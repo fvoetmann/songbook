@@ -22,6 +22,132 @@ import requests
 from bs4 import BeautifulSoup
 
 SONGS_DIR = Path("songs")
+
+# Akkord-diagram tooltip (injiceres i hvert sang-HTML)
+# Format i DB: [E6, A5, D4, G3, B2, e1]  (-1=muted/x, 0=åben, N=fretnummer)
+CHORD_DIAGRAM_HTML = """  <style>
+    #chord-tip {
+      position: fixed; z-index: 9999;
+      background: white; border: 1px solid #ccc;
+      border-radius: 5px; padding: 5px 7px 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      pointer-events: none; text-align: center;
+    }
+    .tip-name { font-family: sans-serif; font-size: 9pt; font-weight: bold; color: #333; margin-bottom: 2px; }
+    @media print { #chord-tip { display: none !important; } }
+  </style>
+  <script>
+  (function() {
+    var DB = {
+      'C':[-1,3,2,0,1,0],'C#':[-1,4,6,6,6,4],'Db':[-1,4,6,6,6,4],
+      'D':[-1,-1,0,2,3,2],'D#':[-1,-1,1,3,4,3],'Eb':[-1,-1,1,3,4,3],
+      'E':[0,2,2,1,0,0],
+      'F':[1,3,3,2,1,1],'F#':[2,4,4,3,2,2],'Gb':[2,4,4,3,2,2],
+      'G':[3,2,0,0,0,3],'G#':[4,6,6,5,4,4],'Ab':[4,6,6,5,4,4],
+      'A':[-1,0,2,2,2,0],'A#':[-1,1,3,3,3,1],'Bb':[-1,1,3,3,3,1],
+      'B':[-1,2,4,4,4,2],
+      'Am':[-1,0,2,2,1,0],'A#m':[-1,1,3,3,2,1],'Bbm':[-1,1,3,3,2,1],
+      'Bm':[-1,2,4,4,3,2],
+      'Cm':[-1,3,5,5,4,3],'C#m':[-1,4,6,6,5,4],'Dbm':[-1,4,6,6,5,4],
+      'Dm':[-1,-1,0,2,3,1],'D#m':[-1,-1,1,3,4,2],'Ebm':[-1,-1,1,3,4,2],
+      'Em':[0,2,2,0,0,0],'Fm':[1,3,3,1,1,1],'F#m':[2,4,4,2,2,2],'Gbm':[2,4,4,2,2,2],
+      'Gm':[3,5,5,3,3,3],'G#m':[4,6,6,4,4,4],'Abm':[4,6,6,4,4,4],
+      'A7':[-1,0,2,0,2,0],'B7':[-1,2,1,2,0,2],'C7':[-1,3,2,3,1,0],
+      'D7':[-1,-1,0,2,1,2],'E7':[0,2,0,1,0,0],'F7':[1,3,1,2,1,1],
+      'G7':[3,2,0,0,0,1],
+      'Am7':[-1,0,2,0,1,0],'Bm7':[-1,2,4,2,3,2],
+      'Cm7':[-1,3,5,3,4,3],'Dm7':[-1,-1,0,2,1,1],
+      'Em7':[0,2,2,0,3,0],'Fm7':[1,3,1,1,1,1],
+      'F#m7':[2,4,2,2,2,2],'Gm7':[3,5,3,3,3,3],
+      'Cmaj7':[-1,3,2,0,0,0],'Dmaj7':[-1,-1,0,2,2,2],
+      'Emaj7':[0,2,1,1,0,0],'Fmaj7':[-1,0,3,2,1,0],
+      'Gmaj7':[3,2,0,0,0,2],'Amaj7':[-1,0,2,1,2,0],
+      'Dsus2':[-1,-1,0,2,3,0],'Dsus4':[-1,-1,0,2,3,3],
+      'Asus2':[-1,0,2,2,0,0],'Asus4':[-1,0,2,2,3,0],
+      'Esus4':[0,2,2,2,0,0],
+      'Cadd9':[-1,3,2,0,3,3],'Gadd9':[3,2,0,2,0,3],
+      'D/F#':[2,-1,0,2,3,2],'G/B':[-1,2,0,0,3,3],
+      'C/G':[3,3,2,0,1,0],'E/G#':[4,-1,2,1,0,0],
+      'A/C#':[-1,4,2,2,2,0],'Am/E':[0,0,2,2,1,0]
+    };
+    function baseFret(f) {
+      var pos = f.filter(function(x) { return x > 0; });
+      if (!pos.length) return 1;
+      var m = Math.min.apply(null, pos);
+      return (f.some(function(x) { return x === 0; }) || m <= 2) ? 1 : m;
+    }
+    function makeSVG(frets) {
+      var base = baseFret(frets), nF = 4, nS = 6, sw = 10, fh = 13;
+      var gw = sw * (nS - 1), gh = fh * nF, ox = 12, oy = 20;
+      var hasLbl = base > 2, nut = base <= 2 ? 3 : 0;
+      var tw = gw + ox * 2 + (hasLbl ? 20 : 0), th = gh + oy + 6;
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + tw + '" height="' + th + '">';
+      s += '<rect width="' + tw + '" height="' + th + '" fill="white"/>';
+      for (var i = 0; i < nS; i++) {
+        var x = ox + i * sw, fi = frets[i];
+        if (fi === -1)
+          s += '<text x="' + x + '" y="' + (oy-5) + '" text-anchor="middle" font-size="9" font-family="sans-serif" fill="#aaa">x</text>';
+        else if (fi === 0)
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="3.5" fill="none" stroke="#aaa" stroke-width="1.2"/>';
+      }
+      if (nut)
+        s += '<rect x="' + ox + '" y="' + oy + '" width="' + gw + '" height="' + nut + '" fill="#333" rx="1"/>';
+      else
+        s += '<text x="' + (ox+gw+4) + '" y="' + (oy+fh*0.75) + '" font-size="8" font-family="sans-serif" fill="#aaa">' + base + 'fr</text>';
+      var y0 = oy + nut;
+      for (var r = 0; r <= nF; r++) {
+        var y = y0 + r * fh;
+        s += '<line x1="' + ox + '" y1="' + y + '" x2="' + (ox+gw) + '" y2="' + y + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var j = 0; j < nS; j++) {
+        var xs = ox + j * sw;
+        s += '<line x1="' + xs + '" y1="' + y0 + '" x2="' + xs + '" y2="' + (y0+gh) + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var k = 0; k < nS; k++) {
+        var fv = frets[k], row = fv - base;
+        if (fv > 0 && row >= 0 && row < nF) {
+          var cx = ox + k * sw, cy = y0 + row * fh + fh / 2;
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (fh*0.38) + '" fill="#b00020"/>';
+        }
+      }
+      return s + '</svg>';
+    }
+    var tip = null;
+    function lookup(name) {
+      if (DB[name]) return DB[name];
+      var sl = name.indexOf('/');
+      return sl > 0 && DB[name.slice(0, sl)] ? DB[name.slice(0, sl)] : null;
+    }
+    function show(el, name) {
+      var frets = lookup(name);
+      if (!frets) return;
+      hide();
+      tip = document.createElement('div');
+      tip.id = 'chord-tip';
+      var lbl = document.createElement('div');
+      lbl.className = 'tip-name';
+      lbl.textContent = name;
+      tip.appendChild(lbl);
+      var d = document.createElement('div');
+      d.innerHTML = makeSVG(frets);
+      tip.appendChild(d);
+      document.body.appendChild(tip);
+      var rect = el.getBoundingClientRect(), tw2 = tip.offsetWidth, th2 = tip.offsetHeight;
+      var left = rect.left + (rect.width - tw2) / 2, top = rect.top - th2 - 6;
+      if (top < 4) top = rect.bottom + 6;
+      left = Math.max(4, Math.min(left, window.innerWidth - tw2 - 4));
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+    }
+    function hide() { if (tip) { tip.remove(); tip = null; } }
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.chord').forEach(function(el) {
+        el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
+        el.addEventListener('mouseleave', hide);
+      });
+    });
+  })();
+  </script>"""
 DOWNLOADS_DIR = Path("downloads")
 INDEX_FILE = Path("index.html")
 SONGS_DATA = Path("songs.json")
@@ -76,7 +202,17 @@ def fetch_page(url: str) -> str:
     return r.text
 
 
+def unwrap_view_source(html_text: str) -> str:
+    """Hvis filen er gemt fra browserens view-source visning, udpak den rå HTML."""
+    soup = BeautifulSoup(html_text, "html.parser")
+    cells = soup.find_all("td", class_="line-content")
+    if not cells:
+        return html_text
+    return "\n".join(cell.get_text() for cell in cells)
+
+
 def extract_ug_data(html_text: str) -> dict:
+    html_text = unwrap_view_source(html_text)
     soup = BeautifulSoup(html_text, "html.parser")
 
     # Nuværende format: JSON i data-content på .js-store
@@ -247,7 +383,7 @@ def make_song_html(
     if tab_blocks.strip():
         tab_html = f'<div class="tab-section">{tab_blocks}</div>'
 
-    return f"""<!DOCTYPE html>
+    page = f"""<!DOCTYPE html>
 <html lang="da">
 <head>
   <meta charset="UTF-8">
@@ -276,7 +412,7 @@ def make_song_html(
       margin-bottom: 6px;
     }}{double_css}
     .tab-section {{ margin-top: 8mm; }}
-    .chord {{ color: #b00020; font-weight: bold; }}
+    .chord {{ color: #b00020; font-weight: bold; cursor: help; }}
     .section {{ color: #777; font-style: italic; font-weight: bold; }}
     @media print {{
       body {{ background: white; padding: 0; }}
@@ -298,7 +434,8 @@ def make_song_html(
     {tab_html}
   </div>
 </body>
-</html>""", layout
+</html>"""
+    return page.replace("</head>", CHORD_DIAGRAM_HTML + "\n</head>", 1), layout
 
 
 def slugify(text: str) -> str:

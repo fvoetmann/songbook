@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
-  <title>Just Like Heaven – The Cure</title>
+  <title>Halleys Comet – Billie Eilish</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: monospace; background: #ddd; padding: 24px; }
@@ -26,7 +26,6 @@
       white-space: pre-wrap; word-break: break-word;
       margin-bottom: 6px;
     }
-    .chords { column-count: 2; column-gap: 8mm; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -65,7 +64,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]]},"ukulele":{"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]]},"mandolin":{"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]]}};
+    var DBS = {"guitar":{"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"B7":[[-1,2,1,2,0,2],[-1,2,4,2,4,2],[-1,2,4,2,4,-1],[7,6,7,8,7,7],[7,6,7,8,7,-1],[7,9,7,8,0,7]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Cm":[[-1,3,1,0,1,3],[-1,3,1,0,1,-1],[-1,3,5,0,4,3],[-1,3,5,5,4,3],[-1,3,5,0,4,-1],[-1,3,5,5,4,-1]],"Gm":[[3,1,0,0,3,3],[3,1,0,3,3,3],[3,1,0,0,3,-1],[3,1,0,3,3,-1],[3,1,0,0,-1,-1],[3,1,0,3,-1,-1]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"Fmaj7":[[1,0,2,2,1,0],[1,0,2,2,1,1],[1,0,3,2,1,0],[1,3,2,2,1,0],[1,3,2,2,1,1],[1,3,3,2,1,0]]},"ukulele":{"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"B7":[[2,3,2,2],[4,3,2,0],[4,6,5,6],[4,3,2,2],[2,3,5,2],[4,3,5,2]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Cm":[[0,0,3,6],[0,3,3,3],[5,0,3,6],[5,3,3,3],[5,3,3,6]],"Gm":[[0,2,3,1],[3,2,3,1],[3,2,3,5],[0,7,6,5],[7,7,6,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"Fmaj7":[[2,4,1,3],[2,5,0,3],[5,5,0,0],[5,5,5,7],[2,0,1,0],[2,0,1,3]]},"mandolin":{"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"B7":[[4,1,0,2],[4,4,6,5],[2,1,2,2],[4,1,2,2],[4,1,0,-1],[4,4,6,7]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Cm":[[5,5,6,3],[5,5,6,-1],[0,1,3,3],[0,1,3,-1],[-1,1,3,3],[5,-1,6,3]],"Gm":[[0,0,1,3],[0,0,1,-1],[0,0,5,6],[0,5,5,6],[-1,5,5,6],[3,0,1,3]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"Fmaj7":[[2,2,3,1],[2,3,3,0],[5,3,0,0],[-1,3,0,0],[-1,3,3,5],[2,2,0,1]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     function baseFret(f) {
@@ -202,125 +201,68 @@
 </head>
 <body>
   <div class="page">
-    <h1>Just Like Heaven</h1>
-    <h2>The Cure</h2>
-    <div class="meta">Toneart: A &nbsp;·&nbsp; Tilføjet: 25.04.2026</div>
-    <div class="chords">
-    <pre class="block">The Cure
-Song: Just Like Heaven
-Transcribed by: Paul N
-Album: Kiss Me, Kiss Me, Kiss Me (1987)
-* Single release of the song has the instrumental after the first verse x2 only.</pre>
-<pre class="block"><span class="section">[Intro]</span>
-<span class="chord">A</span>  <span class="chord">E</span>  <span class="chord">Bm</span>  <span class="chord">D</span>  x4</pre>
+    <h1>Halleys Comet</h1>
+    <h2>Billie Eilish</h2>
+    <div class="meta">Toneart: Bb &nbsp;·&nbsp; Tilføjet: 26.04.2026</div>
+    
+    <pre class="block"><span class="section">[Intro]</span>
+<span class="chord">G</span> <span class="chord">B7</span> <span class="chord">Em</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">D</span>
+<span class="chord">C</span> <span class="chord">B7</span> <span class="chord">Em</span> <span class="chord">A</span>
+<span class="chord">C</span> <span class="chord">Cm</span> <span class="chord">G</span></pre>
 <pre class="block"><span class="section">[Verse 1]</span>
-                   <span class="chord">A</span>               <span class="chord">E</span>
-&quot;Show me, show me, show me how you do that trick
-    <span class="chord">Bm</span>                <span class="chord">D</span>
-The one that makes me scream&quot; she said
-     <span class="chord">A</span>                 <span class="chord">E</span>
-&quot;The one that makes me laugh&quot; she said
-    <span class="chord">Bm</span>              <span class="chord">D</span>
-And threw her arms around my neck
- <span class="chord">A</span>               <span class="chord">E</span>
-&quot;Show me how you do it
-      <span class="chord">Bm</span>             <span class="chord">D</span>
-And I promise you, I promise that
-          <span class="chord">A</span>              <span class="chord">E</span>
-I&#x27;ll run away with you
-          <span class="chord">Bm</span>             <span class="chord">D</span>
-I&#x27;ll run away with you&quot;</pre>
-<pre class="block"><span class="section">[Instrumental]</span>
- *
-<span class="chord">A</span>  <span class="chord">E</span>  <span class="chord">Bm</span>  <span class="chord">D</span>  x4</pre>
+<span class="chord">G</span> <span class="chord">B7</span>  <span class="chord">Em</span>
+I don&#x27;t want it
+     <span class="chord">C</span>      <span class="chord">G</span>       <span class="chord">D</span>
+And I don&#x27;t want to want you
+    <span class="chord">C</span>               <span class="chord">B7</span>            <span class="chord">Em</span>      <span class="chord">A</span>
+But in my dreams, I seem to be more honest
+     <span class="chord">C</span>                  <span class="chord">Cm</span>             <span class="chord">G</span>
+And I must admit you&#x27;ve been in quite a few</pre>
 <pre class="block"><span class="section">[Verse 2]</span>
-<span class="chord">A</span>                <span class="chord">E</span>
-Spinning on that dizzy edge
-  <span class="chord">Bm</span>                  <span class="chord">D</span>
-I kissed her face and kissed her head
-    <span class="chord">A</span>                  <span class="chord">E</span>
-And dreamed of all the different ways
-  <span class="chord">Bm</span>              <span class="chord">D</span>
-I had to make her glow
- <span class="chord">A</span>              <span class="chord">E</span>               <span class="chord">Bm</span>
-&quot;Why are you so far away?&quot; she said
-               <span class="chord">D</span>                     <span class="chord">A</span>            <span class="chord">E</span>
-&quot;Why won&#x27;t you ever know that I&#x27;m in love with you
-            <span class="chord">Bm</span>             <span class="chord">D</span>
-That I&#x27;m in love with you&quot;</pre>
-<pre class="block"><span class="section">[Chorus]</span>
-<span class="chord">F#m</span>
-You
-<span class="chord">G</span>
- Soft and only
-<span class="chord">F#m</span>
-You
-<span class="chord">G</span>
- Lost and lonely
-<span class="chord">F#m</span>
-You
-<span class="chord">G</span>
-Strange as angels
-<span class="chord">D</span>
-Dancing in the deepest oceans
-Twisting in the water
-                   <span class="chord">A</span>      <span class="chord">E</span>
-You&#x27;re just like a dream
-                   <span class="chord">Bm</span>     <span class="chord">D</span>
-You&#x27;re just like a dream</pre>
-<pre class="block"><span class="section">[Instrumental]</span>
-<span class="chord">A</span>  <span class="chord">E</span>  <span class="chord">Bm</span>  <span class="chord">D</span>  x3</pre>
+<span class="chord">G</span>  <span class="chord">B7</span>   <span class="chord">Em</span>
+Halley&#x27;s Comet
+       <span class="chord">C</span>       <span class="chord">G</span>       <span class="chord">D</span>
+Comes around more than I do
+           <span class="chord">C</span>               <span class="chord">B7</span>            <span class="chord">Em</span>    <span class="chord">A</span>
+But you&#x27;re all it takes for me to break a promise
+<span class="chord">C</span>           <span class="chord">Cm</span>                <span class="chord">G</span>
+Silly me to fall in love with you</pre>
 <pre class="block"><span class="section">[Verse 3]</span>
-<span class="chord">A</span>                  <span class="chord">E</span>
-Daylight licked me into shape
-  <span class="chord">Bm</span>              <span class="chord">D</span>
-I must have been asleep for days
-    <span class="chord">A</span>              <span class="chord">E</span>
-And moving lips to breathe her name
-  <span class="chord">Bm</span>           <span class="chord">D</span>
-I opened up my eyes
-    <span class="chord">A</span>             <span class="chord">E</span>
-And found myself alone, alone
- <span class="chord">Bm</span>           <span class="chord">D</span>
-Alone above a raging sea
-     <span class="chord">A</span>              <span class="chord">E</span>
-That stole the only girl I loved
-    <span class="chord">Bm</span>                 <span class="chord">D</span>
-And drowned her deep inside of me</pre>
-<pre class="block"><span class="section">[Chorus]</span>
-<span class="chord">F#m</span>
-You
-<span class="chord">G</span>
-Soft and only
-<span class="chord">F#m</span>
-You
-<span class="chord">G</span>
-Lost and lonely
-<span class="chord">F#m</span>
-You
-<span class="chord">G</span>               <span class="chord">D</span>
-Just like heaven</pre>
-    </div>
-    <div class="tab-section"><pre class="block">e|-------------------------------------------------------------|
-B|-14-14-14-12-12-12-10-10-9-9-9-7-7-7-5-5-3-3-2-3-2-0-0-0---0-|
-G|---------------------------------------------------------2---|  x2
-D|-------------------------------------------------------------|
-A|-------------------------------------------------------------|
-E|-------------------------------------------------------------|
-
-e|---------------------------------------------|
-B|2-2-3-3-5-7-7-9-9-10-12-12-14-14-15-17-15-14-|
-G|---------------------------------------------|
-D|---------------------------------------------|
-A|---------------------------------------------|
-E|---------------------------------------------|
-
-e|----------------------------------------------------|
-B|14-14-14-12-12-12-10-10-9-9-9-7-7-7-5-5-3-3-2-3-2-0-|
-G|----------------------------------------------------|
-D|----------------------------------------------------|
-A|----------------------------------------------------|
-E|----------------------------------------------------|</pre></div>
+  <span class="chord">G</span>
+I haven&#x27;t slept since Sunday
+   <span class="chord">B7</span>                <span class="chord">C</span>     <span class="chord">G</span>   <span class="chord">D</span>
+Midnight for me is 3AM for you-u
+       <span class="chord">G</span>
+But my sleepless nights are better
+     <span class="chord">B7</span>                           <span class="chord">C</span>            <span class="chord">G</span>        <span class="chord">D</span>
+With you than nights could ever be alone, ooh, ooh-ooh, ooh
+     <span class="chord">C</span>                <span class="chord">B7</span>               <span class="chord">Em</span>      <span class="chord">A</span>
+I was good at feeling nothin&#x27;, now I&#x27;m hopeless
+<span class="chord">C</span>              <span class="chord">Cm</span>           <span class="chord">G</span>               <span class="chord">B7</span>             <span class="chord">Em</span>
+What a drag to love you like I do, ooh-ooh, ooh, ooh, ooh, ooh
+    <span class="chord">C</span>        <span class="chord">G</span>                 <span class="chord">D</span>
+Ooh-ooh-ooh, ooh, ooh-ooh, ooh-ooh</pre>
+<pre class="block"><span class="section">[Verse 4]</span>
+          <span class="chord">C</span>                 <span class="chord">B7</span>                <span class="chord">Em</span>    <span class="chord">A</span>
+I&#x27;ve been loved before, but right now in this moment
+       <span class="chord">C</span>                  <span class="chord">Cm</span>             <span class="chord">G</span>
+I feel more and more likе I was made for you
+<span class="chord">C</span> <span class="chord">Cm</span>     <span class="chord">G</span>
+     For you</pre>
+<pre class="block"><span class="section">[Instrumental Break]</span>
+<span class="chord">Gm</span> <span class="chord">C</span> <span class="chord">F</span> <span class="chord">Dm</span>
+<span class="chord">Gm</span> <span class="chord">C</span> <span class="chord">F</span> <span class="chord">Dm</span></pre>
+<pre class="block"><span class="section">[Verse 5]</span>
+    <span class="chord">Gm</span>     <span class="chord">C</span>                <span class="chord">F</span>   <span class="chord">Dm</span>
+I&#x27;m sitting in my brother&#x27;s room
+<span class="chord">Gm</span>                   <span class="chord">C</span>        <span class="chord">F</span>       <span class="chord">Dm</span>
+  Haven&#x27;t slеpt in a week, or two, or two
+  <span class="chord">Gm</span>      <span class="chord">C</span>                    <span class="chord">F</span>    <span class="chord">Dm</span>
+I think I might have fallen in love
+<span class="chord">Gm</span>      <span class="chord">C</span>    <span class="chord">Fmaj7</span>
+What am I to do?</pre>
+    
+    
   </div>
 </body>
 </html>

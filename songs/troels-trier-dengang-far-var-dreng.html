@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
-  <title>Jumping Someone Elses Train – The Cure</title>
+  <title>Dengang Far Var Dreng – Troels Trier</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: monospace; background: #ddd; padding: 24px; }
@@ -64,7 +64,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"C#m":[[-1,4,6,6,5,0],[-1,4,6,6,5,4],[-1,4,6,6,5,-1],[-1,-1,2,1,2,0],[0,4,6,6,5,0],[0,4,6,6,5,4]],"Dsus2":[[-1,-1,0,2,3,0],[-1,5,0,7,5,5],[-1,5,7,7,5,0],[-1,7,0,7,5,5],[-1,5,7,7,5,5],[-1,-1,0,7,5,5]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"Fm":[[1,3,3,1,1,1],[1,3,3,1,1,-1],[-1,-1,3,1,1,1],[1,3,3,1,-1,-1],[-1,3,3,1,1,1],[-1,3,3,1,1,-1]],"G#m":[[4,6,6,4,0,4],[4,6,6,4,4,4],[4,6,6,4,0,-1],[4,6,6,4,4,-1],[-1,-1,6,4,4,4],[4,6,6,4,-1,-1]]},"ukulele":{"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"C#m":[[1,1,0,4],[1,4,0,4],[1,4,4,4],[6,4,4,4],[6,4,4,7],[6,4,0,4]],"Dsus2":[[2,2,0,0],[2,2,0,5],[2,4,0,5],[2,4,5,5],[7,4,0,0],[7,4,5,0]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Fm":[[1,0,1,3],[5,5,4,3]],"G#m":[[1,3,4,2],[4,3,4,2],[4,3,4,6]]},"mandolin":{"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"C#m":[[6,6,4,0],[6,6,7,4],[6,6,7,0],[6,6,7,-1],[1,2,4,0],[1,2,4,4]],"Dsus2":[[-1,0,0,0],[7,0,7,5],[7,7,5,0],[7,7,7,5],[-1,0,7,5],[7,0,0,0]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"Fm":[[-1,3,3,4],[1,3,3,1],[1,3,3,4],[1,3,3,-1],[5,3,3,4],[1,-1,3,1]],"G#m":[[1,1,2,4],[1,1,2,-1],[-1,6,6,7],[4,1,2,4],[-1,1,2,4],[4,6,6,4]]}};
+    var DBS = {"guitar":{"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]]},"ukulele":{"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]]},"mandolin":{"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     function baseFret(f) {
@@ -201,86 +201,75 @@
 </head>
 <body>
   <div class="page">
-    <h1>Jumping Someone Elses Train</h1>
-    <h2>The Cure</h2>
+    <h1>Dengang Far Var Dreng</h1>
+    <h2>Troels Trier</h2>
     <div class="meta">Tilføjet: 25.04.2026</div>
     
-    <pre class="block">Artist: Cure
-Title: Jumping Someone Else&#x27;s Train (single 1979)</pre>
-<pre class="block"><span class="section">[Intro]</span>
-(Open strings)
-000xxx
-(Guitar 1)
-<span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">C#m</span>
-(Drums and bass enters)
-<span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">C#m</span>
-(Guitar 2, riff1)
-                    <span class="chord">Dsus2</span>           <span class="chord">C#m</span></pre>
+    <pre class="block"><span class="section">[Intro]</span>
+<span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span></pre>
 <pre class="block"><span class="section">[Verse 1]</span>
-<span class="chord">Bm</span>                   <span class="chord">C#m</span>                       <span class="chord">F#m</span>
-  Don&#x27;t say what you mean you might spoil your face
-                   <span class="chord">A</span>                         <span class="chord">D</span>
-  If you walk in a crowd you won&#x27;t leave any trace
-                  <span class="chord">C#m</span>
-  It&#x27;s always the same
-                     (riff1)
-  You&#x27;re jumping someone else&#x27;s train</pre>
-<pre class="block"><span class="section">[Chorus]</span>
-<span class="chord">Bm</span>                 <span class="chord">C#m</span>                   <span class="chord">F#m</span>
-  It wont take you long to learn the new smile
-               <span class="chord">A</span>                        <span class="chord">D</span>
-  You have to adapt or you&#x27;ll be out of style
-                  <span class="chord">C#m</span>
-  It&#x27;s always the same
-                     <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">C#m</span>
-  You&#x27;re jumping someone else&#x27;s train</pre>
-<pre class="block"><span class="section">[Bridge]</span>
-<span class="chord">D</span>             <span class="chord">E</span>              <span class="chord">Fm</span>                   <span class="chord">F#m</span>
-  If you pick up on it quick you can say you were there
-   <span class="chord">D</span>                   <span class="chord">E</span>  <span class="chord">Fm</span>
-  Again and again and again
-                     (riff1)
-  You&#x27;re jumping someone else&#x27;s train
-(Riff2)
-                                                   <span class="chord">C#m</span></pre>
+<span class="chord">G</span>               <span class="chord">G</span>            <span class="chord">G</span>                <span class="chord">C</span>
+Nu skal jeg fortælle dig om dengang far var dreng
+<span class="chord">D</span>           <span class="chord">D</span>                <span class="chord">C</span>                 <span class="chord">G</span>
+Vi tæsk om morg’nen, vi fik tæsk når vi gik i seng
+<span class="chord">G</span>                 <span class="chord">G</span>              <span class="chord">G</span>              <span class="chord">C</span>
+Vi fik tæsk til frokost, vi fik tæsk til aftensmad
+<span class="chord">D</span>              <span class="chord">D</span>               <span class="chord">C</span>               <span class="chord">G</span>
+Tæsk af vores nabo, når vores far og mor ikke gad
+   <span class="chord">C</span>          <span class="chord">C</span>            <span class="chord">C</span>           <span class="chord">C</span>
+Og i kommuneskolen måtte skolelær’en slå
+   <span class="chord">A</span>                <span class="chord">A</span>                 <span class="chord">A</span>                 <span class="chord">D</span>
+Så hovedet det var først og fremmest noget man tæsked’ på
+<span class="chord">G</span>               <span class="chord">G</span>              <span class="chord">G</span>            <span class="chord">C</span>
+Vi fik tæsk og tæsk og tæsk og ellers ingenting
+     <span class="chord">D</span>               <span class="chord">D</span>            <span class="chord">C</span>            <span class="chord">G</span>
+Nej du kan fand’me tro at vi fik tæsk da far dreng
+<span class="chord">D</span>                <span class="chord">D</span>            <span class="chord">C</span>            <span class="chord">G</span>
+du kan fand’me tro at vi fik tæsk da far dreng</pre>
 <pre class="block"><span class="section">[Verse 2]</span>
-<span class="chord">Bm</span>                <span class="chord">C#m</span>                           <span class="chord">F#m</span>
-  It&#x27;s the latest wave that you&#x27;ve been craving for
-            <span class="chord">A</span>                     <span class="chord">D</span>
-  The old idea is getting such a bore
-             <span class="chord">C#m</span>
-  Now you&#x27;re back in line
-        <span class="chord">Bm</span>                      <span class="chord">A</span>
-  Goin&#x27; not quite as far but in half the time
-  <span class="chord">G#m</span>
-  Everyone&#x27;s happy
-              <span class="chord">F#m</span>             <span class="chord">E</span>
-  And they&#x27;re finally all the same
-                                <span class="chord">F#m</span>  <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">C#m</span>
-  coz&#x27; everyone is jumping everybody&#x27;s else&#x27;s train</pre>
+<span class="chord">G</span>               <span class="chord">G</span>          <span class="chord">G</span>            <span class="chord">C</span>
+Dengang var der ingen forurening og miljø
+    <span class="chord">D</span>                    <span class="chord">D</span>                <span class="chord">C</span>               <span class="chord">G</span>
+Nej hvis man havd’ noget affald blev det bar’ smidt i en sø
+   <span class="chord">G</span>               <span class="chord">G</span>                  <span class="chord">G</span>           <span class="chord">C</span>
+Og alt det der med grundvand, var der ikke noget med
+     <span class="chord">D</span>                  <span class="chord">D</span>                <span class="chord">C</span>            <span class="chord">G</span>
+Nej hvis der var noget giftigt, blev det bare gravet ned
+   <span class="chord">C</span>          <span class="chord">C</span>             <span class="chord">C</span>              <span class="chord">C</span>
+Og vi åd røde pølser, vi åd plastik og nitrit
+   <span class="chord">A</span>             <span class="chord">A</span>            <span class="chord">A</span>               <span class="chord">D</span>
+Og vi ku’ ses i mørke, for vi åd os’ optisk hvidt
+<span class="chord">G</span>              <span class="chord">G</span>            <span class="chord">G</span>             <span class="chord">C</span>
+Vi fik hjerneskader, dårlig ånde, dårlige ting
+<span class="chord">D</span>             <span class="chord">D</span>           <span class="chord">C</span>                <span class="chord">G</span>
+Der var ingen forurening dengang far var dreng
+<span class="chord">D</span>             <span class="chord">D</span>           <span class="chord">C</span>                <span class="chord">G</span>
+Der var ingen forurening dengang far var dreng</pre>
+<pre class="block"><span class="section">[Solo]</span>
+<span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span>  <span class="chord">A</span> <span class="chord">A</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span></pre>
+<pre class="block"><span class="section">[Verse 3]</span>
+<span class="chord">G</span>               <span class="chord">G</span>                  <span class="chord">G</span>               <span class="chord">C</span>
+Dengang far var dreng, der var der rigtige drenge til
+        <span class="chord">D</span>             <span class="chord">D</span>                  <span class="chord">C</span>            <span class="chord">G</span>
+Vi skød øjn’ne ud på hinanden, båd’ med luftgevær og pil
+    <span class="chord">G</span>             <span class="chord">G</span>               <span class="chord">G</span>               <span class="chord">C</span>
+Og nytårsaften sprang vi fingrene af med fyrværkeri
+<span class="chord">D</span>                 <span class="chord">D</span>                <span class="chord">C</span>                       <span class="chord">G</span>
+Det sag’ bang og bang og bang, og så var der også verdenskrig
+   <span class="chord">C</span>                 <span class="chord">C</span>            <span class="chord">C</span>                <span class="chord">C</span>
+Ja dengang far var dreng, smed vi atombomber på japanerne
+   <span class="chord">A</span>               <span class="chord">A</span>               <span class="chord">A</span>         <span class="chord">D</span>
+Og bagefter gik vi ud og smed dynamit på indianerne
+    <span class="chord">G</span>               <span class="chord">G</span>              <span class="chord">G</span>                <span class="chord">C</span>
+Ja, du kan fandme tro vi had’ det skægt da far var dreng
+<span class="chord">D</span>                 <span class="chord">D</span>             <span class="chord">C</span>                 <span class="chord">G</span>
+Så, nu er klokken otte, kan du så se og skrup’ i seng
+<span class="chord">D</span>             <span class="chord">D</span>             <span class="chord">C</span>                 <span class="chord">G</span>
+nu er klokken otte, kan du så se og skrup’ i seng</pre>
 <pre class="block"><span class="section">[Outro]</span>
-(Riff1)
-Jumping someone else&#x27;s train, jumping someone else&#x27;s train
-<span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">C#m</span>
-Jumping someone else&#x27;s train
-(Drums only)
-(Drums and bass)
-(Riff1)(Fading out)
-Jumping someone else&#x27;s train
-Jumping someone else&#x27;s train</pre>
+<span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span>  <span class="chord">A</span> <span class="chord">A</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span></pre>
     
-    <div class="tab-section"><pre class="block">e|------------------5---------------9--|
-B|-2----------------5-2-------------9--|
-G|---4-2------------7---4-2---------9--|
-D|-------4-2-0------7-------4-2-0---11-|
-A|-------------4----5-------------4----|
-E|---------------2---------------------|</pre>
-<pre class="block">e|--------------|--------------|--------------|--9------------|
-B|-2------------|-2------------|-2------------|--9------------|
-G|---4-2----2-4-|---4-2----2-4-|---4-2----2-4-|--9------------|
-D|-------4------|-------4------|-------4------|-11------------|
-A|--------------|--------------|--------------|---------------|
-E|--------------|--------------|--------------|---------------|</pre></div>
+    
   </div>
 </body>
 </html>

@@ -23,6 +23,361 @@ from bs4 import BeautifulSoup
 
 SONGS_DIR = Path("songs")
 DOWNLOADS_DIR = Path("downloads")
+
+# ── Instrumentkonfigurationer ────────────────────────────────────────────────
+# strings: MIDI-notenumre fra tykkeste til tyndeste streng
+# Ukulele: re-entrant G (G4=67 er højere end C4=60)
+# Mandolin: GDAE ligesom violin
+STRING_OPEN = [40, 45, 50, 55, 59, 64]  # beholdes for bagudkompatibilitet
+MAX_FRET = 9
+
+INSTRUMENTS = {
+    'guitar':   {'strings': [40, 45, 50, 55, 59, 64], 'max_fret': 9, 'min_play': 4, 'span': 2},
+    'ukulele':  {'strings': [67, 60, 64, 69],          'max_fret': 7, 'min_play': 4, 'span': 3, 'reentrant': True},
+    'mandolin': {'strings': [55, 62, 69, 76],          'max_fret': 7, 'min_play': 3, 'span': 3},
+}
+
+NOTE_SEMI = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
+ACCIDENTAL = {'#': 1, 'b': -1}
+
+# Akkordtype-suffixer → intervaller fra rod (sorteret på længde, længst først)
+CHORD_TYPES = sorted([
+    ('mmaj7',   [0, 3, 7, 11]),
+    ('m(maj7)', [0, 3, 7, 11]),
+    ('maj7',    [0, 4, 7, 11]),
+    ('maj9',    [0, 2, 4, 7, 11]),
+    ('7sus4',   [0, 5, 7, 10]),
+    ('dim7',    [0, 3, 6, 9]),
+    ('sus2',    [0, 2, 7]),
+    ('sus4',    [0, 5, 7]),
+    ('add9',    [0, 2, 4, 7]),
+    ('aug',     [0, 4, 8]),
+    ('dim',     [0, 3, 6]),
+    ('m7',      [0, 3, 7, 10]),
+    ('m6',      [0, 3, 7, 9]),
+    ('m9',      [0, 2, 3, 7, 10]),
+    ('maj',     [0, 4, 7]),
+    ('m',       [0, 3, 7]),
+    ('7',       [0, 4, 7, 10]),
+    ('6',       [0, 4, 7, 9]),
+    ('9',       [0, 2, 4, 7, 10]),
+    ('5',       [0, 7]),
+    ('',        [0, 4, 7]),
+], key=lambda x: -len(x[0]))
+
+
+def parse_chord_name(name: str):
+    """Returnér (rod_semi, intervaller, bas_semi|None) eller None."""
+    bass_semi = None
+    slash = name.find('/')
+    if slash > 0:
+        b = name[slash + 1:]
+        if b and b[0] in NOTE_SEMI:
+            bass_semi = NOTE_SEMI[b[0]]
+            if len(b) > 1 and b[1] in ACCIDENTAL:
+                bass_semi = (bass_semi + ACCIDENTAL[b[1]]) % 12
+        name = name[:slash]
+
+    if not name or name[0] not in NOTE_SEMI:
+        return None
+    root = NOTE_SEMI[name[0]]
+    i = 1
+    if i < len(name) and name[i] in ACCIDENTAL:
+        root = (root + ACCIDENTAL[name[i]]) % 12
+        i += 1
+
+    suffix = name[i:]
+    for suf, ivs in CHORD_TYPES:
+        if suffix == suf:
+            return root, ivs, bass_semi
+    return None
+
+
+def generate_voicings(root: int, ivs: list, bass=None, n: int = 6, instr: dict = None) -> list:
+    """Top-n spillbare greb som liste af frets (-1=muted, 0=åben, N=fret)."""
+    from itertools import product as iproduct
+
+    if instr is None:
+        instr = INSTRUMENTS['guitar']
+    string_open = instr['strings']
+    n_str = len(string_open)
+    max_fret = instr['max_fret']
+    min_play = instr['min_play']
+    max_span = instr['span']
+
+    tones = {(root + i) % 12 for i in ivs}
+
+    opts = []
+    for s in range(n_str):
+        o = {-1}
+        for t in tones:
+            diff = (t - string_open[s]) % 12
+            if diff <= max_fret:
+                o.add(diff)
+        opts.append(sorted(o))
+
+    valid = []
+    for combo in iproduct(*opts):
+        fs = list(combo)
+        playing = [f for f in fs if f >= 0]
+
+        if len(playing) < min_play:
+            continue
+
+        pressed = [f for f in fs if f > 0]
+        if pressed and max(pressed) - min(pressed) > max_span:
+            continue
+
+        played = {(string_open[s] + fs[s]) % 12 for s in range(n_str) if fs[s] >= 0}
+
+        if root % 12 not in played:
+            continue
+        if len(ivs) > 1 and (root + ivs[1]) % 12 not in played:
+            continue
+
+        if bass is not None:
+            # Laveste absolutte tonehøjde skal være basnoden (virker med re-entrant tuning)
+            lo_abs = min(string_open[s] + fs[s] for s in range(n_str) if fs[s] >= 0)
+            if lo_abs % 12 != bass % 12:
+                continue
+
+        valid.append(fs)
+
+    if not valid:
+        return []
+
+    def score(fs):
+        played = {(string_open[s] + fs[s]) % 12 for s in range(n_str) if fs[s] >= 0}
+        pressed = [f for f in fs if f > 0]
+        first = next((i for i in range(n_str) if fs[i] >= 0), n_str)
+        last = next((i for i in range(n_str - 1, -1, -1) if fs[i] >= 0), -1)
+        gaps = sum(1 for i in range(first, last + 1) if fs[i] == -1)
+        if instr.get('reentrant') or bass is not None:
+            inv = 0
+        else:
+            lo_abs = min(string_open[s] + fs[s] for s in range(n_str) if fs[s] >= 0)
+            inv = 0 if lo_abs % 12 == root % 12 else 1
+        n_play = sum(1 for f in fs if f >= 0)
+        position = min(pressed) if pressed else 0
+        return (
+            -len(played & tones) / len(tones),
+            gaps,
+            inv,
+            position,
+            -n_play,
+            sum(f for f in fs if f >= 0),
+        )
+
+    valid.sort(key=score)
+
+    seen, result = set(), []
+    for v in valid:
+        k = tuple(v)
+        if k not in seen:
+            seen.add(k)
+            result.append(v)
+            if len(result) == n:
+                break
+    return result
+
+
+def extract_chord_names(content: str) -> list:
+    """Unikke akkordnavne i førstegangs-rækkefølge."""
+    seen, result = set(), []
+    for m in re.finditer(r'\[ch\](.*?)\[/ch\]', content):
+        name = m.group(1).strip()
+        if name not in seen:
+            seen.add(name)
+            result.append(name)
+    return result
+
+
+def build_voicings_db(chord_names: list, instr: dict = None) -> dict:
+    """{akkordnavn: [[frets], ...]} for alle akkorder i sangen."""
+    db = {}
+    for name in chord_names:
+        parsed = parse_chord_name(name)
+        if parsed is None:
+            continue
+        voicings = generate_voicings(*parsed, instr=instr)
+        if voicings:
+            db[name] = voicings
+    return db
+
+
+def build_all_voicings_dbs(chord_names: list) -> dict:
+    """{instrument: {akkordnavn: [[frets], ...]}} for alle instrumenter."""
+    return {name: build_voicings_db(chord_names, instr=cfg) for name, cfg in INSTRUMENTS.items()}
+
+
+# ── Akkord-diagram HTML/JS (injiceres i hvert sang-HTML) ────────────────────
+CHORD_DIAGRAM_STYLE = """  <style>
+    #chord-tip {
+      position: fixed; z-index: 9999;
+      background: white; border: 1px solid #ccc;
+      border-radius: 5px; padding: 5px 7px 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      pointer-events: none; text-align: center;
+    }
+    .tip-name { font-family: sans-serif; font-size: 9pt; font-weight: bold; color: #333; margin-bottom: 2px; }
+    #inst-bar {
+      position: fixed; bottom: 16px; right: 16px; z-index: 9998;
+      background: white; border: 1px solid #ccc; border-radius: 5px;
+      padding: 4px 8px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+      font-family: sans-serif; font-size: 8pt;
+      display: flex; gap: 2px; align-items: center;
+    }
+    #inst-bar span { color: #aaa; margin-right: 4px; }
+    .inst-btn {
+      border: none; background: none; cursor: pointer;
+      padding: 2px 6px; font-size: 8pt; font-family: sans-serif;
+      border-radius: 3px; color: #555;
+    }
+    .inst-btn.active { font-weight: bold; color: #b00020; }
+    @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
+  </style>"""
+
+CHORD_DIAGRAM_JS = """  <script>
+  (function() {
+    var DBS = %s;
+    var inst = 'guitar';
+    var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+    function baseFret(f) {
+      var pos = f.filter(function(x) { return x > 0; });
+      if (!pos.length) return 1;
+      var m = Math.min.apply(null, pos);
+      return (f.some(function(x) { return x === 0; }) || m <= 2) ? 1 : m;
+    }
+    function makeSVG(frets) {
+      var nS = frets.length, sw = nS <= 4 ? 14 : 10;
+      var base = baseFret(frets), nF = 4, fh = 13;
+      var gw = sw * (nS - 1), gh = fh * nF, ox = 12, oy = 20;
+      var hasLbl = base > 2, nut = base <= 2 ? 3 : 0;
+      var tw = gw + ox * 2 + (hasLbl ? 20 : 0), th = gh + oy + 6;
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + tw + '" height="' + th + '">';
+      s += '<rect width="' + tw + '" height="' + th + '" fill="white"/>';
+      for (var i = 0; i < nS; i++) {
+        var x = ox + i * sw, fi = frets[i];
+        if (fi === -1)
+          s += '<text x="' + x + '" y="' + (oy-5) + '" text-anchor="middle" font-size="9" font-family="sans-serif" fill="#aaa">x</text>';
+        else if (fi === 0)
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="3.5" fill="none" stroke="#aaa" stroke-width="1.2"/>';
+        else
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="2.5" fill="#b00020"/>';
+      }
+      if (nut)
+        s += '<rect x="' + ox + '" y="' + oy + '" width="' + gw + '" height="' + nut + '" fill="#333" rx="1"/>';
+      else
+        s += '<text x="' + (ox+gw+4) + '" y="' + (oy+fh*0.75) + '" font-size="8" font-family="sans-serif" font-weight="bold" fill="#555">' + base + 'fr</text>';
+      var y0 = oy + nut;
+      for (var r = 0; r <= nF; r++) {
+        var y = y0 + r * fh;
+        s += '<line x1="' + ox + '" y1="' + y + '" x2="' + (ox+gw) + '" y2="' + y + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var j = 0; j < nS; j++) {
+        var xs = ox + j * sw;
+        s += '<line x1="' + xs + '" y1="' + y0 + '" x2="' + xs + '" y2="' + (y0+gh) + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var k = 0; k < nS; k++) {
+        var fv = frets[k], row = fv - base;
+        if (fv > 0 && row >= 0 && row < nF) {
+          var cx = ox + k * sw, cy = y0 + row * fh + fh / 2;
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (fh*0.38) + '" fill="#b00020"/>';
+        }
+      }
+      return s + '</svg>';
+    }
+    function dist(a, b) {
+      var d = 0;
+      for (var i = 0; i < a.length; i++) {
+        if (a[i] >= 0 && b[i] >= 0) d += Math.abs(a[i] - b[i]);
+        else if (a[i] !== b[i]) d += 2;
+      }
+      return d;
+    }
+    function best(vs, prev) {
+      if (!prev || vs.length === 1) return vs[0];
+      var pick = vs[0], d = dist(pick, prev);
+      for (var i = 1; i < vs.length; i++) {
+        var di = dist(vs[i], prev);
+        if (di < d) { pick = vs[i]; d = di; }
+      }
+      return pick;
+    }
+    function lookup(name) {
+      var db = DBS[inst] || {};
+      if (db[name]) return db[name];
+      var sl = name.indexOf('/');
+      return (sl > 0 && db[name.slice(0,sl)]) ? db[name.slice(0,sl)] : null;
+    }
+    function prevEl(el) {
+      var block = el.closest('pre.block');
+      if (!block) return null;
+      var all = Array.from(block.querySelectorAll('.chord'));
+      var i = all.indexOf(el);
+      return i > 0 ? all[i - 1] : null;
+    }
+    var tip = null;
+    function show(el, name) {
+      var vs = lookup(name);
+      if (!vs) return;
+      var prev = prevEl(el);
+      var prevF = (prev && shown) ? shown.get(prev) : null;
+      var frets = best(vs, prevF || null);
+      if (shown) shown.set(el, frets);
+      hide();
+      tip = document.createElement('div');
+      tip.id = 'chord-tip';
+      var lbl = document.createElement('div');
+      lbl.className = 'tip-name';
+      lbl.textContent = name;
+      tip.appendChild(lbl);
+      var d = document.createElement('div');
+      d.innerHTML = makeSVG(frets);
+      tip.appendChild(d);
+      document.body.appendChild(tip);
+      var r = el.getBoundingClientRect(), tw2 = tip.offsetWidth, th2 = tip.offsetHeight;
+      var left = r.left + (r.width - tw2) / 2, top = r.top - th2 - 6;
+      if (top < 4) top = r.bottom + 6;
+      left = Math.max(4, Math.min(left, window.innerWidth - tw2 - 4));
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+    }
+    function hide() { if (tip) { tip.remove(); tip = null; } }
+    function setInst(name) {
+      inst = name;
+      if (shown) shown = new WeakMap();
+      hide();
+      document.querySelectorAll('.inst-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.inst === name);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var bar = document.createElement('div');
+      bar.id = 'inst-bar';
+      var lbl = document.createElement('span');
+      lbl.textContent = 'Instrument:';
+      bar.appendChild(lbl);
+      [['guitar','Guitar'],['ukulele','Ukulele'],['mandolin','Mandolin']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.inst = p[0]; b.className = 'inst-btn';
+        b.addEventListener('click', function() { setInst(p[0]); });
+        bar.appendChild(b);
+      });
+      document.body.appendChild(bar);
+      setInst('guitar');
+      document.querySelectorAll('.chord').forEach(function(el) {
+        el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
+        el.addEventListener('mouseleave', hide);
+      });
+    });
+  })();
+  </script>"""
+
+
+def make_chord_diagram_html(chord_names: list) -> str:
+    all_dbs = build_all_voicings_dbs(chord_names)
+    return CHORD_DIAGRAM_STYLE + "\n" + (CHORD_DIAGRAM_JS % json.dumps(all_dbs, separators=(',', ':')))
 INDEX_FILE = Path("index.html")
 SONGS_DATA = Path("songs.json")
 
@@ -76,7 +431,17 @@ def fetch_page(url: str) -> str:
     return r.text
 
 
+def unwrap_view_source(html_text: str) -> str:
+    """Hvis filen er gemt fra browserens view-source visning, udpak den rå HTML."""
+    soup = BeautifulSoup(html_text, "html.parser")
+    cells = soup.find_all("td", class_="line-content")
+    if not cells:
+        return html_text
+    return "\n".join(cell.get_text() for cell in cells)
+
+
 def extract_ug_data(html_text: str) -> dict:
+    html_text = unwrap_view_source(html_text)
     soup = BeautifulSoup(html_text, "html.parser")
 
     # Nuværende format: JSON i data-content på .js-store
@@ -223,6 +588,7 @@ def make_song_html(
     title: str, artist: str, key: str, capo: str, content: str, url: str
 ) -> tuple:
     chord_blocks, tab_blocks, layout = content_to_html(content)
+    diagram_html = make_chord_diagram_html(extract_chord_names(content))
 
     meta_parts = []
     if key:
@@ -247,7 +613,7 @@ def make_song_html(
     if tab_blocks.strip():
         tab_html = f'<div class="tab-section">{tab_blocks}</div>'
 
-    return f"""<!DOCTYPE html>
+    page = f"""<!DOCTYPE html>
 <html lang="da">
 <head>
   <meta charset="UTF-8">
@@ -276,7 +642,7 @@ def make_song_html(
       margin-bottom: 6px;
     }}{double_css}
     .tab-section {{ margin-top: 8mm; }}
-    .chord {{ color: #b00020; font-weight: bold; }}
+    .chord {{ color: #b00020; font-weight: bold; cursor: help; }}
     .section {{ color: #777; font-style: italic; font-weight: bold; }}
     @media print {{
       body {{ background: white; padding: 0; }}
@@ -298,7 +664,8 @@ def make_song_html(
     {tab_html}
   </div>
 </body>
-</html>""", layout
+</html>"""
+    return page.replace("</head>", diagram_html + "\n</head>", 1), layout
 
 
 def slugify(text: str) -> str:
