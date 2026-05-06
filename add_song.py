@@ -352,6 +352,12 @@ CHORD_DIAGRAM_JS = """  <script>
         b.classList.toggle('active', b.dataset.inst === name);
       });
     }
+    function setFont(size) {
+      document.body.classList.toggle('font-small', size === 'small');
+      document.querySelectorAll('.font-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.font === size);
+      });
+    }
     document.addEventListener('DOMContentLoaded', function() {
       var bar = document.createElement('div');
       bar.id = 'inst-bar';
@@ -364,8 +370,21 @@ CHORD_DIAGRAM_JS = """  <script>
         b.addEventListener('click', function() { setInst(p[0]); });
         bar.appendChild(b);
       });
+      var sep = document.createElement('span');
+      sep.textContent = '·'; sep.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep);
+      var fontLbl = document.createElement('span');
+      fontLbl.textContent = 'Skrift:';
+      bar.appendChild(fontLbl);
+      [['normal','A'],['small','a']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.font = p[0]; b.className = 'inst-btn font-btn';
+        b.addEventListener('click', function() { setFont(p[0]); });
+        bar.appendChild(b);
+      });
       document.body.appendChild(bar);
       setInst('guitar');
+      setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
@@ -531,8 +550,8 @@ def split_mixed(header: str, body: str) -> list:
 
 
 def count_lines(sections: list) -> tuple:
-    """Return (total_non_blank_lines, max_line_width) ignoring tab sections."""
-    total, max_width = 0, 0
+    """Return (total_non_blank_lines, max_chord_width, max_text_width) ignoring tab sections."""
+    total, max_chord_width, max_text_width = 0, 0, 0
     for header, body in sections:
         if is_tab_section(body):
             continue
@@ -541,10 +560,11 @@ def count_lines(sections: list) -> tuple:
         for line in body.split("\n"):
             if line.strip():
                 total += 1
-                if "[ch]" in line:  # kun akkordlinjer tæller for bredde
-                    clean = re.sub(r"\[ch\](.*?)\[/ch\]", r"\1", line)
-                    max_width = max(max_width, len(clean))
-    return total, max_width
+                clean = re.sub(r"\[ch\](.*?)\[/ch\]", r"\1", line)
+                max_text_width = max(max_text_width, len(clean))
+                if "[ch]" in line:
+                    max_chord_width = max(max_chord_width, len(clean))
+    return total, max_chord_width, max_text_width
 
 
 def decide_layout(total_lines: int, max_width: int) -> str:
@@ -575,19 +595,20 @@ def content_to_html(content: str) -> tuple:
     chord_sections = [(h, b) for h, b in split if not is_tab_section(b)]
     tab_sections = [(h, b) for h, b in split if is_tab_section(b)]
 
-    total_lines, max_width = count_lines(chord_sections)
-    layout = decide_layout(total_lines, max_width)
+    total_lines, max_chord_width, max_text_width = count_lines(chord_sections)
+    layout = decide_layout(total_lines, max_chord_width)
+    auto_small_font = layout == "double" and max_text_width > 60
 
     chord_blocks = "\n".join(render_section(h, b, remove_blank_lines=True) for h, b in chord_sections)
     tab_blocks = "\n".join(render_section(h, b, remove_blank_lines=False) for h, b in tab_sections)
 
-    return chord_blocks, tab_blocks, layout
+    return chord_blocks, tab_blocks, layout, auto_small_font
 
 
 def make_song_html(
     title: str, artist: str, key: str, capo: str, content: str, url: str
 ) -> tuple:
-    chord_blocks, tab_blocks, layout = content_to_html(content)
+    chord_blocks, tab_blocks, layout, auto_small_font = content_to_html(content)
     diagram_html = make_chord_diagram_html(extract_chord_names(content))
 
     meta_parts = []
@@ -640,7 +661,8 @@ def make_song_html(
       font-size: 9pt; line-height: 1.45;
       white-space: pre-wrap; word-break: break-word;
       margin-bottom: 6px;
-    }}{double_css}
+    }}
+    body.font-small pre.block {{ font-size: 8pt; }}{double_css}
     .tab-section {{ margin-top: 8mm; }}
     .chord {{ color: #b00020; font-weight: bold; cursor: help; }}
     .section {{ color: #777; font-style: italic; font-weight: bold; }}
@@ -653,7 +675,7 @@ def make_song_html(
     }}
   </style>
 </head>
-<body>
+<body{' class="font-small"' if auto_small_font else ''}>
   <div class="page">
     <h1>{html.escape(title)}</h1>
     <h2>{html.escape(artist)}</h2>

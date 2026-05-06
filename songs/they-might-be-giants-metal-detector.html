@@ -26,6 +26,7 @@
       white-space: pre-wrap; word-break: break-word;
       margin-bottom: 6px;
     }
+    body.font-small pre.block { font-size: 8pt; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -177,6 +178,12 @@
         b.classList.toggle('active', b.dataset.inst === name);
       });
     }
+    function setFont(size) {
+      document.body.classList.toggle('font-small', size === 'small');
+      document.querySelectorAll('.font-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.font === size);
+      });
+    }
     document.addEventListener('DOMContentLoaded', function() {
       var bar = document.createElement('div');
       bar.id = 'inst-bar';
@@ -189,8 +196,21 @@
         b.addEventListener('click', function() { setInst(p[0]); });
         bar.appendChild(b);
       });
+      var sep = document.createElement('span');
+      sep.textContent = '·'; sep.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep);
+      var fontLbl = document.createElement('span');
+      fontLbl.textContent = 'Skrift:';
+      bar.appendChild(fontLbl);
+      [['normal','A'],['small','a']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.font = p[0]; b.className = 'inst-btn font-btn';
+        b.addEventListener('click', function() { setFont(p[0]); });
+        bar.appendChild(b);
+      });
       document.body.appendChild(bar);
       setInst('guitar');
+      setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
@@ -203,7 +223,7 @@
   <div class="page">
     <h1>Metal Detector</h1>
     <h2>They Might Be Giants</h2>
-    <div class="meta">Tilføjet: 03.05.2026</div>
+    <div class="meta">Tilføjet: 06.05.2026</div>
     
     <pre class="block">Artist: They Might Be Giants
 Song: Metal Detector
