@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Sweet Thing – David Bowie</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: monospace; background: #ddd; padding: 24px; }
+    .page {
+      background: white;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 12mm 14mm;
+    }
+    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 3px; }
+    h2 { font-size: 10pt; font-family: sans-serif; font-weight: normal; color: #555; margin-bottom: 8px; }
+    .meta {
+      font-size: 7.5pt; font-family: sans-serif; color: #999;
+      border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
+    }
+    .meta a { color: #999; }
+    pre.block {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 9pt; line-height: 1.45;
+      white-space: pre-wrap; word-break: break-word;
+      margin-bottom: 6px;
+    }
+    body.font-small pre.block { font-size: 8pt; }
+    .tab-section { margin-top: 8mm; }
+    .chord { color: #b00020; font-weight: bold; cursor: help; }
+    .section { color: #777; font-style: italic; font-weight: bold; }
+    @media print {
+      body { background: white; padding: 0; }
+      .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
+      @page { size: A4; margin: 12mm 14mm; }
+      pre.block { break-inside: avoid; }
+      .tab-section { break-before: page; }
+    }
+  </style>
+  <style>
+    #chord-tip {
+      position: fixed; z-index: 9999;
+      background: white; border: 1px solid #ccc;
+      border-radius: 5px; padding: 5px 7px 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      pointer-events: none; text-align: center;
+    }
+    .tip-name { font-family: sans-serif; font-size: 9pt; font-weight: bold; color: #333; margin-bottom: 2px; }
+    #inst-bar {
+      position: fixed; bottom: 16px; right: 16px; z-index: 9998;
+      background: white; border: 1px solid #ccc; border-radius: 5px;
+      padding: 4px 8px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+      font-family: sans-serif; font-size: 8pt;
+      display: flex; gap: 2px; align-items: center;
+    }
+    #inst-bar span { color: #aaa; margin-right: 4px; }
+    .inst-btn {
+      border: none; background: none; cursor: pointer;
+      padding: 2px 6px; font-size: 8pt; font-family: sans-serif;
+      border-radius: 3px; color: #555;
+    }
+    .inst-btn.active { font-weight: bold; color: #b00020; }
+    @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
+  </style>
+  <script>
+  (function() {
+    var DBS = {"guitar":{"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"C6/9":[[-1,3,2,2,1,3],[-1,3,5,0,5,5],[-1,3,5,5,5,5],[8,7,7,0,8,0],[8,7,7,0,8,8],[8,7,7,9,8,0]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Am/C":[[-1,3,2,2,1,0],[-1,3,2,2,1,-1],[8,7,7,9,-1,-1],[-1,3,-1,2,1,0],[-1,3,2,2,-1,0],[-1,3,-1,5,5,5]],"G/B":[[-1,2,0,0,0,3],[-1,2,0,0,3,3],[-1,2,0,4,0,3],[-1,2,0,4,3,3],[-1,2,0,0,0,-1],[-1,2,0,0,3,-1]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"Gm/D":[[-1,5,0,3,3,3],[-1,5,5,3,3,3],[-1,-1,0,3,3,3],[-1,5,5,3,3,-1],[-1,-1,0,0,8,6],[-1,-1,0,7,8,6]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]]},"ukulele":{"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"C6/9":[[0,0,0,0],[2,4,3,3],[0,4,5,3],[5,4,3,0],[0,0,5,7],[5,7,0,0]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Am/C":[[2,0,0,0],[2,0,0,3],[5,0,0,0],[5,0,5,7],[2,0,5,0],[2,0,5,3]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"Gm/D":[[0,2,3,1],[3,2,3,1],[3,2,3,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]]},"mandolin":{"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"C6/9":[[5,2,0,3],[5,5,0,0],[5,5,7,5],[0,2,3,5],[2,2,3,3],[2,5,3,0]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Am/C":[[5,2,0,0],[5,2,0,5],[5,2,3,5],[5,2,0,-1],[5,7,0,0],[5,7,7,0]],"G/B":[[4,0,2,3],[4,0,5,3],[4,5,5,3],[4,5,5,7],[4,5,5,-1],[4,0,-1,3]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"Gm/D":[[-1,0,1,3],[7,5,5,6],[7,5,-1,6]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]]}};
+    var inst = 'guitar';
+    var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+    function baseFret(f) {
+      var pos = f.filter(function(x) { return x > 0; });
+      if (!pos.length) return 1;
+      var m = Math.min.apply(null, pos);
+      return (f.some(function(x) { return x === 0; }) || m <= 2) ? 1 : m;
+    }
+    function makeSVG(frets) {
+      var nS = frets.length, sw = nS <= 4 ? 14 : 10;
+      var base = baseFret(frets), nF = 4, fh = 13;
+      var gw = sw * (nS - 1), gh = fh * nF, ox = 12, oy = 20;
+      var hasLbl = base > 2, nut = base <= 2 ? 3 : 0;
+      var tw = gw + ox * 2 + (hasLbl ? 20 : 0), th = gh + oy + 6;
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + tw + '" height="' + th + '">';
+      s += '<rect width="' + tw + '" height="' + th + '" fill="white"/>';
+      for (var i = 0; i < nS; i++) {
+        var x = ox + i * sw, fi = frets[i];
+        if (fi === -1)
+          s += '<text x="' + x + '" y="' + (oy-5) + '" text-anchor="middle" font-size="9" font-family="sans-serif" fill="#aaa">x</text>';
+        else if (fi === 0)
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="3.5" fill="none" stroke="#aaa" stroke-width="1.2"/>';
+        else
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="2.5" fill="#b00020"/>';
+      }
+      if (nut)
+        s += '<rect x="' + ox + '" y="' + oy + '" width="' + gw + '" height="' + nut + '" fill="#333" rx="1"/>';
+      else
+        s += '<text x="' + (ox+gw+4) + '" y="' + (oy+fh*0.75) + '" font-size="8" font-family="sans-serif" font-weight="bold" fill="#555">' + base + 'fr</text>';
+      var y0 = oy + nut;
+      for (var r = 0; r <= nF; r++) {
+        var y = y0 + r * fh;
+        s += '<line x1="' + ox + '" y1="' + y + '" x2="' + (ox+gw) + '" y2="' + y + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var j = 0; j < nS; j++) {
+        var xs = ox + j * sw;
+        s += '<line x1="' + xs + '" y1="' + y0 + '" x2="' + xs + '" y2="' + (y0+gh) + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var k = 0; k < nS; k++) {
+        var fv = frets[k], row = fv - base;
+        if (fv > 0 && row >= 0 && row < nF) {
+          var cx = ox + k * sw, cy = y0 + row * fh + fh / 2;
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (fh*0.38) + '" fill="#b00020"/>';
+        }
+      }
+      return s + '</svg>';
+    }
+    function dist(a, b) {
+      var d = 0;
+      for (var i = 0; i < a.length; i++) {
+        if (a[i] >= 0 && b[i] >= 0) d += Math.abs(a[i] - b[i]);
+        else if (a[i] !== b[i]) d += 2;
+      }
+      return d;
+    }
+    function best(vs, prev) {
+      if (!prev || vs.length === 1) return vs[0];
+      var pick = vs[0], d = dist(pick, prev);
+      for (var i = 1; i < vs.length; i++) {
+        var di = dist(vs[i], prev);
+        if (di < d) { pick = vs[i]; d = di; }
+      }
+      return pick;
+    }
+    function lookup(name) {
+      var db = DBS[inst] || {};
+      if (db[name]) return db[name];
+      var sl = name.indexOf('/');
+      return (sl > 0 && db[name.slice(0,sl)]) ? db[name.slice(0,sl)] : null;
+    }
+    function prevEl(el) {
+      var block = el.closest('pre.block');
+      if (!block) return null;
+      var all = Array.from(block.querySelectorAll('.chord'));
+      var i = all.indexOf(el);
+      return i > 0 ? all[i - 1] : null;
+    }
+    var tip = null;
+    function show(el, name) {
+      var vs = lookup(name);
+      if (!vs) return;
+      var prev = prevEl(el);
+      var prevF = (prev && shown) ? shown.get(prev) : null;
+      var frets = best(vs, prevF || null);
+      if (shown) shown.set(el, frets);
+      hide();
+      tip = document.createElement('div');
+      tip.id = 'chord-tip';
+      var lbl = document.createElement('div');
+      lbl.className = 'tip-name';
+      lbl.textContent = name;
+      tip.appendChild(lbl);
+      var d = document.createElement('div');
+      d.innerHTML = makeSVG(frets);
+      tip.appendChild(d);
+      document.body.appendChild(tip);
+      var r = el.getBoundingClientRect(), tw2 = tip.offsetWidth, th2 = tip.offsetHeight;
+      var left = r.left + (r.width - tw2) / 2, top = r.top - th2 - 6;
+      if (top < 4) top = r.bottom + 6;
+      left = Math.max(4, Math.min(left, window.innerWidth - tw2 - 4));
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+    }
+    function hide() { if (tip) { tip.remove(); tip = null; } }
+    function setInst(name) {
+      inst = name;
+      if (shown) shown = new WeakMap();
+      hide();
+      document.querySelectorAll('.inst-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.inst === name);
+      });
+    }
+    function setFont(size) {
+      document.body.classList.toggle('font-small', size === 'small');
+      document.querySelectorAll('.font-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.font === size);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var bar = document.createElement('div');
+      bar.id = 'inst-bar';
+      var lbl = document.createElement('span');
+      lbl.textContent = 'Instrument:';
+      bar.appendChild(lbl);
+      [['guitar','Guitar'],['ukulele','Ukulele'],['mandolin','Mandolin']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.inst = p[0]; b.className = 'inst-btn';
+        b.addEventListener('click', function() { setInst(p[0]); });
+        bar.appendChild(b);
+      });
+      var sep = document.createElement('span');
+      sep.textContent = '·'; sep.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep);
+      var fontLbl = document.createElement('span');
+      fontLbl.textContent = 'Skrift:';
+      bar.appendChild(fontLbl);
+      [['normal','A'],['small','a']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.font = p[0]; b.className = 'inst-btn font-btn';
+        b.addEventListener('click', function() { setFont(p[0]); });
+        bar.appendChild(b);
+      });
+      document.body.appendChild(bar);
+      setInst('guitar');
+      setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
+      document.querySelectorAll('.chord').forEach(function(el) {
+        el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
+        el.addEventListener('mouseleave', hide);
+      });
+    });
+  })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <h1>Sweet Thing</h1>
+    <h2>David Bowie</h2>
+    <div class="meta">Tilføjet: 10.05.2026</div>
+    
+    <pre class="block"><span class="section">[Chords]</span>
+Bbmaj13#11     play <span class="chord">Bb</span>
+<span class="chord">Fmaj13</span>         play <span class="chord">F</span>
+<span class="chord">C6/9</span>           play <span class="chord">C</span>
+<span class="chord">D(add9)</span>        play <span class="chord">D</span></pre>
+<pre class="block"><span class="section">[Intro]</span>
+<span class="chord">C</span>          <span class="chord">D/C</span>          <span class="chord">C</span>          <span class="chord">D/C</span>               <span class="chord">C</span></pre>
+<pre class="block"><span class="section">[Verse 1]</span>
+                 <span class="chord">D/C</span>  <span class="chord">C</span>             <span class="chord">D/C</span>              <span class="chord">C</span>
+It&#x27;s safe in the city, to love in a doorway
+               <span class="chord">D</span>                 <span class="chord">Em</span>                  <span class="chord">D</span>
+To wrangle some screens from the door
+             <span class="chord">C</span>  <span class="chord">D/C</span>          <span class="chord">C</span>                       <span class="chord">D/C</span>
+And isn&#x27;t it me, putting pain in a stranger?
+                   <span class="chord">C</span>          <span class="chord">D</span>           <span class="chord">Em</span>
+Like a portrait in flesh, who trails on a leash
+<span class="chord">D</span>        <span class="chord">C</span>  <span class="chord">D/C</span>             <span class="chord">C</span>            <span class="chord">D/C</span>
+Will you see that I&#x27;m scared and I&#x27;m lonely?
+                    <span class="chord">C</span>         <span class="chord">D</span>         <span class="chord">Em</span>
+So I&#x27;ll break up my room, and yawn and I
+           <span class="chord">D</span>        <span class="chord">Bm</span>
+Run to the center of things,
+Where the knowing one says</pre>
+<pre class="block"><span class="section">[Chorus]</span>
+<span class="chord">Dm</span>    <span class="chord">Am</span>           <span class="chord">G</span>
+Boys, boys, it&#x27;s a sweet thing
+<span class="chord">Dm</span>    <span class="chord">Am</span>           <span class="chord">F</span>                                 <span class="chord">G</span>
+Boys, boys, it&#x27;s a sweet thing, sweet thing
+       <span class="chord">Dm</span>         <span class="chord">Am/C</span>       <span class="chord">G/B</span>                     <span class="chord">G</span>
+If you want it, boys, get it here, thing
+       <span class="chord">Dm</span>         <span class="chord">Am</span>    <span class="chord">F</span>                      <span class="chord">G</span>     <span class="chord">C</span>
+&#x27;Cause hope, boys, is a cheap thing, cheap thing</pre>
+<pre class="block"><span class="section">[Verse 2]</span>
+                     <span class="chord">D/C</span>                             <span class="chord">C</span>
+I&#x27;m glad that you&#x27;re older than me
+                <span class="chord">D/C</span>                                  <span class="chord">C</span>
+Makes me feel important and free
+                   <span class="chord">D</span>                <span class="chord">Em</span>               <span class="chord">D</span>
+Does that make you smile, isn&#x27;t that me?
+            <span class="chord">C</span>   <span class="chord">D/C</span>            <span class="chord">C</span>                     <span class="chord">D/C</span>
+I&#x27;m in your way, and I&#x27;ll steal every moment
+                  <span class="chord">C</span>                <span class="chord">D</span>
+If his trade is a curse, then I&#x27;ll bless you
+   <span class="chord">Em</span>           <span class="chord">D</span>             <span class="chord">Bm</span>
+And turn to the crossroads of hamburgers, and</pre>
+<pre class="block"><span class="section">[Chorus]</span>
+<span class="chord">Dm</span>    <span class="chord">Am</span>           <span class="chord">G</span>
+Boys, boys, it&#x27;s a sweet thing
+<span class="chord">Dm</span>    <span class="chord">Am</span>           <span class="chord">F</span>                                 <span class="chord">G</span>
+Boys, boys, it&#x27;s a sweet thing, sweet thing
+       <span class="chord">Dm</span>         <span class="chord">Am/C</span>       <span class="chord">G/B</span>                     <span class="chord">G</span>
+If you want it, boys, get it here, thing
+       <span class="chord">Dm</span>         <span class="chord">Am</span>    <span class="chord">F</span>                      <span class="chord">G</span>
+&#x27;Cause hope, boys, is a cheap thing, cheap thing</pre>
+<pre class="block"><span class="section">[Solo]</span>
+<span class="chord">D</span>          <span class="chord">F#m</span>        <span class="chord">Bm</span>         <span class="chord">Bb</span>
+<span class="chord">D</span>          <span class="chord">Gm/D</span>       <span class="chord">D</span>          <span class="chord">Gm/D</span>
+<span class="chord">D</span>          <span class="chord">F#m</span>        <span class="chord">Bm</span>         <span class="chord">Bb</span>
+<span class="chord">D</span>          <span class="chord">Gm/D</span>       <span class="chord">D</span>          <span class="chord">Gm/D</span>       <span class="chord">D</span>
+2. Song: Candidate</pre>
+<pre class="block"><span class="section">[Sax and guitar solo]</span>
+<span class="chord">Dm</span>         <span class="chord">Am</span>         <span class="chord">G</span>
+<span class="chord">Dm</span>         <span class="chord">Am</span>         <span class="chord">G</span>
+<span class="chord">Dm</span>         <span class="chord">Am</span>         <span class="chord">G</span>
+<span class="chord">Dm</span>         <span class="chord">Am</span>         <span class="chord">G</span>
+<span class="chord">Dm</span>         <span class="chord">Am</span>         <span class="chord">G</span></pre>
+<pre class="block"><span class="section">[Verse]</span>
+                <span class="chord">Dm</span>             <span class="chord">Am</span>
+I&#x27;ll make you a deal, like any other candidate
+         <span class="chord">G</span>
+We&#x27;ll pretend we&#x27;re walking home &#x27;cause your future&#x27;s at stake
+   <span class="chord">Dm</span>                      <span class="chord">Am</span>
+My set is amazing, it even smells like a street
+          <span class="chord">G</span>
+There&#x27;s a bar at the end where I can meet you and your friend
+<span class="chord">Dm</span>                                        <span class="chord">Am</span>                        <span class="chord">G</span>
+Someone scrawled on the wall &quot;I smell the blood of les tricoteuses&quot;
+Who wrote up scandals in other bars
+          <span class="chord">Dm</span>                    <span class="chord">Am</span>
+I&#x27;m having so much fun with the poisonous people
+          <span class="chord">G</span>
+Spreading rumours and lies and stories they made up
+<span class="chord">Dm</span>                      <span class="chord">Am</span>
+Some make you sing and some make you scream
+<span class="chord">G</span>
+One makes you wish that you&#x27;ve never been seen
+              <span class="chord">Dm</span>                                <span class="chord">Am</span>
+But there&#x27;s a shop on the corner that&#x27;s selling paper mache
+       <span class="chord">G</span>
+Making bulletproof faces, Charlie Manson, Cassius Clay
+       <span class="chord">Dm</span>       <span class="chord">Am</span>           <span class="chord">G</span>
+If you want it, boys, get it here, thing
+       <span class="chord">Dm</span>                    <span class="chord">Am</span>
+So you scream out of line &quot;I want you! I need you!
+<span class="chord">G</span>
+Anyone out there? Any time?&quot;
+<span class="chord">Dm</span>                                   <span class="chord">Am</span>
+Tres butch little number whines &quot;Hey dirty, I want you
+          <span class="chord">G</span>
+When it&#x27;s good, it&#x27;s really good, and when it&#x27;s bad I go to pieces&quot;
+       <span class="chord">Dm</span>       <span class="chord">Am</span>           <span class="chord">G</span>
+If you want it, boys, get it here, thing
+             <span class="chord">Dm</span>                                <span class="chord">Am</span>
+Well, on the street where you live I could not hold up my head
+      <span class="chord">G</span>
+For I put all I have in another bed
+           <span class="chord">Dm</span>            <span class="chord">Am</span>
+On another floor, in the back of a car
+       <span class="chord">G</span>
+In the cellar like a church with the door ajar
+        <span class="chord">Dm</span>                             <span class="chord">Am</span>
+Well, I guess we must be looking for a different kind
+       <span class="chord">G</span>
+But we can&#x27;t stop trying &#x27;til we break up our minds
+         <span class="chord">Dm</span>                     <span class="chord">Am</span>
+&#x27;Til the sun drips blood on the seedy young nights
+    <span class="chord">G</span>
+Who press you on the ground while shaking in fright
+   <span class="chord">Dm</span>                        <span class="chord">Am</span>
+I guess we could cruise down one more time
+     <span class="chord">G</span>
+With you by my side, it should be fine
+      <span class="chord">Dm</span>                 <span class="chord">Am</span>
+We&#x27;ll buy some drugs and watch a band
+      <span class="chord">G</span>
+Then jump in the river holding hands
+3. Song: Sweet thing (reprise)
+(Sax solo)
+<span class="chord">Dm</span>         <span class="chord">Am</span>         <span class="chord">G</span>
+<span class="chord">Dm</span>         <span class="chord">Am</span>         <span class="chord">G</span></pre>
+<pre class="block"><span class="section">[Verse]</span>
+       <span class="chord">Dm</span>         <span class="chord">Am/C</span>       <span class="chord">G</span>
+If you want it, boys, get it here, thing
+       <span class="chord">Dm</span>         <span class="chord">Am</span>    <span class="chord">F</span>                      <span class="chord">G</span>     <span class="chord">C</span>
+&#x27;Cause hope, boys, is a cheap thing, cheap thing
+                   <span class="chord">D/C</span>        <span class="chord">C</span>              <span class="chord">D/C</span>     <span class="chord">C</span>
+Is it nice in your snow storm, freezing your brain?
+                       <span class="chord">D</span>              <span class="chord">Em</span>             <span class="chord">D</span>
+Do you think that your face looks the same?
+            <span class="chord">C</span>  <span class="chord">D/C</span>              <span class="chord">C</span>                    <span class="chord">D/C</span>
+Then let it be, it&#x27;s all I ever wanted
+                     <span class="chord">C</span>           <span class="chord">D</span>
+Its a street with a deal, and a taste
+         <span class="chord">Em</span>              <span class="chord">D</span>           <span class="chord">G</span>               <span class="chord">A/G</span>
+Its got claws, its got me, its got you</pre>
+<pre class="block"><span class="section">[Outro]</span>
+<span class="chord">G</span>          <span class="chord">A/G</span>        <span class="chord">G</span>        <span class="chord">A</span></pre>
+    
+    
+  </div>
+</body>
+</html>
