@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
-  <title>Selkie Bride – Frank Black</title>
+  <title>Im Goin Down – Bruce Springsteen</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: monospace; background: #ddd; padding: 24px; }
@@ -27,7 +27,6 @@
       margin-bottom: 6px;
     }
     body.font-small pre.block { font-size: 8pt; }
-    .chords { column-count: 2; column-gap: 8mm; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -66,7 +65,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"Gm":[[3,1,0,0,3,3],[3,1,0,3,3,3],[3,1,0,0,3,-1],[3,1,0,3,3,-1],[3,1,0,0,-1,-1],[3,1,0,3,-1,-1]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"A7":[[-1,0,2,0,2,0],[-1,0,2,0,2,3],[-1,0,2,2,2,3],[-1,0,2,0,2,-1],[5,4,5,0,5,3],[5,4,5,0,5,0]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"F#7":[[2,1,2,3,2,0],[2,1,2,3,2,2],[2,1,2,3,2,-1],[2,4,2,3,2,0],[2,4,2,3,2,2],[2,4,4,3,2,0]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]]},"ukulele":{"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"Gm":[[0,2,3,1],[3,2,3,1],[3,2,3,5],[0,7,6,5],[7,7,6,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"A7":[[0,1,0,0],[2,4,3,4],[6,4,3,0],[0,4,5,4],[6,7,5,7],[6,7,0,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"F#7":[[3,4,2,4],[3,6,0,4],[6,6,6,7],[3,1,2,1],[3,1,2,4],[3,4,2,1]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"Gm":[[0,0,1,3],[0,0,1,-1],[0,0,5,6],[0,5,5,6],[-1,5,5,6],[3,0,1,3]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"A7":[[2,2,4,3],[2,5,4,0],[0,2,4,5],[0,7,4,0],[6,5,0,0],[6,5,7,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"F#7":[[3,2,4,2],[3,4,4,0],[6,4,7,6],[-1,4,1,0],[-1,4,4,6],[-1,4,7,6]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]]}};
+    var DBS = {"guitar":{"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]]},"ukulele":{"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]]},"mandolin":{"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     function baseFret(f) {
@@ -222,86 +221,68 @@
 </head>
 <body>
   <div class="page">
-    <h1>Selkie Bride</h1>
-    <h2>Frank Black</h2>
-    <div class="meta">Tilføjet: 01.06.2026</div>
-    <div class="chords">
-    <pre class="block">intro:
- <span class="chord">Dm</span>  <span class="chord">Gm</span>  <span class="chord">F</span>  <span class="chord">Am</span>
- <span class="chord">C</span>  <span class="chord">Dm</span>  <span class="chord">Gm</span>  <span class="chord">F</span>
- <span class="chord">A7</span>  <span class="chord">Dm</span>  <span class="chord">Gm</span>  <span class="chord">Am</span>
- <span class="chord">A7</span>  <span class="chord">Dm</span>  <span class="chord">Gm</span>  <span class="chord">Am</span>
- <span class="chord">A7</span>  <span class="chord">Dm</span>
- <span class="chord">A7</span>  <span class="chord">Dm</span>
- <span class="chord">A7</span>  <span class="chord">Dm</span>  <span class="chord">Am</span>
-<span class="chord">D</span>      <span class="chord">F#7</span>                                 
- Human form she had 
-<span class="chord">G</span>            <span class="chord">E</span>
- In crescent city
-<span class="chord">G</span>                  <span class="chord">E</span>                       
- She showed me her pity
-       <span class="chord">G</span>    <span class="chord">A7</span>   
- Lucky me
-<span class="chord">D</span>     <span class="chord">F#7</span>
- In a storm so bad
-<span class="chord">G</span>                 <span class="chord">E</span>
- The worst of the autumn
-<span class="chord">G</span>                  <span class="chord">E</span>             <span class="chord">G</span>    <span class="chord">A7</span>
- She came from the bottom of the sea
-<span class="chord">Dm</span>                <span class="chord">Gm</span>
- Please won&#x27;t you stay a while
-<span class="chord">F</span>             <span class="chord">Am</span>
- And give your coat
-            <span class="chord">C</span>                 <span class="chord">Dm</span>
- Then we&#x27;ll fall in love in my boat
-             <span class="chord">Gm</span>           <span class="chord">F</span> <span class="chord">Am</span>
- You&#x27;ll be my selkie bride
-<span class="chord">Dm</span>              <span class="chord">Gm</span>
- Please give me no denial
-<span class="chord">F</span>           <span class="chord">Am</span>
- A Promise I give 
-         <span class="chord">C</span>                   <span class="chord">Dm</span>
- I&#x27;ll forsake the life that I live
-         <span class="chord">Gm</span>           <span class="chord">F</span>  <span class="chord">A7</span>
- Now you&#x27;re by my side
-          <span class="chord">Dm</span>
- If you return again
-<span class="chord">Gm</span>           <span class="chord">Am</span>
- I&#x27;ll be the saddest man
-<span class="chord">A7</span>            <span class="chord">Dm</span>
- My lips will burn your skin
-<span class="chord">Gm</span>        <span class="chord">Am</span>
- If you return again
-<span class="chord">A7</span>               <span class="chord">Dm</span>
- Please don&#x27;t return again
-<span class="chord">A7</span>               <span class="chord">Dm</span>
- Please don&#x27;t return again
-<span class="chord">A7</span>               <span class="chord">Dm</span>       <span class="chord">Am</span>
- Please don&#x27;t return again
-<span class="chord">D</span>      <span class="chord">F#7</span>
- Human form she had 
-<span class="chord">G</span>             <span class="chord">E</span>
- in crescent city
-<span class="chord">G</span>                  <span class="chord">E</span>
- She showed me her pity
-       <span class="chord">G</span>   <span class="chord">A7</span>
- Lucky me 
-<span class="chord">D</span>        <span class="chord">F#7</span>      
- On that day so sad
-<span class="chord">G</span>           <span class="chord">E</span>
- Breezy and sunny
-<span class="chord">G</span>                <span class="chord">E</span>            <span class="chord">G</span>
- She melted like honey in the sea
-_______________________________________________
-   recommended chord formations
-e--3---1-------3-------3----0---0---1---2---|
-B--4---1---8---3---3---3----1---0---1---3---|
-G--5---1---8---3---3---4----0---1---2---2---|
-D--5---3---8---5---3---3----2---0---3---0---|
-A--3---3---6---5---1---5----3---2---3-------|
-E------1-------3-------3--------0---1-------|
-   <span class="chord">Dm</span>  <span class="chord">Gm</span>  <span class="chord">F</span>  <span class="chord">Am</span>  <span class="chord">C</span>  <span class="chord">A7</span>   <span class="chord">D</span>   <span class="chord">F#7</span>  <span class="chord">G</span>   <span class="chord">E</span></pre>
-    </div>
+    <h1>Im Goin Down</h1>
+    <h2>Bruce Springsteen</h2>
+    <div class="meta">Tilføjet: 04.06.2026</div>
+    
+    <pre class="block">I&#x27;m Going Down- Bruce Springsteen 
+Intro:A <span class="chord">E</span> <span class="chord">F#m</span> <span class="chord">D</span>
+Vs:A <span class="chord">E</span> <span class="chord">F#m</span> <span class="chord">D</span> 
+Ch: – <span class="chord">A</span> <span class="chord">E</span> <span class="chord">F#m</span> <span class="chord">D</span>  </pre>
+<pre class="block"><span class="section">[Verse]</span>
+<span class="chord">A</span>                 <span class="chord">E</span>                        <span class="chord">F#m</span>
+We sit in the car outside your house, but why?
+                    <span class="chord">D</span>
+I can feel the heat coming &#x27;round
+<span class="chord">A</span>              <span class="chord">E</span>
+I go to put my arm around you
+        <span class="chord">F#m</span>                     <span class="chord">D</span>
+and you give me a look like I&#x27;m way out of bounds
+      <span class="chord">A</span>                       <span class="chord">E</span>
+well, you let out one of your bored sighs
+     <span class="chord">F#m</span>                 <span class="chord">D</span>
+Well lately when I look into your eyes</pre>
+<pre class="block"><span class="section">[Chorus]</span>
+         <span class="chord">A</span>         <span class="chord">E</span>
+I&#x27;m goin down down down down
+         <span class="chord">F#m</span>       <span class="chord">D</span>
+I&#x27;m goin down down down down
+         <span class="chord">A</span>         <span class="chord">E</span>
+I&#x27;m goin down down down down
+         <span class="chord">F#m</span>       <span class="chord">D</span>
+I&#x27;m goin down down down down</pre>
+<pre class="block"><span class="section">[Verse]</span>
+We get dressed up and we go, out, baby, for the night
+We come home early burning buning, burning in some fire fight
+I&#x27;m sick and tired of you setting me up, yeah
+Setting me up just to knock-a knock-a knock-a me </pre>
+<pre class="block"><span class="section">[Chorus]</span>
+Down, down, down, down
+I&#x27;m goin down down down down
+I&#x27;m goin down down down down
+I&#x27;m goin down down down down
+Sax Solo</pre>
+<pre class="block"><span class="section">[Verse]</span>
+I pull you close now baby, but when we kiss I can feel a doubt
+I remember back when we started
+My kisses used to turn you inside out
+I used to drive you to work in the morning
+Friday night I&#x27;d drive you all around
+You used to love to drive me wild yeah
+But lately girl you get your kicks from just driving me </pre>
+<pre class="block"><span class="section">[Chorus]</span>
+Down, down, down, down
+I&#x27;m goin down down down down
+I&#x27;m goin down down down down
+I&#x27;m goin down down down down
+I&#x27;m goin down down down down
+I&#x27;m goin down down down down
+I&#x27;m goin down down down down
+I&#x27;m goin down, hey Bop a de da down
+I&#x27;m goin down down down down
+I&#x27;m goin down hey Bop a de da down
+Hey hey bop a de da down down down down</pre>
+    
     
   </div>
 </body>
