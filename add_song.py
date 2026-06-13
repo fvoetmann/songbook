@@ -35,6 +35,7 @@ INSTRUMENTS = {
     'guitar':   {'strings': [40, 45, 50, 55, 59, 64], 'max_fret': 9, 'min_play': 4, 'span': 2},
     'ukulele':  {'strings': [67, 60, 64, 69],          'max_fret': 7, 'min_play': 4, 'span': 3, 'reentrant': True},
     'mandolin': {'strings': [55, 62, 69, 76],          'max_fret': 7, 'min_play': 3, 'span': 3},
+    'banjo':    {'strings': [50, 55, 59, 62, 67],      'max_fret': 7, 'min_play': 3, 'span': 3, 'reentrant': True},
 }
 
 NOTE_SEMI = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
@@ -364,7 +365,7 @@ CHORD_DIAGRAM_JS = """  <script>
       var lbl = document.createElement('span');
       lbl.textContent = 'Instrument:';
       bar.appendChild(lbl);
-      [['guitar','Guitar'],['ukulele','Ukulele'],['mandolin','Mandolin']].forEach(function(p) {
+      [['guitar','Guitar'],['ukulele','Ukulele'],['mandolin','Mandolin'],['banjo','Banjo']].forEach(function(p) {
         var b = document.createElement('button');
         b.textContent = p[1]; b.dataset.inst = p[0]; b.className = 'inst-btn';
         b.addEventListener('click', function() { setInst(p[0]); });
@@ -714,10 +715,24 @@ def processed_sources() -> set:
 
 
 def rebuild_index(songs: list) -> None:
-    items = "\n    ".join(
-        f'<li><a href="songs/{s["file"]}">{html.escape(s["artist"])} – {html.escape(s["title"])}</a></li>'
-        for s in sorted(songs, key=lambda s: (s["artist"].lower(), s["title"].lower()))
-    )
+    from itertools import groupby
+
+    sorted_songs = sorted(songs, key=lambda s: (s["artist"].lower(), s["title"].lower()))
+
+    groups_html = []
+    for artist, group in groupby(sorted_songs, key=lambda s: s["artist"]):
+        group_songs = list(group)
+        song_items = "\n      ".join(
+            f'<li><a href="songs/{s["file"]}">{html.escape(s["title"])}</a></li>'
+            for s in group_songs
+        )
+        groups_html.append(
+            f'  <section>\n'
+            f'    <h2>{html.escape(artist)}</h2>\n'
+            f'    <ul>\n      {song_items}\n    </ul>\n'
+            f'  </section>'
+        )
+
     index_html = f"""<!DOCTYPE html>
 <html lang="da">
 <head>
@@ -725,18 +740,42 @@ def rebuild_index(songs: list) -> None:
   <title>Sangbog</title>
   <style>
     body {{ font-family: sans-serif; max-width: 560px; margin: 48px auto; padding: 0 20px; color: #222; }}
-    h1 {{ font-size: 28pt; margin-bottom: 24px; }}
-    ul {{ list-style: none; padding: 0; }}
-    li {{ border-bottom: 1px solid #eee; }}
-    a {{ display: block; padding: 10px 4px; text-decoration: none; color: #222; font-size: 11pt; }}
+    h1 {{ font-size: 28pt; margin-bottom: 8px; }}
+    #search {{
+      display: block; width: 100%; padding: 8px 10px; margin-bottom: 28px;
+      font-size: 11pt; font-family: sans-serif;
+      border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }}
+    section {{ margin-bottom: 20px; }}
+    h2 {{ font-size: 11pt; color: #999; font-weight: normal; margin-bottom: 2px; padding-bottom: 3px; border-bottom: 1px solid #eee; }}
+    ul {{ list-style: none; padding: 0; margin: 0; }}
+    li {{ border-bottom: 1px solid #f5f5f5; }}
+    a {{ display: block; padding: 7px 4px; text-decoration: none; color: #222; font-size: 11pt; }}
     a:hover {{ color: #b00020; }}
+    section.hidden {{ display: none; }}
   </style>
 </head>
 <body>
   <h1>Sangbog</h1>
-  <ul>
-    {items}
-  </ul>
+  <input id="search" type="search" placeholder="Søg efter sang eller kunstner…" autocomplete="off">
+{chr(10).join(groups_html)}
+  <script>
+    var input = document.getElementById('search');
+    input.addEventListener('input', function() {{
+      var q = this.value.toLowerCase();
+      document.querySelectorAll('section').forEach(function(sec) {{
+        var artist = sec.querySelector('h2').textContent.toLowerCase();
+        var matched = false;
+        sec.querySelectorAll('li').forEach(function(li) {{
+          var title = li.textContent.toLowerCase();
+          var show = !q || title.includes(q) || artist.includes(q);
+          li.style.display = show ? '' : 'none';
+          if (show) matched = true;
+        }});
+        sec.classList.toggle('hidden', !matched);
+      }});
+    }});
+  </script>
 </body>
 </html>"""
     INDEX_FILE.write_text(index_html, encoding="utf-8")
