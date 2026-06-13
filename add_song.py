@@ -359,6 +359,29 @@ CHORD_DIAGRAM_JS = """  <script>
         b.classList.toggle('active', b.dataset.font === size);
       });
     }
+    var scrollTimer = null, scrollSpeed = 5;
+    function scrollTick() {
+      window.scrollBy(0, 1);
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 1) toggleScroll();
+    }
+    function toggleScroll() {
+      var b = document.getElementById('scroll-toggle');
+      if (scrollTimer) {
+        clearInterval(scrollTimer); scrollTimer = null;
+        b.textContent = '▶'; b.classList.remove('active');
+      } else {
+        scrollTimer = setInterval(scrollTick, 210 - scrollSpeed * 20);
+        b.textContent = '⏸'; b.classList.add('active');
+      }
+    }
+    function changeScrollSpeed(delta) {
+      scrollSpeed = Math.max(1, Math.min(9, scrollSpeed + delta));
+      document.getElementById('scroll-speed').textContent = scrollSpeed;
+      if (scrollTimer) {
+        clearInterval(scrollTimer);
+        scrollTimer = setInterval(scrollTick, 210 - scrollSpeed * 20);
+      }
+    }
     document.addEventListener('DOMContentLoaded', function() {
       var bar = document.createElement('div');
       bar.id = 'inst-bar';
@@ -383,6 +406,26 @@ CHORD_DIAGRAM_JS = """  <script>
         b.addEventListener('click', function() { setFont(p[0]); });
         bar.appendChild(b);
       });
+      var sep2 = document.createElement('span');
+      sep2.textContent = '·'; sep2.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep2);
+      var scrollBtn = document.createElement('button');
+      scrollBtn.id = 'scroll-toggle'; scrollBtn.textContent = '▶';
+      scrollBtn.className = 'inst-btn'; scrollBtn.title = 'Automatisk scroll';
+      scrollBtn.addEventListener('click', toggleScroll);
+      bar.appendChild(scrollBtn);
+      var minusBtn = document.createElement('button');
+      minusBtn.textContent = '−'; minusBtn.className = 'inst-btn'; minusBtn.title = 'Langsommere';
+      minusBtn.addEventListener('click', function() { changeScrollSpeed(-1); });
+      bar.appendChild(minusBtn);
+      var speedSpan = document.createElement('span');
+      speedSpan.id = 'scroll-speed'; speedSpan.textContent = scrollSpeed;
+      speedSpan.style.cssText = 'min-width:1em;text-align:center;display:inline-block;color:#555';
+      bar.appendChild(speedSpan);
+      var plusBtn = document.createElement('button');
+      plusBtn.textContent = '+'; plusBtn.className = 'inst-btn'; plusBtn.title = 'Hurtigere';
+      plusBtn.addEventListener('click', function() { changeScrollSpeed(1); });
+      bar.appendChild(plusBtn);
       document.body.appendChild(bar);
       setInst('guitar');
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
