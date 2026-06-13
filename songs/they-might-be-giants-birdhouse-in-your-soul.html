@@ -26,6 +26,8 @@
       white-space: pre-wrap; word-break: break-word;
       margin-bottom: 6px;
     }
+    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
+    pre.block.line-group-last { margin-bottom: 6px; }
     body.font-small pre.block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     .tab-section { margin-top: 8mm; }
@@ -66,7 +68,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"A/C#":[[-1,4,2,2,2,0],[-1,4,2,2,2,-1],[9,7,7,9,-1,-1],[-1,4,-1,2,2,0],[-1,4,2,2,-1,0],[-1,4,-1,6,5,5]],"G/D":[[-1,5,0,0,0,3],[-1,5,0,4,0,3],[-1,5,5,0,0,3],[-1,5,0,4,3,3],[-1,5,5,4,0,3],[-1,5,5,4,3,3]],"C/E":[[0,3,2,0,1,0],[0,3,2,0,1,3],[0,3,2,0,1,-1],[-1,-1,2,0,1,0],[-1,-1,2,0,1,3],[0,3,2,0,-1,-1]],"C/G":[[3,3,2,0,1,0],[3,3,2,0,1,3],[3,3,2,0,1,-1],[3,3,2,0,-1,-1],[3,3,5,0,5,0],[3,3,5,0,5,3]],"F/A":[[-1,0,3,2,1,1],[-1,0,3,2,1,-1],[5,0,3,5,-1,-1],[5,3,3,5,-1,-1],[5,0,7,5,6,5],[-1,0,7,5,6,5]],"G/B":[[-1,2,0,0,0,3],[-1,2,0,0,3,3],[-1,2,0,4,0,3],[-1,2,0,4,3,3],[-1,2,0,0,0,-1],[-1,2,0,0,3,-1]],"Ab/Eb":[[-1,6,6,5,4,4],[-1,6,6,5,4,-1],[-1,6,-1,5,4,4],[-1,6,6,5,-1,4],[-1,6,6,8,-1,8]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"Dm7":[[-1,-1,0,2,1,1],[-1,5,3,5,3,5],[-1,5,0,5,6,5],[-1,5,7,5,6,5],[-1,-1,0,5,6,5],[-1,5,7,5,6,-1]],"Eb":[[-1,6,5,0,4,6],[-1,6,8,0,8,6],[-1,6,8,8,8,6],[-1,6,8,0,8,-1],[-1,6,8,8,8,-1],[3,1,1,0,-1,-1]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"Cm":[[-1,3,1,0,1,3],[-1,3,1,0,1,-1],[-1,3,5,0,4,3],[-1,3,5,5,4,3],[-1,3,5,0,4,-1],[-1,3,5,5,4,-1]],"Db":[[-1,4,6,6,6,4],[-1,4,6,6,6,-1],[-1,-1,3,1,2,1],[4,4,6,6,6,4],[4,4,6,6,6,-1],[-1,-1,6,6,6,4]],"Ab":[[4,6,6,5,4,4],[4,6,6,5,4,-1],[-1,-1,6,5,4,4],[4,6,6,5,-1,-1],[-1,3,1,1,1,-1],[-1,6,6,5,4,4]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"C7":[[-1,3,2,3,1,3],[-1,3,5,3,5,0],[-1,3,5,3,5,3],[-1,3,5,3,5,-1],[8,7,8,0,8,6],[8,7,8,0,8,0]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"D7":[[-1,-1,0,2,1,2],[-1,5,4,5,3,5],[-1,5,0,5,7,5],[-1,5,7,5,7,5],[-1,-1,0,5,7,5],[-1,5,7,5,7,-1]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"B7":[[-1,2,1,2,0,2],[-1,2,4,2,4,2],[-1,2,4,2,4,-1],[7,6,7,8,7,7],[7,6,7,8,7,-1],[7,9,7,8,0,7]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"E/B":[[-1,2,2,1,0,0],[-1,2,2,1,0,-1],[-1,2,2,4,0,4],[7,7,9,9,9,0],[7,7,9,9,9,7],[7,7,9,9,9,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Bm7":[[-1,2,0,2,0,2],[-1,2,0,2,3,2],[-1,2,4,2,3,2],[-1,2,4,2,3,-1],[7,5,0,7,7,5],[7,5,7,7,7,5]]},"ukulele":{"A/C#":[[2,1,0,0],[2,1,0,4]],"G/D":[[0,2,3,2],[4,2,3,2],[4,2,3,5]],"C/E":[[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[5,4,0,3],[5,4,0,7]],"Ab/Eb":[[1,3,4,3],[5,3,4,3],[5,3,4,6]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"Dm7":[[2,2,1,3],[5,5,5,5],[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"Eb":[[0,3,3,1],[3,3,3,1],[0,3,6,6],[3,3,3,6],[0,7,6,6],[0,3,3,6]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"Cm":[[0,0,3,6],[0,3,3,3],[5,0,3,6],[5,3,3,3],[5,3,3,6]],"Db":[[1,1,1,4],[6,5,4,4]],"Ab":[[1,3,4,3],[5,3,4,3],[5,3,4,6],[5,0,4,6],[1,0,4,3],[5,0,4,3]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"C7":[[0,0,0,1],[0,4,6,3],[3,4,3,3],[5,7,6,7],[0,0,6,7],[3,0,0,1]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"D7":[[2,0,2,5],[2,2,2,3],[5,2,2,0],[5,6,5,5],[2,2,2,0],[2,2,2,5]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"B7":[[2,3,2,2],[4,3,2,0],[4,6,5,6],[4,3,2,2],[2,3,5,2],[4,3,5,2]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Bm7":[[2,2,2,2],[4,2,2,0],[4,6,5,5],[7,6,7,0],[4,2,2,2],[2,2,5,2]]},"mandolin":{"A/C#":[[6,7,4,0],[6,7,7,5],[6,7,0,0],[6,7,7,0],[6,7,7,-1],[6,-1,7,5]],"G/D":[[-1,0,2,3],[7,5,5,7],[7,5,-1,7]],"C/E":[[-1,2,3,3],[-1,2,3,0]],"C/G":[[0,2,3,0],[0,2,3,3],[0,2,3,-1],[0,5,3,0],[-1,5,3,0],[0,-1,3,0]],"F/A":[[2,3,3,1],[2,3,3,5],[2,3,3,-1],[2,-1,3,1],[2,3,0,1],[2,3,0,5]],"G/B":[[4,0,2,3],[4,0,5,3],[4,5,5,3],[4,5,5,7],[4,5,5,-1],[4,0,-1,3]],"Ab/Eb":[[-1,1,3,4]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"Dm7":[[2,0,3,1],[5,3,5,5],[-1,0,0,1],[-1,0,3,1],[2,0,0,1],[2,3,5,5]],"Eb":[[-1,1,1,3],[0,1,1,3],[3,1,1,3],[0,1,1,-1],[3,5,6,3],[3,5,6,6]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"Cm":[[5,5,6,3],[5,5,6,-1],[0,1,3,3],[0,1,3,-1],[-1,1,3,3],[5,-1,6,3]],"Db":[[6,3,4,4],[1,3,4,1],[1,3,4,4],[1,3,4,-1],[-1,3,4,4],[6,3,-1,4]],"Ab":[[1,1,3,4],[1,1,3,-1],[-1,1,3,4],[5,6,6,4],[5,6,6,-1],[5,-1,6,4]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"C7":[[5,5,7,6],[3,2,3,3],[3,5,3,0],[5,2,3,3],[5,5,3,0],[5,5,7,0]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"D7":[[2,0,3,2],[5,0,0,2],[5,4,5,5],[-1,0,0,2],[-1,0,3,2],[7,4,0,5]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"B7":[[4,1,0,2],[4,4,6,5],[2,1,2,2],[4,1,2,2],[4,1,0,-1],[4,4,6,7]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"E/B":[[4,2,2,4],[4,6,7,0],[4,6,7,4],[4,6,7,7],[4,6,7,-1],[4,2,-1,4]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Bm7":[[4,0,0,2],[4,4,5,5],[2,0,2,2],[7,4,0,7],[4,0,2,2],[4,0,2,5]]},"banjo":{"A/C#":[[-1,-1,2,2,2],[-1,6,5,7,6],[-1,6,5,7,-1],[-1,6,-1,7,6]],"G/D":[[0,0,0,0,0],[0,0,0,0,-1],[0,0,0,-1,-1],[0,0,3,0,4],[0,4,3,0,0],[0,0,3,5,4]],"C/E":[[2,0,1,2,0],[2,0,1,2,-1],[2,0,1,-1,-1],[2,0,5,2,5],[2,5,5,2,0],[2,0,5,5,5]],"C/G":[[-1,0,1,2,0],[-1,0,1,2,-1],[5,0,5,2,5],[5,5,5,2,0],[5,5,5,2,5],[-1,0,5,2,5]],"F/A":[[-1,2,1,3,2],[-1,2,1,3,-1],[7,5,6,7,5],[7,5,6,7,-1],[7,5,6,-1,-1],[-1,2,-1,3,5]],"G/B":[[-1,-1,0,0,0],[-1,4,3,0,0],[-1,4,3,5,0],[-1,4,3,5,4],[-1,4,3,5,-1],[-1,4,0,0,0]],"Ab/Eb":[[1,1,1,1,1],[1,1,1,1,-1],[1,1,1,-1,-1],[-1,-1,4,6,5],[1,-1,1,1,1],[1,1,1,-1,1]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[2,0,1,2,-1],[-1,-1,1,2,0],[-1,0,1,2,-1],[2,0,1,-1,-1]],"Dm7":[[0,2,1,3,2],[3,2,1,0,2],[0,2,1,3,-1],[3,2,1,0,-1],[0,2,3,3,5],[0,5,3,3,2]],"Eb":[[1,0,4,1,3],[1,3,4,1,0],[-1,0,4,1,3],[-1,3,4,1,0],[5,0,4,5,3],[5,3,4,5,0]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]],"Bb":[[0,3,3,3,3],[0,3,6,0,3],[3,3,3,0,3],[0,3,6,3,3],[3,3,3,3,3],[3,3,6,0,3]],"Cm":[[1,0,1,1,0],[-1,0,1,1,0],[1,0,1,1,-1],[-1,-1,1,1,0],[-1,0,1,1,-1],[1,0,1,-1,-1]],"Db":[[3,1,2,3,1],[-1,1,2,3,1],[3,1,2,3,-1],[-1,-1,2,3,1],[-1,1,2,3,-1],[3,1,2,-1,-1]],"Ab":[[1,1,1,1,1],[-1,1,1,1,1],[1,1,1,1,-1],[-1,-1,1,1,1],[-1,1,1,1,-1],[1,1,1,-1,-1]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[0,0,0,0,-1],[-1,-1,0,0,0],[-1,0,0,0,-1],[0,0,0,-1,-1]],"C7":[[2,0,1,2,3],[2,3,1,2,0],[-1,0,1,2,3],[-1,3,1,2,0],[2,3,5,5,5],[2,5,5,5,3]],"Am":[[2,2,1,2,2],[-1,2,1,2,2],[2,2,1,2,-1],[-1,-1,1,2,2],[-1,2,1,2,-1],[2,2,1,-1,-1]],"D7":[[0,2,1,4,2],[4,2,1,0,2],[0,2,1,4,-1],[4,2,1,0,-1],[0,2,3,4,5],[0,5,3,4,2]],"F#m":[[4,2,2,4,2],[-1,2,2,4,2],[4,2,2,4,-1],[-1,-1,2,4,2],[-1,2,2,4,-1],[4,2,2,-1,-1]],"D":[[0,2,3,4,2],[4,2,3,0,2],[4,2,3,4,2],[0,2,3,4,-1],[4,2,3,0,-1],[-1,2,3,4,2]],"B7":[[1,2,0,4,2],[4,2,0,1,2],[1,2,0,4,4],[1,4,0,4,2],[4,2,0,1,4],[4,4,0,1,2]],"E":[[2,1,0,2,1],[2,1,0,2,4],[2,4,0,2,1],[-1,1,0,2,1],[2,1,0,2,-1],[-1,1,0,2,4]],"E/B":[[-1,4,0,2,1],[-1,-1,0,2,1],[-1,4,5,6,4],[-1,4,5,6,-1],[-1,4,-1,2,1]],"A":[[2,2,2,2,2],[-1,2,2,2,2],[2,2,2,2,-1],[-1,-1,2,2,2],[-1,2,2,2,-1],[2,2,2,-1,-1]],"Bm7":[[0,2,0,4,2],[4,2,0,0,2],[0,2,0,4,4],[0,4,0,4,2],[4,2,0,0,4],[4,4,0,0,2]]}};
+    var DBS = {"guitar":{"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"Dm7":[[-1,-1,0,2,1,1],[-1,5,3,5,3,5],[-1,5,0,5,6,5],[-1,5,7,5,6,5],[-1,-1,0,5,6,5],[-1,5,7,5,6,-1]],"Eb":[[-1,6,5,0,4,6],[-1,6,8,0,8,6],[-1,6,8,8,8,6],[-1,6,8,0,8,-1],[-1,6,8,8,8,-1],[3,1,1,0,-1,-1]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"Cm":[[-1,3,1,0,1,3],[-1,3,1,0,1,-1],[-1,3,5,0,4,3],[-1,3,5,5,4,3],[-1,3,5,0,4,-1],[-1,3,5,5,4,-1]],"Db":[[-1,4,6,6,6,4],[-1,4,6,6,6,-1],[-1,-1,3,1,2,1],[4,4,6,6,6,4],[4,4,6,6,6,-1],[-1,-1,6,6,6,4]],"G/D":[[-1,5,0,0,0,3],[-1,5,0,4,0,3],[-1,5,5,0,0,3],[-1,5,0,4,3,3],[-1,5,5,4,0,3],[-1,5,5,4,3,3]],"C/E":[[0,3,2,0,1,0],[0,3,2,0,1,3],[0,3,2,0,1,-1],[-1,-1,2,0,1,0],[-1,-1,2,0,1,3],[0,3,2,0,-1,-1]],"C/G":[[3,3,2,0,1,0],[3,3,2,0,1,3],[3,3,2,0,1,-1],[3,3,2,0,-1,-1],[3,3,5,0,5,0],[3,3,5,0,5,3]],"F/A":[[-1,0,3,2,1,1],[-1,0,3,2,1,-1],[5,0,3,5,-1,-1],[5,3,3,5,-1,-1],[5,0,7,5,6,5],[-1,0,7,5,6,5]],"G/B":[[-1,2,0,0,0,3],[-1,2,0,0,3,3],[-1,2,0,4,0,3],[-1,2,0,4,3,3],[-1,2,0,0,0,-1],[-1,2,0,0,3,-1]],"Ab/Eb":[[-1,6,6,5,4,4],[-1,6,6,5,4,-1],[-1,6,-1,5,4,4],[-1,6,6,5,-1,4],[-1,6,6,8,-1,8]],"Ab":[[4,6,6,5,4,4],[4,6,6,5,4,-1],[-1,-1,6,5,4,4],[4,6,6,5,-1,-1],[-1,3,1,1,1,-1],[-1,6,6,5,4,4]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"C7":[[-1,3,2,3,1,3],[-1,3,5,3,5,0],[-1,3,5,3,5,3],[-1,3,5,3,5,-1],[8,7,8,0,8,6],[8,7,8,0,8,0]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"D7":[[-1,-1,0,2,1,2],[-1,5,4,5,3,5],[-1,5,0,5,7,5],[-1,5,7,5,7,5],[-1,-1,0,5,7,5],[-1,5,7,5,7,-1]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"B7":[[-1,2,1,2,0,2],[-1,2,4,2,4,2],[-1,2,4,2,4,-1],[7,6,7,8,7,7],[7,6,7,8,7,-1],[7,9,7,8,0,7]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"A/C#":[[-1,4,2,2,2,0],[-1,4,2,2,2,-1],[9,7,7,9,-1,-1],[-1,4,-1,2,2,0],[-1,4,2,2,-1,0],[-1,4,-1,6,5,5]],"E/B":[[-1,2,2,1,0,0],[-1,2,2,1,0,-1],[-1,2,2,4,0,4],[7,7,9,9,9,0],[7,7,9,9,9,7],[7,7,9,9,9,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Bm7":[[-1,2,0,2,0,2],[-1,2,0,2,3,2],[-1,2,4,2,3,2],[-1,2,4,2,3,-1],[7,5,0,7,7,5],[7,5,7,7,7,5]]},"ukulele":{"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"Dm7":[[2,2,1,3],[5,5,5,5],[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"Eb":[[0,3,3,1],[3,3,3,1],[0,3,6,6],[3,3,3,6],[0,7,6,6],[0,3,3,6]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"Cm":[[0,0,3,6],[0,3,3,3],[5,0,3,6],[5,3,3,3],[5,3,3,6]],"Db":[[1,1,1,4],[6,5,4,4]],"G/D":[[0,2,3,2],[4,2,3,2],[4,2,3,5]],"C/E":[[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[5,4,0,3],[5,4,0,7]],"Ab/Eb":[[1,3,4,3],[5,3,4,3],[5,3,4,6]],"Ab":[[1,3,4,3],[5,3,4,3],[5,3,4,6],[5,0,4,6],[1,0,4,3],[5,0,4,3]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"C7":[[0,0,0,1],[0,4,6,3],[3,4,3,3],[5,7,6,7],[0,0,6,7],[3,0,0,1]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"D7":[[2,0,2,5],[2,2,2,3],[5,2,2,0],[5,6,5,5],[2,2,2,0],[2,2,2,5]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"B7":[[2,3,2,2],[4,3,2,0],[4,6,5,6],[4,3,2,2],[2,3,5,2],[4,3,5,2]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"A/C#":[[2,1,0,0],[2,1,0,4]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Bm7":[[2,2,2,2],[4,2,2,0],[4,6,5,5],[7,6,7,0],[4,2,2,2],[2,2,5,2]]},"mandolin":{"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"Dm7":[[2,0,3,1],[5,3,5,5],[-1,0,0,1],[-1,0,3,1],[2,0,0,1],[2,3,5,5]],"Eb":[[-1,1,1,3],[0,1,1,3],[3,1,1,3],[0,1,1,-1],[3,5,6,3],[3,5,6,6]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"Cm":[[5,5,6,3],[5,5,6,-1],[0,1,3,3],[0,1,3,-1],[-1,1,3,3],[5,-1,6,3]],"Db":[[6,3,4,4],[1,3,4,1],[1,3,4,4],[1,3,4,-1],[-1,3,4,4],[6,3,-1,4]],"G/D":[[-1,0,2,3],[7,5,5,7],[7,5,-1,7]],"C/E":[[-1,2,3,3],[-1,2,3,0]],"C/G":[[0,2,3,0],[0,2,3,3],[0,2,3,-1],[0,5,3,0],[-1,5,3,0],[0,-1,3,0]],"F/A":[[2,3,3,1],[2,3,3,5],[2,3,3,-1],[2,-1,3,1],[2,3,0,1],[2,3,0,5]],"G/B":[[4,0,2,3],[4,0,5,3],[4,5,5,3],[4,5,5,7],[4,5,5,-1],[4,0,-1,3]],"Ab/Eb":[[-1,1,3,4]],"Ab":[[1,1,3,4],[1,1,3,-1],[-1,1,3,4],[5,6,6,4],[5,6,6,-1],[5,-1,6,4]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"C7":[[5,5,7,6],[3,2,3,3],[3,5,3,0],[5,2,3,3],[5,5,3,0],[5,5,7,0]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"D7":[[2,0,3,2],[5,0,0,2],[5,4,5,5],[-1,0,0,2],[-1,0,3,2],[7,4,0,5]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"B7":[[4,1,0,2],[4,4,6,5],[2,1,2,2],[4,1,2,2],[4,1,0,-1],[4,4,6,7]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"A/C#":[[6,7,4,0],[6,7,7,5],[6,7,0,0],[6,7,7,0],[6,7,7,-1],[6,-1,7,5]],"E/B":[[4,2,2,4],[4,6,7,0],[4,6,7,4],[4,6,7,7],[4,6,7,-1],[4,2,-1,4]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Bm7":[[4,0,0,2],[4,4,5,5],[2,0,2,2],[7,4,0,7],[4,0,2,2],[4,0,2,5]]},"banjo":{"C":[[2,0,1,2,0],[-1,0,1,2,0],[2,0,1,2,-1],[-1,-1,1,2,0],[-1,0,1,2,-1],[2,0,1,-1,-1]],"Dm7":[[0,2,1,3,2],[3,2,1,0,2],[0,2,1,3,-1],[3,2,1,0,-1],[0,2,3,3,5],[0,5,3,3,2]],"Eb":[[1,0,4,1,3],[1,3,4,1,0],[-1,0,4,1,3],[-1,3,4,1,0],[5,0,4,5,3],[5,3,4,5,0]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]],"Bb":[[0,3,3,3,3],[0,3,6,0,3],[3,3,3,0,3],[0,3,6,3,3],[3,3,3,3,3],[3,3,6,0,3]],"Cm":[[1,0,1,1,0],[-1,0,1,1,0],[1,0,1,1,-1],[-1,-1,1,1,0],[-1,0,1,1,-1],[1,0,1,-1,-1]],"Db":[[3,1,2,3,1],[-1,1,2,3,1],[3,1,2,3,-1],[-1,-1,2,3,1],[-1,1,2,3,-1],[3,1,2,-1,-1]],"G/D":[[0,0,0,0,0],[0,0,0,0,-1],[0,0,0,-1,-1],[0,0,3,0,4],[0,4,3,0,0],[0,0,3,5,4]],"C/E":[[2,0,1,2,0],[2,0,1,2,-1],[2,0,1,-1,-1],[2,0,5,2,5],[2,5,5,2,0],[2,0,5,5,5]],"C/G":[[-1,0,1,2,0],[-1,0,1,2,-1],[5,0,5,2,5],[5,5,5,2,0],[5,5,5,2,5],[-1,0,5,2,5]],"F/A":[[-1,2,1,3,2],[-1,2,1,3,-1],[7,5,6,7,5],[7,5,6,7,-1],[7,5,6,-1,-1],[-1,2,-1,3,5]],"G/B":[[-1,-1,0,0,0],[-1,4,3,0,0],[-1,4,3,5,0],[-1,4,3,5,4],[-1,4,3,5,-1],[-1,4,0,0,0]],"Ab/Eb":[[1,1,1,1,1],[1,1,1,1,-1],[1,1,1,-1,-1],[-1,-1,4,6,5],[1,-1,1,1,1],[1,1,1,-1,1]],"Ab":[[1,1,1,1,1],[-1,1,1,1,1],[1,1,1,1,-1],[-1,-1,1,1,1],[-1,1,1,1,-1],[1,1,1,-1,-1]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[0,0,0,0,-1],[-1,-1,0,0,0],[-1,0,0,0,-1],[0,0,0,-1,-1]],"C7":[[2,0,1,2,3],[2,3,1,2,0],[-1,0,1,2,3],[-1,3,1,2,0],[2,3,5,5,5],[2,5,5,5,3]],"Am":[[2,2,1,2,2],[-1,2,1,2,2],[2,2,1,2,-1],[-1,-1,1,2,2],[-1,2,1,2,-1],[2,2,1,-1,-1]],"D7":[[0,2,1,4,2],[4,2,1,0,2],[0,2,1,4,-1],[4,2,1,0,-1],[0,2,3,4,5],[0,5,3,4,2]],"F#m":[[4,2,2,4,2],[-1,2,2,4,2],[4,2,2,4,-1],[-1,-1,2,4,2],[-1,2,2,4,-1],[4,2,2,-1,-1]],"D":[[0,2,3,4,2],[4,2,3,0,2],[4,2,3,4,2],[0,2,3,4,-1],[4,2,3,0,-1],[-1,2,3,4,2]],"B7":[[1,2,0,4,2],[4,2,0,1,2],[1,2,0,4,4],[1,4,0,4,2],[4,2,0,1,4],[4,4,0,1,2]],"E":[[2,1,0,2,1],[2,1,0,2,4],[2,4,0,2,1],[-1,1,0,2,1],[2,1,0,2,-1],[-1,1,0,2,4]],"A/C#":[[-1,-1,2,2,2],[-1,6,5,7,6],[-1,6,5,7,-1],[-1,6,-1,7,6]],"E/B":[[-1,4,0,2,1],[-1,-1,0,2,1],[-1,4,5,6,4],[-1,4,5,6,-1],[-1,4,-1,2,1]],"A":[[2,2,2,2,2],[-1,2,2,2,2],[2,2,2,2,-1],[-1,-1,2,2,2],[-1,2,2,2,-1],[2,2,2,-1,-1]],"Bm7":[[0,2,0,4,2],[4,2,0,0,2],[0,2,0,4,4],[0,4,0,4,2],[4,2,0,0,4],[4,4,0,0,2]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     function baseFret(f) {
@@ -267,135 +269,135 @@
   <div class="page">
     <h1>Birdhouse In Your Soul</h1>
     <h2>They Might Be Giants</h2>
-    <div class="meta">Toneart: C &nbsp;·&nbsp; Tilføjet: 05.06.2026</div>
+    <div class="meta">Toneart: C &nbsp;·&nbsp; Tilføjet: 13.06.2026</div>
     <div class="chords">
-    <pre class="block"><span class="section">[Intro]</span>
+    <pre class="block line-group"><span class="section">[Intro]</span>
 <span class="chord">C</span>             <span class="chord">Dm7</span>                  <span class="chord">Eb</span>
-I&#x27;m your only friend, I&#x27;m not your only friend
-    <span class="chord">F</span>            <span class="chord">Bb</span>
-But I&#x27;m a little glowing friend
-    <span class="chord">Cm</span>             <span class="chord">Db</span>            <span class="chord">G/D</span>
+I&#x27;m your only friend, I&#x27;m not your only friend</pre>
+<pre class="block line-group">    <span class="chord">F</span>            <span class="chord">Bb</span>
+But I&#x27;m a little glowing friend</pre>
+<pre class="block line-group line-group-last">    <span class="chord">Cm</span>             <span class="chord">Db</span>            <span class="chord">G/D</span>
 But really I&#x27;m not actually your friend, but I am</pre>
-<pre class="block"><span class="section">[Chorus]</span>
+<pre class="block line-group"><span class="section">[Chorus]</span>
 <span class="chord">C</span>      <span class="chord">C/E</span>         <span class="chord">F</span>
-Blue canary in the outlet by the light switch
-<span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
-Who watches over you
-<span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
-Make a little birdhouse in your soul
-               <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it
-<span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet
-<span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Make a little birdhouse in your soul
-<span class="chord">C</span>   <span class="chord">F</span>
-<span class="chord">C</span>   <span class="chord">F</span></pre>
-<pre class="block"><span class="section">[Verse 1]</span>
+Blue canary in the outlet by the light switch</pre>
+<pre class="block line-group"><span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
+Who watches over you</pre>
+<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
+Make a little birdhouse in your soul</pre>
+<pre class="block line-group">               <span class="chord">Ab/Eb</span>
+Not to put too fine a point on it</pre>
+<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
+Say I&#x27;m the only bee in your bonnet</pre>
+<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
+Make a little birdhouse in your soul</pre>
+<pre class="block line-group"><span class="chord">C</span>   <span class="chord">F</span></pre>
+<pre class="block line-group line-group-last"><span class="chord">C</span>   <span class="chord">F</span></pre>
+<pre class="block line-group"><span class="section">[Verse 1]</span>
 <span class="chord">C</span>        <span class="chord">F</span>              <span class="chord">C</span>        <span class="chord">F</span>
-I have a secret to tell from my electrical well
-<span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">C7</span>              <span class="chord">F</span>               <span class="chord">G</span>
-It&#x27;s a simple message and I&#x27;m leaving out the whistles and bells
-<span class="chord">C</span>                <span class="chord">F</span>             <span class="chord">C</span>          <span class="chord">F</span>
-So the room must listen to me, filibuster vigilantly
-<span class="chord">C</span>  <span class="chord">G/B</span>     <span class="chord">C7</span>          <span class="chord">F</span>                  <span class="chord">G</span>
-My name is blue canary one note spelled l-i-t-e
-<span class="chord">Am</span>         <span class="chord">F</span>
-My story&#x27;s infinite
-<span class="chord">D7</span>                <span class="chord">F</span>               <span class="chord">G</span>
+I have a secret to tell from my electrical well</pre>
+<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">C7</span>              <span class="chord">F</span>               <span class="chord">G</span>
+It&#x27;s a simple message and I&#x27;m leaving out the whistles and bells</pre>
+<pre class="block line-group"><span class="chord">C</span>                <span class="chord">F</span>             <span class="chord">C</span>          <span class="chord">F</span>
+So the room must listen to me, filibuster vigilantly</pre>
+<pre class="block line-group"><span class="chord">C</span>  <span class="chord">G/B</span>     <span class="chord">C7</span>          <span class="chord">F</span>                  <span class="chord">G</span>
+My name is blue canary one note spelled l-i-t-e</pre>
+<pre class="block line-group"><span class="chord">Am</span>         <span class="chord">F</span>
+My story&#x27;s infinite</pre>
+<pre class="block line-group line-group-last"><span class="chord">D7</span>                <span class="chord">F</span>               <span class="chord">G</span>
 Like the longines symphonette, it doesn&#x27;t rest</pre>
-<pre class="block"><span class="section">[Chorus]</span>
+<pre class="block line-group"><span class="section">[Chorus]</span>
 <span class="chord">C</span>      <span class="chord">C/E</span>         <span class="chord">F</span>
-Blue canary in the outlet by the light switch
-<span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
-Who watches over you
-<span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
-Make a little birdhouse in your soul
-               <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it
-<span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet
-<span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Make a little birdhouse in your soul
-<span class="chord">C</span>    <span class="chord">F</span>
-<span class="chord">C</span>    <span class="chord">F</span></pre>
-<pre class="block"><span class="section">[Bridge]</span>
-<span class="chord">Am</span>   <span class="chord">F</span>   <span class="chord">D7</span>   <span class="chord">F</span>
-<span class="chord">Am</span>   <span class="chord">F</span>   <span class="chord">D7</span>   <span class="chord">F</span>
-<span class="chord">F#m</span>  <span class="chord">D</span>   <span class="chord">B7</span>   <span class="chord">D</span>
-<span class="chord">E</span>    <span class="chord">E/D</span> <span class="chord">A/C#</span>  <span class="chord">E/B</span>
-
-<span class="chord">A</span>             <span class="chord">Bm7</span>                  <span class="chord">C</span>
-I&#x27;m your only friend, I&#x27;m not your only friend
-    <span class="chord">D</span>            <span class="chord">G</span>       
-But I&#x27;m a little glowing friend
-    <span class="chord">Am</span>             <span class="chord">Bb</span>            <span class="chord">G/B</span>
+Blue canary in the outlet by the light switch</pre>
+<pre class="block line-group"><span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
+Who watches over you</pre>
+<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
+Make a little birdhouse in your soul</pre>
+<pre class="block line-group">               <span class="chord">Ab/Eb</span>
+Not to put too fine a point on it</pre>
+<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
+Say I&#x27;m the only bee in your bonnet</pre>
+<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
+Make a little birdhouse in your soul</pre>
+<pre class="block line-group"><span class="chord">C</span>    <span class="chord">F</span></pre>
+<pre class="block line-group line-group-last"><span class="chord">C</span>    <span class="chord">F</span></pre>
+<pre class="block line-group"><span class="section">[Bridge]</span>
+<span class="chord">Am</span>   <span class="chord">F</span>   <span class="chord">D7</span>   <span class="chord">F</span></pre>
+<pre class="block line-group"><span class="chord">Am</span>   <span class="chord">F</span>   <span class="chord">D7</span>   <span class="chord">F</span></pre>
+<pre class="block line-group"><span class="chord">F#m</span>  <span class="chord">D</span>   <span class="chord">B7</span>   <span class="chord">D</span></pre>
+<pre class="block line-group"><span class="chord">E</span>    <span class="chord">E/D</span> <span class="chord">A/C#</span>  <span class="chord">E/B</span></pre>
+<pre class="block line-group"><span class="chord">A</span>             <span class="chord">Bm7</span>                  <span class="chord">C</span>
+I&#x27;m your only friend, I&#x27;m not your only friend</pre>
+<pre class="block line-group">    <span class="chord">D</span>            <span class="chord">G</span>       
+But I&#x27;m a little glowing friend</pre>
+<pre class="block line-group line-group-last">    <span class="chord">Am</span>             <span class="chord">Bb</span>            <span class="chord">G/B</span>
 But really I&#x27;m not actually your friend, but I am</pre>
-<pre class="block"><span class="section">[Verse 2]</span>
+<pre class="block line-group"><span class="section">[Verse 2]</span>
 <span class="chord">C</span>                 <span class="chord">F</span>           <span class="chord">C</span>               <span class="chord">F</span>
-There&#x27;s a picture opposite me of my primitive ancestry
-<span class="chord">C</span>     <span class="chord">G/B</span>      <span class="chord">C7</span>               <span class="chord">F</span>                <span class="chord">G</span>
-Which stood on rocky shores and kept the beaches shipwreck-free
-<span class="chord">C</span>          <span class="chord">F</span>                 <span class="chord">C</span>               <span class="chord">F</span>
-Though I respect that a lot, I&#x27;d be fired if that were my job
-<span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">C7</span>            <span class="chord">F</span>                   <span class="chord">G</span>
-After killing Jason off and countless screaming argonauts
-<span class="chord">Am</span>          <span class="chord">F</span>
-Bluebird of friendliness
-<span class="chord">D7</span>            <span class="chord">F</span>           <span class="chord">G</span>
+There&#x27;s a picture opposite me of my primitive ancestry</pre>
+<pre class="block line-group"><span class="chord">C</span>     <span class="chord">G/B</span>      <span class="chord">C7</span>               <span class="chord">F</span>                <span class="chord">G</span>
+Which stood on rocky shores and kept the beaches shipwreck-free</pre>
+<pre class="block line-group"><span class="chord">C</span>          <span class="chord">F</span>                 <span class="chord">C</span>               <span class="chord">F</span>
+Though I respect that a lot, I&#x27;d be fired if that were my job</pre>
+<pre class="block line-group"><span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">C7</span>            <span class="chord">F</span>                   <span class="chord">G</span>
+After killing Jason off and countless screaming argonauts</pre>
+<pre class="block line-group"><span class="chord">Am</span>          <span class="chord">F</span>
+Bluebird of friendliness</pre>
+<pre class="block line-group line-group-last"><span class="chord">D7</span>            <span class="chord">F</span>           <span class="chord">G</span>
 Like guardian angels it&#x27;s always near</pre>
-<pre class="block"><span class="section">[Chorus 2]</span>
+<pre class="block line-group"><span class="section">[Chorus 2]</span>
 <span class="chord">C</span>      <span class="chord">C/E</span>         <span class="chord">F</span>
-Blue canary in the outlet by the light switch
-<span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
-Who watches over you
-<span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
-Make a little birdhouse in your soul
-               <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it
-<span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet
-<span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>   <span class="chord">C/E</span>
-Make a little birdhouse in your soul
-<span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
-While you&#x27;re at it, keep the nightlight on inside
-        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
-the birdhouse in your soul
-<span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it
-<span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet
-<span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Make a little birdhouse in your soul
-<span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
-While you&#x27;re at it, keep the nightlight on inside
-        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
-the birdhouse in your soul
-<span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it
-<span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet
-<span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
+Blue canary in the outlet by the light switch</pre>
+<pre class="block line-group"><span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
+Who watches over you</pre>
+<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
 Make a little birdhouse in your soul</pre>
-<pre class="block"><span class="section">[Outro]</span>
-<span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
-While you&#x27;re at it, keep the nightlight on inside
-        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
-the birdhouse in your soul
-<span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it
-<span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet
-<span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
+<pre class="block line-group">               <span class="chord">Ab/Eb</span>
+Not to put too fine a point on it</pre>
+<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
+Say I&#x27;m the only bee in your bonnet</pre>
+<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>   <span class="chord">C/E</span>
 Make a little birdhouse in your soul</pre>
+<pre class="block line-group"><span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
+While you&#x27;re at it, keep the nightlight on inside</pre>
+<pre class="block line-group">        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
+the birdhouse in your soul</pre>
+<pre class="block line-group"><span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
+Not to put too fine a point on it</pre>
+<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
+Say I&#x27;m the only bee in your bonnet</pre>
+<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
+Make a little birdhouse in your soul</pre>
+<pre class="block line-group"><span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
+While you&#x27;re at it, keep the nightlight on inside</pre>
+<pre class="block line-group">        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
+the birdhouse in your soul</pre>
+<pre class="block line-group"><span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
+Not to put too fine a point on it</pre>
+<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
+Say I&#x27;m the only bee in your bonnet</pre>
+<pre class="block line-group line-group-last"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
+Make a little birdhouse in your soul</pre>
+<pre class="block line-group"><span class="section">[Outro]</span>
+<span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
+While you&#x27;re at it, keep the nightlight on inside</pre>
+<pre class="block line-group">        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
+the birdhouse in your soul</pre>
+<pre class="block line-group"><span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
+Not to put too fine a point on it</pre>
+<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
+Say I&#x27;m the only bee in your bonnet</pre>
+<pre class="block line-group line-group-last"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span></pre>
     </div>
-    <div class="tab-section"><pre class="block">e|-------------------------1----3-----4---|
+    <div class="tab-section"><pre class="block line-group">Make a little birdhouse in your soul
+
+e|-------------------------1----3-----4---|
 b|-------------1-----1-----1----0-----4---|
 g|-2-----4-----0-----0-----2----0-----5---|
 d|-2-----5-----2-----2-----3----0-----6---|
 a|-4-----5-----3-----3-----0----2-----6---|
-e|-------------0-----3--------------------|
-   <span class="chord">A/C#</span>  <span class="chord">G/D</span>   <span class="chord">C/E</span>   <span class="chord">C/G</span>   <span class="chord">F/A</span>  <span class="chord">G/B</span>   <span class="chord">Ab/Eb</span></pre></div>
+e|-------------0-----3--------------------|</pre>
+<pre class="block line-group line-group-last">   <span class="chord">A/C#</span>  <span class="chord">G/D</span>   <span class="chord">C/E</span>   <span class="chord">C/G</span>   <span class="chord">F/A</span>  <span class="chord">G/B</span>   <span class="chord">Ab/Eb</span></pre></div>
   </div>
 </body>
 </html>

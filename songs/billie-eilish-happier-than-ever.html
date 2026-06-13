@@ -26,6 +26,8 @@
       white-space: pre-wrap; word-break: break-word;
       margin-bottom: 6px;
     }
+    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
+    pre.block.line-group-last { margin-bottom: 6px; }
     body.font-small pre.block { font-size: 8pt; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
@@ -65,7 +67,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"G6":[[3,2,0,0,0,0],[3,2,0,0,3,0],[3,2,0,4,0,0],[3,2,2,0,3,0],[3,2,0,4,3,0],[3,2,2,0,3,3]],"G7":[[3,2,0,0,0,1],[3,2,0,0,3,1],[3,2,3,0,3,1],[3,2,3,0,3,3],[3,2,3,4,3,3],[3,2,3,0,3,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"C/G":[[3,3,2,0,1,0],[3,3,2,0,1,3],[3,3,2,0,1,-1],[3,3,2,0,-1,-1],[3,3,5,0,5,0],[3,3,5,0,5,3]],"E7":[[0,2,0,1,0,0],[0,2,0,1,3,0],[0,2,2,1,3,0],[0,2,0,1,0,-1],[0,2,0,1,3,-1],[0,2,2,1,3,-1]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"Am/E":[[0,0,2,2,1,0],[0,3,2,2,1,0],[0,0,2,2,1,-1],[0,3,2,2,1,-1],[-1,-1,2,2,1,0],[0,3,2,2,-1,-1]],"Cadd9":[[-1,3,0,0,1,0],[-1,3,2,0,3,0],[-1,3,2,0,3,3],[-1,3,2,0,3,-1],[-1,3,0,0,3,0],[-1,3,0,0,5,0]],"Dm7":[[-1,-1,0,2,1,1],[-1,5,3,5,3,5],[-1,5,0,5,6,5],[-1,5,7,5,6,5],[-1,-1,0,5,6,5],[-1,5,7,5,6,-1]],"D/F#":[[2,0,0,2,3,2],[2,0,4,2,3,2],[2,0,0,2,3,-1],[2,0,4,2,3,-1],[2,0,0,2,-1,-1],[-1,-1,4,2,3,2]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Fm":[[1,3,3,1,1,1],[1,3,3,1,1,-1],[-1,-1,3,1,1,1],[1,3,3,1,-1,-1],[-1,3,3,1,1,1],[-1,3,3,1,1,-1]]},"ukulele":{"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"G6":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"G7":[[0,2,1,2],[4,5,3,5],[0,5,7,5],[0,2,3,2],[0,5,3,2],[4,2,3,2]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"E7":[[1,2,0,2],[4,4,4,5],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"Am/E":[[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0],[5,4,5,0],[5,4,5,7]],"Cadd9":[[0,2,0,3],[5,4,3,5],[0,0,0,5],[5,7,0,5],[0,2,3,3],[5,2,0,3]],"Dm7":[[2,2,1,3],[5,5,5,5],[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"D/F#":[[7,6,5,0],[7,6,5,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Fm":[[1,0,1,3],[5,5,4,3]]},"mandolin":{"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"G6":[[0,0,2,0],[0,0,7,7],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,2,2,0]],"G7":[[0,0,2,1],[4,3,5,3],[0,3,2,1],[0,0,2,3],[0,3,2,3],[0,0,2,-1]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"C/G":[[0,2,3,0],[0,2,3,3],[0,2,3,-1],[0,5,3,0],[-1,5,3,0],[0,-1,3,0]],"E7":[[1,0,2,0],[4,2,5,4],[4,0,7,4],[4,6,5,0],[7,6,7,7],[-1,2,2,4]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"Am/E":[[-1,2,3,5]],"Cadd9":[[5,2,5,3],[5,5,5,0],[0,0,3,0],[5,2,5,0],[5,2,5,-1],[5,0,3,0]],"Dm7":[[2,0,3,1],[5,3,5,5],[-1,0,0,1],[-1,0,3,1],[2,0,0,1],[2,3,5,5]],"D/F#":[[-1,4,5,5],[-1,4,5,2]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Fm":[[-1,3,3,4],[1,3,3,1],[1,3,3,4],[1,3,3,-1],[5,3,3,4],[1,-1,3,1]]},"banjo":{"G":[[0,0,0,0,0],[-1,0,0,0,0],[0,0,0,0,-1],[-1,-1,0,0,0],[-1,0,0,0,-1],[0,0,0,-1,-1]],"G6":[[0,0,0,2,0],[2,0,0,0,0],[0,0,0,2,4],[0,4,0,2,0],[2,0,0,0,4],[2,4,0,0,0]],"G7":[[0,0,0,3,0],[3,0,0,0,0],[0,0,0,3,4],[0,4,0,3,0],[3,0,0,0,4],[3,4,0,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[2,0,1,2,-1],[-1,-1,1,2,0],[-1,0,1,2,-1],[2,0,1,-1,-1]],"C/G":[[-1,0,1,2,0],[-1,0,1,2,-1],[5,0,5,2,5],[5,5,5,2,0],[5,5,5,2,5],[-1,0,5,2,5]],"E7":[[0,1,0,2,1],[2,1,0,0,1],[0,1,0,2,4],[0,4,0,2,1],[2,1,0,0,4],[2,4,0,0,1]],"Am":[[2,2,1,2,2],[-1,2,1,2,2],[2,2,1,2,-1],[-1,-1,1,2,2],[-1,2,1,2,-1],[2,2,1,-1,-1]],"Am/E":[[2,2,1,2,2],[2,2,1,2,-1],[2,2,1,-1,-1],[2,2,5,2,5],[2,5,5,2,2],[-1,-1,5,7,5]],"Cadd9":[[0,0,1,2,0],[2,0,1,0,0],[0,0,1,2,-1],[2,0,1,0,-1],[0,0,3,2,5],[0,5,3,2,0]],"Dm7":[[0,2,1,3,2],[3,2,1,0,2],[0,2,1,3,-1],[3,2,1,0,-1],[0,2,3,3,5],[0,5,3,3,2]],"D/F#":[[4,2,3,0,2],[4,2,3,4,2],[4,2,3,0,-1],[4,2,3,4,-1],[4,2,3,-1,-1],[4,7,7,7,7]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]],"Fm":[[3,1,1,3,1],[-1,1,1,3,1],[3,1,1,3,-1],[-1,-1,1,3,1],[-1,1,1,3,-1],[3,1,1,-1,-1]]}};
+    var DBS = {"guitar":{"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"G6":[[3,2,0,0,0,0],[3,2,0,0,3,0],[3,2,0,4,0,0],[3,2,2,0,3,0],[3,2,0,4,3,0],[3,2,2,0,3,3]],"G7":[[3,2,0,0,0,1],[3,2,0,0,3,1],[3,2,3,0,3,1],[3,2,3,0,3,3],[3,2,3,4,3,3],[3,2,3,0,3,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"C/G":[[3,3,2,0,1,0],[3,3,2,0,1,3],[3,3,2,0,1,-1],[3,3,2,0,-1,-1],[3,3,5,0,5,0],[3,3,5,0,5,3]],"Cadd9":[[-1,3,0,0,1,0],[-1,3,2,0,3,0],[-1,3,2,0,3,3],[-1,3,2,0,3,-1],[-1,3,0,0,3,0],[-1,3,0,0,5,0]],"E7":[[0,2,0,1,0,0],[0,2,0,1,3,0],[0,2,2,1,3,0],[0,2,0,1,0,-1],[0,2,0,1,3,-1],[0,2,2,1,3,-1]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"Dm7":[[-1,-1,0,2,1,1],[-1,5,3,5,3,5],[-1,5,0,5,6,5],[-1,5,7,5,6,5],[-1,-1,0,5,6,5],[-1,5,7,5,6,-1]],"D/F#":[[2,0,0,2,3,2],[2,0,4,2,3,2],[2,0,0,2,3,-1],[2,0,4,2,3,-1],[2,0,0,2,-1,-1],[-1,-1,4,2,3,2]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Fm":[[1,3,3,1,1,1],[1,3,3,1,1,-1],[-1,-1,3,1,1,1],[1,3,3,1,-1,-1],[-1,3,3,1,1,1],[-1,3,3,1,1,-1]],"Am/E":[[0,0,2,2,1,0],[0,3,2,2,1,0],[0,0,2,2,1,-1],[0,3,2,2,1,-1],[-1,-1,2,2,1,0],[0,3,2,2,-1,-1]]},"ukulele":{"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"G6":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"G7":[[0,2,1,2],[4,5,3,5],[0,5,7,5],[0,2,3,2],[0,5,3,2],[4,2,3,2]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"Cadd9":[[0,2,0,3],[5,4,3,5],[0,0,0,5],[5,7,0,5],[0,2,3,3],[5,2,0,3]],"E7":[[1,2,0,2],[4,4,4,5],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"Dm7":[[2,2,1,3],[5,5,5,5],[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"D/F#":[[7,6,5,0],[7,6,5,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Fm":[[1,0,1,3],[5,5,4,3]],"Am/E":[[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0],[5,4,5,0],[5,4,5,7]]},"mandolin":{"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"G6":[[0,0,2,0],[0,0,7,7],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,2,2,0]],"G7":[[0,0,2,1],[4,3,5,3],[0,3,2,1],[0,0,2,3],[0,3,2,3],[0,0,2,-1]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"C/G":[[0,2,3,0],[0,2,3,3],[0,2,3,-1],[0,5,3,0],[-1,5,3,0],[0,-1,3,0]],"Cadd9":[[5,2,5,3],[5,5,5,0],[0,0,3,0],[5,2,5,0],[5,2,5,-1],[5,0,3,0]],"E7":[[1,0,2,0],[4,2,5,4],[4,0,7,4],[4,6,5,0],[7,6,7,7],[-1,2,2,4]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"Dm7":[[2,0,3,1],[5,3,5,5],[-1,0,0,1],[-1,0,3,1],[2,0,0,1],[2,3,5,5]],"D/F#":[[-1,4,5,5],[-1,4,5,2]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Fm":[[-1,3,3,4],[1,3,3,1],[1,3,3,4],[1,3,3,-1],[5,3,3,4],[1,-1,3,1]],"Am/E":[[-1,2,3,5]]},"banjo":{"G":[[0,0,0,0,0],[-1,0,0,0,0],[0,0,0,0,-1],[-1,-1,0,0,0],[-1,0,0,0,-1],[0,0,0,-1,-1]],"G6":[[0,0,0,2,0],[2,0,0,0,0],[0,0,0,2,4],[0,4,0,2,0],[2,0,0,0,4],[2,4,0,0,0]],"G7":[[0,0,0,3,0],[3,0,0,0,0],[0,0,0,3,4],[0,4,0,3,0],[3,0,0,0,4],[3,4,0,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[2,0,1,2,-1],[-1,-1,1,2,0],[-1,0,1,2,-1],[2,0,1,-1,-1]],"C/G":[[-1,0,1,2,0],[-1,0,1,2,-1],[5,0,5,2,5],[5,5,5,2,0],[5,5,5,2,5],[-1,0,5,2,5]],"Cadd9":[[0,0,1,2,0],[2,0,1,0,0],[0,0,1,2,-1],[2,0,1,0,-1],[0,0,3,2,5],[0,5,3,2,0]],"E7":[[0,1,0,2,1],[2,1,0,0,1],[0,1,0,2,4],[0,4,0,2,1],[2,1,0,0,4],[2,4,0,0,1]],"Am":[[2,2,1,2,2],[-1,2,1,2,2],[2,2,1,2,-1],[-1,-1,1,2,2],[-1,2,1,2,-1],[2,2,1,-1,-1]],"Dm7":[[0,2,1,3,2],[3,2,1,0,2],[0,2,1,3,-1],[3,2,1,0,-1],[0,2,3,3,5],[0,5,3,3,2]],"D/F#":[[4,2,3,0,2],[4,2,3,4,2],[4,2,3,0,-1],[4,2,3,4,-1],[4,2,3,-1,-1],[4,7,7,7,7]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]],"Fm":[[3,1,1,3,1],[-1,1,1,3,1],[3,1,1,3,-1],[-1,-1,1,3,1],[-1,1,1,3,-1],[3,1,1,-1,-1]],"Am/E":[[2,2,1,2,2],[2,2,1,2,-1],[2,2,1,-1,-1],[2,2,5,2,5],[2,5,5,2,2],[-1,-1,5,7,5]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     function baseFret(f) {
@@ -266,150 +268,150 @@
   <div class="page">
     <h1>Happier Than Ever</h1>
     <h2>Billie Eilish</h2>
-    <div class="meta">Toneart: C &nbsp;·&nbsp; Tilføjet: 05.06.2026</div>
+    <div class="meta">Toneart: C &nbsp;·&nbsp; Tilføjet: 13.06.2026</div>
     
-    <pre class="block">***Please Note: If you find Cadd9 difficult to play, feel free to use a regular C (X32010).***
+    <pre class="block line-group line-group-last">***Please Note: If you find Cadd9 difficult to play, feel free to use a regular C (X32010).***
  </pre>
-<pre class="block"><span class="section">[Intro - Rhythm Guitar]</span>
+<pre class="block line-group line-group-last"><span class="section">[Intro - Rhythm Guitar]</span>
 <span class="chord">G</span>                    <span class="chord">G6</span>       <span class="chord">G7</span></pre>
-<pre class="block"><span class="section">[Verse 1 - Full Picking Pattern (With Optional Slash Chords)]</span>
+<pre class="block line-group line-group-last"><span class="section">[Verse 1 - Full Picking Pattern (With Optional Slash Chords)]</span>
 <span class="chord">C</span>         <span class="chord">C/G</span>             <span class="chord">C</span>          <span class="chord">C/G</span></pre>
-<pre class="block"><span class="section">[Chorus]</span>
+<pre class="block line-group"><span class="section">[Chorus]</span>
 N.C.     <span class="chord">Cadd9</span>
-When I&#x27;m away from you
-                 <span class="chord">E7</span>
-I&#x27;m happier than ever
-                         <span class="chord">Am</span>
-Wish I could explain it better
-                 <span class="chord">Dm7</span>    <span class="chord">G</span>
-I wish it wasn&#x27;t true, mmm
-         <span class="chord">Cadd9</span>
-Give me a day or two
-                       <span class="chord">E7</span>
-To think of something clever
-                 <span class="chord">Am</span>
-To write myself a letter
-                  <span class="chord">Dm7</span>  <span class="chord">G</span>
+When I&#x27;m away from you</pre>
+<pre class="block line-group">                 <span class="chord">E7</span>
+I&#x27;m happier than ever</pre>
+<pre class="block line-group">                         <span class="chord">Am</span>
+Wish I could explain it better</pre>
+<pre class="block line-group">                 <span class="chord">Dm7</span>    <span class="chord">G</span>
+I wish it wasn&#x27;t true, mmm</pre>
+<pre class="block line-group">         <span class="chord">Cadd9</span>
+Give me a day or two</pre>
+<pre class="block line-group">                       <span class="chord">E7</span>
+To think of something clever</pre>
+<pre class="block line-group">                 <span class="chord">Am</span>
+To write myself a letter</pre>
+<pre class="block line-group line-group-last">                  <span class="chord">Dm7</span>  <span class="chord">G</span>
 To tell me what to do,  mm-mm
  </pre>
-<pre class="block"><span class="section">[Verse 1]</span>
+<pre class="block line-group"><span class="section">[Verse 1]</span>
 <span class="chord">C</span>
-  Do you read my interviews?
-   <span class="chord">E7</span>
-Or do you skip my avenue?
-     <span class="chord">Am</span>
-When you said you were passin&#x27; through
-      <span class="chord">Dm7b5</span>
-Was I even on your way?
-   <span class="chord">C</span>
-I knew when I asked you to (When I asked you to)
-    <span class="chord">E7</span>
-Be cool about what I was tellin&#x27; you
-      <span class="chord">Am</span>
-You&#x27;d do the opposite of what you said you&#x27;d do (What you said you&#x27;d do)
-       <span class="chord">Dm7b5</span>
-And I&#x27;d end up more afraid
-               <span class="chord">E7</span>
-Don&#x27;t say it isn&#x27;t fair
-                                   <span class="chord">Am</span>      <span class="chord">Am/G</span>   <span class="chord">D/F#</span>            
-You clearly weren&#x27;t aware that you made me miserable, ooh
-           <span class="chord">Dm7</span>          <span class="chord">G7</span>
+  Do you read my interviews?</pre>
+<pre class="block line-group">   <span class="chord">E7</span>
+Or do you skip my avenue?</pre>
+<pre class="block line-group">     <span class="chord">Am</span>
+When you said you were passin&#x27; through</pre>
+<pre class="block line-group">      <span class="chord">Dm7b5</span>
+Was I even on your way?</pre>
+<pre class="block line-group">   <span class="chord">C</span>
+I knew when I asked you to (When I asked you to)</pre>
+<pre class="block line-group">    <span class="chord">E7</span>
+Be cool about what I was tellin&#x27; you</pre>
+<pre class="block line-group">      <span class="chord">Am</span>
+You&#x27;d do the opposite of what you said you&#x27;d do (What you said you&#x27;d do)</pre>
+<pre class="block line-group">       <span class="chord">Dm7b5</span>
+And I&#x27;d end up more afraid</pre>
+<pre class="block line-group">               <span class="chord">E7</span>
+Don&#x27;t say it isn&#x27;t fair</pre>
+<pre class="block line-group">                                   <span class="chord">Am</span>      <span class="chord">Am/G</span>   <span class="chord">D/F#</span>            
+You clearly weren&#x27;t aware that you made me miserable, ooh</pre>
+<pre class="block line-group line-group-last">           <span class="chord">Dm7</span>          <span class="chord">G7</span>
 So if you really wanna know
  </pre>
-<pre class="block"><span class="section">[Chorus]</span>
+<pre class="block line-group"><span class="section">[Chorus]</span>
          <span class="chord">Cadd9</span>
-When I&#x27;m away from you (When I&#x27;m away from you)
-                  <span class="chord">E7</span>
-I&#x27;m happier than ever (I&#x27;m happier than ever)
-                         <span class="chord">Am</span>
-Wish I could explain it better (Wish I could explain it better)
-                 <span class="chord">Dm7</span>    <span class="chord">G</span>      <span class="chord">C</span>
+When I&#x27;m away from you (When I&#x27;m away from you)</pre>
+<pre class="block line-group">                  <span class="chord">E7</span>
+I&#x27;m happier than ever (I&#x27;m happier than ever)</pre>
+<pre class="block line-group">                         <span class="chord">Am</span>
+Wish I could explain it better (Wish I could explain it better)</pre>
+<pre class="block line-group line-group-last">                 <span class="chord">Dm7</span>    <span class="chord">G</span>      <span class="chord">C</span>
 I wish it wasn&#x27;t true, mmm
  </pre>
-<pre class="block"><span class="section">[Instrumental Break]</span>
- 
-<span class="chord">C</span>  <span class="chord">E7</span>  <span class="chord">Am</span>  <span class="chord">F</span>  <span class="chord">Fm</span>
+<pre class="block line-group"><span class="section">[Instrumental Break]</span>
  </pre>
-<pre class="block"><span class="section">[Verse 2]</span>
+<pre class="block line-group line-group-last"><span class="chord">C</span>  <span class="chord">E7</span>  <span class="chord">Am</span>  <span class="chord">F</span>  <span class="chord">Fm</span>
+ </pre>
+<pre class="block line-group"><span class="section">[Verse 2]</span>
 <span class="chord">C</span>              <span class="chord">E7</span>                   <span class="chord">Am</span>
-You called me again, drunk in your Benz
-               <span class="chord">F</span>          <span class="chord">Fm</span>
-Drivin&#x27; home under the influence
-<span class="chord">C</span>                 <span class="chord">E7</span>                       <span class="chord">Am</span>
-You scared me to death but I&#x27;m wastin&#x27; my breath
-                  <span class="chord">F</span>             <span class="chord">Fm</span>
-&#x27;Cause you only listen to your fuckin&#x27; friends
-<span class="chord">C</span>                    <span class="chord">E7</span>
-I don&#x27;t relate to you
-<span class="chord">Am</span>                     <span class="chord">F</span>
-I don&#x27;t relate to you, no
-                  <span class="chord">C</span>               <span class="chord">E7</span>
-&#x27;Cause I&#x27;d never treat me this shitty
-            <span class="chord">Am</span>            <span class="chord">F</span>
+You called me again, drunk in your Benz</pre>
+<pre class="block line-group">               <span class="chord">F</span>          <span class="chord">Fm</span>
+Drivin&#x27; home under the influence</pre>
+<pre class="block line-group"><span class="chord">C</span>                 <span class="chord">E7</span>                       <span class="chord">Am</span>
+You scared me to death but I&#x27;m wastin&#x27; my breath</pre>
+<pre class="block line-group">                  <span class="chord">F</span>             <span class="chord">Fm</span>
+&#x27;Cause you only listen to your fuckin&#x27; friends</pre>
+<pre class="block line-group"><span class="chord">C</span>                    <span class="chord">E7</span>
+I don&#x27;t relate to you</pre>
+<pre class="block line-group"><span class="chord">Am</span>                     <span class="chord">F</span>
+I don&#x27;t relate to you, no</pre>
+<pre class="block line-group">                  <span class="chord">C</span>               <span class="chord">E7</span>
+&#x27;Cause I&#x27;d never treat me this shitty</pre>
+<pre class="block line-group line-group-last">            <span class="chord">Am</span>            <span class="chord">F</span>
 You made me hate this city
  </pre>
-<pre class="block"><span class="section">[Bridge]</span>
+<pre class="block line-group"><span class="section">[Bridge]</span>
                   <span class="chord">C</span>                      <span class="chord">E7</span>
-And I don&#x27;t talk shit about you on the internet
-            <span class="chord">Am</span>              <span class="chord">F</span>
-Never told anyone anything bad
-                     <span class="chord">C</span>                        <span class="chord">E7</span>
-&#x27;Cause that shit&#x27;s embarrassing, you were my everything
-                 <span class="chord">Am</span>                       <span class="chord">F</span>
-And all that you did was make me fuckin&#x27; sad
-   <span class="chord">C</span>                             <span class="chord">E7</span>
-So don&#x27;t waste the time I don&#x27;t have
-    <span class="chord">Am</span>                         <span class="chord">F</span>
-And don&#x27;t try to make me feel bad
-                    <span class="chord">C</span>                         <span class="chord">E7</span>
-I could talk about every time that you showed up on time
-                 <span class="chord">Am</span>                          <span class="chord">F</span>
-But I&#x27;d have an empty line &#x27;cause you never did
-               <span class="chord">C</span>                     <span class="chord">E7</span>
-Never paid any mind to my mother or friends, so I
-              <span class="chord">Am</span>                          <span class="chord">F</span>
+And I don&#x27;t talk shit about you on the internet</pre>
+<pre class="block line-group">            <span class="chord">Am</span>              <span class="chord">F</span>
+Never told anyone anything bad</pre>
+<pre class="block line-group">                     <span class="chord">C</span>                        <span class="chord">E7</span>
+&#x27;Cause that shit&#x27;s embarrassing, you were my everything</pre>
+<pre class="block line-group">                 <span class="chord">Am</span>                       <span class="chord">F</span>
+And all that you did was make me fuckin&#x27; sad</pre>
+<pre class="block line-group">   <span class="chord">C</span>                             <span class="chord">E7</span>
+So don&#x27;t waste the time I don&#x27;t have</pre>
+<pre class="block line-group">    <span class="chord">Am</span>                         <span class="chord">F</span>
+And don&#x27;t try to make me feel bad</pre>
+<pre class="block line-group">                    <span class="chord">C</span>                         <span class="chord">E7</span>
+I could talk about every time that you showed up on time</pre>
+<pre class="block line-group">                 <span class="chord">Am</span>                          <span class="chord">F</span>
+But I&#x27;d have an empty line &#x27;cause you never did</pre>
+<pre class="block line-group">               <span class="chord">C</span>                     <span class="chord">E7</span>
+Never paid any mind to my mother or friends, so I</pre>
+<pre class="block line-group line-group-last">              <span class="chord">Am</span>                          <span class="chord">F</span>
 Shut them all out for you &#x27;cause I was a kid
  </pre>
-<pre class="block"><span class="section">[Outro]</span>
+<pre class="block line-group"><span class="section">[Outro]</span>
 <span class="chord">C</span>                      <span class="chord">E7</span>
-You ruined everything good
-        <span class="chord">Am</span>                     <span class="chord">F</span>
-Always said you were misunderstood
-<span class="chord">C</span>                        <span class="chord">E7</span>
-Made all my moments your own
-<span class="chord">Am</span>                     <span class="chord">F</span>
+You ruined everything good</pre>
+<pre class="block line-group">        <span class="chord">Am</span>                     <span class="chord">F</span>
+Always said you were misunderstood</pre>
+<pre class="block line-group"><span class="chord">C</span>                        <span class="chord">E7</span>
+Made all my moments your own</pre>
+<pre class="block line-group line-group-last"><span class="chord">Am</span>                     <span class="chord">F</span>
 Just fuckin&#x27; leave me alone
- 
 <span class="chord">C</span>  <span class="chord">E7</span>  <span class="chord">Am</span>  <span class="chord">F</span>  X3
 <span class="chord">C</span>  <span class="chord">E7</span>  <span class="chord">Am</span>  <span class="chord">F</span>  <span class="chord">Fm</span>  <span class="chord">C</span>  X1</pre>
     
-    <div class="tab-section"><pre class="block">e|-------3---3----3---3---0----|---1-------------|
+    <div class="tab-section"><pre class="block line-group">e|-------3---3----3---3---0----|---1-------------|
 B|-------0---0----0---0---0----|---0-------------|
 G|-------0---0----0---0---0----|---0-------------|
 D|-----------------------------|---0-------------|
 A|-----------------------------|-----------------|
-E|---3-------------------------|-----------------|</pre>
-<pre class="block">e|-------0--0-------0--0---|-------0--0--------0--0---|
+E|---3-------------------------|-----------------|
+
+e|-------0--0-------0--0---|-------0--0--------0--0---|
 B|-------1--1-------1--1---|-------1--1--------1--1---|
 G|-------0--0-------0--0---|-------0--0--------0--0---|
 D|-------2--2-------2--2---|-------2--2--------2--2---|
 A|---3---------------------|---3----------------------|
-E|---------------3---------|---------------3----------|
-    <span class="chord">E7</span>
+E|---------------3---------|---------------3----------|</pre>
+<pre class="block line-group">    <span class="chord">E7</span>
 e|-------0--0-------0--0---|-------0--0--------0--0---|
 B|-------0--0-------0--0---|-------0--0--------0--0---|
 G|-------1--1-------1--1---|-------1--1--------1--1---|
 D|-------0--0-------0--0---|-------0--0--------0--0---|
 A|---2---------------------|---2----------------------|
-E|---------------0---------|---------------0----------|
-    <span class="chord">Am</span>         <span class="chord">Am/E</span>           <span class="chord">Am</span>         <span class="chord">Am/E</span>
+E|---------------0---------|---------------0----------|</pre>
+<pre class="block line-group">    <span class="chord">Am</span>         <span class="chord">Am/E</span>           <span class="chord">Am</span>         <span class="chord">Am/E</span>
 e|-------0--0-------0--0---|-------0--0--------0--0---|
 B|-------1--1-------1--1---|-------1--1--------1--1---|
 G|-------2--2-------2--2---|-------2--2--------2--2---|
 D|-------2--2-------2--2---|-------2--2--------2--2---|
 A|---0---------------------|---0----------------------|
-E|---------------0---------|---------------0----------|
-    <span class="chord">Dm7b5</span>
+E|---------------0---------|---------------0----------|</pre>
+<pre class="block line-group line-group-last">    <span class="chord">Dm7b5</span>
 e|-------1--1-------1--1---|-------1--1--------1--1---|
 B|-------1--1-------1--1---|-------1--1--------1--1---|
 G|-------1--1-------1--1---|-------1--1--------1--1---|

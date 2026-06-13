@@ -620,13 +620,41 @@ def decide_layout(total_lines: int, max_width: int) -> str:
         return "multi"
 
 
+def is_chord_only_line(line: str) -> bool:
+    """True if line consists solely of [ch]...[/ch] chords and whitespace."""
+    stripped = re.sub(r"\[ch\](.*?)\[/ch\]", "", line)
+    return "[ch]" in line and not stripped.strip()
+
+
+def group_lines(lines: list) -> list:
+    """Group lines so a chord-only line stays together with the lyric lines
+    that follow it, until the next chord-only line. This keeps each group
+    intact when columns/pages break, so a column never starts mid-lyric."""
+    groups = []
+    current = []
+    for line in lines:
+        if is_chord_only_line(line) and current:
+            groups.append(current)
+            current = []
+        current.append(line)
+    if current:
+        groups.append(current)
+    return groups or [[]]
+
+
 def render_section(header: str, body: str, remove_blank_lines: bool = False) -> str:
     if remove_blank_lines:
         body = re.sub(r"\n[ \t]*\n", "\n", body)
-    escaped_body = html.escape(body.lstrip("\n"))
-    styled = re.sub(r"\[ch\](.*?)\[/ch\]", r'<span class="chord">\1</span>', escaped_body)
-    header_html = f'<span class="section">{html.escape(header)}</span>\n' if header else ""
-    return f'<pre class="block">{header_html}{styled}</pre>'
+    groups = group_lines(body.lstrip("\n").split("\n"))
+
+    blocks = []
+    for i, group in enumerate(groups):
+        escaped = html.escape("\n".join(group))
+        styled = re.sub(r"\[ch\](.*?)\[/ch\]", r'<span class="chord">\1</span>', escaped)
+        header_html = f'<span class="section">{html.escape(header)}</span>\n' if i == 0 and header else ""
+        cls = "block line-group" + (" line-group-last" if i == len(groups) - 1 else "")
+        blocks.append(f'<pre class="{cls}">{header_html}{styled}</pre>')
+    return "\n".join(blocks)
 
 
 def content_to_html(content: str) -> tuple:
@@ -706,6 +734,8 @@ def make_song_html(
       white-space: pre-wrap; word-break: break-word;
       margin-bottom: 6px;
     }}
+    pre.block.line-group {{ break-inside: avoid; margin-bottom: 0; }}
+    pre.block.line-group-last {{ margin-bottom: 6px; }}
     body.font-small pre.block {{ font-size: 8pt; }}{double_css}
     .tab-section {{ margin-top: 8mm; }}
     .chord {{ color: #b00020; font-weight: bold; cursor: help; }}

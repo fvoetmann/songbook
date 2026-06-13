@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Rediger en sang i sangbogen.
+Rediger eller tilføj en sang i sangbogen.
 
 Brug:
   python3 edit_song.py <søgeord>   # f.eks. "tender", "blur", "blur-tender"
+  python3 edit_song.py --new       # opret en ny sang fra bunden
 
 Format i editoren:
   Sektioner: [Verse 1], [Chorus], [Bridge]
@@ -20,7 +21,10 @@ from pathlib import Path
 from bs4 import BeautifulSoup, NavigableString
 
 sys.path.insert(0, str(Path(__file__).parent))
-from add_song import make_song_html, parse_chord_name, load_songs
+from add_song import (
+    make_song_html, parse_chord_name, load_songs, save_songs,
+    rebuild_index, slugify,
+)
 
 SONGS_DIR = Path("songs")
 
@@ -91,17 +95,61 @@ def ug_to_edit(content: str) -> str:
     return re.sub(r"\[ch\](.*?)\[/ch\]", r"[\1]", content)
 
 
+def split_inline_chords(line: str) -> list:
+    """Convert a line with inline [chord]ord markers into separate chord+lyric
+    lines, with chords positioned above the column they precede. Lines that
+    contain only chord markers (already-aligned chord lines) are left as-is."""
+    plain = []
+    chord_positions = []
+    i = 0
+    while i < len(line):
+        if line[i] == "[":
+            end = line.find("]", i)
+            if end != -1:
+                name = line[i + 1:end]
+                if parse_chord_name(name) is not None:
+                    chord_positions.append((len(plain), name))
+                    i = end + 1
+                    continue
+        plain.append(line[i])
+        i += 1
+
+    if not chord_positions:
+        return [line]
+
+    plain_text = "".join(plain)
+    if not plain_text.strip():
+        # Chord-only line (already aligned) – just tag the chords in place
+        def replace(m):
+            inner = m.group(1)
+            if parse_chord_name(inner) is not None:
+                return f"[ch]{inner}[/ch]"
+            return m.group(0)
+        return [re.sub(r"\[([^\]]+)\]", replace, line)]
+
+    segments = []
+    col = 0
+    for pos, name in chord_positions:
+        if pos > col:
+            segments.append(" " * (pos - col))
+            col = pos
+        elif pos < col:
+            segments.append(" ")
+            col += 1
+        segments.append(f"[ch]{name}[/ch]")
+        col += len(name)
+
+    return ["".join(segments), plain_text]
+
+
 def edit_to_ug(text: str) -> str:
     lines = [l for l in text.splitlines() if not l.startswith("#")]
-    text = "\n".join(lines)
 
-    def replace(m):
-        inner = m.group(1)
-        if parse_chord_name(inner) is not None:
-            return f"[ch]{inner}[/ch]"
-        return m.group(0)
+    out = []
+    for line in lines:
+        out.extend(split_inline_chords(line))
 
-    return re.sub(r"\[([^\]]+)\]", replace, text)
+    return "\n".join(out)
 
 
 def open_editor(text: str) -> str:
@@ -119,10 +167,60 @@ def open_editor(text: str) -> str:
         Path(fname).unlink(missing_ok=True)
 
 
+def create_new_song():
+    title = input("Titel: ").strip()
+    artist = input("Artist: ").strip()
+    if not title or not artist:
+        sys.exit("Titel og artist skal udfyldes.")
+    key = input("Toneart (kan være tom): ").strip()
+    capo = input("Capo (kan være tom): ").strip()
+
+    filename = f"{slugify(artist)}-{slugify(title)}.html"
+    filepath = SONGS_DIR / filename
+    if filepath.exists():
+        sys.exit(f"Filen findes allerede: {filepath} — brug 'edit_song.py <søgeord>' til at redigere den.")
+
+    template = (
+        f"# === {artist} – {title} ===\n"
+        f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
+        f"# Skriv akkorder direkte i teksten, fx: [Am]Her er linjen\n"
+        f"# Gem og luk editoren for at gemme. Tom fil annullerer.\n"
+        f"#\n"
+        f"[Verse 1]\n"
+    )
+
+    edited = open_editor(template)
+    content_lines = [l for l in edited.splitlines() if not l.startswith("#")]
+    new_content = "\n".join(content_lines).strip()
+
+    if not new_content:
+        print("Tom fil – ny sang annulleret.")
+        return
+
+    new_ug = edit_to_ug(new_content)
+    new_html, layout = make_song_html(title, artist, key, capo, new_ug, "")
+
+    SONGS_DIR.mkdir(exist_ok=True)
+    filepath.write_text(new_html, encoding="utf-8")
+
+    songs = load_songs()
+    songs.append({"title": title, "artist": artist, "file": filename, "source": "manuel"})
+    save_songs(songs)
+    rebuild_index(songs)
+
+    layout_msg = {"single": "1 kolonne", "double": "2 kolonner", "multi": "flere sider"}
+    print(f"Gemt: {filepath}  (layout: {layout_msg[layout]})")
+    print("Indeks opdateret.")
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
         sys.exit(1)
+
+    if sys.argv[1] == "--new":
+        create_new_song()
+        return
 
     query = " ".join(sys.argv[1:])
     song, html_path = find_song(query)
