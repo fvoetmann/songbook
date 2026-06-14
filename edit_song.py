@@ -91,6 +91,26 @@ def html_to_content(html_path: Path):
     return title, artist, key, capo, url, content
 
 
+def build_header(title: str, artist: str, key: str, capo: str) -> str:
+    return (
+        f"# Titel: {title}\n"
+        f"# Artist: {artist}\n"
+        f"# Toneart: {key}\n"
+        f"# Capo: {capo}\n"
+        f"#\n"
+    )
+
+
+def parse_header(text: str) -> dict:
+    """Extract Titel/Artist/Toneart/Capo from '# Felt: værdi' lines."""
+    fields = {}
+    for line in text.splitlines():
+        m = re.match(r"#\s*(Titel|Artist|Toneart|Capo)\s*:\s*(.*)", line, re.IGNORECASE)
+        if m:
+            fields[m.group(1).lower()] = m.group(2).strip()
+    return fields
+
+
 def ug_to_edit(content: str) -> str:
     return re.sub(r"\[ch\](.*?)\[/ch\]", r"[\1]", content)
 
@@ -181,21 +201,32 @@ def create_new_song():
         sys.exit(f"Filen findes allerede: {filepath} — brug 'edit_song.py <søgeord>' til at redigere den.")
 
     template = (
-        f"# === {artist} – {title} ===\n"
-        f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
-        f"# Skriv akkorder direkte i teksten, fx: [Am]Her er linjen\n"
-        f"# Gem og luk editoren for at gemme. Tom fil annullerer.\n"
-        f"#\n"
-        f"[Verse 1]\n"
+        build_header(title, artist, key, capo)
+        + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
+        + f"# Skriv akkorder direkte i teksten, fx: [Am]Her er linjen\n"
+        + f"# Gem og luk editoren for at gemme. Tom fil annullerer.\n"
+        + f"#\n"
+        + f"[Verse 1]\n"
     )
 
     edited = open_editor(template)
+    header = parse_header(edited)
+    title = header.get("titel", title) or title
+    artist = header.get("artist", artist) or artist
+    key = header.get("toneart", key)
+    capo = header.get("capo", capo)
+
     content_lines = [l for l in edited.splitlines() if not l.startswith("#")]
     new_content = "\n".join(content_lines).strip()
 
     if not new_content:
         print("Tom fil – ny sang annulleret.")
         return
+
+    filename = f"{slugify(artist)}-{slugify(title)}.html"
+    filepath = SONGS_DIR / filename
+    if filepath.exists():
+        sys.exit(f"Filen findes allerede: {filepath} — brug 'edit_song.py <søgeord>' til at redigere den.")
 
     new_ug = edit_to_ug(new_content)
     new_html, layout = make_song_html(title, artist, key, capo, new_ug, "")
@@ -234,14 +265,20 @@ def main():
     original_edit = ug_to_edit(ug_content)
 
     edit_text = (
-        f"# === {artist} – {title} ===\n"
-        f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
-        f"# Gem og luk editoren for at gemme. Slet ALT indhold for at annullere.\n"
-        f"#\n"
+        build_header(title, artist, key, capo)
+        + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
+        + f"# Gem og luk editoren for at gemme. Slet ALT indhold for at annullere.\n"
+        + f"#\n"
         + original_edit
     )
 
     edited = open_editor(edit_text)
+
+    header = parse_header(edited)
+    new_title = header.get("titel", title) or title
+    new_artist = header.get("artist", artist) or artist
+    new_key = header.get("toneart", key)
+    new_capo = header.get("capo", capo)
 
     content_lines = [l for l in edited.splitlines() if not l.startswith("#")]
     new_content = "\n".join(content_lines).strip()
@@ -250,13 +287,35 @@ def main():
         print("Tom fil – ingen ændringer gemt.")
         return
 
-    if new_content == original_edit.strip():
+    meta_changed = (new_title, new_artist, new_key, new_capo) != (title, artist, key, capo)
+    if new_content == original_edit.strip() and not meta_changed:
         print("Ingen ændringer.")
         return
 
     new_ug = edit_to_ug(edited)
-    new_html, layout = make_song_html(title, artist, key, capo, new_ug, url)
+    new_html, layout = make_song_html(new_title, new_artist, new_key, new_capo, new_ug, url)
+
+    new_filename = f"{slugify(new_artist)}-{slugify(new_title)}.html"
+    new_path = SONGS_DIR / new_filename
+
+    if new_filename != song["file"]:
+        if new_path.exists():
+            sys.exit(f"Kan ikke omdøbe – filen findes allerede: {new_path}")
+        html_path.unlink()
+        html_path = new_path
+
     html_path.write_text(new_html, encoding="utf-8")
+
+    if (new_title, new_artist, new_filename) != (title, artist, song["file"]):
+        songs = load_songs()
+        for s in songs:
+            if s["file"] == song["file"]:
+                s["title"] = new_title
+                s["artist"] = new_artist
+                s["file"] = new_filename
+                break
+        save_songs(songs)
+        rebuild_index(songs)
 
     layout_msg = {"single": "1 kolonne", "double": "2 kolonner", "multi": "flere sider"}
     print(f"Gemt: {html_path}  (layout: {layout_msg[layout]})")

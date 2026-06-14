@@ -15,6 +15,7 @@ import sys
 import json
 import re
 import html
+import hashlib
 from pathlib import Path
 from datetime import date
 
@@ -871,14 +872,27 @@ def process_file(ug_path: Path, url: str = "") -> None:
     filepath = SONGS_DIR / filename
 
     song_html, layout = make_song_html(title, artist, key, capo, content, url)
-    filepath.write_text(song_html, encoding="utf-8")
+    new_hash = hashlib.sha256(song_html.encode("utf-8")).hexdigest()
     layout_msg = {"single": "1 kolonne", "double": "2 kolonner", "multi": "flere sider"}
-    print(f"  Layout:  {layout_msg[layout]}")
-    print(f"  Gemt:    {filepath}")
 
     songs = load_songs()
     existing = next((s for s in songs if s["file"] == filename), None)
-    entry = {"title": title, "artist": artist, "file": filename, "source": ug_path.name}
+
+    if filepath.exists() and existing and existing.get("hash"):
+        current_hash = hashlib.sha256(filepath.read_bytes()).hexdigest()
+        if current_hash != existing["hash"]:
+            new_path = SONGS_DIR / f"{filepath.stem}_UGversion.html"
+            new_path.write_text(song_html, encoding="utf-8")
+            print(f"  ADVARSEL: {filepath} er redigeret manuelt siden sidst.")
+            print(f"  Den nye version er gemt som {new_path} i stedet for at overskrive.")
+            print(f"  Layout:  {layout_msg[layout]}")
+            return
+
+    filepath.write_text(song_html, encoding="utf-8")
+    print(f"  Layout:  {layout_msg[layout]}")
+    print(f"  Gemt:    {filepath}")
+
+    entry = {"title": title, "artist": artist, "file": filename, "source": ug_path.name, "hash": new_hash}
     if existing:
         existing.update(entry)
     else:

@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
-  <title>Gods Eller Guld – Troels Trier</title>
+  <title>Lather – Jefferson Airplane</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: monospace; background: #ddd; padding: 24px; }
@@ -29,6 +29,7 @@
     pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
     pre.block.line-group-last { margin-bottom: 6px; }
     body.font-small pre.block { font-size: 8pt; }
+    .chords { column-count: 2; column-gap: 8mm; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -67,7 +68,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Ab":[[4,6,6,5,4,4],[4,6,6,5,4,-1],[-1,-1,6,5,4,4],[4,6,6,5,-1,-1],[-1,3,1,1,1,-1],[-1,6,6,5,4,4]],"Bbm":[[-1,1,3,3,2,1],[-1,1,3,3,2,-1],[6,8,8,6,6,6],[6,8,8,6,6,-1],[-1,-1,8,6,6,6],[6,8,8,6,-1,-1]],"Eb":[[-1,6,5,0,4,6],[-1,6,8,0,8,6],[-1,6,8,8,8,6],[-1,6,8,0,8,-1],[-1,6,8,8,8,-1],[3,1,1,0,-1,-1]],"Fm":[[1,3,3,1,1,1],[1,3,3,1,1,-1],[-1,-1,3,1,1,1],[1,3,3,1,-1,-1],[-1,3,3,1,1,1],[-1,3,3,1,1,-1]],"Dbm":[[-1,4,6,6,5,0],[-1,4,6,6,5,4],[-1,4,6,6,5,-1],[-1,-1,2,1,2,0],[0,4,6,6,5,0],[0,4,6,6,5,4]],"Cm":[[-1,3,1,0,1,3],[-1,3,1,0,1,-1],[-1,3,5,0,4,3],[-1,3,5,5,4,3],[-1,3,5,0,4,-1],[-1,3,5,5,4,-1]],"Db":[[-1,4,6,6,6,4],[-1,4,6,6,6,-1],[-1,-1,3,1,2,1],[4,4,6,6,6,4],[4,4,6,6,6,-1],[-1,-1,6,6,6,4]]},"ukulele":{"Ab":[[1,3,4,3],[5,3,4,3],[5,3,4,6],[5,0,4,6],[1,0,4,3],[5,0,4,3]],"Bbm":[[3,1,1,1],[3,1,1,4],[3,5,6,4],[6,5,6,4]],"Eb":[[0,3,3,1],[3,3,3,1],[0,3,6,6],[3,3,3,6],[0,7,6,6],[0,3,3,6]],"Fm":[[1,0,1,3],[5,5,4,3]],"Dbm":[[1,1,0,4],[1,4,0,4],[1,4,4,4],[6,4,4,4],[6,4,4,7],[6,4,0,4]],"Cm":[[0,0,3,6],[0,3,3,3],[5,0,3,6],[5,3,3,3],[5,3,3,6]],"Db":[[1,1,1,4],[6,5,4,4]]},"mandolin":{"Ab":[[1,1,3,4],[1,1,3,-1],[-1,1,3,4],[5,6,6,4],[5,6,6,-1],[5,-1,6,4]],"Bbm":[[3,3,4,1],[3,3,4,6],[3,3,4,-1],[6,3,4,6],[-1,3,4,6],[3,-1,4,1]],"Eb":[[-1,1,1,3],[0,1,1,3],[3,1,1,3],[0,1,1,-1],[3,5,6,3],[3,5,6,6]],"Fm":[[-1,3,3,4],[1,3,3,1],[1,3,3,4],[1,3,3,-1],[5,3,3,4],[1,-1,3,1]],"Dbm":[[6,6,4,0],[6,6,7,4],[6,6,7,0],[6,6,7,-1],[1,2,4,0],[1,2,4,4]],"Cm":[[5,5,6,3],[5,5,6,-1],[0,1,3,3],[0,1,3,-1],[-1,1,3,3],[5,-1,6,3]],"Db":[[6,3,4,4],[1,3,4,1],[1,3,4,4],[1,3,4,-1],[-1,3,4,4],[6,3,-1,4]]},"banjo":{"Ab":[[1,1,1,1,1],[-1,1,1,1,1],[1,1,1,1,-1],[-1,-1,1,1,1],[-1,1,1,1,-1],[1,1,1,-1,-1]],"Bbm":[[3,3,2,3,3],[-1,3,2,3,3],[3,3,2,3,-1],[-1,-1,2,3,3],[-1,3,2,3,-1],[3,3,2,-1,-1]],"Eb":[[1,0,4,1,3],[1,3,4,1,0],[-1,0,4,1,3],[-1,3,4,1,0],[5,0,4,5,3],[5,3,4,5,0]],"Fm":[[3,1,1,3,1],[-1,1,1,3,1],[3,1,1,3,-1],[-1,-1,1,3,1],[-1,1,1,3,-1],[3,1,1,-1,-1]],"Dbm":[[2,1,2,2,1],[-1,1,2,2,1],[2,1,2,2,-1],[-1,-1,2,2,1],[-1,1,2,2,-1],[2,1,2,-1,-1]],"Cm":[[1,0,1,1,0],[-1,0,1,1,0],[1,0,1,1,-1],[-1,-1,1,1,0],[-1,0,1,1,-1],[1,0,1,-1,-1]],"Db":[[3,1,2,3,1],[-1,1,2,3,1],[3,1,2,3,-1],[-1,-1,2,3,1],[-1,1,2,3,-1],[3,1,2,-1,-1]]}};
+    var DBS = {"guitar":{"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"F#":[[2,4,4,3,2,2],[2,4,4,3,2,-1],[-1,-1,4,3,2,2],[2,4,4,3,-1,-1],[-1,4,4,3,2,2],[-1,4,4,3,2,-1]]},"ukulele":{"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"F#":[[3,1,2,1],[3,1,2,4],[3,6,6,4],[6,6,6,4]]},"mandolin":{"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"F#":[[-1,4,4,6],[3,4,4,2],[3,4,4,6],[3,4,4,-1],[6,4,4,6],[3,-1,4,2]]},"banjo":{"Am":[[2,2,1,2,2],[-1,2,1,2,2],[2,2,1,2,-1],[-1,-1,1,2,2],[-1,2,1,2,-1],[2,2,1,-1,-1]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[2,0,1,2,-1],[-1,-1,1,2,0],[-1,0,1,2,-1],[2,0,1,-1,-1]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[0,0,0,0,-1],[-1,-1,0,0,0],[-1,0,0,0,-1],[0,0,0,-1,-1]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,0,0,2,4],[2,4,0,2,0],[2,0,0,5,4]],"D":[[0,2,3,4,2],[4,2,3,0,2],[4,2,3,4,2],[0,2,3,4,-1],[4,2,3,0,-1],[-1,2,3,4,2]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]],"A":[[2,2,2,2,2],[-1,2,2,2,2],[2,2,2,2,-1],[-1,-1,2,2,2],[-1,2,2,2,-1],[2,2,2,-1,-1]],"E":[[2,1,0,2,1],[2,1,0,2,4],[2,4,0,2,1],[-1,1,0,2,1],[2,1,0,2,-1],[-1,1,0,2,4]],"Bm":[[0,4,3,4,4],[4,4,3,0,4],[4,4,3,4,4],[0,4,3,4,-1],[4,4,3,0,-1],[-1,4,3,4,4]],"F#m":[[4,2,2,4,2],[-1,2,2,4,2],[4,2,2,4,-1],[-1,-1,2,4,2],[-1,2,2,4,-1],[4,2,2,-1,-1]],"F#":[[4,3,2,4,3],[-1,3,2,4,3],[4,3,2,4,-1],[-1,-1,2,4,3],[-1,3,2,4,-1],[4,3,2,-1,-1]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     function baseFret(f) {
@@ -266,75 +267,84 @@
 </head>
 <body>
   <div class="page">
-    <h1>Gods Eller Guld</h1>
-    <h2>Troels Trier</h2>
-    <div class="meta">Toneart: A &nbsp;·&nbsp; Tilføjet: 14.06.2026</div>
-    
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">Ab</span> <span class="chord">Bbm</span> <span class="chord">Eb</span> <span class="chord">Fm</span> <span class="chord">Bbm</span> <span class="chord">Dbm</span> <span class="chord">Eb</span> <span class="chord">Eb</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-    <span class="chord">Fm</span>                      <span class="chord">Cm</span>              <span class="chord">Db</span>                 <span class="chord">Ab</span>
-Fra barndommen husker jeg drengen Per, han sad ved landsbyens gadekær</pre>
-<pre class="block line-group">     <span class="chord">Cm</span>                    <span class="chord">Fm</span>                   <span class="chord">Bbm</span>            <span class="chord">Eb</span>
-Hans tøj var snavset, hans hår fuld af lus, han kom kommunens fattighus</pre>
-<pre class="block line-group">    <span class="chord">Fm</span>                  <span class="chord">Cm</span>                <span class="chord">Db</span>                 <span class="chord">Ab</span>
-Han længtes tit mod den anden bred, mod Brugsens Lis så hans kærlighed</pre>
-<pre class="block line-group line-group-last">       <span class="chord">Bbm</span>                  <span class="chord">Eb</span>                 <span class="chord">Bbm</span>                  <span class="chord">Eb</span>
-Hendes hår var gyldent og kjolen var smuk, hun ænsede ikke drengens suk åhåhåhåh</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Ab</span>         <span class="chord">Fm</span>                 <span class="chord">Bbm</span>           <span class="chord">Eb</span>
-Lykken er hverken gods eller guld, men den ligner</pre>
-<pre class="block line-group">     <span class="chord">Fm</span>                <span class="chord">Bbm</span>                   <span class="chord">Bbm</span>                 <span class="chord">Eb</span>
-For den som er fattig græder, og den som har røven fuld går og griner</pre>
-<pre class="block line-group"><span class="chord">Ab</span>        <span class="chord">Cm</span>                   <span class="chord">Db</span>                     <span class="chord">Eb</span>
-Lykken er ikke til salg, men umulig at få hvis du er flad</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Fm</span>             <span class="chord">Bbm</span>              <span class="chord">Bbm</span>    <span class="chord">Dbm</span> <span class="chord">Eb</span>  <span class="chord">Eb</span>
-                                         *      *       
-Så hvis lykken hverken er gods eller guld, så følges de oftest ad</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Fm</span>                 <span class="chord">Cm</span>              <span class="chord">Db</span>                          <span class="chord">Ab</span>
-Per blev voksen og rejste bort, og slog sig på tips og han var vild med sport</pre>
-<pre class="block line-group">   <span class="chord">Cm</span>                      <span class="chord">Fm</span>                <span class="chord">Bbm</span>            <span class="chord">Eb</span>
-En skønne dag vandt han en kvart million, og købte en Esso-tankstation</pre>
-<pre class="block line-group"><span class="chord">Fm</span>           <span class="chord">Cm</span>             <span class="chord">Db</span>               <span class="chord">Ab</span>
-Lavprissupermarked kom, og snart var brugsforeningen tom</pre>
-<pre class="block line-group line-group-last">        <span class="chord">Bbm</span>                     <span class="chord">Eb</span>               <span class="chord">Bbm</span>                        <span class="chord">Eb</span>
-Det var slut med spejderhagl og kirsebærvin, men Per solgte mer’ og mer’ benzin åhåh</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Ab</span>         <span class="chord">Fm</span>                 <span class="chord">Bbm</span>           <span class="chord">Eb</span>
-Lykken er hverken gods eller guld, men den ligner</pre>
-<pre class="block line-group">     <span class="chord">Fm</span>                <span class="chord">Bbm</span>                   <span class="chord">Bbm</span>                 <span class="chord">Eb</span>
-For den som er fattig græder, og den som har røven fuld går og griner</pre>
-<pre class="block line-group"><span class="chord">Ab</span>        <span class="chord">Cm</span>                   <span class="chord">Db</span>                     <span class="chord">Eb</span>
-Lykken er ikke til salg, men umulig at få hvis du er flad</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Fm</span>             <span class="chord">Bbm</span>              <span class="chord">Bbm</span>    <span class="chord">Dbm</span> <span class="chord">Eb</span>  <span class="chord">Eb</span>
-                                         *      *       
-Så hvis lykken hverken er gods eller guld, så følges de oftest ad</pre>
-<pre class="block line-group line-group-last"><span class="section">[Instrumental]</span>
-<span class="chord">Ab</span> <span class="chord">Bbm</span> <span class="chord">Eb</span> <span class="chord">Fm</span> <span class="chord">Bbm</span> <span class="chord">Dbm</span> <span class="chord">Eb</span> <span class="chord">Eb</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-  <span class="chord">Fm</span>                       <span class="chord">Cm</span>            <span class="chord">Db</span>                   <span class="chord">Ab</span>
-Snart bygged’ Per som blev millionær, en villa ved landsbyens gadekær</pre>
-<pre class="block line-group">    <span class="chord">Cm</span>             <span class="chord">Fm</span>                <span class="chord">Bbm</span>                <span class="chord">Eb</span>
-Med udsigt til den anden bred, hvor Brugsen den er revet ned</pre>
-<pre class="block line-group"><span class="chord">Fm</span>                <span class="chord">Cm</span>                 <span class="chord">Db</span>            <span class="chord">Ab</span>
-Der kan man se en gravsten stå, over Lis som døde fattig og grå</pre>
-<pre class="block line-group line-group-last">  <span class="chord">Bbm</span>                  <span class="chord">Eb</span>        <span class="chord">Bbm</span>                <span class="chord">Eb</span>
-I jorden ligger hendes lig, mens Per er lykkelig og rig åhåhåh</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Ab</span>         <span class="chord">Fm</span>                 <span class="chord">Bbm</span>           <span class="chord">Eb</span>
-Lykken er hverken gods eller guld, men den ligner</pre>
-<pre class="block line-group">     <span class="chord">Fm</span>                <span class="chord">Bbm</span>                   <span class="chord">Bbm</span>                 <span class="chord">Eb</span>
-For den som er fattig græder, og den som har røven fuld går og griner</pre>
-<pre class="block line-group"><span class="chord">Ab</span>        <span class="chord">Cm</span>                   <span class="chord">Db</span>                     <span class="chord">Eb</span>
-Lykken er ikke til salg, men umulig at få hvis du er flad</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Fm</span>             <span class="chord">Bbm</span>              <span class="chord">Bbm</span>    <span class="chord">Dbm</span> <span class="chord">Eb</span>  <span class="chord">Eb</span>
-                                         *      *       
-Så hvis lykken hverken er gods eller guld, så følges de oftest ad     ja</pre>
-<pre class="block line-group line-group-last"><span class="section">[Instrumental]</span>
-<span class="chord">Ab</span> <span class="chord">Bbm</span> <span class="chord">Eb</span> <span class="chord">Fm</span> <span class="chord">Bbm</span> <span class="chord">Dbm</span> <span class="chord">Eb</span> <span class="chord">Eb</span>
-         x3</pre>
-    
+    <h1>Lather</h1>
+    <h2>Jefferson Airplane</h2>
+    <div class="meta">Toneart: Cm &nbsp;·&nbsp; Tilføjet: 13.06.2026</div>
+    <div class="chords">
+    <pre class="block line-group">Lather chords
+Jefferson Airplane  1968
+https://en.wikipedia.org/wiki/Lather_(song)
+Capo III *</pre>
+<pre class="block line-group"><span class="chord">Am</span> <span class="chord">C</span> <span class="chord">G</span></pre>
+<pre class="block line-group"><span class="chord">Am</span>         <span class="chord">C</span>            <span class="chord">G</span>
+Lather was thirty years old today,</pre>
+<pre class="block line-group">     <span class="chord">Em</span>        <span class="chord">D</span>          <span class="chord">C</span>
+they took away all of his toys.</pre>
+<pre class="block line-group">    <span class="chord">Am</span>          <span class="chord">C</span>         <span class="chord">G</span>
+His mother sent newspaper clippings to him,</pre>
+<pre class="block line-group">          <span class="chord">Em</span>                <span class="chord">D</span>             <span class="chord">C</span>
+about his old friends who&#x27;d stopped being boys.</pre>
+<pre class="block line-group">          <span class="chord">Em</span>         <span class="chord">D</span>           <span class="chord">F</span>             <span class="chord">D</span>
+There was Harwitz E. Green, just turned thirty three,</pre>
+<pre class="block line-group">    <span class="chord">Am</span>            <span class="chord">Em</span>           <span class="chord">D</span>
+his leather chair waits at the bank.</pre>
+<pre class="block line-group">    <span class="chord">Em</span>          <span class="chord">D</span>             <span class="chord">F</span>           <span class="chord">D</span>
+And Sargent Dow Jones, twenty seven years old,</pre>
+<pre class="block line-group"><span class="chord">Am</span>             <span class="chord">Em</span>       <span class="chord">D</span>
+commanding his very own tank. </pre>
+<pre class="block line-group">    <span class="chord">C</span>            <span class="chord">D</span>          <span class="chord">Em</span>
+But Lather still finds it a nice thing to do,</pre>
+<pre class="block line-group">   <span class="chord">C</span>         <span class="chord">D</span>           <span class="chord">Em</span>
+to lie about nude in the sand</pre>
+<pre class="block line-group">        <span class="chord">C</span>           <span class="chord">D</span>              <span class="chord">Em</span>
+Drawing pictures of mountains that look like bumps,</pre>
+<pre class="block line-group">    <span class="chord">D</span>                          <span class="chord">Am</span>    <span class="chord">A</span>
+and thrashing the air with his hands.  </pre>
+<pre class="block line-group">    <span class="chord">A</span>                    <span class="chord">G</span>
+But wait, oh Lather&#x27;s productive you know,</pre>
+<pre class="block line-group">   <span class="chord">A</span>            <span class="chord">G</span>         <span class="chord">A</span>
+he produces the finest of sound</pre>
+<pre class="block line-group">                             <span class="chord">G</span>
+Putting drumsticks on either side of his nose,</pre>
+<pre class="block line-group"><span class="chord">A</span>            <span class="chord">G</span>             <span class="chord">A</span>     <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>  <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>
+snorting the best licks in town; </pre>
+<pre class="block line-group">    <span class="chord">E</span>
+but that&#x27;s all over</pre>
+<pre class="block line-group"><span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>  <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span></pre>
+<pre class="block line-group"><span class="chord">Am</span>         <span class="chord">C</span>            <span class="chord">G</span>
+Lather was thirty years old today,</pre>
+<pre class="block line-group">    <span class="chord">Em</span>          <span class="chord">D</span>             <span class="chord">C</span>
+and Lather came foam from his tongue.</pre>
+<pre class="block line-group">   <span class="chord">Am</span>           <span class="chord">C</span>             <span class="chord">G</span>
+He looked at me eyes wide and plainly said,</pre>
+<pre class="block line-group">      <span class="chord">Em</span>            <span class="chord">D</span>         <span class="chord">C</span>
+is it true that I&#x27;m no longer young? (mommy?)</pre>
+<pre class="block line-group">        <span class="chord">Em</span>       <span class="chord">D</span>        <span class="chord">F</span>  <span class="chord">D</span>
+And the children call him famous,</pre>
+<pre class="block line-group">         <span class="chord">Am</span>      <span class="chord">Em</span>     <span class="chord">D</span>
+what the old men call insane</pre>
+<pre class="block line-group">    <span class="chord">Em</span>  <span class="chord">D</span>             <span class="chord">F</span>   <span class="chord">D</span>
+And sometimes he&#x27;s so nameless,</pre>
+<pre class="block line-group">        <span class="chord">Am</span>     <span class="chord">Em</span>          <span class="chord">D</span>
+that he hardly knows which game to play;</pre>
+<pre class="block line-group">      <span class="chord">C</span>
+which words to say</pre>
+<pre class="block line-group">      <span class="chord">C</span>           <span class="chord">D</span>          <span class="chord">Em</span>
+And I should have told him, &quot;no, you&#x27;re not old.&quot; </pre>
+<pre class="block line-group">      <span class="chord">C</span>           <span class="chord">D</span>          <span class="chord">Em</span>  <span class="chord">D</span>             <span class="chord">Am</span>
+And I should have let him go on, smiling, baby wide.</pre>
+<pre class="block line-group line-group-last"><span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>  <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>
+* Alternate:
+Capo I
+<span class="chord">Am</span> = <span class="chord">Bm</span>
+<span class="chord">C</span>  = <span class="chord">D</span>
+<span class="chord">G</span>  = <span class="chord">A</span>
+<span class="chord">Em</span> = <span class="chord">F#m</span>
+<span class="chord">D</span>  = <span class="chord">E</span>
+<span class="chord">F</span>  = <span class="chord">G</span>
+<span class="chord">E</span>  = <span class="chord">F#</span>
+Set8</pre>
+    </div>
     
   </div>
 </body>
