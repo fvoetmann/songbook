@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Engel i min seng – Souvenirs</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: monospace; background: #ddd; padding: 24px; }
+    .page {
+      background: white;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 12mm 14mm;
+    }
+    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 3px; }
+    h2 { font-size: 10pt; font-family: sans-serif; font-weight: normal; color: #555; margin-bottom: 8px; }
+    .meta {
+      font-size: 7.5pt; font-family: sans-serif; color: #999;
+      border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
+    }
+    .meta a { color: #999; }
+    pre.block {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 9pt; line-height: 1.45;
+      white-space: pre-wrap; word-break: break-word;
+      margin-bottom: 6px;
+    }
+    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
+    pre.block.line-group-last { margin-bottom: 6px; }
+    body.font-small pre.block { font-size: 8pt; }
+    .tab-section { margin-top: 8mm; }
+    .chord { color: #b00020; font-weight: bold; cursor: help; }
+    .section { color: #777; font-style: italic; font-weight: bold; }
+    @media print {
+      body { background: white; padding: 0; }
+      .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
+      @page { size: A4; margin: 12mm 14mm; }
+      pre.block { break-inside: avoid; }
+      .tab-section { break-before: page; }
+    }
+  </style>
+  <style>
+    #chord-tip {
+      position: fixed; z-index: 9999;
+      background: white; border: 1px solid #ccc;
+      border-radius: 5px; padding: 5px 7px 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      pointer-events: none; text-align: center;
+    }
+    .tip-name { font-family: sans-serif; font-size: 9pt; font-weight: bold; color: #333; margin-bottom: 2px; }
+    #inst-bar {
+      position: fixed; bottom: 16px; right: 16px; z-index: 9998;
+      background: white; border: 1px solid #ccc; border-radius: 5px;
+      padding: 4px 8px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+      font-family: sans-serif; font-size: 8pt;
+      display: flex; gap: 2px; align-items: center;
+    }
+    #inst-bar span { color: #aaa; margin-right: 4px; }
+    .inst-btn {
+      border: none; background: none; cursor: pointer;
+      padding: 2px 6px; font-size: 8pt; font-family: sans-serif;
+      border-radius: 3px; color: #555;
+    }
+    .inst-btn.active { font-weight: bold; color: #b00020; }
+    @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
+  </style>
+  <script>
+  (function() {
+    var DBS = {"guitar":{"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]]},"ukulele":{"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]]},"mandolin":{"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]]},"banjo":{"Dm":[[0,2,3,3,2],[3,2,3,0,2],[3,2,3,3,2],[0,2,3,3,-1],[3,2,3,0,-1],[-1,2,3,3,2]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[2,0,1,2,-1],[-1,-1,1,2,0],[-1,0,1,2,-1],[2,0,1,-1,-1]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]],"Bb":[[0,3,3,3,3],[0,3,6,0,3],[3,3,3,0,3],[0,3,6,3,3],[3,3,3,3,3],[3,3,6,0,3]],"Am":[[2,2,1,2,2],[-1,2,1,2,2],[2,2,1,2,-1],[-1,-1,1,2,2],[-1,2,1,2,-1],[2,2,1,-1,-1]]}};
+    var inst = 'guitar';
+    var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+    function baseFret(f) {
+      var pos = f.filter(function(x) { return x > 0; });
+      if (!pos.length) return 1;
+      var m = Math.min.apply(null, pos);
+      return (f.some(function(x) { return x === 0; }) || m <= 2) ? 1 : m;
+    }
+    function makeSVG(frets) {
+      var nS = frets.length, sw = nS <= 4 ? 14 : 10;
+      var base = baseFret(frets), nF = 4, fh = 13;
+      var gw = sw * (nS - 1), gh = fh * nF, ox = 12, oy = 20;
+      var hasLbl = base > 2, nut = base <= 2 ? 3 : 0;
+      var tw = gw + ox * 2 + (hasLbl ? 20 : 0), th = gh + oy + 6;
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + tw + '" height="' + th + '">';
+      s += '<rect width="' + tw + '" height="' + th + '" fill="white"/>';
+      for (var i = 0; i < nS; i++) {
+        var x = ox + i * sw, fi = frets[i];
+        if (fi === -1)
+          s += '<text x="' + x + '" y="' + (oy-5) + '" text-anchor="middle" font-size="9" font-family="sans-serif" fill="#aaa">x</text>';
+        else if (fi === 0)
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="3.5" fill="none" stroke="#aaa" stroke-width="1.2"/>';
+        else
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="2.5" fill="#b00020"/>';
+      }
+      if (nut)
+        s += '<rect x="' + ox + '" y="' + oy + '" width="' + gw + '" height="' + nut + '" fill="#333" rx="1"/>';
+      else
+        s += '<text x="' + (ox+gw+4) + '" y="' + (oy+fh*0.75) + '" font-size="8" font-family="sans-serif" font-weight="bold" fill="#555">' + base + 'fr</text>';
+      var y0 = oy + nut;
+      for (var r = 0; r <= nF; r++) {
+        var y = y0 + r * fh;
+        s += '<line x1="' + ox + '" y1="' + y + '" x2="' + (ox+gw) + '" y2="' + y + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var j = 0; j < nS; j++) {
+        var xs = ox + j * sw;
+        s += '<line x1="' + xs + '" y1="' + y0 + '" x2="' + xs + '" y2="' + (y0+gh) + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var k = 0; k < nS; k++) {
+        var fv = frets[k], row = fv - base;
+        if (fv > 0 && row >= 0 && row < nF) {
+          var cx = ox + k * sw, cy = y0 + row * fh + fh / 2;
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (fh*0.38) + '" fill="#b00020"/>';
+        }
+      }
+      return s + '</svg>';
+    }
+    function dist(a, b) {
+      var d = 0;
+      for (var i = 0; i < a.length; i++) {
+        if (a[i] >= 0 && b[i] >= 0) d += Math.abs(a[i] - b[i]);
+        else if (a[i] !== b[i]) d += 2;
+      }
+      return d;
+    }
+    function best(vs, prev) {
+      if (!prev || vs.length === 1) return vs[0];
+      var pick = vs[0], d = dist(pick, prev);
+      for (var i = 1; i < vs.length; i++) {
+        var di = dist(vs[i], prev);
+        if (di < d) { pick = vs[i]; d = di; }
+      }
+      return pick;
+    }
+    function lookup(name) {
+      var db = DBS[inst] || {};
+      if (db[name]) return db[name];
+      var sl = name.indexOf('/');
+      return (sl > 0 && db[name.slice(0,sl)]) ? db[name.slice(0,sl)] : null;
+    }
+    function prevEl(el) {
+      var block = el.closest('pre.block');
+      if (!block) return null;
+      var all = Array.from(block.querySelectorAll('.chord'));
+      var i = all.indexOf(el);
+      return i > 0 ? all[i - 1] : null;
+    }
+    var tip = null;
+    function show(el, name) {
+      var vs = lookup(name);
+      if (!vs) return;
+      var prev = prevEl(el);
+      var prevF = (prev && shown) ? shown.get(prev) : null;
+      var frets = best(vs, prevF || null);
+      if (shown) shown.set(el, frets);
+      hide();
+      tip = document.createElement('div');
+      tip.id = 'chord-tip';
+      var lbl = document.createElement('div');
+      lbl.className = 'tip-name';
+      lbl.textContent = name;
+      tip.appendChild(lbl);
+      var d = document.createElement('div');
+      d.innerHTML = makeSVG(frets);
+      tip.appendChild(d);
+      document.body.appendChild(tip);
+      var r = el.getBoundingClientRect(), tw2 = tip.offsetWidth, th2 = tip.offsetHeight;
+      var left = r.left + (r.width - tw2) / 2, top = r.top - th2 - 6;
+      if (top < 4) top = r.bottom + 6;
+      left = Math.max(4, Math.min(left, window.innerWidth - tw2 - 4));
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+    }
+    function hide() { if (tip) { tip.remove(); tip = null; } }
+    function setInst(name) {
+      inst = name;
+      if (shown) shown = new WeakMap();
+      hide();
+      document.querySelectorAll('.inst-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.inst === name);
+      });
+    }
+    function setFont(size) {
+      document.body.classList.toggle('font-small', size === 'small');
+      document.querySelectorAll('.font-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.font === size);
+      });
+    }
+    var scrollTimer = null, scrollSpeed = 5;
+    function scrollTick() {
+      window.scrollBy(0, 1);
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 1) toggleScroll();
+    }
+    function toggleScroll() {
+      var b = document.getElementById('scroll-toggle');
+      if (scrollTimer) {
+        clearInterval(scrollTimer); scrollTimer = null;
+        b.textContent = '▶'; b.classList.remove('active');
+      } else {
+        scrollTimer = setInterval(scrollTick, 210 - scrollSpeed * 20);
+        b.textContent = '⏸'; b.classList.add('active');
+      }
+    }
+    function changeScrollSpeed(delta) {
+      scrollSpeed = Math.max(1, Math.min(9, scrollSpeed + delta));
+      document.getElementById('scroll-speed').textContent = scrollSpeed;
+      if (scrollTimer) {
+        clearInterval(scrollTimer);
+        scrollTimer = setInterval(scrollTick, 210 - scrollSpeed * 20);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var bar = document.createElement('div');
+      bar.id = 'inst-bar';
+      var lbl = document.createElement('span');
+      lbl.textContent = 'Instrument:';
+      bar.appendChild(lbl);
+      [['guitar','Guitar'],['ukulele','Ukulele'],['mandolin','Mandolin'],['banjo','Banjo']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.inst = p[0]; b.className = 'inst-btn';
+        b.addEventListener('click', function() { setInst(p[0]); });
+        bar.appendChild(b);
+      });
+      var sep = document.createElement('span');
+      sep.textContent = '·'; sep.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep);
+      var fontLbl = document.createElement('span');
+      fontLbl.textContent = 'Skrift:';
+      bar.appendChild(fontLbl);
+      [['normal','A'],['small','a']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.font = p[0]; b.className = 'inst-btn font-btn';
+        b.addEventListener('click', function() { setFont(p[0]); });
+        bar.appendChild(b);
+      });
+      var sep2 = document.createElement('span');
+      sep2.textContent = '·'; sep2.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep2);
+      var scrollBtn = document.createElement('button');
+      scrollBtn.id = 'scroll-toggle'; scrollBtn.textContent = '▶';
+      scrollBtn.className = 'inst-btn'; scrollBtn.title = 'Automatisk scroll';
+      scrollBtn.addEventListener('click', toggleScroll);
+      bar.appendChild(scrollBtn);
+      var minusBtn = document.createElement('button');
+      minusBtn.textContent = '−'; minusBtn.className = 'inst-btn'; minusBtn.title = 'Langsommere';
+      minusBtn.addEventListener('click', function() { changeScrollSpeed(-1); });
+      bar.appendChild(minusBtn);
+      var speedSpan = document.createElement('span');
+      speedSpan.id = 'scroll-speed'; speedSpan.textContent = scrollSpeed;
+      speedSpan.style.cssText = 'min-width:1em;text-align:center;display:inline-block;color:#555';
+      bar.appendChild(speedSpan);
+      var plusBtn = document.createElement('button');
+      plusBtn.textContent = '+'; plusBtn.className = 'inst-btn'; plusBtn.title = 'Hurtigere';
+      plusBtn.addEventListener('click', function() { changeScrollSpeed(1); });
+      bar.appendChild(plusBtn);
+      document.body.appendChild(bar);
+      setInst('guitar');
+      setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
+      document.querySelectorAll('.chord').forEach(function(el) {
+        el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
+        el.addEventListener('mouseleave', hide);
+      });
+    });
+  })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <h1>Engel i min seng</h1>
+    <h2>Souvenirs</h2>
+    <div class="meta">Tilføjet: 27.06.2026</div>
+    
+    <pre class="block line-group"><span class="section">[Verse 1]</span>
+     <span class="chord">Dm</span>           <span class="chord">C</span>                  <span class="chord">F</span>
+Hele ugen har jeg følt mig skidt til mode</pre>
+<pre class="block line-group">        <span class="chord">Dm</span>          <span class="chord">C</span>            <span class="chord">F</span>
+Jeg har taget Echinaforce og Panodil</pre>
+<pre class="block line-group">           <span class="chord">Dm</span>        <span class="chord">C</span>        <span class="chord">F</span>
+Der er for meget roderi i mit hoved</pre>
+<pre class="block line-group line-group-last">      <span class="chord">Dm</span>            <span class="chord">C</span>            <span class="chord">F</span>
+Alt i alt så er min tilstand ustabil</pre>
+<pre class="block line-group"><span class="section">[Chorus]</span>
+               <span class="chord">Dm</span>
+Gid der kom et Rumskib </pre>
+<pre class="block line-group">   <span class="chord">Bb</span>               <span class="chord">C</span>
+og landede på min altan</pre>
+<pre class="block line-group">                  <span class="chord">Dm</span>
+Gid at jeg skulle reddes </pre>
+<pre class="block line-group">         <span class="chord">Bb</span>
+mund til mund</pre>
+<pre class="block line-group">               <span class="chord">C</span>
+på et flyvende lagen</pre>
+<pre class="block line-group">                   <span class="chord">Dm</span>
+ja bare der kom en engel</pre>
+<pre class="block line-group">    <span class="chord">C</span>                  <span class="chord">F</span>
+med lyst hår og gylden hud</pre>
+<pre class="block line-group">               <span class="chord">Dm</span>              <span class="chord">C</span>
+Gid der kom en rummand til min seng</pre>
+<pre class="block line-group">         <span class="chord">Dm</span>               <span class="chord">F</span>
+En helt igennem underskøn dreng</pre>
+<pre class="block line-group">   <span class="chord">Dm</span>         <span class="chord">C</span>              <span class="chord">Bb</span>
+en Buddha som kan noget Kama Sutra</pre>
+<pre class="block line-group">                  <span class="chord">Am</span>          <span class="chord">Bb</span>
+Ja bare der lå en engel i min seng </pre>
+<pre class="block line-group line-group-last">               <span class="chord">Dm</span>
+en engel i min seng</pre>
+<pre class="block line-group"><span class="section">[Verse 2]</span>
+        <span class="chord">Dm</span>              <span class="chord">C</span>            <span class="chord">F</span>
+Jeg har vendt og drejet alting meget længe</pre>
+<pre class="block line-group">        <span class="chord">Dm</span>          <span class="chord">C</span>               <span class="chord">F</span>
+jeg har også talt alvorligt med min mor</pre>
+<pre class="block line-group">      <span class="chord">Dm</span>                <span class="chord">C</span>             <span class="chord">F</span>
+andre ligger sammen med nogen i deres senge</pre>
+<pre class="block line-group">           <span class="chord">Dm</span>      <span class="chord">C</span>           <span class="chord">F</span>
+hvorfor er jeg så alene her på jord</pre>
+<pre class="block line-group">              <span class="chord">Bb</span>         <span class="chord">F</span>
+Tænk hvis jeg hørte vingesus</pre>
+<pre class="block line-group">                 <span class="chord">Bb</span>              <span class="chord">F</span>     <span class="chord">Dm</span>
+og der pludselig var et mandfolk i mit hus</pre>
+<pre class="block line-group line-group-last">            <span class="chord">Bb</span>    <span class="chord">Am</span>          <span class="chord">Bb</span>
+Ja, gid der lå en engel i min seng</pre>
+    
+    
+  </div>
+</body>
+</html>
