@@ -236,6 +236,7 @@ CHORD_DIAGRAM_STYLE = """  <style>
       border-radius: 3px; color: #555;
     }
     .inst-btn.active { font-weight: bold; color: #b00020; }
+    @media (max-width: 640px) { #inst-bar { flex-wrap: wrap; max-width: calc(100vw - 32px); bottom: 8px; right: 8px; } }
     @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
   </style>"""
 
@@ -433,7 +434,16 @@ CHORD_DIAGRAM_JS = """  <script>
       document.querySelectorAll('.chord').forEach(function(el) {
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
+        el.addEventListener('touchstart', function(e) {
+          var name = el.textContent.trim();
+          if (tip && tip._el === el) { e.preventDefault(); e.stopPropagation(); hide(); return; }
+          e.preventDefault(); e.stopPropagation();
+          show(el, name);
+          if (tip) tip._el = el;
+        });
       });
+      document.addEventListener('touchstart', function() { hide(); }, { passive: true });
+      window.addEventListener('scroll', hide, { passive: true });
     });
   })();
   </script>"""
@@ -699,7 +709,7 @@ def make_song_html(
     double_css = ""
     wrap_open, wrap_close = "", ""
     if layout == "double":
-        double_css = "\n    .chords { column-count: 2; column-gap: 8mm; }"
+        double_css = "\n    .chords { column-count: 2; column-gap: 8mm; }\n    @media (max-width: 640px) { .chords { column-count: 1; } }"
         wrap_open = '<div class="chords">'
         wrap_close = "</div>"
 
@@ -711,6 +721,7 @@ def make_song_html(
 <html lang="da">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{html.escape(title)} – {html.escape(artist)}</title>
   <style>
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -741,6 +752,10 @@ def make_song_html(
     .tab-section {{ margin-top: 8mm; }}
     .chord {{ color: #b00020; font-weight: bold; cursor: help; }}
     .section {{ color: #777; font-style: italic; font-weight: bold; }}
+    @media (max-width: 640px) {{
+      body {{ background: white; padding: 0; }}
+      .page {{ width: 100%; min-height: auto; padding: 12px 14px; }}
+    }}
     @media print {{
       body {{ background: white; padding: 0; }}
       .page {{ width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }}
@@ -811,9 +826,11 @@ def rebuild_index(songs: list) -> None:
 <html lang="da">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sangbog</title>
   <style>
     body {{ font-family: sans-serif; max-width: 560px; margin: 48px auto; padding: 0 20px; color: #222; }}
+    @media (max-width: 640px) {{ body {{ margin: 24px auto; }} }}
     h1 {{ font-size: 28pt; margin-bottom: 8px; }}
     #search {{
       display: block; width: 100%; padding: 8px 10px; margin-bottom: 28px;

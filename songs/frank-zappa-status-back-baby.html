@@ -2,6 +2,7 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Status Back Baby – Frank Zappa</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,6 +33,10 @@
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
+    @media (max-width: 640px) {
+      body { background: white; padding: 0; }
+      .page { width: 100%; min-height: auto; padding: 12px 14px; }
+    }
     @media print {
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
@@ -63,6 +68,7 @@
       border-radius: 3px; color: #555;
     }
     .inst-btn.active { font-weight: bold; color: #b00020; }
+    @media (max-width: 640px) { #inst-bar { flex-wrap: wrap; max-width: calc(100vw - 32px); bottom: 8px; right: 8px; } }
     @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
   </style>
   <script>
@@ -259,7 +265,16 @@
       document.querySelectorAll('.chord').forEach(function(el) {
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
+        el.addEventListener('touchstart', function(e) {
+          var name = el.textContent.trim();
+          if (tip && tip._el === el) { e.preventDefault(); e.stopPropagation(); hide(); return; }
+          e.preventDefault(); e.stopPropagation();
+          show(el, name);
+          if (tip) tip._el = el;
+        });
       });
+      document.addEventListener('touchstart', function() { hide(); }, { passive: true });
+      window.addEventListener('scroll', hide, { passive: true });
     });
   })();
   </script>
@@ -344,7 +359,8 @@ B|----15----15-----15-----------17-15-----15---15-----------17-15-|
 G|-14----14-----14---------------------14-------------------------|
 D|----------------------------------------------------------------|
 A|----------------------------------------------------------------|
-E|----------------------------------------------------------------|</pre>
+E|----------------------------------------------------------------|
+</pre>
 <pre class="block line-group">  <span class="chord">D</span>
 
    (1:35)                                                                         (1:41)
@@ -353,7 +369,8 @@ B|-12-15---1514-12---1514-12---1514-12---1514-12---1514-12---1514-12---15-x-12--
 G|---------------------------------------------------------------------------------------|
 D|---------------------------------------------------------------------------------------|
 A|---------------------------------------------------------------------------------------|
-E|---------------------------------------------------------------------------------------|</pre>
+E|---------------------------------------------------------------------------------------|
+</pre>
 <pre class="block line-group">  <span class="chord">D</span>
 
    (1:41)                                                                                 (1:47)
@@ -362,7 +379,8 @@ B|-13-------------13---------------------13-------------13-------------------13-
 G|----15-14-12-------15-14-----12h14-12-----15-14-12-------15-14-15-14--12-------14--12h14p12-12-|
 D|-------------15----------15------------------------15------------------------------------------|
 A|-----------------------------------------------------------------------------------------------|
-E|-----------------------------------------------------------------------------------------------|</pre>
+E|-----------------------------------------------------------------------------------------------|
+</pre>
 <pre class="block line-group">  <span class="chord">D</span>
 
    (1:47)                         (1:51)
@@ -371,7 +389,8 @@ B|-13-------------13---------------------|
 G| --15-14-12h14----15-14-x--12h14p12-12-|
 D|---------------------------------------|
 A|---------------------------------------|
-E|---------------------------------------|</pre>
+E|---------------------------------------|
+</pre>
 <pre class="block line-group">   <span class="chord">D</span>
 
   (1:54)                                                                                (2:06)
@@ -380,7 +399,8 @@ B|-8---11---10---8----8--8--11---10---8----8---11---10--8--6----6---10---8--6--8
 G|-------------------------------------------------------------------------------------------7-|
 D|---------------------------------------------------------------------------------------------|
 A|---------------------------------------------------------------------------------------------|
-E|---------------------------------------------------------------------------------------------|</pre>
+E|---------------------------------------------------------------------------------------------|
+</pre>
 <pre class="block line-group line-group-last">   <span class="chord">C</span>   <span class="chord">Gm</span>   <span class="chord">F</span>    <span class="chord">Eb</span>   <span class="chord">C</span>  <span class="chord">C</span>  <span class="chord">Gm</span>   <span class="chord">F</span>    <span class="chord">Eb</span>   <span class="chord">C</span>   <span class="chord">Gm</span>   <span class="chord">F</span>   <span class="chord">Eb</span> <span class="chord">Dm</span>   <span class="chord">Dm</span>  <span class="chord">F</span>    <span class="chord">Eb</span> <span class="chord">Dm</span> <span class="chord">Eb</span>   <span class="chord">Dm</span>  <span class="chord">F</span>    <span class="chord">G</span>   <span class="chord">D</span> <span class="chord">D</span> <span class="chord">D</span> <span class="chord">D</span> <span class="chord">D</span> <span class="chord">D</span> <span class="chord">D</span></pre></div>
   </div>
 </body>
