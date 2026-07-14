@@ -722,6 +722,8 @@ def make_song_html(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
   <title>{html.escape(title)} – {html.escape(artist)}</title>
   <style>
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -741,7 +743,7 @@ def make_song_html(
     }}
     .meta a {{ color: #999; }}
     pre.block {{
-      font-family: 'Courier New', Courier, monospace;
+      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
       font-size: 9pt; line-height: 1.45;
       white-space: pre-wrap; word-break: break-word;
       margin-bottom: 6px;
