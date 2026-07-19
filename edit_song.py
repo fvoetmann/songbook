@@ -268,7 +268,7 @@ def main():
     edit_text = (
         build_header(title, artist, key, capo)
         + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
-        + f"# Transponer: sæt fx +2 eller -1 for at transponere akkorder og toneart\n"
+        + f"# Transponer sættes ovenfor i header-feltet, fx +2 eller -1\n"
         + f"# Gem og luk editoren for at gemme. Slet ALT indhold for at annullere.\n"
         + f"#\n"
         + original_edit
