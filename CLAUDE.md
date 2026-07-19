@@ -28,9 +28,10 @@ python3 edit_song.py --new        # opret ny sang fra bunden
 ```
 
 Åbner sangen i `$EDITOR` (standard: nano) med et tekstformat:
-- Header-linjer starter med `#` (Titel, Artist, Toneart, Capo) — kan redigeres
+- Header-linjer starter med `#` (Titel, Artist, Toneart, Capo, Transponer) — kan redigeres
 - Akkorder skrives inline i teksten: `[Am]Her er teksten` → splittes automatisk til akkordlinje + tekstlinje
 - Chord-only linjer (allerede justerede) genkendes og konverteres korrekt
+- `Transponer: +N` eller `-N` i headeren transponerer alle akkorder (og Toneart) N halvtoner ved gem; `0` (standard) gør intet
 - Tom fil ved gem annullerer ændringerne
 - Ændres titel eller artist, omdøbes HTML-filen og indekset opdateres
 

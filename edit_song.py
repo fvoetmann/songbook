@@ -23,7 +23,7 @@ from bs4 import BeautifulSoup, NavigableString
 sys.path.insert(0, str(Path(__file__).parent))
 from add_song import (
     make_song_html, parse_chord_name, load_songs, save_songs,
-    rebuild_index, slugify,
+    rebuild_index, slugify, transpose_content, transpose_chord,
 )
 
 SONGS_DIR = Path("songs")
@@ -91,21 +91,22 @@ def html_to_content(html_path: Path):
     return title, artist, key, capo, url, content
 
 
-def build_header(title: str, artist: str, key: str, capo: str) -> str:
+def build_header(title: str, artist: str, key: str, capo: str, transpose: str = "0") -> str:
     return (
         f"# Titel: {title}\n"
         f"# Artist: {artist}\n"
         f"# Toneart: {key}\n"
         f"# Capo: {capo}\n"
+        f"# Transponer: {transpose}\n"
         f"#\n"
     )
 
 
 def parse_header(text: str) -> dict:
-    """Extract Titel/Artist/Toneart/Capo from '# Felt: værdi' lines."""
+    """Extract Titel/Artist/Toneart/Capo/Transponer from '# Felt: værdi' lines."""
     fields = {}
     for line in text.splitlines():
-        m = re.match(r"#\s*(Titel|Artist|Toneart|Capo)\s*:\s*(.*)", line, re.IGNORECASE)
+        m = re.match(r"#\s*(Titel|Artist|Toneart|Capo|Transponer)\s*:\s*(.*)", line, re.IGNORECASE)
         if m:
             fields[m.group(1).lower()] = m.group(2).strip()
     return fields
@@ -267,6 +268,7 @@ def main():
     edit_text = (
         build_header(title, artist, key, capo)
         + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
+        + f"# Transponer: sæt fx +2 eller -1 for at transponere akkorder og toneart\n"
         + f"# Gem og luk editoren for at gemme. Slet ALT indhold for at annullere.\n"
         + f"#\n"
         + original_edit
@@ -280,6 +282,12 @@ def main():
     new_key = header.get("toneart", key)
     new_capo = header.get("capo", capo)
 
+    transpose_str = header.get("transponer", "0").strip()
+    try:
+        semitones = int(transpose_str) if transpose_str else 0
+    except ValueError:
+        sys.exit(f"Ugyldig Transponer-værdi: '{transpose_str}' – brug fx +2 eller -1")
+
     content_lines = [l for l in edited.splitlines() if not l.startswith("#")]
     new_content = "\n".join(content_lines).strip()
 
@@ -288,11 +296,16 @@ def main():
         return
 
     meta_changed = (new_title, new_artist, new_key, new_capo) != (title, artist, key, capo)
-    if new_content == original_edit.strip() and not meta_changed:
+    if new_content == original_edit.strip() and not meta_changed and semitones == 0:
         print("Ingen ændringer.")
         return
 
     new_ug = edit_to_ug(edited)
+    if semitones:
+        new_ug = transpose_content(new_ug, semitones)
+        if new_key:
+            new_key = transpose_chord(new_key, semitones)
+
     new_html, layout = make_song_html(new_title, new_artist, new_key, new_capo, new_ug, url)
 
     new_filename = f"{slugify(new_artist)}-{slugify(new_title)}.html"
