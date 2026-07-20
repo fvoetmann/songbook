@@ -56,7 +56,7 @@ Sangbogen kan hostes som en statisk hjemmeside via GitHub Pages:
 
 Alle sider er mobilvenlige:
 - Responsivt layout: A4-siden flyder ud til fuld bredde på skærme ≤ 640px
-- 2-kolonne layout deaktiveres automatisk på mobilskærme
+- 2-kolonne layout deaktiveres automatisk på mobilskærme, også i landskabstilstand (bredde- og højde-baseret media query)
 - Akkorddiagrammer vises ved tryk (tap) på akkorder; skjules ved tryk et andet sted eller ved scroll
 - Instrument-baren kan ombryde på smalle skærme
 
