@@ -5,6 +5,12 @@ En Python-baseret sangbog der henter akkorder og tekst fra Ultimate Guitar og ge
 ## Brug
 
 ```bash
+python3 songbook.py                   # interaktiv menu: åbn/tilføj/rediger sange, generér PDF
+```
+
+Eller direkte:
+
+```bash
 python3 add_song.py                   # auto-scan downloads/ for nye sange
 python3 add_song.py <gemt-ug-side.html>
 ```
@@ -67,6 +73,7 @@ python3 rebuild_songs.py
 
 ## Filer
 
+- `songbook.py` — interaktiv menu der samler add_song/edit_song/make_pdf og åbning af sangbogen
 - `add_song.py` — hovedscript (tilføj sang fra UG)
 - `edit_song.py` — rediger eller opret sang manuelt
 - `make_pdf.py` — generer samlet PDF med indholdsfortegnelse
