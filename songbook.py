@@ -23,6 +23,13 @@ def open_songbook():
     webbrowser.open(f"file://{INDEX_FILE}")
 
 
+def open_pdf_songbook():
+    if not PDF_FILE.exists():
+        print("songbook.pdf findes ikke endnu — generér den først.")
+        return
+    subprocess.run(["xdg-open", str(PDF_FILE)])
+
+
 def add_song():
     print("Kør uden argument for at auto-scanne downloads/, eller angiv en fil/URL.")
     arg = input("Fil/URL (tom = auto-scan): ").strip()
@@ -46,10 +53,11 @@ def generate_pdf():
 
 MENU = [
     ("1", "Åbn sangbog", open_songbook),
-    ("2", "Tilføj ny sang", add_song),
-    ("3", "Rediger sang", edit_song),
-    ("4", "Generér PDF-sangbog", generate_pdf),
-    ("5", "Afslut", None),
+    ("2", "Åbn PDF-sangbog", open_pdf_songbook),
+    ("3", "Tilføj ny sang fra UG eller autoscan downloadede filer til sangbogen", add_song),
+    ("4", "Rediger sang eller opret selv en ny sang", edit_song),
+    ("5", "Generér PDF-sangbog", generate_pdf),
+    ("6", "Afslut", None),
 ]
 
 
@@ -60,7 +68,7 @@ def main():
             print(f"  {key}. {label}")
         choice = input("Vælg: ").strip()
 
-        if choice == "5" or choice.lower() in ("q", "afslut", "quit"):
+        if choice.lower() in ("q", "afslut", "quit"):
             break
 
         match = next((m for m in MENU if m[0] == choice), None)
@@ -69,6 +77,9 @@ def main():
             continue
 
         _, _, action = match
+        if action is None:
+            break
+
         try:
             action()
         except KeyboardInterrupt:
