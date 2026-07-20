@@ -177,6 +177,74 @@ def assign_pages(song_pdfs: list[dict], toc_pages: int) -> list[dict]:
     return result
 
 
+def optimize_song_order(song_pdfs: list[dict], toc_pages: int) -> list[dict]:
+    """Reorder songs to minimise 2-page songs starting on odd pages.
+
+    Artists stay in alphabetical order. Within each artist: one single is placed
+    first if needed to fix page parity, then doubles, then remaining singles, then
+    multi-page songs. If an artist has doubles but no singles and is on an odd page,
+    one single is borrowed from the immediately next artist.
+    """
+    # Group by artist, preserving alphabetical order
+    artist_groups: list[dict] = []
+    for s in song_pdfs:
+        if not artist_groups or s["artist"] != artist_groups[-1]["artist"]:
+            artist_groups.append({"artist": s["artist"], "singles": [], "doubles": [], "multi": []})
+        g = artist_groups[-1]
+        if s["n_pages"] == 1:
+            g["singles"].append(s)
+        elif s["n_pages"] == 2:
+            g["doubles"].append(s)
+        else:
+            g["multi"].append(s)
+
+    # Count conflicts in original order for comparison
+    conflicts_before = sum(
+        1 for s in song_pdfs
+        if s["n_pages"] == 2 and (toc_pages + 1 + sum(
+            p["n_pages"] for p in song_pdfs[:song_pdfs.index(s)]
+        )) % 2 == 1
+    )
+
+    result: list[dict] = []
+    current_page = toc_pages + 1
+    conflicts_after = 0
+
+    for i, group in enumerate(artist_groups):
+        singles = group["singles"][:]
+        doubles = group["doubles"][:]
+        multi   = group["multi"][:]
+
+        # Borrow a single from the next artist if needed to fix parity
+        if current_page % 2 == 1 and doubles and not singles:
+            if i + 1 < len(artist_groups) and artist_groups[i + 1]["singles"]:
+                borrowed = artist_groups[i + 1]["singles"].pop(0)
+                singles = [borrowed]
+                print(f"  [opt] borrow '{borrowed['title']}' ({borrowed['artist']}) → before {group['artist']}")
+
+        # Place one single first if on odd page
+        if current_page % 2 == 1 and singles:
+            result.append(singles.pop(0))
+            current_page += 1
+
+        for s in doubles:
+            if current_page % 2 == 1:
+                conflicts_after += 1
+            result.append(s)
+            current_page += 2
+
+        for s in singles:
+            result.append(s)
+            current_page += 1
+
+        for s in multi:
+            result.append(s)
+            current_page += s["n_pages"]
+
+    print(f"  [opt] 2-page conflicts: {conflicts_before} → {conflicts_after}")
+    return result
+
+
 def main():
     weasyprint = find_weasyprint()
 
@@ -211,11 +279,12 @@ def main():
                 "n_pages": count_pages(pdf_path),
             })
 
-        # Two-pass TOC: measure TOC page count, then finalize page numbers
+        # Two-pass TOC: measure page count (content order doesn't affect TOC size)
         toc_pages = 1
         for _ in range(2):
             entries = assign_pages(song_pdfs, toc_pages)
-            toc_html = make_toc_html_standalone(entries)
+            toc_entries = sorted(entries, key=lambda e: (e["artist"].lower(), e["title"].lower()))
+            toc_html = make_toc_html_standalone(toc_entries)
             toc_html_path = tmp / "toc.html"
             toc_pdf_path = tmp / "toc.pdf"
             toc_html_path.write_text(toc_html, encoding="utf-8")
@@ -225,9 +294,17 @@ def main():
                 break
             toc_pages = measured
 
+        # Optimise song order to minimise mid-song page turns
+        print("\nOptimising page order...")
+        song_pdfs = optimize_song_order(song_pdfs, toc_pages)
+
+        # Re-assign page numbers with optimised order; keep TOC alphabetical
+        entries = assign_pages(song_pdfs, toc_pages)
+        toc_entries = sorted(entries, key=lambda e: (e["artist"].lower(), e["title"].lower()))
+
         # Render combined document (TOC + all songs) in one pass for page numbers
         song_bodies = [s["body"] for s in song_pdfs]
-        combined_html = make_combined_html(entries, song_bodies, shared_css)
+        combined_html = make_combined_html(toc_entries, song_bodies, shared_css)
         combined_html_path = tmp / "combined.html"
         combined_html_path.write_text(combined_html, encoding="utf-8")
         print("\nRendering final PDF...")
