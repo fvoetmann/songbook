@@ -16,8 +16,8 @@
       margin: 0 auto;
       padding: 12mm 14mm;
     }
-    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 3px; }
-    h2 { font-size: 10pt; font-family: sans-serif; font-weight: normal; color: #555; margin-bottom: 8px; }
+    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
+    h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
     .meta {
       font-size: 7.5pt; font-family: sans-serif; color: #999;
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
@@ -32,6 +32,8 @@
     pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
     pre.block.line-group-last { margin-bottom: 6px; }
     body.font-small pre.block { font-size: 8pt; }
+    .chords { column-count: 2; column-gap: 8mm; }
+    @media (max-width: 640px) { .chords { column-count: 1; } }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -283,76 +285,86 @@
 </head>
 <body>
   <div class="page">
-    <h1>My Terrible Ways</h1>
-    <h2>Frank Black</h2>
-    <div class="meta">Tilføjet: 13.06.2026</div>
+    <h1>My Terrible Ways <span class="artist-inline">– Frank Black</span></h1>
     
-    <pre class="block line-group line-group-last"><span class="section">[INTRO]</span>
-<span class="chord">Am</span>
-<span class="chord">Am</span>  <span class="chord">C</span>  <span class="chord">D</span>(add4)  <span class="chord">F</span>  (x4)</pre>
+    <div class="chords">
+    <pre class="block line-group"><span class="section">[INTRO]</span>
+<span class="chord">Am</span></pre>
+<pre class="block line-group line-group-last"><span class="chord">Am</span><span class="chord">C</span> <span class="chord">D</span>       <span class="chord">F</span>
+    (add4)    (x4)</pre>
+<pre class="block line-group line-group-last"><span class="section">[VERSE]</span>
+   <span class="chord">Am</span><span class="chord">C</span>           <span class="chord">F</span>
+       </pre>
+<pre class="block line-group"><span class="section">[Dadd4]</span>
+   
+My terr-i-ble    ways</pre>
+<pre class="block line-group">      <span class="chord">C</span>         <span class="chord">E7</span>
+They got me in jail</pre>
+<pre class="block line-group">      <span class="chord">F</span>           <span class="chord">C</span>
+Where some did succeed</pre>
+<pre class="block line-group">  <span class="chord">G</span>          <span class="chord">Am</span>
+I always did fail</pre>
+<pre class="block line-group">      <span class="chord">G#</span>            <span class="chord">C</span>       <span class="chord">A7</span>           <span class="chord">F</span>   <span class="chord">Fm</span>
+But I thought I was fine to wait for the day</pre>
+<pre class="block line-group">         <span class="chord">C</span>           <span class="chord">G#</span>       <span class="chord">C</span>     <span class="chord">F</span> <span class="chord">C</span>
+When I’d paid for my terrible ways  </pre>
+<pre class="block line-group line-group-last"><span class="chord">Am</span><span class="chord">C</span> <span class="chord">D</span>       <span class="chord">F</span>
+    (add4)   (x2)</pre>
 <pre class="block line-group"><span class="section">[VERSE]</span>
-     <span class="chord">Am</span>  <span class="chord">C</span>  Dadd4   <span class="chord">F</span>
-  My terr-i-ble    ways</pre>
-<pre class="block line-group">       <span class="chord">C</span>         <span class="chord">E7</span>
-  They got me in jail</pre>
-<pre class="block line-group">        <span class="chord">F</span>           <span class="chord">C</span>
-  Where some did succeed</pre>
-<pre class="block line-group">    <span class="chord">G</span>          <span class="chord">Am</span>
-  I always did fail</pre>
-<pre class="block line-group">        <span class="chord">G#</span>            <span class="chord">C</span>       <span class="chord">A7</span>           <span class="chord">F</span>   <span class="chord">Fm</span>
-  But I thought I was fine to wait for the day</pre>
-<pre class="block line-group line-group-last">           <span class="chord">C</span>           <span class="chord">G#</span>       <span class="chord">C</span>     <span class="chord">F</span> <span class="chord">C</span>
-  When I’d paid for my terrible ways  
-<span class="chord">Am</span>  <span class="chord">C</span>  <span class="chord">D</span>(add4)  <span class="chord">F</span> (x2)</pre>
-<pre class="block line-group"><span class="section">[VERSE]</span>
-     <span class="chord">Am</span>   <span class="chord">C</span> Dadd4  <span class="chord">F</span>
-  My terr-i-ble   ways</pre>
-<pre class="block line-group">       <span class="chord">C</span>           <span class="chord">E7</span>
-  They came to and end</pre>
-<pre class="block line-group">        <span class="chord">F</span>         <span class="chord">C</span>              <span class="chord">G</span>        <span class="chord">Am</span>
-  When a mighty deluge freed the criminal men</pre>
-<pre class="block line-group">        <span class="chord">G#</span>             <span class="chord">C</span>
-  But I stayed in Mississippi</pre>
-<pre class="block line-group">      <span class="chord">A7</span>            <span class="chord">F</span>    <span class="chord">Fm</span>
-  and three souls I saved</pre>
-<pre class="block line-group line-group-last">         <span class="chord">C</span>        <span class="chord">G#</span>       <span class="chord">C</span>   <span class="chord">F</span> <span class="chord">C</span>
-  and so ended my terrible ways</pre>
+   <span class="chord">Am</span> <span class="chord">C</span>       <span class="chord">F</span>
+       Dadd4  
+My terr-i-ble   ways</pre>
+<pre class="block line-group">     <span class="chord">C</span>           <span class="chord">E7</span>
+They came to and end</pre>
+<pre class="block line-group">      <span class="chord">F</span>         <span class="chord">C</span>              <span class="chord">G</span>        <span class="chord">Am</span>
+When a mighty deluge freed the criminal men</pre>
+<pre class="block line-group">      <span class="chord">G#</span>             <span class="chord">C</span>
+But I stayed in Mississippi</pre>
+<pre class="block line-group">    <span class="chord">A7</span>            <span class="chord">F</span>    <span class="chord">Fm</span>
+and three souls I saved</pre>
+<pre class="block line-group line-group-last">       <span class="chord">C</span>        <span class="chord">G#</span>       <span class="chord">C</span>   <span class="chord">F</span> <span class="chord">C</span>
+and so ended my terrible ways</pre>
 <pre class="block line-group"><span class="section">[CHORUS]</span>
-    <span class="chord">F</span>             <span class="chord">C</span>
-    Terrible ways, terrible ways</pre>
-<pre class="block line-group">    <span class="chord">G</span>                 <span class="chord">Am</span>
-    sooner or later a criminal pays</pre>
-<pre class="block line-group">        <span class="chord">F</span>                <span class="chord">C</span>       <span class="chord">Am</span>
-    And I’ll never have enough, enough</pre>
-<pre class="block line-group line-group-last">      <span class="chord">D7/F#</span>     <span class="chord">F</span>
-    To pay this off
-<span class="chord">Am</span>  <span class="chord">C</span>  <span class="chord">D(add9)</span>  <span class="chord">F</span>  (x2)</pre>
+ <span class="chord">F</span>             <span class="chord">C</span>
+Terrible ways, terrible ways</pre>
+<pre class="block line-group"><span class="chord">G</span>                 <span class="chord">Am</span>
+sooner or later a criminal pays</pre>
+<pre class="block line-group">    <span class="chord">F</span>                <span class="chord">C</span>       <span class="chord">Am</span>
+And I’ll never have enough, enough</pre>
+<pre class="block line-group">  <span class="chord">D7/F#</span>     <span class="chord">F</span>
+To pay this off</pre>
+<pre class="block line-group line-group-last"><span class="chord">Am</span><span class="chord">C</span>            <span class="chord">F</span>
+    </pre>
+<pre class="block line-group line-group-last"><span class="section">[D(add9)]</span>
+    (x2)</pre>
 <pre class="block line-group line-group-last"><span class="section">[SOLO]</span>
         play verse 1x</pre>
-<pre class="block line-group line-group-last"><span class="section">[CHORUS]</span>
-        repeat chorus
-        <span class="chord">Am</span>  <span class="chord">C</span>  <span class="chord">D</span>(add4)  <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[VERSE]</span>
-      <span class="chord">Am</span>  <span class="chord">C</span>  Dadd4   <span class="chord">F</span>
-  My terr-i-ble    ways</pre>
-<pre class="block line-group">      <span class="chord">C</span>           <span class="chord">E7</span>
-  The govenor forgave</pre>
-<pre class="block line-group">       <span class="chord">F</span>              <span class="chord">C</span>           <span class="chord">G</span>            <span class="chord">Am</span>
-  On account of three souls and account of the wave</pre>
-<pre class="block line-group">       <span class="chord">G#</span>               <span class="chord">C</span>        <span class="chord">A7</span>          <span class="chord">F</span>  <span class="chord">Fm</span>
-  That took my wife and baby and swept them away</pre>
-<pre class="block line-group line-group-last">       <span class="chord">C</span>           <span class="chord">G#</span>       <span class="chord">C</span>    <span class="chord">F</span> <span class="chord">C</span>
-  All ‘cause of my terrible ways</pre>
 <pre class="block line-group"><span class="section">[CHORUS]</span>
-    <span class="chord">F</span>             <span class="chord">C</span>
-    Terrible ways, terrible ways</pre>
-<pre class="block line-group">    <span class="chord">G</span>                 <span class="chord">Am</span>
-    Sooner or later I know I’m going to pay</pre>
-<pre class="block line-group">        <span class="chord">F</span>                 <span class="chord">C</span>       <span class="chord">Am</span>
-    And I’ll never have enough, enough</pre>
-<pre class="block line-group line-group-last">       <span class="chord">D7/F#</span>    <span class="chord">F</span>
-    To pay this off</pre>
-    
+        repeat chorus</pre>
+<pre class="block line-group line-group-last">        <span class="chord">Am</span><span class="chord">C</span> <span class="chord">D</span>       <span class="chord">F</span>
+            (add4)  </pre>
+<pre class="block line-group"><span class="section">[VERSE]</span>
+    <span class="chord">Am</span><span class="chord">C</span>         <span class="chord">F</span>
+        Dadd4   
+My terr-i-ble    ways</pre>
+<pre class="block line-group">    <span class="chord">C</span>           <span class="chord">E7</span>
+The govenor forgave</pre>
+<pre class="block line-group">     <span class="chord">F</span>              <span class="chord">C</span>           <span class="chord">G</span>            <span class="chord">Am</span>
+On account of three souls and account of the wave</pre>
+<pre class="block line-group">     <span class="chord">G#</span>               <span class="chord">C</span>        <span class="chord">A7</span>          <span class="chord">F</span>  <span class="chord">Fm</span>
+That took my wife and baby and swept them away</pre>
+<pre class="block line-group line-group-last">     <span class="chord">C</span>           <span class="chord">G#</span>       <span class="chord">C</span>    <span class="chord">F</span> <span class="chord">C</span>
+All ‘cause of my terrible ways</pre>
+<pre class="block line-group"><span class="section">[CHORUS]</span>
+<span class="chord">F</span>             <span class="chord">C</span>
+Terrible ways, terrible ways</pre>
+<pre class="block line-group"><span class="chord">G</span>                 <span class="chord">Am</span>
+Sooner or later I know I’m going to pay</pre>
+<pre class="block line-group">    <span class="chord">F</span>                 <span class="chord">C</span>       <span class="chord">Am</span>
+And I’ll never have enough, enough</pre>
+<pre class="block line-group line-group-last">   <span class="chord">D7/F#</span>    <span class="chord">F</span>
+To pay this off</pre>
+    </div>
     
   </div>
 </body>

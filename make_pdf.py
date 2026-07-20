@@ -139,6 +139,9 @@ def make_combined_html(entries: list[dict], song_bodies: list[str], shared_css: 
         color: #888;
       }}
     }}
+    /* Alternating margins for spiral binding: extra room on the spine side */
+    @page :right {{ margin-left: 20mm; margin-right: 12mm; }}
+    @page :left {{ margin-left: 12mm; margin-right: 20mm; }}
     /* TOC */
     #toc h1 {{ font-size: 18pt; margin-bottom: 14px; font-family: sans-serif; }}
     #toc table {{ width: 100%; border-collapse: collapse; font-size: 10pt; font-family: sans-serif; }}

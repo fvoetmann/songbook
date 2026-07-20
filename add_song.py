@@ -17,7 +17,6 @@ import re
 import html
 import hashlib
 from pathlib import Path
-from datetime import date
 
 import requests
 from bs4 import BeautifulSoup
@@ -623,9 +622,9 @@ def count_lines(sections: list) -> tuple:
 
 
 def decide_layout(total_lines: int, max_width: int) -> str:
-    if total_lines <= 65:
+    if total_lines <= 54:
         return "single"
-    elif total_lines <= 120 and max_width <= 65:
+    elif total_lines <= 130 and max_width <= 65:
         return "double"
     else:
         return "multi"
@@ -703,8 +702,8 @@ def make_song_html(
         meta_parts.append(
             f'Kilde: <a href="{url}">{html.escape(url[:70])}{"..." if len(url) > 70 else ""}</a>'
         )
-    meta_parts.append(f"Tilføjet: {date.today().strftime('%d.%m.%Y')}")
     meta_html = " &nbsp;·&nbsp; ".join(meta_parts)
+    meta_div = f'<div class="meta">{meta_html}</div>' if meta_html else ""
 
     double_css = ""
     wrap_open, wrap_close = "", ""
@@ -735,8 +734,8 @@ def make_song_html(
       margin: 0 auto;
       padding: 12mm 14mm;
     }}
-    h1 {{ font-size: 15pt; font-family: sans-serif; margin-bottom: 3px; }}
-    h2 {{ font-size: 10pt; font-family: sans-serif; font-weight: normal; color: #555; margin-bottom: 8px; }}
+    h1 {{ font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }}
+    h1 .artist-inline {{ font-size: 10pt; font-weight: normal; color: #555; }}
     .meta {{
       font-size: 7.5pt; font-family: sans-serif; color: #999;
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
@@ -769,9 +768,8 @@ def make_song_html(
 </head>
 <body{' class="font-small"' if auto_small_font else ''}>
   <div class="page">
-    <h1>{html.escape(title)}</h1>
-    <h2>{html.escape(artist)}</h2>
-    <div class="meta">{meta_html}</div>
+    <h1>{html.escape(title)} <span class="artist-inline">– {html.escape(artist)}</span></h1>
+    {meta_div}
     {wrap_open}
     {chord_blocks}
     {wrap_close}

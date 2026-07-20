@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-  <title>Bennys Badekar - Havfruesangen – Misc Cartoons</title>
+  <title>Bennys Badekar - Sørøversangen – Flemming Quist Møller</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: monospace; background: #ddd; padding: 24px; }
@@ -16,8 +16,8 @@
       margin: 0 auto;
       padding: 12mm 14mm;
     }
-    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 3px; }
-    h2 { font-size: 10pt; font-family: sans-serif; font-weight: normal; color: #555; margin-bottom: 8px; }
+    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
+    h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
     .meta {
       font-size: 7.5pt; font-family: sans-serif; color: #999;
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
@@ -32,6 +32,8 @@
     pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
     pre.block.line-group-last { margin-bottom: 6px; }
     body.font-small pre.block { font-size: 8pt; }
+    .chords { column-count: 2; column-gap: 8mm; }
+    @media (max-width: 640px) { .chords { column-count: 1; } }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -75,7 +77,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Fm7":[[1,3,1,1,1,1],[1,3,1,1,1,-1],[1,3,1,1,-1,-1],[-1,-1,3,5,4,4],[-1,8,6,8,6,8],[-1,3,1,1,1,1]],"Bb7":[[-1,1,0,1,3,1],[-1,1,3,1,3,1],[-1,1,3,1,3,-1],[6,5,6,7,6,6],[6,5,6,7,6,-1],[6,8,6,7,6,6]],"Eb7":[[-1,-1,1,3,2,3],[-1,6,5,6,4,6],[-1,6,8,6,8,6],[-1,6,8,6,8,-1],[3,1,1,0,2,3],[3,1,1,3,2,3]],"C7":[[-1,3,2,3,1,3],[-1,3,5,3,5,0],[-1,3,5,3,5,3],[-1,3,5,3,5,-1],[8,7,8,0,8,6],[8,7,8,0,8,0]],"Eb":[[-1,6,5,0,4,6],[-1,6,8,0,8,6],[-1,6,8,8,8,6],[-1,6,8,0,8,-1],[-1,6,8,8,8,-1],[3,1,1,0,-1,-1]],"Gm7":[[3,1,0,0,3,1],[3,1,0,3,3,1],[3,1,3,0,3,1],[3,1,3,0,3,3],[3,1,3,3,3,1],[3,1,3,3,3,3]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]]},"ukulele":{"Fm7":[[1,3,1,3],[5,5,4,6],[1,0,1,3],[5,5,4,3]],"Bb7":[[1,2,1,1],[3,5,4,5],[3,2,1,1],[1,2,4,1],[3,2,4,1],[3,2,4,5]],"Eb7":[[0,3,6,4],[3,3,3,4],[6,7,6,6],[0,3,3,1],[3,3,3,1],[0,3,3,4]],"C7":[[0,0,0,1],[0,4,6,3],[3,4,3,3],[5,7,6,7],[0,0,6,7],[3,0,0,1]],"Eb":[[0,3,3,1],[3,3,3,1],[0,3,6,6],[3,3,3,6],[0,7,6,6],[0,3,3,6]],"Gm7":[[0,2,1,1],[3,5,3,5],[0,5,6,5],[0,2,3,1],[3,2,3,1],[3,2,3,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]]},"mandolin":{"Fm7":[[1,1,3,1],[5,3,6,4],[-1,3,3,4],[-1,3,6,4],[1,3,3,1],[1,3,3,4]],"Bb7":[[3,3,5,4],[1,0,1,1],[3,0,1,1],[3,0,1,4],[3,0,5,4],[3,3,5,6]],"Eb7":[[3,1,4,3],[6,5,6,6],[-1,1,1,3],[-1,1,4,3],[0,1,1,3],[0,1,4,3]],"C7":[[5,5,7,6],[3,2,3,3],[3,5,3,0],[5,2,3,3],[5,5,3,0],[5,5,7,0]],"Eb":[[-1,1,1,3],[0,1,1,3],[3,1,1,3],[0,1,1,-1],[3,5,6,3],[3,5,6,6]],"Gm7":[[0,0,1,1],[0,3,5,6],[3,3,5,3],[0,0,1,3],[0,3,1,1],[0,3,1,3]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]]},"banjo":{"Fm7":[[1,1,1,3,1],[3,1,1,1,1],[1,1,1,3,-1],[3,1,1,1,-1],[3,5,4,6,5],[6,5,4,3,5]],"Bb7":[[0,1,3,3,3],[0,3,3,3,1],[3,1,3,0,3],[3,3,3,0,1],[3,1,3,3,3],[3,3,3,3,1]],"Eb7":[[1,0,2,1,3],[1,3,2,1,0],[-1,0,2,1,3],[-1,3,2,1,0],[5,3,4,5,6],[5,6,4,5,3]],"C7":[[2,0,1,2,3],[2,3,1,2,0],[-1,0,1,2,3],[-1,3,1,2,0],[2,3,5,5,5],[2,5,5,5,3]],"Eb":[[1,0,4,1,3],[1,3,4,1,0],[-1,0,4,1,3],[-1,3,4,1,0],[5,0,4,5,3],[5,3,4,5,0]],"Gm7":[[0,0,3,3,3],[0,0,6,0,3],[0,3,3,3,0],[0,3,6,0,0],[3,0,3,0,3],[3,3,3,0,0]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]]}};
+    var DBS = {"guitar":{"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]]},"ukulele":{"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]]},"mandolin":{"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]]},"banjo":{"G":[[0,0,0,0,0],[-1,0,0,0,0],[0,0,0,0,-1],[-1,-1,0,0,0],[-1,0,0,0,-1],[0,0,0,-1,-1]],"F":[[3,2,1,3,2],[-1,2,1,3,2],[3,2,1,3,-1],[-1,-1,1,3,2],[-1,2,1,3,-1],[3,2,1,-1,-1]],"D":[[0,2,3,4,2],[4,2,3,0,2],[4,2,3,4,2],[0,2,3,4,-1],[4,2,3,0,-1],[-1,2,3,4,2]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[2,0,1,2,-1],[-1,-1,1,2,0],[-1,0,1,2,-1],[2,0,1,-1,-1]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     function baseFret(f) {
@@ -283,54 +285,139 @@
 </head>
 <body>
   <div class="page">
-    <h1>Bennys Badekar - Havfruesangen</h1>
-    <h2>Misc Cartoons</h2>
-    <div class="meta">Toneart: Fm &nbsp;·&nbsp; Tilføjet: 13.06.2026</div>
-    
-    <pre class="block line-group line-group-last">Bennys Badekar - Havfruesangen
-Trille, Maia, Aya og Otto Brandenburg
-Tabbed af: Christian Wille Koch
-3. feb 2022</pre>
+    <h1>Bennys Badekar - Sørøversangen <span class="artist-inline">– Flemming Quist Møller</span></h1>
+    <div class="meta">Toneart: G</div>
+    <div class="chords">
+    <pre class="block line-group line-group-last">Bennys Badekar - Sørøversangen
+Povl Dissing og Per Goldschmidt3</pre>
 <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Eb7</span> <span class="chord">C7</span> <span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Eb7</span></pre>
-<pre class="block line-group"><span class="section">[Vers 1]</span>
-         <span class="chord">Fm7</span>         <span class="chord">Bb7</span>    <span class="chord">Fm7</span>        <span class="chord">Bb7</span>
-Synes du ikke vi er kønne? Mmmmm  mmmm mmm mmmmm mmm mmm</pre>
-<pre class="block line-group"><span class="chord">Fm7</span>           <span class="chord">Bb7</span>         <span class="chord">Eb7</span>    <span class="chord">C7</span>
-Jo i er billedskønne alle tre</pre>
-<pre class="block line-group">      <span class="chord">Fm7</span>           <span class="chord">Bb7</span>
-Er vi flotte vær nu ærlig</pre>
-<pre class="block line-group"><span class="chord">Fm7</span>        <span class="chord">Bb7</span>      <span class="chord">Fm7</span>           <span class="chord">Bb7</span>            <span class="chord">Eb</span>
-I er noget særligt mmmh mmmh mmmh mmmh mmmh mmmh mmmh</pre>
-<pre class="block line-group">      <span class="chord">Gm7</span>          <span class="chord">C7</span>         <span class="chord">F</span>
-Er vi slanke er vi smækre i faconen</pre>
-<pre class="block line-group">      <span class="chord">Gm7</span>         <span class="chord">C7</span>        <span class="chord">F</span>
-I er labre i er lækre alle tre</pre>
-<pre class="block line-group">         <span class="chord">Fm7</span>      <span class="chord">Bb7</span>
-Synes du vi er elegante?</pre>
-<pre class="block line-group">       <span class="chord">Eb7</span>     <span class="chord">C7</span>     <span class="chord">Fm7</span>   <span class="chord">Bb7</span>  <span class="chord">Eb7</span>
-Ja og noget så interessante alle tre</pre>
-<pre class="block line-group">          <span class="chord">Fm7</span>       <span class="chord">Bb7</span>     <span class="chord">Fm7</span>        <span class="chord">Bb7</span>
-Synes du også vi er smarte Uuh uh uuh uh uh uuuh</pre>
-<pre class="block line-group"><span class="chord">Fm7</span>            <span class="chord">Bb7</span>          <span class="chord">Eb7</span>    <span class="chord">C7</span>
-Ja jeg synes i har det alle tre   Åh åh åh</pre>
-<pre class="block line-group">       <span class="chord">Fm7</span>              <span class="chord">Bb7</span>
-Er vi flotte og er vi chikke</pre>
-<pre class="block line-group line-group-last"><span class="chord">Fm7</span>               <span class="chord">Bb7</span>      <span class="chord">Fm7</span>            <span class="chord">Bb7</span>         <span class="chord">Eb7</span>
-Jeg tør dårligt kigge    Mmmmm  mmmm mmm mmmmm mmm mmm</pre>
-<pre class="block line-group"><span class="section">[Instrumental]</span>
-<span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Fm7</span> <span class="chord">Bb7</span></pre>
-<pre class="block line-group"><span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Eb7</span> <span class="chord">C7</span></pre>
-<pre class="block line-group"><span class="chord">Fm7</span> <span class="chord">Bb7</span></pre>
-<pre class="block line-group"><span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Eb</span></pre>
-<pre class="block line-group"><span class="chord">Gm7</span> <span class="chord">C7</span> <span class="chord">F</span> <span class="chord">Gm7</span> <span class="chord">C7</span> <span class="chord">F</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Eb7</span> <span class="chord">C7</span> <span class="chord">Fm7</span> <span class="chord">Bb7</span> <span class="chord">Eb7</span></pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-     <span class="chord">Fm7</span>          <span class="chord">Bb7</span>     <span class="chord">Fm7</span>             <span class="chord">Bb7</span>
-I er slanke, i er skønne, flotte, smarte, kønne Mmmmm  mmmm mmm mmmmm mmm mmm</pre>
-<pre class="block line-group line-group-last">     <span class="chord">Fm7</span>            <span class="chord">Bb7</span>    <span class="chord">Fm7</span>          <span class="chord">Bb7</span>
-Åh hvor er vi altså lækre. Fine, labre, smækre Mmmmm  mmmm mmm mmmmm mmm mmm</pre>
-    
+<span class="chord">G</span> <span class="chord">F</span> <span class="chord">G</span> <span class="chord">F</span></pre>
+<pre class="block line-group"><span class="section">[Verse 1]</span>
+        <span class="chord">G</span>
+Jeg er søn af Sorte Anna</pre>
+<pre class="block line-group">                      <span class="chord">D</span>
+Hun var Verdenshavets skræk</pre>
+<pre class="block line-group">                   <span class="chord">D</span>
+Blodsofie var min mama</pre>
+<pre class="block line-group">                    <span class="chord">G</span>
+hun var endnu mere fræk</pre>
+<pre class="block line-group">      <span class="chord">C</span>            <span class="chord">G</span>
+Blodsofie var hans mama</pre>
+<pre class="block line-group">        <span class="chord">D</span>          <span class="chord">G</span>
+hun var endnu mere fræk</pre>
+<pre class="block line-group line-group-last"><span class="chord">F</span>   <span class="chord">G</span>   <span class="chord">F</span></pre>
+<pre class="block line-group"><span class="section">[Verse 2]</span>
+         <span class="chord">G</span>
+Hun stod ud med tyve skibe</pre>
+<pre class="block line-group">                    <span class="chord">D</span>
+sejled’ hele jorden rundt</pre>
+<pre class="block line-group">                   <span class="chord">D</span>
+Min sænked’ dem på stribe</pre>
+<pre class="block line-group">                     <span class="chord">G</span>
+og grinte så hun fik ondt</pre>
+<pre class="block line-group">     <span class="chord">C</span>              <span class="chord">G</span>
+Hans sænked’ dem på stribe</pre>
+<pre class="block line-group line-group-last">   <span class="chord">D</span>                    <span class="chord">G</span>
+og grinte så hun fik et ondt</pre>
+<pre class="block line-group"><span class="section">[Verse 3]</span>
+    <span class="chord">G</span>
+Min mor var en mægtig skrap én</pre>
+<pre class="block line-group">                      <span class="chord">D</span>
+med en kæmpe klap for øjet</pre>
+<pre class="block line-group">                     <span class="chord">D</span>
+Min havde et rigtigt træben</pre>
+<pre class="block line-group">                 <span class="chord">G</span>
+og en gammel papegøje</pre>
+<pre class="block line-group">     <span class="chord">C</span>                <span class="chord">G</span>
+Hans havde et rigtigt træben</pre>
+<pre class="block line-group line-group-last">      <span class="chord">D</span>          <span class="chord">G</span>
+og en gammel papegøje</pre>
+<pre class="block line-group"><span class="section">[Bridge]</span>
+      <span class="chord">C</span>
+La la li la la lå</pre>
+<pre class="block line-group">      <span class="chord">G</span>
+La la li la la lej</pre>
+<pre class="block line-group line-group-last">      <span class="chord">D</span>                 <span class="chord">G</span>
+La la li la la lå la la lej</pre>
+<pre class="block line-group"><span class="section">[Verse 4]</span>
+       <span class="chord">G</span>
+Tusind dolke og kanoner</pre>
+<pre class="block line-group">                      <span class="chord">D</span>
+var der på min moders skib</pre>
+<pre class="block line-group">                     <span class="chord">D</span>
+Hundrede trilliarder kroner</pre>
+<pre class="block line-group">                     <span class="chord">G</span>
+hugged’ min sit hele liv</pre>
+<pre class="block line-group">         <span class="chord">C</span>           <span class="chord">G</span>
+Hundrede trilliarder kroner</pre>
+<pre class="block line-group line-group-last">        <span class="chord">D</span>             <span class="chord">G</span>
+hugged’ hans sit hele liv</pre>
+<pre class="block line-group"><span class="section">[Verse 5]</span>
+    <span class="chord">G</span>
+Min mor var piraters dronning</pre>
+<pre class="block line-group">                      <span class="chord">D</span>
+hun var styg som bare syv</pre>
+<pre class="block line-group">                        <span class="chord">D</span>
+Hun var sød og mild som honning</pre>
+<pre class="block line-group">                             <span class="chord">G</span>
+min var streng - lad vær’ og lyv!</pre>
+<pre class="block line-group">               <span class="chord">C</span>               <span class="chord">G</span>
+(Hehe) Hun var sød og mild som honning</pre>
+<pre class="block line-group line-group-last">                <span class="chord">D</span>                    <span class="chord">G</span>
+(haha) hans var streng - lad vær’ og lyv!</pre>
+<pre class="block line-group"><span class="section">[Verse 6]</span>
+  <span class="chord">G</span>
+Engang på Skatteøen</pre>
+<pre class="block line-group">                     <span class="chord">D</span>
+slog hun tusind mand ihjel</pre>
+<pre class="block line-group">                       <span class="chord">D</span>
+Når min mor stod ud på søen</pre>
+<pre class="block line-group">                           <span class="chord">G</span>
+døde der fler’ en man ku’ tælle</pre>
+<pre class="block line-group">         <span class="chord">C</span>              <span class="chord">G</span>
+Når hans mor stod ud på søen</pre>
+<pre class="block line-group line-group-last">          <span class="chord">D</span>                <span class="chord">G</span>
+døde der fler’ en man ku’ tælle</pre>
+<pre class="block line-group"><span class="section">[Verse 7]</span>
+    <span class="chord">G</span>
+Min mor drak rom og røg cigarer</pre>
+<pre class="block line-group">                      <span class="chord">D</span>
+Hun kunne spytte tyve fod</pre>
+<pre class="block line-group">                         <span class="chord">D</span>
+Når min kom løb folk som harer</pre>
+<pre class="block line-group">                             <span class="chord">G</span>
+Hun skreg af fryd når hun så blod</pre>
+<pre class="block line-group">         <span class="chord">C</span>                    <span class="chord">G</span>
+Når hans mor kom løb folk som harer</pre>
+<pre class="block line-group line-group-last">             <span class="chord">D</span>               <span class="chord">G</span>
+Hun skreg af fryd når hun så blod</pre>
+<pre class="block line-group"><span class="section">[Verse 8]</span>
+         <span class="chord">G</span>
+Jeg’ den skrappeste pirast af os</pre>
+<pre class="block line-group">                          <span class="chord">D</span>
+for jeg har aldrig gået i skole</pre>
+<pre class="block line-group">                        <span class="chord">D</span>
+Næ, for du turd’ aldrig slås</pre>
+<pre class="block line-group">                     <span class="chord">G</span>
+og få revet din fine kjole</pre>
+<pre class="block line-group">         <span class="chord">C</span>                <span class="chord">G</span>
+Nej, for jeg turd’ aldrig slås</pre>
+<pre class="block line-group line-group-last">      <span class="chord">D</span>              <span class="chord">G</span>
+og få revet min fine kjole</pre>
+<pre class="block line-group"><span class="section">[Verse 9]</span>
+         <span class="chord">G</span>
+Jeg’ den ledeste pirat på havet</pre>
+<pre class="block line-group">                           <span class="chord">D</span>
+Jeg stjæler guld som ingen før</pre>
+<pre class="block line-group">                        <span class="chord">D</span>
+De sørøvertogter du har lavet</pre>
+<pre class="block line-group">                                <span class="chord">G</span>
+har gjort dig modig og hård som smør</pre>
+<pre class="block line-group">                     <span class="chord">C</span>      <span class="chord">G</span>
+De sørøvertogter som DU har lavet</pre>
+<pre class="block line-group line-group-last">          <span class="chord">D</span>                     <span class="chord">G</span>
+har gjort DIG modig og hård som smør!</pre>
+    </div>
     
   </div>
 </body>

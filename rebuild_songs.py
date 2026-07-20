@@ -19,12 +19,16 @@ sys.path.insert(0, str(Path(__file__).parent))
 from add_song import make_song_html, load_songs, save_songs, rebuild_index, SONGS_DIR
 
 
-def extract_date(soup) -> str:
-    meta = soup.find(class_="meta")
-    if not meta:
-        return ""
-    m = re.search(r"Tilføjet:\s*(\d{2}\.\d{2}\.\d{4})", meta.get_text())
-    return m.group(1) if m else ""
+def extract_title_artist(soup) -> tuple:
+    h1 = soup.find("h1")
+    artist_span = h1.find("span", class_="artist-inline")
+    if artist_span:
+        artist = re.sub(r"^–\s*", "", artist_span.get_text()).strip()
+        title = h1.get_text()[: -len(artist_span.get_text())].strip()
+        return title, artist
+    # Old format: separate <h2> for artist
+    h2 = soup.find("h2")
+    return h1.get_text().strip(), (h2.get_text().strip() if h2 else "")
 
 
 def extract_meta(soup):
@@ -61,13 +65,11 @@ def pre_to_ug(pre) -> str:
 
 def html_to_content(html_path: Path):
     soup = BeautifulSoup(html_path.read_text(encoding="utf-8"), "html.parser")
-    title = soup.find("h1").get_text()
-    artist = soup.find("h2").get_text()
+    title, artist = extract_title_artist(soup)
     key, capo, url = extract_meta(soup)
-    added = extract_date(soup)
     blocks = [pre_to_ug(pre) for pre in soup.find_all("pre", class_="block")]
     content = "\n\n".join(b for b in blocks if b.strip())
-    return title, artist, key, capo, url, added, content
+    return title, artist, key, capo, url, content
 
 
 def main():
@@ -79,14 +81,8 @@ def main():
             print(f"  Missing: {filepath}")
             continue
 
-        title, artist, key, capo, url, added, content = html_to_content(filepath)
+        title, artist, key, capo, url, content = html_to_content(filepath)
         new_html, layout = make_song_html(title, artist, key, capo, content, url)
-
-        # Preserve the original "Tilføjet" date
-        if added:
-            from datetime import date
-            today = date.today().strftime("%d.%m.%Y")
-            new_html = new_html.replace(f"Tilføjet: {today}", f"Tilføjet: {added}", 1)
 
         filepath.write_text(new_html, encoding="utf-8")
         new_hash = hashlib.sha256(new_html.encode("utf-8")).hexdigest()

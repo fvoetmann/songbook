@@ -119,8 +119,8 @@ Scriptet analyserer indholdet og vælger automatisk layout:
 
 | Situation | Layout |
 |---|---|
-| ≤ 65 ikke-blanke linjer | 1 kolonne |
-| ≤ 120 linjer, akkordlinjer ≤ 65 tegn | 2 kolonner |
+| ≤ 54 ikke-blanke linjer | 1 kolonne |
+| ≤ 130 linjer, akkordlinjer ≤ 65 tegn | 2 kolonner |
 | Ellers | Flere sider |
 
 Guitar tab-notation (linjer med `e|`, `B|` osv.) behandles separat:

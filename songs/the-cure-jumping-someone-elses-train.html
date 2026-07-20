@@ -16,8 +16,8 @@
       margin: 0 auto;
       padding: 12mm 14mm;
     }
-    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 3px; }
-    h2 { font-size: 10pt; font-family: sans-serif; font-weight: normal; color: #555; margin-bottom: 8px; }
+    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
+    h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
     .meta {
       font-size: 7.5pt; font-family: sans-serif; color: #999;
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
@@ -32,6 +32,8 @@
     pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
     pre.block.line-group-last { margin-bottom: 6px; }
     body.font-small pre.block { font-size: 8pt; }
+    .chords { column-count: 2; column-gap: 8mm; }
+    @media (max-width: 640px) { .chords { column-count: 1; } }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -281,12 +283,11 @@
   })();
   </script>
 </head>
-<body>
+<body class="font-small">
   <div class="page">
-    <h1>Jumping Someone Elses Train</h1>
-    <h2>The Cure</h2>
-    <div class="meta">Tilføjet: 13.06.2026</div>
+    <h1>Jumping Someone Elses Train <span class="artist-inline">– The Cure</span></h1>
     
+    <div class="chords">
     <pre class="block line-group line-group-last">Artist: Cure
 Title: Jumping Someone Else&#x27;s Train (single 1979)</pre>
 <pre class="block line-group"><span class="section">[Intro]</span>
@@ -344,7 +345,7 @@ Title: Jumping Someone Else&#x27;s Train (single 1979)</pre>
 (Riff1)
 Jumping someone else&#x27;s train, jumping someone else&#x27;s train</pre>
 <pre class="block line-group line-group-last"><span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">C#m</span></pre>
-    
+    </div>
     <div class="tab-section"><pre class="block line-group line-group-last">Jumping someone else&#x27;s train
 (Drums only)
 (Drums and bass)

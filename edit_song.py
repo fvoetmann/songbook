@@ -81,10 +81,21 @@ def pre_to_ug(pre) -> str:
     return "".join(parts).strip("\n")
 
 
+def extract_title_artist(soup) -> tuple:
+    h1 = soup.find("h1")
+    artist_span = h1.find("span", class_="artist-inline")
+    if artist_span:
+        artist = re.sub(r"^–\s*", "", artist_span.get_text()).strip()
+        title = h1.get_text()[: -len(artist_span.get_text())].strip()
+        return title, artist
+    # Old format: separate <h2> for artist
+    h2 = soup.find("h2")
+    return h1.get_text().strip(), (h2.get_text().strip() if h2 else "")
+
+
 def html_to_content(html_path: Path):
     soup = BeautifulSoup(html_path.read_text(encoding="utf-8"), "html.parser")
-    title = soup.find("h1").get_text()
-    artist = soup.find("h2").get_text()
+    title, artist = extract_title_artist(soup)
     key, capo, url = extract_meta(soup)
     blocks = [pre_to_ug(pre) for pre in soup.find_all("pre", class_="block")]
     content = "\n\n".join(b for b in blocks if b.strip())
