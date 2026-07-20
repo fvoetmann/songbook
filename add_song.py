@@ -708,7 +708,11 @@ def make_song_html(
     double_css = ""
     wrap_open, wrap_close = "", ""
     if layout == "double":
-        double_css = "\n    .chords { column-count: 2; column-gap: 8mm; }\n    @media (max-width: 640px) { .chords { column-count: 1; } }"
+        double_css = (
+            "\n    .chords { column-count: 2; column-gap: 8mm; }"
+            "\n    @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) {"
+            " .chords { column-count: 1; } }"
+        )
         wrap_open = '<div class="chords">'
         wrap_close = "</div>"
 
