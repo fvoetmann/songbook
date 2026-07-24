@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from add_song import (
     make_song_html, parse_chord_name, load_songs, save_songs,
     rebuild_index, slugify, transpose_content, transpose_chord,
+    is_chord_only_line,
 )
 
 SONGS_DIR = Path("songs")
@@ -123,8 +124,50 @@ def parse_header(text: str) -> dict:
     return fields
 
 
+def merge_chord_line(chord_line: str, lyric_line: str) -> str:
+    """Inverse of split_inline_chords: insert each [ch]X[/ch] marker from a
+    chord-only line into the lyric line below it, at the column it visually
+    sits above. Pads with spaces rather than truncating if a chord sits
+    beyond the end of the lyric text, so the merge is exactly reversible."""
+    chords = []
+    col, i = 0, 0
+    while i < len(chord_line):
+        if chord_line[i:i + 4] == "[ch]":
+            end = chord_line.find("[/ch]", i)
+            if end != -1:
+                name = chord_line[i + 4:end]
+                chords.append((col, name))
+                col += len(name)
+                i = end + 5
+                continue
+        col += 1
+        i += 1
+
+    result = lyric_line
+    for pos, name in sorted(chords, key=lambda c: -c[0]):
+        if pos > len(result):
+            result += " " * (pos - len(result))
+        result = result[:pos] + f"[{name}]" + result[pos:]
+    return result
+
+
 def ug_to_edit(content: str) -> str:
-    return re.sub(r"\[ch\](.*?)\[/ch\]", r"[\1]", content)
+    """Convert stored UG content into the friendly inline edit format
+    (fx '[Am]Her er teksten') so chord placement is visible directly next to
+    the word it belongs to, instead of a separately-aligned chord line."""
+    lines = content.split("\n")
+    out = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        if is_chord_only_line(line) and nxt.strip() and not is_chord_only_line(nxt) and "[ch]" not in nxt:
+            out.append(merge_chord_line(line, nxt))
+            i += 2
+            continue
+        out.append(re.sub(r"\[ch\](.*?)\[/ch\]", r"[\1]", line))
+        i += 1
+    return "\n".join(out)
 
 
 def split_inline_chords(line: str) -> list:
