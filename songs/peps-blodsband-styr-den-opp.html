@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <title>Styr Den Opp – Peps Blodsband</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: monospace; background: #ddd; padding: 24px; }
+    .page {
+      background: white;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 12mm 14mm;
+    }
+    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
+    h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
+    .meta {
+      font-size: 7.5pt; font-family: sans-serif; color: #999;
+      border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
+    }
+    .meta a { color: #999; }
+    pre.block {
+      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+      font-size: 9pt; line-height: 1.45;
+      white-space: pre-wrap; word-break: break-word;
+      margin-bottom: 6px;
+    }
+    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
+    pre.block.line-group-last { margin-bottom: 6px; }
+    body.font-small pre.block { font-size: 8pt; }
+    .tab-section { margin-top: 8mm; }
+    .chord { color: #b00020; font-weight: bold; cursor: help; }
+    .section { color: #777; font-style: italic; font-weight: bold; }
+    @media (max-width: 640px) {
+      body { background: white; padding: 0; }
+      .page { width: 100%; min-height: auto; padding: 12px 14px; }
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
+      @page { size: A4; margin: 12mm 14mm; }
+      pre.block { break-inside: avoid; }
+      .tab-section { break-before: page; }
+    }
+  </style>
+  <style>
+    #chord-tip {
+      position: fixed; z-index: 9999;
+      background: white; border: 1px solid #ccc;
+      border-radius: 5px; padding: 5px 7px 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      pointer-events: none; text-align: center;
+    }
+    .tip-name { font-family: sans-serif; font-size: 9pt; font-weight: bold; color: #333; margin-bottom: 2px; }
+    #inst-bar {
+      position: fixed; bottom: 16px; right: 16px; z-index: 9998;
+      background: white; border: 1px solid #ccc; border-radius: 5px;
+      padding: 4px 8px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+      font-family: sans-serif; font-size: 8pt;
+      display: flex; gap: 2px; align-items: center;
+    }
+    #inst-bar span { color: #aaa; margin-right: 4px; }
+    .inst-btn {
+      border: none; background: none; cursor: pointer;
+      padding: 2px 6px; font-size: 8pt; font-family: sans-serif;
+      border-radius: 3px; color: #555;
+    }
+    .inst-btn.active { font-weight: bold; color: #b00020; }
+    @media (max-width: 640px) { #inst-bar { flex-wrap: wrap; max-width: calc(100vw - 32px); bottom: 8px; right: 8px; } }
+    @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
+  </style>
+  <script>
+  (function() {
+    var DBS = {"guitar":{"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]]},"ukulele":{"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]]},"banjo":{"A":[[2,2,2,2,2],[-1,2,2,2,2],[2,2,2,2,-1],[-1,-1,2,2,2],[-1,2,2,2,-1],[2,2,2,-1,-1]],"D":[[0,2,3,4,2],[4,2,3,0,2],[4,2,3,4,2],[0,2,3,4,-1],[4,2,3,0,-1],[-1,2,3,4,2]],"E":[[2,1,0,2,1],[2,1,0,2,4],[2,4,0,2,1],[-1,1,0,2,1],[2,1,0,2,-1],[-1,1,0,2,4]]}};
+    var inst = 'guitar';
+    var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+    // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
+    // for akkorder der ikke findes i DBS (fx efter transponering i browseren).
+    // Skal holdes i sync med INSTRUMENTS/NOTE_SEMI/ACCIDENTAL/CHORD_TYPES i add_song.py.
+    var INSTRUMENTS = {
+      guitar:   { strings: [40,45,50,55,59,64], max_fret: 9, min_play: 4, span: 2 },
+      ukulele:  { strings: [67,60,64,69],       max_fret: 7, min_play: 4, span: 3, reentrant: true },
+      mandolin: { strings: [55,62,69,76],       max_fret: 7, min_play: 3, span: 3 },
+      banjo:    { strings: [50,55,59,62,67],    max_fret: 7, min_play: 3, span: 3, reentrant: true }
+    };
+    var NOTE_SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+    var ACCIDENTAL = { '#': 1, 'b': -1 };
+    var CHORD_TYPES = {
+      'mmaj7': [0,3,7,11], 'm(maj7)': [0,3,7,11], 'maj7': [0,4,7,11], 'maj9': [0,2,4,7,11],
+      '7sus4': [0,5,7,10], 'dim7': [0,3,6,9], 'sus2': [0,2,7], 'sus4': [0,5,7],
+      'add9': [0,2,4,7], 'aug': [0,4,8], 'dim': [0,3,6], 'm7': [0,3,7,10], 'm6': [0,3,7,9],
+      'm9': [0,2,3,7,10], 'maj': [0,4,7], 'm': [0,3,7], '7': [0,4,7,10], '6': [0,4,7,9],
+      '9': [0,2,4,7,10], '5': [0,7], '': [0,4,7]
+    };
+    function parseChordName(name) {
+      var bassSemi = null;
+      var slash = name.indexOf('/');
+      if (slash > 0) {
+        var b = name.slice(slash + 1);
+        if (b && NOTE_SEMI.hasOwnProperty(b[0])) {
+          bassSemi = NOTE_SEMI[b[0]];
+          if (b.length > 1 && ACCIDENTAL.hasOwnProperty(b[1])) {
+            bassSemi = (bassSemi + ACCIDENTAL[b[1]] + 12) % 12;
+          }
+        }
+        name = name.slice(0, slash);
+      }
+      if (!name || !NOTE_SEMI.hasOwnProperty(name[0])) return null;
+      var root = NOTE_SEMI[name[0]];
+      var i = 1;
+      if (i < name.length && ACCIDENTAL.hasOwnProperty(name[i])) {
+        root = (root + ACCIDENTAL[name[i]] + 12) % 12;
+        i += 1;
+      }
+      var suffix = name.slice(i);
+      if (!CHORD_TYPES.hasOwnProperty(suffix)) return null;
+      return { root: root, ivs: CHORD_TYPES[suffix], bass: bassSemi };
+    }
+    function cartesian(arrs) {
+      var result = [[]];
+      for (var i = 0; i < arrs.length; i++) {
+        var next = [];
+        for (var j = 0; j < result.length; j++) {
+          for (var k = 0; k < arrs[i].length; k++) {
+            next.push(result[j].concat([arrs[i][k]]));
+          }
+        }
+        result = next;
+      }
+      return result;
+    }
+    function generateVoicings(root, ivs, bass, instr) {
+      var stringOpen = instr.strings, nStr = stringOpen.length;
+      var maxFret = instr.max_fret, minPlay = instr.min_play, maxSpan = instr.span;
+      var tones = {};
+      ivs.forEach(function(iv) { tones[(root + iv) % 12] = true; });
+      var toneKeys = Object.keys(tones);
+
+      var opts = [];
+      for (var s = 0; s < nStr; s++) {
+        var o = { '-1': true };
+        toneKeys.forEach(function(tk) {
+          var diff = ((Number(tk) - stringOpen[s]) % 12 + 12) % 12;
+          if (diff <= maxFret) o[diff] = true;
+        });
+        opts.push(Object.keys(o).map(Number).sort(function(a, b) { return a - b; }));
+      }
+
+      var valid = [];
+      cartesian(opts).forEach(function(fs) {
+        var playing = fs.filter(function(f) { return f >= 0; });
+        if (playing.length < minPlay) return;
+        var pressed = fs.filter(function(f) { return f > 0; });
+        if (pressed.length && (Math.max.apply(null, pressed) - Math.min.apply(null, pressed)) > maxSpan) return;
+        var played = {};
+        for (var s = 0; s < nStr; s++) if (fs[s] >= 0) played[((stringOpen[s] + fs[s]) % 12 + 12) % 12] = true;
+        if (!played[root % 12]) return;
+        if (ivs.length > 1 && !played[(root + ivs[1]) % 12]) return;
+        if (bass !== null) {
+          var loAbs = Math.min.apply(null, fs.map(function(f, s) { return f >= 0 ? stringOpen[s] + f : Infinity; }));
+          if (((loAbs % 12 + 12) % 12) !== bass % 12) return;
+        }
+        valid.push(fs);
+      });
+      if (!valid.length) return [];
+
+      function scoreKey(fs) {
+        var played = {};
+        for (var s = 0; s < nStr; s++) if (fs[s] >= 0) played[((stringOpen[s] + fs[s]) % 12 + 12) % 12] = true;
+        var pressed = fs.filter(function(f) { return f > 0; });
+        var first = nStr, last = -1;
+        for (var i = 0; i < nStr; i++) if (fs[i] >= 0) { first = i; break; }
+        for (var i = nStr - 1; i >= 0; i--) if (fs[i] >= 0) { last = i; break; }
+        var gaps = 0;
+        for (var i = first; i <= last; i++) if (fs[i] === -1) gaps++;
+        var inv;
+        if (instr.reentrant || bass !== null) {
+          inv = 0;
+        } else {
+          var loAbs = Math.min.apply(null, fs.map(function(f, s) { return f >= 0 ? stringOpen[s] + f : Infinity; }));
+          inv = ((loAbs % 12 + 12) % 12) === (root % 12) ? 0 : 1;
+        }
+        var nPlay = fs.filter(function(f) { return f >= 0; }).length;
+        var position = pressed.length ? Math.min.apply(null, pressed) : 0;
+        var matched = Object.keys(played).filter(function(k) { return tones[k]; }).length;
+        var sumFrets = fs.filter(function(f) { return f >= 0; }).reduce(function(a, b) { return a + b; }, 0);
+        return [-matched / toneKeys.length, gaps, inv, position, -nPlay, sumFrets];
+      }
+      valid.sort(function(a, b) {
+        var ka = scoreKey(a), kb = scoreKey(b);
+        for (var i = 0; i < ka.length; i++) {
+          if (ka[i] !== kb[i]) return ka[i] - kb[i];
+        }
+        return 0;
+      });
+
+      var seen = {}, result = [];
+      for (var i = 0; i < valid.length; i++) {
+        var k = valid[i].join(',');
+        if (!seen[k]) {
+          seen[k] = true;
+          result.push(valid[i]);
+          if (result.length === 6) break;
+        }
+      }
+      return result;
+    }
+    // Transponering: JS-port af shift_note/transpose_chord i add_song.py.
+    // Skal holdes i sync hvis akkord-parsing-reglerne ændres.
+    var SHARPS = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    var FLATS  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+    var transposeSemitones = 0;
+    function shiftNote(note, n) {
+      var scale = note.indexOf('b') >= 0 ? FLATS : SHARPS;
+      var idx = scale.indexOf(note);
+      if (idx < 0) return note;
+      return scale[((idx + n) % 12 + 12) % 12];
+    }
+    function transposeChordName(name, n) {
+      var m = /^([A-G][#b]?)(.*?)(\/([A-G][#b]?))?$/.exec(name);
+      if (!m) return name;
+      var result = shiftNote(m[1], n) + (m[2] || '');
+      if (m[4]) result += '/' + shiftNote(m[4], n);
+      return result;
+    }
+    function setTranspose(n) {
+      transposeSemitones = n;
+      document.querySelectorAll('.chord').forEach(function(el) {
+        var origName = el.dataset.orig;
+        var newName = transposeChordName(origName, n);
+        el.textContent = newName;
+        var gap = el.dataset.origGap;
+        if (gap !== undefined) {
+          var next = el.nextSibling;
+          var m = /^( +)/.exec(gap);
+          if (m && next && next.nodeType === 3) {
+            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
+            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
+          }
+        }
+      });
+      if (shown) shown = new WeakMap();
+      hide();
+    }
+    function changeTranspose(delta) {
+      var n = Math.max(-11, Math.min(11, transposeSemitones + delta));
+      setTranspose(n);
+      document.getElementById('transpose-value').textContent =
+        n > 0 ? '+' + n : (n === 0 ? '0' : '−' + Math.abs(n));
+    }
+    function baseFret(f) {
+      var pos = f.filter(function(x) { return x > 0; });
+      if (!pos.length) return 1;
+      var m = Math.min.apply(null, pos);
+      return (f.some(function(x) { return x === 0; }) || m <= 2) ? 1 : m;
+    }
+    function makeSVG(frets) {
+      var nS = frets.length, sw = nS <= 4 ? 14 : 10;
+      var base = baseFret(frets), nF = 4, fh = 13;
+      var gw = sw * (nS - 1), gh = fh * nF, ox = 12, oy = 20;
+      var hasLbl = base > 2, nut = base <= 2 ? 3 : 0;
+      var tw = gw + ox * 2 + (hasLbl ? 20 : 0), th = gh + oy + 6;
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + tw + '" height="' + th + '">';
+      s += '<rect width="' + tw + '" height="' + th + '" fill="white"/>';
+      for (var i = 0; i < nS; i++) {
+        var x = ox + i * sw, fi = frets[i];
+        if (fi === -1)
+          s += '<text x="' + x + '" y="' + (oy-5) + '" text-anchor="middle" font-size="9" font-family="sans-serif" fill="#aaa">x</text>';
+        else if (fi === 0)
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="3.5" fill="none" stroke="#aaa" stroke-width="1.2"/>';
+        else
+          s += '<circle cx="' + x + '" cy="' + (oy-8) + '" r="2.5" fill="#b00020"/>';
+      }
+      if (nut)
+        s += '<rect x="' + ox + '" y="' + oy + '" width="' + gw + '" height="' + nut + '" fill="#333" rx="1"/>';
+      else
+        s += '<text x="' + (ox+gw+4) + '" y="' + (oy+fh*0.75) + '" font-size="8" font-family="sans-serif" font-weight="bold" fill="#555">' + base + 'fr</text>';
+      var y0 = oy + nut;
+      for (var r = 0; r <= nF; r++) {
+        var y = y0 + r * fh;
+        s += '<line x1="' + ox + '" y1="' + y + '" x2="' + (ox+gw) + '" y2="' + y + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var j = 0; j < nS; j++) {
+        var xs = ox + j * sw;
+        s += '<line x1="' + xs + '" y1="' + y0 + '" x2="' + xs + '" y2="' + (y0+gh) + '" stroke="#ddd" stroke-width="0.8"/>';
+      }
+      for (var k = 0; k < nS; k++) {
+        var fv = frets[k], row = fv - base;
+        if (fv > 0 && row >= 0 && row < nF) {
+          var cx = ox + k * sw, cy = y0 + row * fh + fh / 2;
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (fh*0.38) + '" fill="#b00020"/>';
+        }
+      }
+      return s + '</svg>';
+    }
+    function dist(a, b) {
+      var d = 0;
+      for (var i = 0; i < a.length; i++) {
+        if (a[i] >= 0 && b[i] >= 0) d += Math.abs(a[i] - b[i]);
+        else if (a[i] !== b[i]) d += 2;
+      }
+      return d;
+    }
+    function best(vs, prev) {
+      if (!prev || vs.length === 1) return vs[0];
+      var pick = vs[0], d = dist(pick, prev);
+      for (var i = 1; i < vs.length; i++) {
+        var di = dist(vs[i], prev);
+        if (di < d) { pick = vs[i]; d = di; }
+      }
+      return pick;
+    }
+    function lookup(name) {
+      var db = DBS[inst] || (DBS[inst] = {});
+      if (db[name]) return db[name];
+      var sl = name.indexOf('/');
+      if (sl > 0 && db[name.slice(0,sl)]) return db[name.slice(0,sl)];
+      var parsed = parseChordName(name);
+      if (!parsed) return null;
+      var vs = generateVoicings(parsed.root, parsed.ivs, parsed.bass, INSTRUMENTS[inst]);
+      if (!vs.length) return null;
+      db[name] = vs;
+      return vs;
+    }
+    function prevEl(el) {
+      var block = el.closest('pre.block');
+      if (!block) return null;
+      var all = Array.from(block.querySelectorAll('.chord'));
+      var i = all.indexOf(el);
+      return i > 0 ? all[i - 1] : null;
+    }
+    var tip = null;
+    function show(el, name) {
+      var vs = lookup(name);
+      if (!vs) return;
+      var prev = prevEl(el);
+      var prevF = (prev && shown) ? shown.get(prev) : null;
+      var frets = best(vs, prevF || null);
+      if (shown) shown.set(el, frets);
+      hide();
+      tip = document.createElement('div');
+      tip.id = 'chord-tip';
+      var lbl = document.createElement('div');
+      lbl.className = 'tip-name';
+      lbl.textContent = name;
+      tip.appendChild(lbl);
+      var d = document.createElement('div');
+      d.innerHTML = makeSVG(frets);
+      tip.appendChild(d);
+      document.body.appendChild(tip);
+      var r = el.getBoundingClientRect(), tw2 = tip.offsetWidth, th2 = tip.offsetHeight;
+      var left = r.left + (r.width - tw2) / 2, top = r.top - th2 - 6;
+      if (top < 4) top = r.bottom + 6;
+      left = Math.max(4, Math.min(left, window.innerWidth - tw2 - 4));
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+    }
+    function hide() { if (tip) { tip.remove(); tip = null; } }
+    function setInst(name) {
+      inst = name;
+      if (shown) shown = new WeakMap();
+      hide();
+      document.querySelectorAll('.inst-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.inst === name);
+      });
+    }
+    function setFont(size) {
+      document.body.classList.toggle('font-small', size === 'small');
+      document.querySelectorAll('.font-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.font === size);
+      });
+    }
+    var scrollTimer = null, scrollSpeed = 5;
+    function scrollTick() {
+      window.scrollBy(0, 1);
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 1) toggleScroll();
+    }
+    function toggleScroll() {
+      var b = document.getElementById('scroll-toggle');
+      if (scrollTimer) {
+        clearInterval(scrollTimer); scrollTimer = null;
+        b.textContent = '▶'; b.classList.remove('active');
+      } else {
+        scrollTimer = setInterval(scrollTick, 210 - scrollSpeed * 20);
+        b.textContent = '⏸'; b.classList.add('active');
+      }
+    }
+    function changeScrollSpeed(delta) {
+      scrollSpeed = Math.max(1, Math.min(9, scrollSpeed + delta));
+      document.getElementById('scroll-speed').textContent = scrollSpeed;
+      if (scrollTimer) {
+        clearInterval(scrollTimer);
+        scrollTimer = setInterval(scrollTick, 210 - scrollSpeed * 20);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var bar = document.createElement('div');
+      bar.id = 'inst-bar';
+      var lbl = document.createElement('span');
+      lbl.textContent = 'Instrument:';
+      bar.appendChild(lbl);
+      [['guitar','Guitar'],['ukulele','Ukulele'],['mandolin','Mandolin'],['banjo','Banjo']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.inst = p[0]; b.className = 'inst-btn';
+        b.addEventListener('click', function() { setInst(p[0]); });
+        bar.appendChild(b);
+      });
+      var sep = document.createElement('span');
+      sep.textContent = '·'; sep.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep);
+      var fontLbl = document.createElement('span');
+      fontLbl.textContent = 'Skrift:';
+      bar.appendChild(fontLbl);
+      [['normal','A'],['small','a']].forEach(function(p) {
+        var b = document.createElement('button');
+        b.textContent = p[1]; b.dataset.font = p[0]; b.className = 'inst-btn font-btn';
+        b.addEventListener('click', function() { setFont(p[0]); });
+        bar.appendChild(b);
+      });
+      var sep2 = document.createElement('span');
+      sep2.textContent = '·'; sep2.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep2);
+      var scrollBtn = document.createElement('button');
+      scrollBtn.id = 'scroll-toggle'; scrollBtn.textContent = '▶';
+      scrollBtn.className = 'inst-btn'; scrollBtn.title = 'Automatisk scroll';
+      scrollBtn.addEventListener('click', toggleScroll);
+      bar.appendChild(scrollBtn);
+      var minusBtn = document.createElement('button');
+      minusBtn.textContent = '−'; minusBtn.className = 'inst-btn'; minusBtn.title = 'Langsommere';
+      minusBtn.addEventListener('click', function() { changeScrollSpeed(-1); });
+      bar.appendChild(minusBtn);
+      var speedSpan = document.createElement('span');
+      speedSpan.id = 'scroll-speed'; speedSpan.textContent = scrollSpeed;
+      speedSpan.style.cssText = 'min-width:1em;text-align:center;display:inline-block;color:#555';
+      bar.appendChild(speedSpan);
+      var plusBtn = document.createElement('button');
+      plusBtn.textContent = '+'; plusBtn.className = 'inst-btn'; plusBtn.title = 'Hurtigere';
+      plusBtn.addEventListener('click', function() { changeScrollSpeed(1); });
+      bar.appendChild(plusBtn);
+      var sep3 = document.createElement('span');
+      sep3.textContent = '·'; sep3.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep3);
+      var transLbl = document.createElement('span');
+      transLbl.textContent = 'Transponer:';
+      bar.appendChild(transLbl);
+      var transMinus = document.createElement('button');
+      transMinus.textContent = '−'; transMinus.className = 'inst-btn'; transMinus.title = 'Transponer ned';
+      transMinus.addEventListener('click', function() { changeTranspose(-1); });
+      bar.appendChild(transMinus);
+      var transValue = document.createElement('span');
+      transValue.id = 'transpose-value'; transValue.textContent = '0';
+      transValue.style.cssText = 'min-width:1.6em;text-align:center;display:inline-block;color:#555';
+      bar.appendChild(transValue);
+      var transPlus = document.createElement('button');
+      transPlus.textContent = '+'; transPlus.className = 'inst-btn'; transPlus.title = 'Transponer op';
+      transPlus.addEventListener('click', function() { changeTranspose(1); });
+      bar.appendChild(transPlus);
+      document.body.appendChild(bar);
+      setInst('guitar');
+      setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
+      document.querySelectorAll('.chord').forEach(function(el) {
+        el.dataset.orig = el.textContent;
+        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
+        el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
+        el.addEventListener('mouseleave', hide);
+        el.addEventListener('touchstart', function(e) {
+          var name = el.textContent.trim();
+          if (tip && tip._el === el) { e.preventDefault(); e.stopPropagation(); hide(); return; }
+          e.preventDefault(); e.stopPropagation();
+          show(el, name);
+          if (tip) tip._el = el;
+        });
+      });
+      document.addEventListener('touchstart', function() { hide(); }, { passive: true });
+      window.addEventListener('scroll', hide, { passive: true });
+    });
+  })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <h1>Styr Den Opp <span class="artist-inline">– Peps Blodsband</span></h1>
+    
+    
+    <pre class="block line-group">        <span class="chord">A</span>            <span class="chord">D</span>         <span class="chord">E</span>        <span class="chord">A</span>            <span class="chord">D</span> <span class="chord">E</span>
+Kom och styr den opp min lilla älskling styr den opp
+        <span class="chord">A</span>            <span class="chord">D</span>         <span class="chord">E</span>        <span class="chord">A</span>             <span class="chord">D</span> E...
+Kom och styr den opp min lilla älskling styr den opp</pre>
+<pre class="block line-group">         <span class="chord">A</span>            <span class="chord">D</span>               <span class="chord">E</span>
+Det e så längesen sen jag fick dej på hjärnan</pre>
+<pre class="block line-group">       <span class="chord">A</span>            <span class="chord">D</span>                 <span class="chord">E</span>
+men nu e du här jag säger: Så ska det va</pre>
+<pre class="block line-group">   <span class="chord">A</span>                  <span class="chord">D</span>    <span class="chord">E</span>
+Du hajar det hela va: Bara du o jag
+Så kom o styr...</pre>
+<pre class="block line-group"><span class="chord">A</span>                <span class="chord">D</span>        <span class="chord">E</span>
+Jag för in veden o öppnar spjället</pre>
+<pre class="block line-group"><span class="chord">A</span>                       <span class="chord">D</span>         <span class="chord">E</span>
+sätter tändstickan till det rätta stället</pre>
+<pre class="block line-group"><span class="chord">A</span>                                 <span class="chord">D</span>    <span class="chord">E</span>
+Sen ska jag raka o skaka i glöden hela tiden</pre>
+<pre class="block line-group"><span class="chord">A</span>                      <span class="chord">D</span>       <span class="chord">E</span>
+allt du behöver göra e o hålla liv i den
+Styr den opp...</pre>
+<pre class="block line-group"><span class="chord">A</span>            <span class="chord">D</span>       <span class="chord">E</span>
+Om du visste vad jag känner</pre>
+<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span>          <span class="chord">E</span>
+hur hjärtat slår o blodet det bränner</pre>
+<pre class="block line-group"><span class="chord">A</span>                                   <span class="chord">D</span>     <span class="chord">E</span>
+Kom rör ihop, rör ihop, rör ihop en liten pepparkaka</pre>
+<pre class="block line-group line-group-last"><span class="chord">A</span>                      <span class="chord">D</span>             <span class="chord">E</span>
+jag har en slickepinne som du kan få smaka
+Styr den opp...</pre>
+    
+    
+  </div>
+</body>
+</html>
