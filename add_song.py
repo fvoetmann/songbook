@@ -28,6 +28,8 @@ DOWNLOADS_DIR = Path("downloads")
 # strings: MIDI-notenumre fra tykkeste til tyndeste streng
 # Ukulele: re-entrant G (G4=67 er højere end C4=60)
 # Mandolin: GDAE ligesom violin
+# Banjo: 5. streng (sidste i listen) er en kort strengesnor der starter ved bånd 5 –
+# kan i praksis kun spilles åben, aldrig gribes. Modelleres med 'fixed_open'.
 STRING_OPEN = [40, 45, 50, 55, 59, 64]  # beholdes for bagudkompatibilitet
 MAX_FRET = 9
 
@@ -35,7 +37,7 @@ INSTRUMENTS = {
     'guitar':   {'strings': [40, 45, 50, 55, 59, 64], 'max_fret': 9, 'min_play': 4, 'span': 2},
     'ukulele':  {'strings': [67, 60, 64, 69],          'max_fret': 7, 'min_play': 4, 'span': 3, 'reentrant': True},
     'mandolin': {'strings': [55, 62, 69, 76],          'max_fret': 7, 'min_play': 3, 'span': 3},
-    'banjo':    {'strings': [50, 55, 59, 62, 67],      'max_fret': 7, 'min_play': 3, 'span': 3, 'reentrant': True},
+    'banjo':    {'strings': [50, 55, 59, 62, 67],      'max_fret': 7, 'min_play': 3, 'span': 3, 'reentrant': True, 'fixed_open': [4]},
 }
 
 NOTE_SEMI = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
@@ -107,9 +109,13 @@ def generate_voicings(root: int, ivs: list, bass=None, n: int = 6, instr: dict =
     max_span = instr['span']
 
     tones = {(root + i) % 12 for i in ivs}
+    fixed_open = set(instr.get('fixed_open', []))
 
     opts = []
     for s in range(n_str):
+        if s in fixed_open:
+            opts.append([0])
+            continue
         o = {-1}
         for t in tones:
             diff = (t - string_open[s]) % 12
@@ -221,6 +227,7 @@ CHORD_DIAGRAM_STYLE = """  <style>
       pointer-events: none; text-align: center;
     }
     .tip-name { font-family: sans-serif; font-size: 9pt; font-weight: bold; color: #333; margin-bottom: 2px; }
+    .tip-note { font-family: sans-serif; font-size: 7pt; color: #999; margin-top: 2px; }
     #inst-bar {
       position: fixed; bottom: 16px; right: 16px; z-index: 9998;
       background: white; border: 1px solid #ccc; border-radius: 5px;
@@ -251,7 +258,7 @@ CHORD_DIAGRAM_JS = """  <script>
       guitar:   { strings: [40,45,50,55,59,64], max_fret: 9, min_play: 4, span: 2 },
       ukulele:  { strings: [67,60,64,69],       max_fret: 7, min_play: 4, span: 3, reentrant: true },
       mandolin: { strings: [55,62,69,76],       max_fret: 7, min_play: 3, span: 3 },
-      banjo:    { strings: [50,55,59,62,67],    max_fret: 7, min_play: 3, span: 3, reentrant: true }
+      banjo:    { strings: [50,55,59,62,67],    max_fret: 7, min_play: 3, span: 3, reentrant: true, fixed_open: [4] }
     };
     var NOTE_SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
     var ACCIDENTAL = { '#': 1, 'b': -1 };
@@ -305,9 +312,12 @@ CHORD_DIAGRAM_JS = """  <script>
       var tones = {};
       ivs.forEach(function(iv) { tones[(root + iv) % 12] = true; });
       var toneKeys = Object.keys(tones);
+      var fixedOpen = {};
+      (instr.fixed_open || []).forEach(function(i) { fixedOpen[i] = true; });
 
       var opts = [];
       for (var s = 0; s < nStr; s++) {
+        if (fixedOpen[s]) { opts.push([0]); continue; }
         var o = { '-1': true };
         toneKeys.forEach(function(tk) {
           var diff = ((Number(tk) - stringOpen[s]) % 12 + 12) % 12;
@@ -515,8 +525,16 @@ CHORD_DIAGRAM_JS = """  <script>
       lbl.textContent = name;
       tip.appendChild(lbl);
       var d = document.createElement('div');
-      d.innerHTML = makeSVG(frets);
+      var fo = INSTRUMENTS[inst].fixed_open || [];
+      var shownFrets = fo.length ? frets.filter(function(f, i) { return fo.indexOf(i) === -1; }) : frets;
+      d.innerHTML = makeSVG(shownFrets);
       tip.appendChild(d);
+      if (fo.length) {
+        var note = document.createElement('div');
+        note.className = 'tip-note';
+        note.textContent = fo.map(function(i) { return '+ ' + (i + 1) + '. streng åben'; }).join(', ');
+        tip.appendChild(note);
+      }
       document.body.appendChild(tip);
       var r = el.getBoundingClientRect(), tw2 = tip.offsetWidth, th2 = tip.offsetHeight;
       var left = r.left + (r.width - tw2) / 2, top = r.top - th2 - 6;
