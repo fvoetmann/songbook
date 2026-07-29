@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>How You Went So Far – Frank Black and the Catholics</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -76,7 +85,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"A7":[[-1,0,2,0,2,0],[-1,0,2,0,2,3],[-1,0,2,2,2,3],[-1,0,2,0,2,-1],[5,4,5,0,5,3],[5,4,5,0,5,0]],"C#7":[[-1,4,3,4,2,4],[-1,4,3,4,0,4],[-1,4,6,4,6,4],[-1,4,6,4,6,-1],[1,2,3,1,2,1],[-1,2,3,1,2,1]],"Bb6":[[-1,1,0,0,3,1],[-1,1,3,0,3,1],[-1,1,3,0,3,3],[-1,1,3,3,3,3],[-1,1,3,0,3,-1],[6,5,0,0,6,6]],"Asus4":[[-1,0,0,2,3,0],[-1,0,2,2,3,0],[-1,0,2,2,3,-1],[5,0,0,7,5,0],[5,0,0,7,5,5],[5,5,0,7,5,0]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Gm":[[3,1,0,0,3,3],[3,1,0,3,3,3],[3,1,0,0,3,-1],[3,1,0,3,3,-1],[3,1,0,0,-1,-1],[3,1,0,3,-1,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"D#":[[-1,6,5,0,4,6],[-1,6,8,0,8,6],[-1,6,8,8,8,6],[-1,6,8,0,8,-1],[-1,6,8,8,8,-1],[3,1,1,0,-1,-1]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"C#":[[-1,4,6,6,6,4],[-1,4,6,6,6,-1],[-1,-1,3,1,2,1],[4,4,6,6,6,4],[4,4,6,6,6,-1],[-1,-1,6,6,6,4]]},"ukulele":{"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"A7":[[0,1,0,0],[2,4,3,4],[6,4,3,0],[0,4,5,4],[6,7,5,7],[6,7,0,0]],"C#7":[[1,1,1,2],[4,5,4,4],[1,1,1,4],[4,1,1,2],[4,1,1,4],[6,5,4,4]],"Bb6":[[0,2,1,1],[3,5,3,5],[0,5,6,5],[0,2,3,1],[3,2,1,1],[3,2,3,1]],"Asus4":[[2,2,0,0],[2,2,0,5],[2,4,0,5],[2,4,5,5],[7,4,0,0],[7,4,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Gm":[[0,2,3,1],[3,2,3,1],[3,2,3,5],[0,7,6,5],[7,7,6,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"D#":[[0,3,3,1],[3,3,3,1],[0,3,6,6],[3,3,3,6],[0,7,6,6],[0,3,3,6]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"C#":[[1,1,1,4],[6,5,4,4]]},"mandolin":{"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"A7":[[2,2,4,3],[2,5,4,0],[0,2,4,5],[0,7,4,0],[6,5,0,0],[6,5,7,5]],"C#7":[[4,3,4,4],[6,3,4,4],[1,3,4,1],[1,3,4,4],[4,3,4,1],[1,3,4,-1]],"Bb6":[[3,3,5,3],[0,0,1,1],[0,3,5,6],[3,0,1,1],[3,0,1,3],[3,0,5,3]],"Asus4":[[2,0,0,0],[2,0,5,0],[2,2,5,0],[2,2,5,5],[2,2,5,-1],[-1,7,5,0]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Gm":[[0,0,1,3],[0,0,1,-1],[0,0,5,6],[0,5,5,6],[-1,5,5,6],[3,0,1,3]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"D#":[[-1,1,1,3],[0,1,1,3],[3,1,1,3],[0,1,1,-1],[3,5,6,3],[3,5,6,6]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"C#":[[6,3,4,4],[1,3,4,1],[1,3,4,4],[1,3,4,-1],[-1,3,4,4],[6,3,-1,4]]},"banjo":{"Dm":[[0,2,3,3,0],[3,2,3,0,0],[3,2,3,3,0],[-1,2,3,3,0],[0,7,6,7,0],[7,7,6,0,0]],"A7":[[2,2,2,2,0],[2,2,2,5,0],[5,2,2,2,0],[-1,2,2,2,0],[5,6,5,7,0],[7,6,5,5,0]],"C#7":[[3,6,0,6,0],[6,6,0,3,0],[3,1,2,3,0],[-1,1,2,3,0],[3,4,2,3,0],[-1,4,2,3,0]],"Bb6":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"Asus4":[[0,2,3,2,0],[0,2,5,0,0],[2,2,3,0,0],[0,2,5,2,0],[2,2,3,2,0],[2,2,5,0,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Gm":[[0,3,3,0,0],[0,3,3,5,0],[5,3,3,0,0],[5,3,3,5,0],[-1,3,3,0,0],[-1,3,3,5,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"D#":[[1,3,4,1,0],[-1,3,4,1,0],[5,3,4,5,0],[-1,3,4,5,0],[1,3,-1,1,0],[1,3,4,-1,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"Bb":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"C#":[[3,1,2,3,0],[-1,1,2,3,0],[3,6,6,6,0],[6,6,6,3,0],[6,6,6,6,0],[-1,6,6,6,0]]}};
+    var DBS = {"guitar":{"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"C#7":[[-1,4,3,4,2,4],[-1,4,3,4,0,4],[-1,4,6,4,6,4],[-1,4,6,4,6,-1],[1,2,3,1,2,1],[-1,2,3,1,2,1]],"Bb6":[[-1,1,0,0,3,1],[-1,1,3,0,3,1],[-1,1,3,0,3,3],[-1,1,3,3,3,3],[-1,1,3,0,3,-1],[6,5,0,0,6,6]],"Asus4":[[-1,0,0,2,3,0],[-1,0,2,2,3,0],[-1,0,2,2,3,-1],[5,0,0,7,5,0],[5,0,0,7,5,5],[5,5,0,7,5,0]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Gm":[[3,1,0,0,3,3],[3,1,0,3,3,3],[3,1,0,0,3,-1],[3,1,0,3,3,-1],[3,1,0,0,-1,-1],[3,1,0,3,-1,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"D#":[[-1,6,5,0,4,6],[-1,6,8,0,8,6],[-1,6,8,8,8,6],[-1,6,8,0,8,-1],[-1,6,8,8,8,-1],[3,1,1,0,-1,-1]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"C#":[[-1,4,6,6,6,4],[-1,4,6,6,6,-1],[-1,-1,3,1,2,1],[4,4,6,6,6,4],[4,4,6,6,6,-1],[-1,-1,6,6,6,4]]},"ukulele":{"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"C#7":[[1,1,1,2],[4,5,4,4],[1,1,1,4],[4,1,1,2],[4,1,1,4],[6,5,4,4]],"Bb6":[[0,2,1,1],[3,5,3,5],[0,5,6,5],[0,2,3,1],[3,2,1,1],[3,2,3,1]],"Asus4":[[2,2,0,0],[2,2,0,5],[2,4,0,5],[2,4,5,5],[7,4,0,0],[7,4,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Gm":[[0,2,3,1],[3,2,3,1],[3,2,3,5],[0,7,6,5],[7,7,6,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"D#":[[0,3,3,1],[3,3,3,1],[0,3,6,6],[3,3,3,6],[0,7,6,6],[0,3,3,6]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"C#":[[1,1,1,4],[6,5,4,4]]},"mandolin":{"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"C#7":[[4,3,4,4],[6,3,4,4],[1,3,4,1],[1,3,4,4],[4,3,4,1],[1,3,4,-1]],"Bb6":[[3,3,5,3],[0,0,1,1],[0,3,5,6],[3,0,1,1],[3,0,1,3],[3,0,5,3]],"Asus4":[[2,0,0,0],[2,0,5,0],[2,2,5,0],[2,2,5,5],[2,2,5,-1],[-1,7,5,0]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Gm":[[0,0,1,3],[0,0,1,-1],[0,0,5,6],[0,5,5,6],[-1,5,5,6],[3,0,1,3]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"D#":[[-1,1,1,3],[0,1,1,3],[3,1,1,3],[0,1,1,-1],[3,5,6,3],[3,5,6,6]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"C#":[[6,3,4,4],[1,3,4,1],[1,3,4,4],[1,3,4,-1],[-1,3,4,4],[6,3,-1,4]]},"banjo":{"Dm":[[0,2,3,3,0],[3,2,3,0,0],[3,2,3,3,0],[-1,2,3,3,0],[0,7,6,7,0],[7,7,6,0,0]],"C#7":[[3,6,0,6,0],[6,6,0,3,0],[3,1,2,3,0],[-1,1,2,3,0],[3,4,2,3,0],[-1,4,2,3,0]],"Bb6":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"Asus4":[[0,2,3,2,0],[0,2,5,0,0],[2,2,3,0,0],[0,2,5,2,0],[2,2,3,2,0],[2,2,5,0,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Gm":[[0,3,3,0,0],[0,3,3,5,0],[5,3,3,0,0],[5,3,3,5,0],[-1,3,3,0,0],[-1,3,3,5,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"D#":[[1,3,4,1,0],[-1,3,4,1,0],[5,3,4,5,0],[-1,3,4,5,0],[1,3,-1,1,0],[1,3,4,-1,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"Bb":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"C#":[[3,1,2,3,0],[-1,1,2,3,0],[3,6,6,6,0],[6,6,6,3,0],[6,6,6,6,0],[-1,6,6,6,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,53 +496,29 @@
     <h1>How You Went So Far <span class="artist-inline">– Frank Black and the Catholics</span></h1>
     
     
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">Dm</span> <span class="chord">A7</span>  x12</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Dm</span>    <span class="chord">C#7</span>  <span class="chord">Bb6</span> <span class="chord">Asus4</span>     <span class="chord">A</span>         <span class="chord">Gm</span>           <span class="chord">C</span>
-Someday      I know that you&#x27;ll be coming back here</pre>
-<pre class="block line-group"><span class="chord">Dm</span>            <span class="chord">A</span>
-Will you someday?</pre>
-<pre class="block line-group"><span class="chord">Dm</span>    <span class="chord">C#7</span>  <span class="chord">Bb6</span>     <span class="chord">Asus4</span>    <span class="chord">A</span>       <span class="chord">Gm</span>             <span class="chord">C</span>
-  I wait       to hear you turn that knob on that door</pre>
-<pre class="block line-group">        <span class="chord">Dm</span>         <span class="chord">A</span>
-I can&#x27;t take it no more</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">Dm</span>
-  Boston to Phoenix</pre>
-<pre class="block line-group"><span class="chord">C</span>              <span class="chord">Dm</span>
-  I went in my car</pre>
-<pre class="block line-group line-group-last"><span class="chord">D#</span>     <span class="chord">F</span>                  <span class="chord">C</span>       <span class="chord">Bb</span>  <span class="chord">A</span>
-But I don&#x27;t know how you went so far</pre>
-<pre class="block line-group"><span class="section">[Instrumental]</span>
-<span class="chord">Dm</span>   <span class="chord">C#7</span>   <span class="chord">Bb6</span>   <span class="chord">Asus4</span>   <span class="chord">A</span>   <span class="chord">Gm</span>   <span class="chord">C</span>   <span class="chord">Dm</span>   <span class="chord">A</span>  x2</pre>
-<pre class="block line-group"><span class="chord">C</span>             <span class="chord">Dm</span>  <span class="chord">C#</span>
-  I&#x27;ve been to Cairo</pre>
-<pre class="block line-group"><span class="chord">C</span>                 <span class="chord">Dm</span>
-  I&#x27;ve seen the bazaar</pre>
-<pre class="block line-group line-group-last"><span class="chord">D#</span>     <span class="chord">F</span>                  <span class="chord">C</span>       <span class="chord">Bb</span>  <span class="chord">A</span>
-But I don&#x27;t know how you went so far</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Dm</span>   <span class="chord">C#7</span>   <span class="chord">Bb6</span>   <span class="chord">Asus4</span>      <span class="chord">A</span>       <span class="chord">Gm</span>               <span class="chord">C</span>
- One day       I know that you will come to your senses</pre>
-<pre class="block line-group"><span class="chord">Dm</span>            <span class="chord">A</span>
-Will you one day?</pre>
-<pre class="block line-group"><span class="chord">Dm</span>      <span class="chord">C#7</span> <span class="chord">Bb6</span>    <span class="chord">Asus4</span>   <span class="chord">A</span>       <span class="chord">Gm</span>          <span class="chord">C</span>
- It&#x27;s too late for me to leave and be with you there</pre>
-<pre class="block line-group"><span class="chord">Dm</span>            <span class="chord">A</span>
-I would be scared</pre>
-<pre class="block line-group"><span class="chord">C</span>                <span class="chord">Dm</span>  <span class="chord">C#</span>
- I sailed the Atlantic</pre>
-<pre class="block line-group"><span class="chord">C</span>                   <span class="chord">Dm</span>
- And I looked at the stars</pre>
-<pre class="block line-group"><span class="chord">D#</span>     <span class="chord">F</span>                  <span class="chord">C</span>       <span class="chord">Bb</span>  <span class="chord">A</span>
-But I don&#x27;t know how you went so far</pre>
-<pre class="block line-group"><span class="chord">D#</span>     <span class="chord">F</span>                  <span class="chord">C</span>       <span class="chord">Bb</span>  <span class="chord">A</span>
-No, I don&#x27;t know how you went so far</pre>
-<pre class="block line-group line-group-last"><span class="chord">D#</span>     <span class="chord">F</span>                  <span class="chord">C</span>       <span class="chord">Bb</span>  <span class="chord">A</span>
-    I don&#x27;t know how you went so far</pre>
-<pre class="block line-group line-group-last"><span class="section">[Outro]</span>
-<span class="chord">Dm</span>  <span class="chord">A7</span>  x15 
-(fade out)</pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="lyr">Dm A7  x12</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Someda</span></span><span class="seg"><span class="chord">C#7</span><span class="lyr">y    </span></span><span class="seg"><span class="chord">Bb6</span><span class="lyr">  I </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">know that </span></span><span class="seg"><span class="chord">A</span><span class="lyr">you&#x27;ll be </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">coming back h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ere</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Will you somed</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ay?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">  I wa</span></span><span class="seg"><span class="chord">C#7</span><span class="lyr">it   </span></span><span class="seg"><span class="chord">Bb6</span><span class="lyr">    to h</span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">ear you t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">urn that</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr"> knob on that d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">oor</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I can&#x27;t </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">take it no </span></span><span class="seg"><span class="chord">A</span><span class="lyr">more</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Boston to</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> Phoenix</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I went in my </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">car</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D#</span><span class="lyr">But I d</span></span><span class="seg"><span class="chord">F</span><span class="lyr">on&#x27;t know how you w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ent so f</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ar</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line"><span class="seg"><span class="lyr">Dm C#7 Bb6 Asus4 A Gm C Dm A  x2</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I&#x27;ve been to</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> Cai</span></span><span class="seg"><span class="chord">C#</span><span class="lyr">ro</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I&#x27;ve seen the ba</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">zaar</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D#</span><span class="lyr">But I d</span></span><span class="seg"><span class="chord">F</span><span class="lyr">on&#x27;t know how you w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ent so f</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ar</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> One </span></span><span class="seg"><span class="chord">C#7</span><span class="lyr">day   </span></span><span class="seg"><span class="chord">Bb6</span><span class="lyr">    I </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">know that y</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ou will </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">come to your sens</span></span><span class="seg"><span class="chord">C</span><span class="lyr">es</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Will you one d</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ay?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> It&#x27;s to</span></span><span class="seg"><span class="chord">C#7</span><span class="lyr">o la</span></span><span class="seg"><span class="chord">Bb6</span><span class="lyr">te for </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">me to le</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ave and </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">be with you </span></span><span class="seg"><span class="chord">C</span><span class="lyr">there</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">I would be sca</span></span><span class="seg"><span class="chord">A</span><span class="lyr">red</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> I sailed the Atl</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">anti</span></span><span class="seg"><span class="chord">C#</span><span class="lyr">c</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> And I looked at the</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> stars</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D#</span><span class="lyr">But I d</span></span><span class="seg"><span class="chord">F</span><span class="lyr">on&#x27;t know how you w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ent so f</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ar</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D#</span><span class="lyr">No, I d</span></span><span class="seg"><span class="chord">F</span><span class="lyr">on&#x27;t know how you w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ent so f</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ar</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D#</span><span class="lyr">    I d</span></span><span class="seg"><span class="chord">F</span><span class="lyr">on&#x27;t know how you w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ent so f</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ar</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">Dm A7  x15 </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(fade out)</span></span></div></div>
     
     
   </div>

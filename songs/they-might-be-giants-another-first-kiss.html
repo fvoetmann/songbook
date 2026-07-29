@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Another First Kiss – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,95 +496,55 @@
     <h1>Another First Kiss <span class="artist-inline">– They Might Be Giants</span></h1>
     
     
-    <pre class="block line-group line-group-last">I was going to submit these as corrections, but there were a few too many so I decided 
-it would be better to just make a new one</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">A</span> <span class="chord">D</span> <span class="chord">A</span> <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">C</span>    <span class="chord">G</span>               <span class="chord">F</span>       <span class="chord">G</span>
-I&#x27;m asleep but she&#x27;s talking to me</pre>
-<pre class="block line-group"><span class="chord">C</span>              <span class="chord">G</span>             <span class="chord">F</span>          <span class="chord">G</span>
-She&#x27;s walking &#x27;round wearing all of my clothes</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">Em</span>      <span class="chord">F</span>         <span class="chord">G</span>
-As she runs out of things to say</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>            <span class="chord">Em</span>       <span class="chord">F</span>     <span class="chord">G</span>
-And grabs my coat to walk away</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, she said</pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, I said</pre>
-<pre class="block line-group"><span class="chord">F</span>         <span class="chord">G</span>     <span class="chord">Am</span>         <span class="chord">D</span>
-I want another first kiss like this</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>         <span class="chord">E</span>
-How bout another first kiss.</pre>
-<pre class="block line-group line-group-last"><span class="section">[Bridge]</span>
-<span class="chord">A</span>                     <span class="chord">D</span>
----------12-9------------------14-9-------|
-10-12-10------12-10---10-12-10------12-10-|
-------------------------------------------|
-------------------------------------------|
-------------------------------------------|
-------------------------------------------|</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">C</span>     <span class="chord">G</span>               <span class="chord">F</span>    <span class="chord">G</span>
-Other people were too sentimental</pre>
-<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G</span>          <span class="chord">F</span>         <span class="chord">G</span>
-Always worrying about their hair</pre>
-<pre class="block line-group">    <span class="chord">C</span>        <span class="chord">Em</span>      <span class="chord">F</span>   <span class="chord">G</span>
-Got tired of wasting all my time</pre>
-<pre class="block line-group line-group-last">    <span class="chord">C</span>       <span class="chord">Em</span>    <span class="chord">F</span>     <span class="chord">G</span>
-Now I&#x27;m not worrying at all</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, she said</pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, I said</pre>
-<pre class="block line-group"><span class="chord">F</span>         <span class="chord">G</span>     <span class="chord">Am</span>          <span class="chord">D</span>
-I want another first kiss like this</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>         <span class="chord">E</span>
-How bout another first kiss.</pre>
-<pre class="block line-group"><span class="section">[Solo]</span>
-<span class="chord">A</span>                      <span class="chord">D</span>                      <span class="chord">A</span>                      <span class="chord">E</span>
----------12-9-------------------14-9-------------------12-9------------------------------|
-10-12-10------12-10----10-12-10------12-10----10-12-10------12-10----10-9----9-10-9------|
---------------------------------------------------------------------------11--------11-9-|
------------------------------------------------------------------------------------------|
------------------------------------------------------------------------------------------|
------------------------------------------------------------------------------------------|</pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>                      <span class="chord">D</span>                      <span class="chord">A</span>                      <span class="chord">E</span>
----------12-9-------------------14-9-------------------12-9----------------12------------12-|
-10-12-10------12-10----10-12-10------12-10----10-12-10------12-10----10h12----10-9-10-12----|
---------------------------------------------------------------------------------------------|
---------------------------------------------------------------------------------------------|
---------------------------------------------------------------------------------------------|
---------------------------------------------------------------------------------------------|</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">C</span>         <span class="chord">G</span>            <span class="chord">F</span>      <span class="chord">G</span>
-You could tell me we belong together</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">G</span>          <span class="chord">F</span>         <span class="chord">G</span>
-And I could tell you belong with me</pre>
-<pre class="block line-group">    <span class="chord">C</span>          <span class="chord">Em</span>     <span class="chord">F</span>        <span class="chord">G</span>
-But we&#x27;ve run out of things to say</pre>
-<pre class="block line-group line-group-last">    <span class="chord">C</span>        <span class="chord">Em</span>    <span class="chord">F</span>   <span class="chord">Fm</span>
-And well be happy anyway so</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, she said</pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, I said</pre>
-<pre class="block line-group"><span class="chord">F</span>         <span class="chord">G</span>     <span class="chord">Am</span>         <span class="chord">D</span>
-I want another first kiss like this</pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>         <span class="chord">E</span>
-How bout another first kiss.</pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, she said</pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">Em</span>
-How bout another first kiss, I said</pre>
-<pre class="block line-group"><span class="chord">F</span>         <span class="chord">G</span>     <span class="chord">Am</span>         <span class="chord">D</span>
-I want another first kiss like this</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>          <span class="chord">G</span>        <span class="chord">C</span>
-How bout another first kiss.</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I was going to submit these as corrections, but there were a few too many so I decided </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">it would be better to just make a new one</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">D</span><span class="chord">A</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I&#x27;m a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">sleep but she&#x27;s </span></span><span class="seg"><span class="chord">F</span><span class="lyr">talking </span></span><span class="seg"><span class="chord">G</span><span class="lyr">to me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">She&#x27;s walking &#x27;</span></span><span class="seg"><span class="chord">G</span><span class="lyr">round wearing </span></span><span class="seg"><span class="chord">F</span><span class="lyr">all of my c</span></span><span class="seg"><span class="chord">G</span><span class="lyr">lothes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">As she runs </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">out of t</span></span><span class="seg"><span class="chord">F</span><span class="lyr">hings to s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ay</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">And grabs my </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">coat to w</span></span><span class="seg"><span class="chord">F</span><span class="lyr">alk aw</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ay</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">she said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I want ano</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ther f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">irst kiss l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ike this</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss.</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">---------12-9---------</span></span><span class="seg"><span class="chord">D</span><span class="lyr">---------14-9-------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">10-12-10------12-10---10-12-10------12-10-|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">------------------------------------------|</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Other </span></span><span class="seg"><span class="chord">G</span><span class="lyr">people were too </span></span><span class="seg"><span class="chord">F</span><span class="lyr">senti</span></span><span class="seg"><span class="chord">G</span><span class="lyr">mental</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Always </span></span><span class="seg"><span class="chord">G</span><span class="lyr">worrying ab</span></span><span class="seg"><span class="chord">F</span><span class="lyr">out their </span></span><span class="seg"><span class="chord">G</span><span class="lyr">hair</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Got </span></span><span class="seg"><span class="chord">C</span><span class="lyr">tired of </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">wasting </span></span><span class="seg"><span class="chord">F</span><span class="lyr">all </span></span><span class="seg"><span class="chord">G</span><span class="lyr">my time</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Now </span></span><span class="seg"><span class="chord">C</span><span class="lyr">I&#x27;m not </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">worryi</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ng at </span></span><span class="seg"><span class="chord">G</span><span class="lyr">all</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">she said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I want ano</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ther f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">irst kiss li</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ke this</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss.</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">---------12-9----------</span></span><span class="seg"><span class="chord">D</span><span class="lyr">---------14-9----------</span></span><span class="seg"><span class="chord">A</span><span class="lyr">---------12-9----------</span></span><span class="seg"><span class="chord">E</span><span class="lyr">--------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">10-12-10------12-10----10-12-10------12-10----10-12-10------12-10----10-9----9-10-9------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">--------------------------------------------------------------------------11--------11-9-|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">-----------------------------------------------------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">-----------------------------------------------------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">-----------------------------------------------------------------------------------------|</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">---------12-9----------</span></span><span class="seg"><span class="chord">D</span><span class="lyr">---------14-9----------</span></span><span class="seg"><span class="chord">A</span><span class="lyr">---------12-9----------</span></span><span class="seg"><span class="chord">E</span><span class="lyr">------12------------12-|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">10-12-10------12-10----10-12-10------12-10----10-12-10------12-10----10h12----10-9-10-12----|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">--------------------------------------------------------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">--------------------------------------------------------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">--------------------------------------------------------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">--------------------------------------------------------------------------------------------|</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">You could </span></span><span class="seg"><span class="chord">G</span><span class="lyr">tell me we be</span></span><span class="seg"><span class="chord">F</span><span class="lyr">long to</span></span><span class="seg"><span class="chord">G</span><span class="lyr">gether</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">And I could </span></span><span class="seg"><span class="chord">G</span><span class="lyr">tell you be</span></span><span class="seg"><span class="chord">F</span><span class="lyr">long with </span></span><span class="seg"><span class="chord">G</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">C</span><span class="lyr">we&#x27;ve run o</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ut of t</span></span><span class="seg"><span class="chord">F</span><span class="lyr">hings to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">say</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">C</span><span class="lyr">well be h</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">appy a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">nywa</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">y so</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">she said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I want ano</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ther f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">irst kiss l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ike this</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss.</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">she said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I want ano</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ther f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">irst kiss l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ike this</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">How bout an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">other fir</span></span><span class="seg"><span class="chord">C</span><span class="lyr">st kiss.</span></span></div></div>
     
     
   </div>

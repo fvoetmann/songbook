@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Jokerman – Bob Dylan</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,136 +496,68 @@
     <h1>Jokerman <span class="artist-inline">– Bob Dylan</span></h1>
     
     
-    <pre class="block line-group line-group-last">Capo on 1</pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">A</span>                         <span class="chord">Amaj7</span>
-Standing on the water, casting your bread</pre>
-<pre class="block line-group">           <span class="chord">Bm/A</span>                    <span class="chord">E/A</span>             <span class="chord">A</span>
-While the eyes of the idol with the iron head are glowing</pre>
-<pre class="block line-group"><span class="chord">A</span>                      <span class="chord">Amaj7</span>
-Distant ships sailing into the mist</pre>
-<pre class="block line-group">          <span class="chord">Bm/A</span>                              <span class="chord">E/A</span>                        <span class="chord">A</span>
-You were born with a snake in both of your fists while a hurricane was 
-blowing</pre>
-<pre class="block line-group"><span class="chord">Bm</span>       <span class="chord">E</span>                          <span class="chord">A</span>
-Freedom just around the corner for you</pre>
-<pre class="block line-group line-group-last">          <span class="chord">Bm</span>               <span class="chord">E</span>                  <span class="chord">A</span>   <span class="chord">D</span>
-But with truth so far off, what good will it do.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>                          <span class="chord">D</span>
-Jokerman dance to the nightingale tune</pre>
-<pre class="block line-group"><span class="chord">A</span>         <span class="chord">E/G#</span>        <span class="chord">F#m</span>          <span class="chord">D</span>
-Bird fly high by the light of the moon</pre>
-<pre class="block line-group line-group-last"><span class="chord">C#m7</span>  <span class="chord">D6</span>  <span class="chord">E</span>   <span class="chord">A</span>
-Oh, oh, oh, Jokerman.</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">A</span>                    <span class="chord">Amaj7</span>
-So swiftly the sun sets in the sky</pre>
-<pre class="block line-group"><span class="chord">Bm/A</span>             <span class="chord">E/A</span>                  <span class="chord">A</span>  <span class="chord">D/A</span>
-You rise up and say goodbye to no one</pre>
-<pre class="block line-group"><span class="chord">A</span>                    <span class="chord">Amaj7</span>
-Fools rush in where angels fear to tread</pre>
-<pre class="block line-group"><span class="chord">Bm/A</span>                       <span class="chord">E/A</span>                     <span class="chord">A</span>
-Both of their futures, so full of dread, you don&#x27;t show one</pre>
-<pre class="block line-group"><span class="chord">Bm</span>            <span class="chord">E</span>                 <span class="chord">A</span>
-Shedding off one more layer of skin</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Bm</span>            <span class="chord">E</span>                     <span class="chord">A</span>    <span class="chord">D</span>
-Keeping one step ahead of the persecutor within.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>                      <span class="chord">D</span>
-Jokerman dance to the nightingale tune</pre>
-<pre class="block line-group"><span class="chord">A</span>         <span class="chord">E/G#</span>        <span class="chord">F#m</span>          <span class="chord">D</span>
-Bird fly high by the light of the moon</pre>
-<pre class="block line-group line-group-last"><span class="chord">C#m7</span>  <span class="chord">D6</span>  <span class="chord">E</span>   <span class="chord">A</span>
-Oh, oh, oh, Jokerman.</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-         <span class="chord">A</span>                              <span class="chord">Ammaj7</span>
-You&#x27;re a man of the mountain, you can walk on the clouds</pre>
-<pre class="block line-group">      <span class="chord">Bm/A</span>                      <span class="chord">E/A</span>            <span class="chord">A</span>  <span class="chord">D/A</span>
-Manipulator of crowds, you&#x27;re a dream twister</pre>
-<pre class="block line-group">                 <span class="chord">A</span>
-You&#x27;re going to Sodom and Gomorrah</pre>
-<pre class="block line-group">     <span class="chord">Amaj7</span>                     <span class="chord">Bm/A</span>              <span class="chord">E/A</span>           <span class="chord">A</span>
-But what do you care ? Ain&#x27;t nobody there would want marry your sister</pre>
-<pre class="block line-group"><span class="chord">Bm</span>                       <span class="chord">E</span>                     <span class="chord">A</span>
-Friend to the martyr, a friend to the woman of shame</pre>
-<pre class="block line-group line-group-last">                 <span class="chord">Bm</span>                <span class="chord">E</span>                         <span class="chord">A</span>        <span class="chord">D</span>
-You look into the fiery furnace, see the rich man without any name.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>                         <span class="chord">D</span>
-Jokerman dance to the nightingale tune</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">E/G#</span>        <span class="chord">F#m</span>         <span class="chord">D</span>
-Bird fly high by the light of the moon</pre>
-<pre class="block line-group line-group-last"><span class="chord">C#m7</span>  <span class="chord">D6</span>  <span class="chord">E</span>   <span class="chord">A</span>
-Oh, oh, oh, Jokerman.</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-          <span class="chord">A</span>                      <span class="chord">Ammaj7</span>
-Well, the Book of Leviticus and Deuteronomy</pre>
-<pre class="block line-group">     <span class="chord">Bm/A</span>                      <span class="chord">E/A</span>               <span class="chord">A</span>    <span class="chord">D/A</span>
-The law of the jungle and the sea are your only teachers</pre>
-<pre class="block line-group">       <span class="chord">A</span>                           <span class="chord">Amaj7</span>
-In the smoke of the twilight on a milk-white steed</pre>
-<pre class="block line-group"><span class="chord">Bm/A</span>         <span class="chord">E/A</span>                               <span class="chord">A</span>
-Michelangeo indeed could&#x27;ve carved out your features</pre>
-<pre class="block line-group"><span class="chord">Bm</span>                      <span class="chord">E</span>                     <span class="chord">A</span>
-Resting in the fields, far from the turbulent space</pre>
-<pre class="block line-group line-group-last">          <span class="chord">Bm</span>                      <span class="chord">E</span>                       <span class="chord">A</span>    <span class="chord">D</span>
-Half asleep near the stars with a small dog licking your face.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>                       <span class="chord">D</span>
-Jokerman dance to the nightingale tune</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">E/G#</span>        <span class="chord">F#m</span>         <span class="chord">D</span>
-Bird fly high by the light of the moon</pre>
-<pre class="block line-group line-group-last"><span class="chord">C#m7</span> <span class="chord">D6</span>  <span class="chord">E</span>    <span class="chord">A</span>
-Oh, oh, oh, Jokerman.</pre>
-<pre class="block line-group"><span class="section">[Verse 5]</span>
-           <span class="chord">A</span>                        <span class="chord">Ammaj7</span> 
-Well, the rifleman&#x27;s stalking the sick and the lame</pre>
-<pre class="block line-group">        <span class="chord">Bm/A</span>                        <span class="chord">E/A</span>                  <span class="chord">A</span>        <span class="chord">D/A</span>
-Preacherman seeks the same, who&#x27;ll get there first is uncertain </pre>
-<pre class="block line-group"><span class="chord">A</span>                               <span class="chord">Amaj7</span> 
-Nightsticks and water cannons, tear gas, padlocks</pre>
-<pre class="block line-group">       <span class="chord">Bm/A</span>           <span class="chord">E/A</span>                  <span class="chord">A</span>
-Molotow cocktails and rocks behind every curtain</pre>
-<pre class="block line-group"><span class="chord">Bm</span>                    <span class="chord">E</span>                          <span class="chord">A</span>
-False-hearted judges dying in the webs that they spin</pre>
-<pre class="block line-group line-group-last">       <span class="chord">Bm</span>               <span class="chord">E</span>                            <span class="chord">A</span>  <span class="chord">D</span>
-Only a matter of time &#x27;til the night comes stepping in.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>                      <span class="chord">D</span>
-Jokerman dance to the nightingale tune</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">E/G#</span>        <span class="chord">F#m</span>         <span class="chord">D</span>
-Bird fly high by the light of the moon</pre>
-<pre class="block line-group line-group-last"><span class="chord">C#m7</span>  <span class="chord">D6</span>  <span class="chord">E</span>   <span class="chord">A</span>
-Oh, oh, oh, Jokerman.</pre>
-<pre class="block line-group"><span class="section">[Verse 6]</span>
-        <span class="chord">A</span>                         <span class="chord">Amaj7</span>
-It&#x27;s a shadowy world, skies are slippery gray</pre>
-<pre class="block line-group">   <span class="chord">Bm/A</span>                      <span class="chord">E/A</span>                              <span class="chord">A</span>      <span class="chord">D/A</span>
-A woman just gave birth to a prince today and dressed him in scarlet</pre>
-<pre class="block line-group">                <span class="chord">A</span>                            <span class="chord">Amaj7</span>
-He&#x27;ll put the priest in his pocket, put the blade to the heat</pre>
-<pre class="block line-group">           <span class="chord">Bm/A</span>                       <span class="chord">E/A</span>
-Take the motherless children off the street</pre>
-<pre class="block line-group">                        <span class="chord">A</span>
-And place them at the feet of a harlot</pre>
-<pre class="block line-group"><span class="chord">Bm</span>             <span class="chord">E</span>                 <span class="chord">A</span>
-Oh, Jokerman, you know what he wants</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bm</span>             <span class="chord">E</span>                     <span class="chord">A</span>    <span class="chord">D</span>
-Oh, Jokerman, you don&#x27;t show any response.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>                       <span class="chord">D</span>
-Jokerman dance to the nightingale tune</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">E/G#</span>      <span class="chord">F#m</span>          <span class="chord">D</span>
-Bird fly high by the light of the moon</pre>
-<pre class="block line-group line-group-last"><span class="chord">C#m7</span> <span class="chord">D6</span>  <span class="chord">E</span>    <span class="chord">A</span>
-Oh, oh, oh, Jokerman. </pre>
-<pre class="block line-group line-group-last"><span class="section">[Coda]</span>
- 
-| <span class="chord">A</span>   | <span class="chord">Amaj7</span>   | <span class="chord">Bm/A</span>   |  <span class="chord">E/A</span>   |  <span class="chord">A</span>    | <span class="chord">D/A</span>  
-| <span class="chord">Bm</span>  | <span class="chord">E</span>       | <span class="chord">A</span>      | <span class="chord">A</span>
-| <span class="chord">Bm</span>  | <span class="chord">E</span>       | <span class="chord">A</span>      | <span class="chord">D</span>
-| <span class="chord">E</span>   | <span class="chord">D</span>       | <span class="chord">A</span>  <span class="chord">E/G#</span> | <span class="chord">F#m</span></pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Capo on 1</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Standing on the water, cas</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">ting your bread</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">While the e</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">yes of the idol with the</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr"> iron head are g</span></span><span class="seg"><span class="chord">A</span><span class="lyr">lowing</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Distant ships sailing i</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">nto the mist</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You were b</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">orn with a snake in both of your f</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">ists while a hurricane was </span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">blowing</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Freedom j</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ust around the corner for y</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ou</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But with t</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">ruth so far off, </span></span><span class="seg"><span class="chord">E</span><span class="lyr">what good will it d</span></span><span class="seg"><span class="chord">A</span><span class="lyr">o.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the night</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ingale tune</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly h</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">igh by the l</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ight of the m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oon</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, oh</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">, oh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">So swiftly the sun se</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">ts in the sky</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm/A</span><span class="lyr">You rise up and s</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">ay goodbye to no one</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">D/A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Fools rush in where a</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">ngels fear to tread</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm/A</span><span class="lyr">Both of their futures, so f</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">ull of dread, you don&#x27;t </span></span><span class="seg"><span class="chord">A</span><span class="lyr">show one</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Shedding off o</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ne more layer of s</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kin</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Keeping o</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">ne step ahead </span></span><span class="seg"><span class="chord">E</span><span class="lyr">of the persecutor with</span></span><span class="seg"><span class="chord">A</span><span class="lyr">in.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ightingale tune</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly h</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">igh by the l</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ight of the m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oon</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, oh</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">, oh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">You&#x27;re a </span></span><span class="seg"><span class="chord">A</span><span class="lyr">man of the mountain, you can wa</span></span><span class="seg"><span class="chord">Ammaj7</span><span class="lyr">lk on the clouds</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Manipu</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">lator of crowds, you&#x27;re a </span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">dream twister</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">D/A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You&#x27;re going to S</span></span><span class="seg"><span class="chord">A</span><span class="lyr">odom and Gomorrah</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But w</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">hat do you care ? Ain&#x27;t no</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">body there would w</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">ant marry your</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> sister</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Friend to the martyr, a f</span></span><span class="seg"><span class="chord">E</span><span class="lyr">riend to the woman of </span></span><span class="seg"><span class="chord">A</span><span class="lyr">shame</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">You look into the</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"> fiery furnace, se</span></span><span class="seg"><span class="chord">E</span><span class="lyr">e the rich man without any</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> name.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the nigh</span></span><span class="seg"><span class="chord">D</span><span class="lyr">tingale tune</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly hi</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">gh by the li</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ght of the m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oon</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, oh</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">, oh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">Well, the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">Book of Leviticus and D</span></span><span class="seg"><span class="chord">Ammaj7</span><span class="lyr">euteronomy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The l</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">aw of the jungle and the s</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">ea are your only t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">eache</span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">rs</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">In the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">smoke of the twilight on a m</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">ilk-white steed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm/A</span><span class="lyr">Michelangeo i</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">ndeed could&#x27;ve carved out your fea</span></span><span class="seg"><span class="chord">A</span><span class="lyr">tures</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Resting in the fields, f</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ar from the turbulent </span></span><span class="seg"><span class="chord">A</span><span class="lyr">space</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Half aslee</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">p near the stars with a </span></span><span class="seg"><span class="chord">E</span><span class="lyr">small dog licking your f</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ace.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the ni</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ghtingale tune</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly hi</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">gh by the li</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ght of the m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oon</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, o</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">h, o</span></span><span class="seg"><span class="chord">E</span><span class="lyr">h, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="lyr">Well, the r</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ifleman&#x27;s stalking the si</span></span><span class="seg"><span class="chord">Ammaj7</span><span class="lyr">ck and the lame</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Preacher</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">man seeks the same, who&#x27;ll g</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">et there first is unc</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ertain </span></span><span class="seg"><span class="chord">D/A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Nightsticks and water cannons, t</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">ear gas, padlocks</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Molotow</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr"> cocktails and </span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">rocks behind every cu</span></span><span class="seg"><span class="chord">A</span><span class="lyr">rtain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">False-hearted judges d</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ying in the webs that they </span></span><span class="seg"><span class="chord">A</span><span class="lyr">spin</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Only a </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">matter of time &#x27;t</span></span><span class="seg"><span class="chord">E</span><span class="lyr">il the night comes stepping i</span></span><span class="seg"><span class="chord">A</span><span class="lyr">n.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ightingale tune</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly hi</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">gh by the li</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ght of the m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oon</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, oh</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">, oh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="lyr">It&#x27;s a s</span></span><span class="seg"><span class="chord">A</span><span class="lyr">hadowy world, skies are sl</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">ippery gray</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A w</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">oman just gave birth to a </span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">prince today and dressed him in s</span></span><span class="seg"><span class="chord">A</span><span class="lyr">carlet</span></span><span class="seg"><span class="chord">D/A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">He&#x27;ll put the pr</span></span><span class="seg"><span class="chord">A</span><span class="lyr">iest in his pocket, put the b</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">lade to the heat</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Take the mo</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">therless children off the s</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">treet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And place them at the fe</span></span><span class="seg"><span class="chord">A</span><span class="lyr">et of a harlot</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Oh, Jokerman, y</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ou know what he wa</span></span><span class="seg"><span class="chord">A</span><span class="lyr">nts</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Oh, Jokerman, y</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ou don&#x27;t show any resp</span></span><span class="seg"><span class="chord">A</span><span class="lyr">onse.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the ni</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ghtingale tune</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly hi</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">gh by the </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">light of the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">moon</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, o</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">h, o</span></span><span class="seg"><span class="chord">E</span><span class="lyr">h, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman. </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Coda]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| A   | Amaj7   | Bm/A   |  E/A   |  A    | D/A </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| Bm  | E       | A      | A</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| Bm  | E       | A      | D</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| E   | D       | A E/G# | F#m</span></span></div></div>
     
     
   </div>

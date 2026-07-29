@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>The Farm – Jefferson Airplane</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,74 +498,38 @@
     <h1>The Farm <span class="artist-inline">– Jefferson Airplane</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">F</span>    <span class="chord">G</span>  <span class="chord">C</span>  <span class="chord">G</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>    <span class="chord">G</span>  <span class="chord">C</span>  <span class="chord">G</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">F</span>
-Bought Myself A Farm Way Out In The County</pre>
-<pre class="block line-group"><span class="chord">F</span>
-Took To Growing Lettuce Milking Cows And Honey</pre>
-<pre class="block line-group"><span class="chord">G</span>               <span class="chord">C</span>      <span class="chord">G</span>
-Bought Myself A Farm</pre>
-<pre class="block line-group"><span class="chord">F</span>
-Bought Myself A Farm Way Out In The County</pre>
-<pre class="block line-group"><span class="chord">F</span>
-Spent Time In The Hayloft With The Mice And The Bunnies</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>               <span class="chord">C</span>     <span class="chord">G</span>
-Bought Myself A Farm</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>        <span class="chord">F</span>    <span class="chord">G</span>
-Yes It&#x27;s Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group"><span class="chord">C</span>     <span class="chord">F</span>    <span class="chord">G</span>
-Oh So Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>     <span class="chord">F</span>     <span class="chord">G</span>                     <span class="chord">C</span> <span class="chord">F</span> <span class="chord">G</span> <span class="chord">C</span>
-Yes It&#x27;s Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">F</span>
-Here Comes My Next Door Neighbor</pre>
-<pre class="block line-group"><span class="chord">F</span>
-Comin&#x27; Down The Road</pre>
-<pre class="block line-group"><span class="chord">F</span>
-He Always Looks So Regal Ridin&#x27; On His Toad</pre>
-<pre class="block line-group">      <span class="chord">G</span>      <span class="chord">C</span>   <span class="chord">G</span>
-Named Lightning</pre>
-<pre class="block line-group"><span class="chord">F</span>
-The Toad&#x27;s Name Is Lightning He&#x27;s Ten Hands At</pre>
-<pre class="block line-group"><span class="chord">F</span>
-At The Shoulder And If You Give Him Sugar</pre>
-<pre class="block line-group"><span class="chord">F</span>
-He&#x27;ll Winnie Like A Boulder</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>      <span class="chord">C</span>      <span class="chord">G</span>
-Yes He will</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>        <span class="chord">F</span>    <span class="chord">G</span>
-Yes It&#x27;s Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group"><span class="chord">C</span>     <span class="chord">F</span>    <span class="chord">G</span>
-Oh So Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>     <span class="chord">F</span>     <span class="chord">G</span>                     <span class="chord">C</span> <span class="chord">F</span> <span class="chord">G</span> <span class="chord">C</span>
-Yes It&#x27;s Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group"><span class="section">[Instrumental]</span>
-<span class="chord">F</span>    <span class="chord">G</span>  <span class="chord">C</span>  <span class="chord">G</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>    <span class="chord">G</span>  <span class="chord">C</span>  <span class="chord">G</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">F</span>
-Well I Gotta Get Back To Work Now</pre>
-<pre class="block line-group"><span class="chord">F</span>
-Clear Away Some Logs</pre>
-<pre class="block line-group"><span class="chord">F</span>
-Ah The Sun Is Shining Westward I Think</pre>
-<pre class="block line-group"><span class="chord">F</span>
-I&#x27;ll Saddle Up My Frogs And Get</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>     <span class="chord">C</span>    <span class="chord">G</span>
-Outta Here</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>        <span class="chord">F</span>    <span class="chord">G</span>
-Yes It&#x27;s Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group"><span class="chord">C</span>     <span class="chord">F</span>    <span class="chord">G</span>
-Oh So Good Livin&#x27; On The Farm</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>     <span class="chord">F</span>     <span class="chord">G</span>                     <span class="chord">C</span> <span class="chord">F</span> <span class="chord">G</span> <span class="chord">C</span>
-Yes It&#x27;s Good Livin&#x27; On The Farm</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">F</span><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">F</span><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Bought Myself A Farm Way Out In The County</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Took To Growing Lettuce Milking Cows And Honey</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Bought Myself A </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Farm</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Bought Myself A Farm Way Out In The County</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Spent Time In The Hayloft With The Mice And The Bunnies</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Bought Myself A </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Farm</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Yes It&#x27;s </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Good </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Livin&#x27; On The Farm</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Oh So </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Good </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Livin&#x27; On The Farm</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Yes It</span></span><span class="seg"><span class="chord">F</span><span class="lyr">&#x27;s Goo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">d Livin&#x27; On The Farm</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Here Comes My Next Door Neighbor</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Comin&#x27; Down The Road</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">He Always Looks So Regal Ridin&#x27; On His Toad</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Named </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Lightni</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ng</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">The Toad&#x27;s Name Is Lightning He&#x27;s Ten Hands At</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">At The Shoulder And If You Give Him Sugar</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">He&#x27;ll Winnie Like A Boulder</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Yes He </span></span><span class="seg"><span class="chord">C</span><span class="lyr">will</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Yes It&#x27;s </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Good </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Livin&#x27; On The Farm</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Oh So </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Good </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Livin&#x27; On The Farm</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Yes It</span></span><span class="seg"><span class="chord">F</span><span class="lyr">&#x27;s Goo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">d Livin&#x27; On The Farm</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">F</span><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">F</span><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Well I Gotta Get Back To Work Now</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Clear Away Some Logs</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Ah The Sun Is Shining Westward I Think</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I&#x27;ll Saddle Up My Frogs And Get</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Outta </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Here</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Yes It&#x27;s </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Good </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Livin&#x27; On The Farm</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Oh So </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Good </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Livin&#x27; On The Farm</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Yes It</span></span><span class="seg"><span class="chord">F</span><span class="lyr">&#x27;s Goo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">d Livin&#x27; On The Farm</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
     </div>
     
   </div>

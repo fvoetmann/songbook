@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Lather – Jefferson Airplane</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -78,7 +87,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"F#":[[2,4,4,3,2,2],[2,4,4,3,2,-1],[-1,-1,4,3,2,2],[2,4,4,3,-1,-1],[-1,4,4,3,2,2],[-1,4,4,3,2,-1]]},"ukulele":{"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"F#":[[3,1,2,1],[3,1,2,4],[3,6,6,4],[6,6,6,4]]},"mandolin":{"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"F#":[[-1,4,4,6],[3,4,4,2],[3,4,4,6],[3,4,4,-1],[6,4,4,6],[3,-1,4,2]]},"banjo":{"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"F#m":[[4,2,2,4,0],[-1,2,2,4,0],[4,6,7,7,0],[7,6,7,4,0],[7,6,7,7,0],[-1,6,7,7,0]],"F#":[[4,3,2,4,0],[-1,3,2,4,0],[4,3,2,-1,0],[4,3,-1,4,0],[-1,3,-1,4,0],[4,3,-1,-1,0]]}};
+    var DBS = {"guitar":{"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]]},"ukulele":{"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]]},"banjo":{"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,79 +498,50 @@
     <h1>Lather <span class="artist-inline">– Jefferson Airplane</span></h1>
     <div class="meta">Toneart: Cm</div>
     <div class="chords">
-    <pre class="block line-group">Lather chords
-Jefferson Airplane  1968
-https://en.wikipedia.org/wiki/Lather_(song)
-Capo III *</pre>
-<pre class="block line-group"><span class="chord">Am</span> <span class="chord">C</span> <span class="chord">G</span></pre>
-<pre class="block line-group"><span class="chord">Am</span>         <span class="chord">C</span>            <span class="chord">G</span>
-Lather was thirty years old today,</pre>
-<pre class="block line-group">     <span class="chord">Em</span>        <span class="chord">D</span>          <span class="chord">C</span>
-they took away all of his toys.</pre>
-<pre class="block line-group">    <span class="chord">Am</span>          <span class="chord">C</span>         <span class="chord">G</span>
-His mother sent newspaper clippings to him,</pre>
-<pre class="block line-group">          <span class="chord">Em</span>                <span class="chord">D</span>             <span class="chord">C</span>
-about his old friends who&#x27;d stopped being boys.</pre>
-<pre class="block line-group">          <span class="chord">Em</span>         <span class="chord">D</span>           <span class="chord">F</span>             <span class="chord">D</span>
-There was Harwitz E. Green, just turned thirty three,</pre>
-<pre class="block line-group">    <span class="chord">Am</span>            <span class="chord">Em</span>           <span class="chord">D</span>
-his leather chair waits at the bank.</pre>
-<pre class="block line-group">    <span class="chord">Em</span>          <span class="chord">D</span>             <span class="chord">F</span>           <span class="chord">D</span>
-And Sargent Dow Jones, twenty seven years old,</pre>
-<pre class="block line-group"><span class="chord">Am</span>             <span class="chord">Em</span>       <span class="chord">D</span>
-commanding his very own tank. </pre>
-<pre class="block line-group">    <span class="chord">C</span>            <span class="chord">D</span>          <span class="chord">Em</span>
-But Lather still finds it a nice thing to do,</pre>
-<pre class="block line-group">   <span class="chord">C</span>         <span class="chord">D</span>           <span class="chord">Em</span>
-to lie about nude in the sand</pre>
-<pre class="block line-group">        <span class="chord">C</span>           <span class="chord">D</span>              <span class="chord">Em</span>
-Drawing pictures of mountains that look like bumps,</pre>
-<pre class="block line-group">    <span class="chord">D</span>                          <span class="chord">Am</span>    <span class="chord">A</span>
-and thrashing the air with his hands.  </pre>
-<pre class="block line-group">    <span class="chord">A</span>                    <span class="chord">G</span>
-But wait, oh Lather&#x27;s productive you know,</pre>
-<pre class="block line-group">   <span class="chord">A</span>            <span class="chord">G</span>         <span class="chord">A</span>
-he produces the finest of sound</pre>
-<pre class="block line-group">                             <span class="chord">G</span>
-Putting drumsticks on either side of his nose,</pre>
-<pre class="block line-group"><span class="chord">A</span>            <span class="chord">G</span>             <span class="chord">A</span>     <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>  <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>
-snorting the best licks in town; </pre>
-<pre class="block line-group">    <span class="chord">E</span>
-but that&#x27;s all over</pre>
-<pre class="block line-group"><span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>  <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="chord">Am</span>         <span class="chord">C</span>            <span class="chord">G</span>
-Lather was thirty years old today,</pre>
-<pre class="block line-group">    <span class="chord">Em</span>          <span class="chord">D</span>             <span class="chord">C</span>
-and Lather came foam from his tongue.</pre>
-<pre class="block line-group">   <span class="chord">Am</span>           <span class="chord">C</span>             <span class="chord">G</span>
-He looked at me eyes wide and plainly said,</pre>
-<pre class="block line-group">      <span class="chord">Em</span>            <span class="chord">D</span>         <span class="chord">C</span>
-is it true that I&#x27;m no longer young? (mommy?)</pre>
-<pre class="block line-group">        <span class="chord">Em</span>       <span class="chord">D</span>        <span class="chord">F</span>  <span class="chord">D</span>
-And the children call him famous,</pre>
-<pre class="block line-group">         <span class="chord">Am</span>      <span class="chord">Em</span>     <span class="chord">D</span>
-what the old men call insane</pre>
-<pre class="block line-group">    <span class="chord">Em</span>  <span class="chord">D</span>             <span class="chord">F</span>   <span class="chord">D</span>
-And sometimes he&#x27;s so nameless,</pre>
-<pre class="block line-group">        <span class="chord">Am</span>     <span class="chord">Em</span>          <span class="chord">D</span>
-that he hardly knows which game to play;</pre>
-<pre class="block line-group">      <span class="chord">C</span>
-which words to say</pre>
-<pre class="block line-group">      <span class="chord">C</span>           <span class="chord">D</span>          <span class="chord">Em</span>
-And I should have told him, &quot;no, you&#x27;re not old.&quot; </pre>
-<pre class="block line-group">      <span class="chord">C</span>           <span class="chord">D</span>          <span class="chord">Em</span>  <span class="chord">D</span>             <span class="chord">Am</span>
-And I should have let him go on, smiling, baby wide.</pre>
-<pre class="block line-group line-group-last"><span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>  <span class="chord">Am</span> <span class="chord">G</span> <span class="chord">D</span>
-* Alternate:
-Capo I
-<span class="chord">Am</span> = <span class="chord">Bm</span>
-<span class="chord">C</span>  = <span class="chord">D</span>
-<span class="chord">G</span>  = <span class="chord">A</span>
-<span class="chord">Em</span> = <span class="chord">F#m</span>
-<span class="chord">D</span>  = <span class="chord">E</span>
-<span class="chord">F</span>  = <span class="chord">G</span>
-<span class="chord">E</span>  = <span class="chord">F#</span>
-Set8</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Lather chords</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Jefferson Airplane  1968</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">https://en.wikipedia.org/wiki/Lather_(song)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Capo III *</span></span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">Am</span><span class="chord">C</span><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Lather was </span></span><span class="seg"><span class="chord">C</span><span class="lyr">thirty years </span></span><span class="seg"><span class="chord">G</span><span class="lyr">old today,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">they </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">took away </span></span><span class="seg"><span class="chord">D</span><span class="lyr">all of his </span></span><span class="seg"><span class="chord">C</span><span class="lyr">toys.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">His </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mother sent </span></span><span class="seg"><span class="chord">C</span><span class="lyr">newspaper </span></span><span class="seg"><span class="chord">G</span><span class="lyr">clippings to him,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">about his </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">old friends who&#x27;d </span></span><span class="seg"><span class="chord">D</span><span class="lyr">stopped being </span></span><span class="seg"><span class="chord">C</span><span class="lyr">boys.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">There was </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Harwitz E. </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Green, just </span></span><span class="seg"><span class="chord">F</span><span class="lyr">turned thirty </span></span><span class="seg"><span class="chord">D</span><span class="lyr">three,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">leather chair </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">waits at the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">bank.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Sargent Dow </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Jones, twenty </span></span><span class="seg"><span class="chord">F</span><span class="lyr">seven years </span></span><span class="seg"><span class="chord">D</span><span class="lyr">old,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">commanding his </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">very own </span></span><span class="seg"><span class="chord">D</span><span class="lyr">tank. </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Lather still </span></span><span class="seg"><span class="chord">D</span><span class="lyr">finds it a </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">nice thing to do,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">to </span></span><span class="seg"><span class="chord">C</span><span class="lyr">lie about </span></span><span class="seg"><span class="chord">D</span><span class="lyr">nude in the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">sand</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Drawing </span></span><span class="seg"><span class="chord">C</span><span class="lyr">pictures of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">mountains that </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">look like bumps,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">thrashing the air with his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hands.</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">A</span><span class="lyr">wait, oh Lather&#x27;s pro</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ductive you know,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">he </span></span><span class="seg"><span class="chord">A</span><span class="lyr">produces the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">finest of </span></span><span class="seg"><span class="chord">A</span><span class="lyr">sound</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Putting drumsticks on either </span></span><span class="seg"><span class="chord">G</span><span class="lyr">side of his nose,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">snorting the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">best licks in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">town; </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">but </span></span><span class="seg"><span class="chord">E</span><span class="lyr">that&#x27;s all over</span></span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">Am</span><span class="chord">G</span><span class="chord">D</span><span class="chord">Am</span><span class="chord">G</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Lather was </span></span><span class="seg"><span class="chord">C</span><span class="lyr">thirty years </span></span><span class="seg"><span class="chord">G</span><span class="lyr">old today,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Lather came </span></span><span class="seg"><span class="chord">D</span><span class="lyr">foam from his </span></span><span class="seg"><span class="chord">C</span><span class="lyr">tongue.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">He </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">looked at me </span></span><span class="seg"><span class="chord">C</span><span class="lyr">eyes wide and </span></span><span class="seg"><span class="chord">G</span><span class="lyr">plainly said,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">is it </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">true that I&#x27;m </span></span><span class="seg"><span class="chord">D</span><span class="lyr">no longer </span></span><span class="seg"><span class="chord">C</span><span class="lyr">young? (mommy?)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">children </span></span><span class="seg"><span class="chord">D</span><span class="lyr">call him </span></span><span class="seg"><span class="chord">F</span><span class="lyr">fam</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ous,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">what the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">old men </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">call in</span></span><span class="seg"><span class="chord">D</span><span class="lyr">sane</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">some</span></span><span class="seg"><span class="chord">D</span><span class="lyr">times he&#x27;s so </span></span><span class="seg"><span class="chord">F</span><span class="lyr">name</span></span><span class="seg"><span class="chord">D</span><span class="lyr">less,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">that he </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hardly </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">knows which </span></span><span class="seg"><span class="chord">D</span><span class="lyr">game to play;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">which </span></span><span class="seg"><span class="chord">C</span><span class="lyr">words to say</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">should have </span></span><span class="seg"><span class="chord">D</span><span class="lyr">told him, &quot;</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">no, you&#x27;re not old.&quot; </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">should have </span></span><span class="seg"><span class="chord">D</span><span class="lyr">let him go </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">on, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">smiling, baby </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">wide.</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">* A</span></span><span class="seg"><span class="chord">G</span><span class="lyr">lt</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ern</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ate</span></span><span class="seg"><span class="chord">G</span><span class="lyr">:</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Capo I</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am = Bm</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C  = D</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G  = A</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Em = F#m</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D  = E</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F  = G</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E  = F#</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Set8</span></span></div></div>
     </div>
     
   </div>

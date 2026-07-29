@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Lolita – Troels Trier</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,66 +496,33 @@
     <h1>Lolita <span class="artist-inline">– Troels Trier</span></h1>
     
     
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">F</span> <span class="chord">Bb</span> <span class="chord">C</span> <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-  <span class="chord">F</span>           <span class="chord">Bb</span>     <span class="chord">C</span>    <span class="chord">F</span>   <span class="chord">F</span> <span class="chord">Bb</span> <span class="chord">C</span> <span class="chord">F</span>
-Lolita er ekspert i kærlighed.       </pre>
-<pre class="block line-group">     <span class="chord">F</span>                     <span class="chord">Bb</span>
-Der’ ikke det Lolita ikke ved.</pre>
-<pre class="block line-group">   <span class="chord">Bb</span>             <span class="chord">F</span>      <span class="chord">Bb</span>             <span class="chord">F</span>
-Lolita ka’ vær’ blid. Lolita ka’ vær’ fræk.</pre>
-<pre class="block line-group">        <span class="chord">Bb</span>       <span class="chord">F</span>       <span class="chord">Bb</span>        <span class="chord">F</span>
-Hun kan gi’ dig kærtegn, gi’ dig smæk.</pre>
-<pre class="block line-group">     <span class="chord">Eb</span>          <span class="chord">Bb</span>       <span class="chord">F</span>
-Der’ ikke det Lolita ikke ve’</pre>
-<pre class="block line-group line-group-last">   <span class="chord">Eb</span>            <span class="chord">Bb</span>      <span class="chord">F</span>
-Lolita hun er ekspert i kærlighed</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-   <span class="chord">D</span>                     <span class="chord">Gm</span>       <span class="chord">D</span>                  <span class="chord">Gm</span>
-Lolita hun er ekspert i kærlighed. Og fra sit vindu’ ser hun ned</pre>
-<pre class="block line-group">    <span class="chord">Eb</span>          <span class="chord">Bb</span>           <span class="chord">F</span>
-På mændene som går forbi og kigger op på hende</pre>
-<pre class="block line-group line-group-last">   <span class="chord">Eb</span>        <span class="chord">Bb</span>           <span class="chord">F</span>
-Lolitas gadedør går op og i og op igen</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Bb</span>     <span class="chord">F</span>      <span class="chord">Bb</span>    <span class="chord">F</span>    <span class="chord">Bb</span>      <span class="chord">F</span>       <span class="chord">Bb</span>    <span class="chord">F</span>
-En er gammel. En er ung.  En er let, og en er tung,</pre>
-<pre class="block line-group">    <span class="chord">Bb</span>    <span class="chord">F</span>      <span class="chord">Bb</span>     <span class="chord">F</span>      <span class="chord">Eb</span>   <span class="chord">Bb</span>                <span class="chord">F</span>
-Gardinet det går op og ned, og alle har de behov for kærlighed</pre>
-<pre class="block line-group line-group-last">                                   <span class="chord">Bb</span>                   <span class="chord">C</span>
-Lolita ved hvordan, Lolita ved hvordan, Lolita ved hvordan</pre>
-<pre class="block line-group line-group-last"><span class="section">[Instrumental]</span>
-<span class="chord">D</span> <span class="chord">Gm</span> <span class="chord">D</span> <span class="chord">Gm</span> <span class="chord">D</span> <span class="chord">Gm</span> <span class="chord">C</span> <span class="chord">F</span> <span class="chord">C</span> <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-     <span class="chord">F</span>        <span class="chord">Bb</span>     <span class="chord">C</span>       <span class="chord">F</span>  <span class="chord">F</span> <span class="chord">Bb</span> <span class="chord">C</span> <span class="chord">F</span>
-Jeg så Lolita gå på gad’n i går.       </pre>
-<pre class="block line-group"><span class="chord">F</span>                  <span class="chord">Bb</span>
-Andet tøj og andet hår</pre>
-<pre class="block line-group">    <span class="chord">Bb</span>             <span class="chord">F</span>       <span class="chord">Bb</span>   <span class="chord">F</span>
-Jeg vendte mig og råbte Lolita hej</pre>
-<pre class="block line-group">      <span class="chord">Bb</span>           <span class="chord">F</span>           <span class="chord">Bb</span>      <span class="chord">F</span>
-Men Lolita lod som om hun ikke kendte mig</pre>
-<pre class="block line-group">   <span class="chord">Eb</span>          <span class="chord">Bb</span>               <span class="chord">F</span>
-I morgen vil Lolita kende mig igen</pre>
-<pre class="block line-group line-group-last">    <span class="chord">Eb</span>                <span class="chord">Bb</span>            <span class="chord">F</span>
-Men i dag har Lolita fri og er fru Mortensen</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-           <span class="chord">D</span>                     <span class="chord">Gm</span>       <span class="chord">D</span>                  <span class="chord">Gm</span>
-Og det’ Lolita som er ekspert i kærlighed. Og fra sit vindu’ ser hun ned</pre>
-<pre class="block line-group">    <span class="chord">Eb</span>          <span class="chord">Bb</span>           <span class="chord">F</span>
-På mændene som går forbi og kigger op på hende</pre>
-<pre class="block line-group line-group-last">   <span class="chord">Eb</span>        <span class="chord">Bb</span>           <span class="chord">F</span>
-Lolitas gadedør går op og i og op igen</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-  <span class="chord">Bb</span>          <span class="chord">F</span>       <span class="chord">Bb</span>      <span class="chord">F</span>      <span class="chord">Bb</span>            <span class="chord">F</span>        <span class="chord">Bb</span>      <span class="chord">F</span>
-Lolita er ekspert fra ti til fem. Så lukker hun butikken og kører hjem</pre>
-<pre class="block line-group"><span class="chord">Bb</span>            <span class="chord">F</span>          <span class="chord">Bb</span>    <span class="chord">F</span>          <span class="chord">Eb</span>      <span class="chord">Bb</span>           <span class="chord">F</span>
-Hjem til sin mand og sin villavej. For Lolita er kærlighed en levevej</pre>
-<pre class="block line-group line-group-last">                                   <span class="chord">Bb</span>                   <span class="chord">C</span>
-Lolita ved hvordan, Lolita ved hvordan, Lolita ved hvordan</pre>
-<pre class="block line-group line-group-last"><span class="section">[Instrumental]</span>
-<span class="chord">D</span> <span class="chord">Gm</span> <span class="chord">D</span> <span class="chord">Gm</span> <span class="chord">D</span> <span class="chord">Gm</span> <span class="chord">C</span> <span class="chord">F</span> <span class="chord">C</span> <span class="chord">F</span></pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">F</span><span class="chord">Bb</span><span class="chord">C</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Lo</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lita er eksp</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ert i k</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ærlig</span></span><span class="seg"><span class="chord">F</span><span class="lyr">hed.</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Der’ </span></span><span class="seg"><span class="chord">F</span><span class="lyr">ikke det Lolita ikke v</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ed.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Lol</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ita ka’ vær’ bl</span></span><span class="seg"><span class="chord">F</span><span class="lyr">id. Lol</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ita ka’ vær’ fr</span></span><span class="seg"><span class="chord">F</span><span class="lyr">æk.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun kan </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">gi’ dig k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ærtegn, </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">gi’ dig sm</span></span><span class="seg"><span class="chord">F</span><span class="lyr">æk.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Der’ </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ikke det Lol</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ita ikke </span></span><span class="seg"><span class="chord">F</span><span class="lyr">ve’</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Lol</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ita hun er eks</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">pert i k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ærlighed</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Lol</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ita hun er ekspert i k</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ærlighed.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> Og fra sit vindu’ </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ser hun ned</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">På m</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ændene som g</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">år forbi og k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">igger op på hende</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Lol</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">itas gaded</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ør går op og </span></span><span class="seg"><span class="chord">F</span><span class="lyr">i og op igen</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">En er g</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ammel. </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">En er </span></span><span class="seg"><span class="chord">F</span><span class="lyr">ung. </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"> En er l</span></span><span class="seg"><span class="chord">F</span><span class="lyr">et, og e</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">n er t</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ung,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Gard</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">inet d</span></span><span class="seg"><span class="chord">F</span><span class="lyr">et går </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">op og n</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ed, og </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">alle </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">har de behov for k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ærlighed</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Lolita ved hvordan, Lolita ved hvor</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">dan, Lolita ved hvord</span></span><span class="seg"><span class="chord">C</span><span class="lyr">an</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">D</span><span class="chord">Gm</span><span class="chord">D</span><span class="chord">Gm</span><span class="chord">D</span><span class="chord">Gm</span><span class="chord">C</span><span class="chord">F</span><span class="chord">C</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Jeg s</span></span><span class="seg"><span class="chord">F</span><span class="lyr">å Lolita </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">gå på g</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ad’n i g</span></span><span class="seg"><span class="chord">F</span><span class="lyr">år.</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Andet tøj og andet </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">hår</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">vendte mig og r</span></span><span class="seg"><span class="chord">F</span><span class="lyr">åbte Lol</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ita h</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ej</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men Lo</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lita lod som </span></span><span class="seg"><span class="chord">F</span><span class="lyr">om hun ikke </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">kendte m</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ig</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I m</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">orgen vil Lo</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lita kende mig ig</span></span><span class="seg"><span class="chord">F</span><span class="lyr">en</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Men </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">i dag har Lolita f</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ri og er fru M</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ortensen</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Og det’ Lol</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ita som er ekspert i k</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ærlighed.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> Og fra sit vindu’ </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ser hun ned</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">På m</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ændene som g</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">år forbi og k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">igger op på hende</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Lol</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">itas gaded</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ør går op og </span></span><span class="seg"><span class="chord">F</span><span class="lyr">i og op igen</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Lo</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lita er eksp</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ert fra </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ti til f</span></span><span class="seg"><span class="chord">F</span><span class="lyr">em. Så </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lukker hun but</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ikken og </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">kører hj</span></span><span class="seg"><span class="chord">F</span><span class="lyr">em</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Hjem til sin m</span></span><span class="seg"><span class="chord">F</span><span class="lyr">and og sin </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">villav</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ej. For Lol</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ita er k</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ærlighed en l</span></span><span class="seg"><span class="chord">F</span><span class="lyr">evevej</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Lolita ved hvordan, Lolita ved hvor</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">dan, Lolita ved hvord</span></span><span class="seg"><span class="chord">C</span><span class="lyr">an</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">D</span><span class="chord">Gm</span><span class="chord">D</span><span class="chord">Gm</span><span class="chord">D</span><span class="chord">Gm</span><span class="chord">C</span><span class="chord">F</span><span class="chord">C</span><span class="chord">F</span></div></div>
     
     
   </div>

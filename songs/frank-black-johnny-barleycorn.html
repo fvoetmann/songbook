@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Johnny Barleycorn – Frank Black</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -78,7 +87,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"A7":[[-1,0,2,0,2,0],[-1,0,2,0,2,3],[-1,0,2,2,2,3],[-1,0,2,0,2,-1],[5,4,5,0,5,3],[5,4,5,0,5,0]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]]},"ukulele":{"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"A7":[[0,1,0,0],[2,4,3,4],[6,4,3,0],[0,4,5,4],[6,7,5,7],[6,7,0,0]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]]},"mandolin":{"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"A7":[[2,2,4,3],[2,5,4,0],[0,2,4,5],[0,7,4,0],[6,5,0,0],[6,5,7,5]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]]},"banjo":{"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"A7":[[2,2,2,2,0],[2,2,2,5,0],[5,2,2,2,0],[-1,2,2,2,0],[5,6,5,7,0],[7,6,5,5,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]]}};
+    var DBS = {"guitar":{"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"A7":[[-1,0,2,0,2,0],[-1,0,2,0,2,3],[-1,0,2,2,2,3],[-1,0,2,0,2,-1],[5,4,5,0,5,3],[5,4,5,0,5,0]]},"ukulele":{"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"A7":[[0,1,0,0],[2,4,3,4],[6,4,3,0],[0,4,5,4],[6,7,5,7],[6,7,0,0]]},"mandolin":{"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"A7":[[2,2,4,3],[2,5,4,0],[0,2,4,5],[0,7,4,0],[6,5,0,0],[6,5,7,5]]},"banjo":{"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"A7":[[2,2,2,2,0],[2,2,2,5,0],[5,2,2,2,0],[-1,2,2,2,0],[5,6,5,7,0],[7,6,5,5,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,91 +498,60 @@
     <h1>Johnny Barleycorn <span class="artist-inline">– Frank Black</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last"><span class="chord">D</span></pre>
-<pre class="block line-group"><span class="section">[VERSE]</span>
-<span class="chord">D</span>         <span class="chord">A</span>           <span class="chord">E</span>       <span class="chord">G</span>
- Have you been to the fields?</pre>
-<pre class="block line-group"><span class="chord">D</span>          <span class="chord">A</span>               <span class="chord">E</span>    <span class="chord">G</span>
- Something there made me afraid</pre>
-<pre class="block line-group">            <span class="chord">D</span>
- Like dying younger</pre>
-<pre class="block line-group">       <span class="chord">A</span>            <span class="chord">E</span>      <span class="chord">G</span>
-If the ground never yields</pre>
-<pre class="block line-group"><span class="chord">E</span>        <span class="chord">G</span>   <span class="chord">A</span>
- We will feel the hunger</pre>
-<pre class="block line-group"><span class="chord">D</span>         <span class="chord">A</span>            <span class="chord">E</span>     <span class="chord">G</span>
- Take him out with the seeds</pre>
-<pre class="block line-group"><span class="chord">D</span>         <span class="chord">A</span>             <span class="chord">E</span>
- Roll him on the barren ground</pre>
-<pre class="block line-group"><span class="chord">G</span>              <span class="chord">D</span>
- Mix blood and water</pre>
-<pre class="block line-group">        <span class="chord">A</span>               <span class="chord">E</span>    <span class="chord">G</span>
- Do not doubt our every need</pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span>         <span class="chord">G</span>    <span class="chord">A</span>
- She will feed, look what we got her
-<span class="chord">D</span>  <span class="chord">A7</span>*  (x2)</pre>
-<pre class="block line-group"><span class="section">[CHORUS]</span>
-<span class="chord">G</span>          <span class="chord">A</span>              <span class="chord">Bm</span>    <span class="chord">G</span>
- Clear the way for Johnny Barleycorn</pre>
-<pre class="block line-group">             <span class="chord">A</span>               <span class="chord">Bm</span>      <span class="chord">A</span>    <span class="chord">G</span>
- This is the day that surely he will be reborn</pre>
-<pre class="block line-group"><span class="chord">G</span>               <span class="chord">A</span>              <span class="chord">D</span>  <span class="chord">G</span>
- Bring down the blade on Johnny</pre>
-<pre class="block line-group line-group-last"> <span class="chord">C</span>        <span class="chord">Bm</span>     <span class="chord">A</span>        <span class="chord">G</span>       <span class="chord">D</span>    <span class="chord">G</span>     <span class="chord">D</span> <span class="chord">D</span>
- He shall be the one that will be torn</pre>
-<pre class="block line-group"><span class="section">[SOLO]</span>
-<span class="chord">D</span>    <span class="chord">A</span>     <span class="chord">E</span>    <span class="chord">G</span>  (x3)</pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span>    <span class="chord">G</span>     <span class="chord">A</span></pre>
-<pre class="block line-group"><span class="section">[VERSE]</span>
-<span class="chord">D</span>        <span class="chord">A</span>           <span class="chord">E</span>    <span class="chord">G</span>
- Ringing out the new year</pre>
-<pre class="block line-group"><span class="chord">D</span>              <span class="chord">A</span>           <span class="chord">E</span>
- Sing out the names of the dead</pre>
-<pre class="block line-group"><span class="chord">G</span>            <span class="chord">D</span>
- Like Johnny Barleycorn</pre>
-<pre class="block line-group"><span class="chord">A</span>           <span class="chord">E</span>            <span class="chord">G</span>
- Give him a cheer   Hey</pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span>        <span class="chord">G</span>   <span class="chord">A</span>
- Can you hear the newborn?
-<span class="chord">D</span>  <span class="chord">A7</span>*  (x2)</pre>
-<pre class="block line-group"><span class="section">[CHORUS]</span>
-<span class="chord">G</span>          <span class="chord">A</span>              <span class="chord">Bm</span>    <span class="chord">G</span>
- Clear the way for Johnny Barleycorn</pre>
-<pre class="block line-group">             <span class="chord">A</span>               <span class="chord">Bm</span>      <span class="chord">A</span>    <span class="chord">G</span>
- This is the day that surely he will be reborn</pre>
-<pre class="block line-group"><span class="chord">G</span>               <span class="chord">A</span>              <span class="chord">D</span>  <span class="chord">G</span>
- Bring down the blade on Johnny
-(repeat above 1x)</pre>
-<pre class="block line-group"> <span class="chord">C</span>        <span class="chord">Bm</span>     <span class="chord">A</span>        <span class="chord">G</span>       <span class="chord">D</span>    <span class="chord">G</span>
- He shall be the one that will be torn</pre>
-<pre class="block line-group"> <span class="chord">C</span>        <span class="chord">Bm</span>     <span class="chord">A</span>        <span class="chord">G</span>       <span class="chord">D</span>
- He shall be the one that will be torn
-A  (fade out)
-_______________________________________________________________
-recommended chord formations: (also barre chords sound good, and
-you can play the full chords of course)
-e---------------3---0----2----0--|
-B---3-----------3---2----3----1--|
-G---2---2-------0---0----4----0--|
-D---0---2---2---0---2----4----2--|
-A-------0---2---x---0----2----3--|
-E-----------0---3----------------|</pre>
-<pre class="block line-group">    <span class="chord">D</span>   <span class="chord">A</span>   <span class="chord">E</span>   <span class="chord">G</span>   <span class="chord">A7</span>   <span class="chord">Bm</span>   <span class="chord">C</span>
-* one guitar does this on D  A7 part
-e------------------------------------------|
-B-----------3-------------------2----------|
-G-------0--------0---------0---------0-----|
-D-----4---4----4---4-----2---2----2-----2--|
-A---5------------------0-------------------|
-E------------------------------------------|</pre>
-<pre class="block line-group line-group-last">    <span class="chord">D</span>                  <span class="chord">A7</span>
-This add-on sounds good on the D and A in the verses
-e--------------------------------------------------|
-B--3--3--3--3--3--3--3--3--------------------------|
-G--2--2--3--2--2--2--3--2--2--2--2--2--2--2--2--2--|
-D--0--0--0--0--0--0--0--0--2--2--3--2--2--2--3--2--|
-A--------------------------0--0--0--0--0--0--0--0--|
-E--------------------------------------------------|</pre>
+    <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[VERSE]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Have you </span></span><span class="seg"><span class="chord">A</span><span class="lyr">been to the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">fields?</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Something </span></span><span class="seg"><span class="chord">A</span><span class="lyr">there made me af</span></span><span class="seg"><span class="chord">E</span><span class="lyr">raid</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> Like dying </span></span><span class="seg"><span class="chord">D</span><span class="lyr">younger</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">If the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">ground never </span></span><span class="seg"><span class="chord">E</span><span class="lyr">yields</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> We will </span></span><span class="seg"><span class="chord">G</span><span class="lyr">feel</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> the hunger</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Take him </span></span><span class="seg"><span class="chord">A</span><span class="lyr">out with the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">seeds</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Roll him </span></span><span class="seg"><span class="chord">A</span><span class="lyr">on the barren </span></span><span class="seg"><span class="chord">E</span><span class="lyr">ground</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Mix blood and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">water</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> Do not </span></span><span class="seg"><span class="chord">A</span><span class="lyr">doubt our every </span></span><span class="seg"><span class="chord">E</span><span class="lyr">need</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> She will </span></span><span class="seg"><span class="chord">G</span><span class="lyr">feed,</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> look what we got her</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D A7*  (x2)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[CHORUS]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Clear the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">way for Johnny </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">Barley</span></span><span class="seg"><span class="chord">G</span><span class="lyr">corn</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> This is the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">day that surely </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">he will </span></span><span class="seg"><span class="chord">A</span><span class="lyr">be re</span></span><span class="seg"><span class="chord">G</span><span class="lyr">born</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Bring down the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blade on Johnny</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr">He shall </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">be the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">one that </span></span><span class="seg"><span class="chord">G</span><span class="lyr">will be </span></span><span class="seg"><span class="chord">D</span><span class="lyr">torn</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[SOLO]</span></div><div class="line"><span class="seg"><span class="lyr">D A E G  (x3)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">E</span><span class="chord">G</span><span class="chord">A</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[VERSE]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Ringing </span></span><span class="seg"><span class="chord">A</span><span class="lyr">out the new </span></span><span class="seg"><span class="chord">E</span><span class="lyr">year</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Sing out the n</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ames of the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">dead</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Like Johnny </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Barleycorn</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr"> Give him a </span></span><span class="seg"><span class="chord">E</span><span class="lyr">cheer   Hey</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Can you </span></span><span class="seg"><span class="chord">G</span><span class="lyr">hear</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> the newborn?</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D A7*  (x2)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[CHORUS]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Clear the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">way for Johnny </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">Barley</span></span><span class="seg"><span class="chord">G</span><span class="lyr">corn</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> This is the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">day that surely </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">he will </span></span><span class="seg"><span class="chord">A</span><span class="lyr">be re</span></span><span class="seg"><span class="chord">G</span><span class="lyr">born</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Bring down the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blade on Johnny</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(repeat above 1x)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr">He shall </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">be the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">one that </span></span><span class="seg"><span class="chord">G</span><span class="lyr">will be </span></span><span class="seg"><span class="chord">D</span><span class="lyr">torn</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr">He shall </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">be the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">one that </span></span><span class="seg"><span class="chord">G</span><span class="lyr">will be </span></span><span class="seg"><span class="chord">D</span><span class="lyr">torn</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A  (fade out)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">_______________________________________________________________</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">recommended chord formations: (also barre chords sound good, and</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">you can play the full chords of course)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">e---------------3---0----2----0--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">B---3-----------3---2----3----1--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G---2---2-------0---0----4----0--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D---0---2---2---0---2----4----2--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A-------0---2---x---0----2----3--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E-----------0---3----------------|</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">* on</span></span><span class="seg"><span class="chord">D</span><span class="lyr">e gu</span></span><span class="seg"><span class="chord">A</span><span class="lyr">itar</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> doe</span></span><span class="seg"><span class="chord">G</span><span class="lyr">s th</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">is on</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"> D  A</span></span><span class="seg"><span class="chord">C</span><span class="lyr">7 part</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">e------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">B-----------3-------------------2----------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G-------0--------0---------0---------0-----|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D-----4---4----4---4-----2---2----2-----2--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A---5------------------0-------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E------------------------------------------|</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">This</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> add-on sounds good</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> on the D and A in the verses</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">e--------------------------------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">B--3--3--3--3--3--3--3--3--------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G--2--2--3--2--2--2--3--2--2--2--2--2--2--2--2--2--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D--0--0--0--0--0--0--0--0--2--2--3--2--2--2--3--2--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A--------------------------0--0--0--0--0--0--0--0--|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E--------------------------------------------------|</span></span></div></div>
     </div>
     
   </div>

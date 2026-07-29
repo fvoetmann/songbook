@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Gods Comic – Elvis Costello</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,81 +498,43 @@
     <h1>Gods Comic <span class="artist-inline">– Elvis Costello</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">Dm</span> <span class="chord">A7</span>   <span class="chord">Dm</span> <span class="chord">A7</span>   <span class="chord">Dm</span> <span class="chord">F</span> <span class="chord">Gm</span> <span class="chord">G#</span> <span class="chord">A</span></pre>
-<pre class="block line-group"><span class="chord">Dm</span>            <span class="chord">A7</span>           <span class="chord">Dm</span>     <span class="chord">A7</span>
-I wish you&#x27;d known me when I was alive</pre>
-<pre class="block line-group"><span class="chord">F</span>             <span class="chord">A#</span>   <span class="chord">C</span>
-I was a funny fellow</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>             <span class="chord">A7</span>       <span class="chord">A#</span>          <span class="chord">A7</span>
-The crowd would hoot and holler for more</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>      <span class="chord">A7</span>         <span class="chord">A#</span>           <span class="chord">A7</span>
-I wore a drunks red nose for applause</pre>
-<pre class="block line-group"><span class="chord">F</span>               <span class="chord">A#</span>       <span class="chord">C</span>
- Oh yes I was a comical priest With a</pre>
-<pre class="block line-group"><span class="chord">F</span>                        <span class="chord">A#</span>           <span class="chord">C</span>
-joke for the flock and a hand up you fleece</pre>
-<pre class="block line-group"><span class="chord">Dm</span>           <span class="chord">A7</span>               <span class="chord">Dm</span>        <span class="chord">C</span>
-Drooling the drink and the lipstick and grease paint</pre>
-<pre class="block line-group"><span class="chord">F</span>                        <span class="chord">A#</span>      <span class="chord">C</span>         <span class="chord">A#</span>
- Down the cardboard front of my dirty dog collar</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span> <span class="chord">A7</span></pre>
-<pre class="block line-group"><span class="section">[Chorus:]</span>
-       <span class="chord">Dm</span>          <span class="chord">A7</span>          <span class="chord">Dm</span>          <span class="chord">C</span>
-now im dead now im dead now im dead now im dead</pre>
-<pre class="block line-group">       <span class="chord">F</span>           <span class="chord">A#</span>        <span class="chord">C</span>
-And im going on to meet my reward</pre>
-<pre class="block line-group">      <span class="chord">Dm</span>           <span class="chord">A7</span>           <span class="chord">Dm</span>            <span class="chord">C</span>
-I was scared I was scared I was scared  I was scared</pre>
-<pre class="block line-group line-group-last">   <span class="chord">F</span>          <span class="chord">A#</span>    <span class="chord">C</span>          <span class="chord">A#</span>    <span class="chord">F</span> <span class="chord">A7</span>
-He might have never heard Gods Comic </pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-   <span class="chord">Dm</span>       <span class="chord">A7</span>       <span class="chord">Dm</span>    <span class="chord">A7</span>
-So there he was on a water bed</pre>
-<pre class="block line-group"><span class="chord">F</span>                    <span class="chord">A#</span>      <span class="chord">C</span>
-drinking a cola of a mystery brand</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>        <span class="chord">A7</span>      <span class="chord">A#</span>   <span class="chord">A7</span>
-reading an airport novellette</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>          <span class="chord">A7</span>           <span class="chord">A#</span>        <span class="chord">A7</span> <span class="chord">Dm</span>
-listening to Andrew Loydd Webbers requiem</pre>
-<pre class="block line-group"><span class="chord">F</span>                     <span class="chord">A#</span>       <span class="chord">C</span>
-He said before it had really begun</pre>
-<pre class="block line-group"><span class="chord">F</span>                 <span class="chord">A#</span>       <span class="chord">C</span>
-I prefer the one about my son</pre>
-<pre class="block line-group">          <span class="chord">Dm</span>             <span class="chord">A7</span>       <span class="chord">Dm</span>           <span class="chord">C</span>
-I&#x27;ve been wading through all this unbelievable junk</pre>
-<pre class="block line-group">    <span class="chord">F</span>                          <span class="chord">A#</span>        <span class="chord">C</span>                <span class="chord">A#</span>
-and wondering if i should have given the world to the the monkeys.</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span> <span class="chord">A7</span></pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">A#</span>           <span class="chord">C</span>
-Im goind to take a little trip</pre>
-<pre class="block line-group"><span class="chord">A#</span>        <span class="chord">C</span>        <span class="chord">F</span>
-down paradises endless shores
-they say that travel broadens the mind</pre>
-<pre class="block line-group line-group-last">                      <span class="chord">A7</span>               <span class="chord">D</span>
-till you cant get you head out of doors</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">Dm</span>         <span class="chord">A7</span>          <span class="chord">Dm</span>         <span class="chord">A7</span>
-Im sitting here on the top of the world</pre>
-<pre class="block line-group"><span class="chord">F</span>                    <span class="chord">A#</span>      <span class="chord">C</span>
-I hang around in the longest night</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>        <span class="chord">A7</span>        <span class="chord">A#</span>      <span class="chord">A7</span>
-Until each beast has gone to bed</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>        <span class="chord">A7</span>      <span class="chord">A#</span>        <span class="chord">A7</span>           <span class="chord">Dm</span>
-and then i say god bless and turn out the light</pre>
-<pre class="block line-group"><span class="chord">F</span>                          <span class="chord">A#</span>       <span class="chord">C</span>
-While you lie in the dark afraid to breathe</pre>
-<pre class="block line-group">        <span class="chord">F</span>                           <span class="chord">A#</span>              <span class="chord">C</span>
-and you beg and you promise and you bargain and you plead</pre>
-<pre class="block line-group">    <span class="chord">F</span>                         <span class="chord">A#</span>    <span class="chord">C</span>
-sometimes you confuse me with Santa Claus</pre>
-<pre class="block line-group"><span class="chord">F</span>                 <span class="chord">A#</span>         <span class="chord">C</span>
-its the big white beard i suppose</pre>
-<pre class="block line-group">         <span class="chord">Dm</span>        <span class="chord">A7</span>             <span class="chord">Dm</span>           <span class="chord">C</span>
-im going up to the pole where you folks die of cold</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>          <span class="chord">A#</span>         <span class="chord">C</span>            <span class="chord">A#</span>     <span class="chord">F</span><span class="chord">A7</span>
-i might be gone for a while if you need me </pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line chords-only"><span class="chord">Dm</span><span class="chord">A7</span><span class="chord">Dm</span><span class="chord">A7</span><span class="chord">Dm</span><span class="chord">F</span><span class="chord">Gm</span><span class="chord">G#</span><span class="chord">A</span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">I wish you&#x27;d k</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">nown me when </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">I was a</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">live</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I was a funny </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">fello</span></span><span class="seg"><span class="chord">C</span><span class="lyr">w</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">The crowd would </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">hoot and </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">holler for m</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">ore</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">I wore a </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">drunks red </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">nose for appl</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">ause</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> Oh yes I was a </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">comical p</span></span><span class="seg"><span class="chord">C</span><span class="lyr">riest With a</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">joke for the flock and a </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">hand up you f</span></span><span class="seg"><span class="chord">C</span><span class="lyr">leece</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Drooling the </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">drink and the lip</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">stick and </span></span><span class="seg"><span class="chord">C</span><span class="lyr">grease paint</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> Down the cardboard front</span></span><span class="seg"><span class="chord">A#</span><span class="lyr"> of my d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">irty dog c</span></span><span class="seg"><span class="chord">A#</span><span class="lyr">ollar</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">F</span><span class="chord">A7</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus:]</span></div><div class="line"><span class="seg"><span class="lyr">now im </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">dead now im </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">dead now im </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">dead now im </span></span><span class="seg"><span class="chord">C</span><span class="lyr">dead</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And im </span></span><span class="seg"><span class="chord">F</span><span class="lyr">going on to </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">meet my re</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ward</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">scared I was </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">scared I was </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">scared  I was </span></span><span class="seg"><span class="chord">C</span><span class="lyr">scared</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">He </span></span><span class="seg"><span class="chord">F</span><span class="lyr">might have </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">never </span></span><span class="seg"><span class="chord">C</span><span class="lyr">heard Gods </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">Comic </span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">A7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">So </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">there he </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">was on a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">water </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">bed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">drinking a cola of a </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">mystery </span></span><span class="seg"><span class="chord">C</span><span class="lyr">brand</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">reading an </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">airport </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">novel</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">lette</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">listening to </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">Andrew Loydd </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">Webbers re</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">qui</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">em</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">He said before it had </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">really be</span></span><span class="seg"><span class="chord">C</span><span class="lyr">gun</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I prefer the one a</span></span><span class="seg"><span class="chord">A#</span><span class="lyr">bout my s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">on</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;ve been </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">wading through </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">all this </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">unbelievable </span></span><span class="seg"><span class="chord">C</span><span class="lyr">junk</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and </span></span><span class="seg"><span class="chord">F</span><span class="lyr">wondering if i should have </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">given the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">world to the the </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">monkeys.</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">F</span><span class="chord">A7</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">A#</span><span class="lyr">Im goind to t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ake a little trip</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A#</span><span class="lyr">down parad</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ises endl</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ess shores</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">they say that travel broadens the mind</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">till you cant get you </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">head out of doors</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Im sitting </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">here on the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">top of the </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">world</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I hang around in the </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">longest </span></span><span class="seg"><span class="chord">C</span><span class="lyr">night</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">Until each </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">beast has </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">gone to </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">bed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">and then i </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">say god </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">bless and </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">turn out the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">light</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">While you lie in the dark a</span></span><span class="seg"><span class="chord">A#</span><span class="lyr">fraid to </span></span><span class="seg"><span class="chord">C</span><span class="lyr">breathe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and you </span></span><span class="seg"><span class="chord">F</span><span class="lyr">beg and you promise and you </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">bargain and you </span></span><span class="seg"><span class="chord">C</span><span class="lyr">plead</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">some</span></span><span class="seg"><span class="chord">F</span><span class="lyr">times you confuse me with </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">Santa </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Claus</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">its the big white </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">beard i sup</span></span><span class="seg"><span class="chord">C</span><span class="lyr">pose</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">im going </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">up to the </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">pole where you </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">folks die of </span></span><span class="seg"><span class="chord">C</span><span class="lyr">cold</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">i might be </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">gone for a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">while if you </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">need me</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A7</span><span class="lyr"></span></span></div></div>
     </div>
     
   </div>

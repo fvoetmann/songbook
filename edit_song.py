@@ -69,6 +69,7 @@ def extract_meta(soup):
 
 
 def pre_to_ug(pre) -> str:
+    """Reconstruct raw UG text from a <pre class="block"> (tab sections only)."""
     parts = []
     for child in pre.children:
         if isinstance(child, NavigableString):
@@ -80,6 +81,60 @@ def pre_to_ug(pre) -> str:
         else:
             parts.append(child.get_text())
     return "".join(parts).strip("\n")
+
+
+def line_div_to_ug(line_div) -> str:
+    """Inverse of add_song.py's render_chord_lyric_line/render_chord_lines:
+    reconstruct the raw chord-only-line(+lyric-line) text from a rendered
+    <div class="line">."""
+    classes = line_div.get("class", [])
+    if "section-line" in classes:
+        section = line_div.find("span", class_="section")
+        return section.get_text() if section else line_div.get_text()
+    if "chords-only" in classes:
+        chords = [c.get_text() for c in line_div.find_all("span", class_="chord")]
+        return "  ".join(f"[ch]{c}[/ch]" for c in chords)
+
+    # Chord+lyric pair (or plain lyric line): walk .seg children, tracking
+    # position with a separate integer counter (not len() of the string
+    # being built, which would double-count the [ch]...[/ch] markup itself).
+    chord_positions = []
+    lyric_parts = []
+    col = 0
+    for seg in line_div.find_all("span", class_="seg", recursive=False):
+        chord_span = seg.find("span", class_="chord", recursive=False)
+        lyr_span = seg.find("span", class_="lyr", recursive=False)
+        lyr_text = lyr_span.get_text() if lyr_span else ""
+        if chord_span:
+            chord_positions.append((col, chord_span.get_text()))
+        lyric_parts.append(lyr_text)
+        col += len(lyr_text)
+    lyric_line = "".join(lyric_parts)
+    if not chord_positions:
+        return lyric_line
+
+    chord_line = ""
+    col = 0
+    for pos, name in chord_positions:
+        if pos > col:
+            chord_line += " " * (pos - col)
+            col = pos
+        elif pos < col:
+            chord_line += " "
+            col += 1
+        chord_line += f"[ch]{name}[/ch]"
+        col += len(name)
+    return chord_line + "\n" + lyric_line
+
+
+def block_to_ug(block) -> str:
+    """Reconstruct raw UG content text from a rendered block element: either
+    a <pre class="block"> (tab section, unchanged monospace text) or a
+    <div class="block"> (chord/lyric section, position-anchored lines)."""
+    if block.name == "pre":
+        return pre_to_ug(block)
+    lines = [line_div_to_ug(d) for d in block.find_all("div", class_="line", recursive=False)]
+    return "\n".join(lines).strip("\n")
 
 
 def extract_title_artist(soup) -> tuple:
@@ -98,7 +153,7 @@ def html_to_content(html_path: Path):
     soup = BeautifulSoup(html_path.read_text(encoding="utf-8"), "html.parser")
     title, artist = extract_title_artist(soup)
     key, capo, url = extract_meta(soup)
-    blocks = [pre_to_ug(pre) for pre in soup.find_all("pre", class_="block")]
+    blocks = [block_to_ug(b) for b in soup.find_all(["pre", "div"], class_="block")]
     content = "\n\n".join(b for b in blocks if b.strip())
     return title, artist, key, capo, url, content
 

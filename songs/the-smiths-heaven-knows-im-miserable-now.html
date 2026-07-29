@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Heaven Knows Im Miserable Now – The Smiths</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -78,7 +87,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Aadd9":[[-1,0,2,4,2,0],[-1,0,2,4,2,-1],[5,0,7,6,0,0],[5,7,7,6,0,0],[7,0,7,6,5,0],[5,0,7,6,5,7]],"Emaj7":[[0,2,1,1,0,0],[0,2,1,1,0,-1],[0,2,1,1,-1,-1],[0,2,2,4,4,4],[-1,-1,2,4,4,4],[0,6,6,4,0,0]],"Cmaj7":[[-1,3,2,0,0,0],[-1,3,2,0,0,3],[-1,3,2,4,0,3],[-1,3,2,0,0,-1],[-1,3,5,0,0,0],[-1,3,5,4,0,0]],"Bm7":[[-1,2,0,2,0,2],[-1,2,0,2,3,2],[-1,2,4,2,3,2],[-1,2,4,2,3,-1],[7,5,0,7,7,5],[7,5,7,7,7,5]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"C#m":[[-1,4,6,6,5,0],[-1,4,6,6,5,4],[-1,4,6,6,5,-1],[-1,-1,2,1,2,0],[0,4,6,6,5,0],[0,4,6,6,5,4]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"B":[[-1,2,4,4,4,2],[-1,2,4,4,4,-1],[7,9,9,8,0,7],[7,9,9,8,7,7],[7,9,9,8,0,-1],[7,9,9,8,7,-1]],"A/C#":[[-1,4,2,2,2,0],[-1,4,2,2,2,-1],[9,7,7,9,-1,-1],[-1,4,-1,2,2,0],[-1,4,2,2,-1,0],[-1,4,-1,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"E/B":[[-1,2,2,1,0,0],[-1,2,2,1,0,-1],[-1,2,2,4,0,4],[7,7,9,9,9,0],[7,7,9,9,9,7],[7,7,9,9,9,-1]],"B/D#":[[-1,6,4,4,0,-1],[-1,6,4,4,4,-1],[-1,6,-1,8,7,7],[-1,6,-1,8,0,7]]},"ukulele":{"Aadd9":[[2,1,0,2],[4,1,0,0],[4,4,5,4],[6,4,7,0],[2,4,0,2],[2,4,5,2]],"Emaj7":[[1,3,0,2],[4,4,4,6],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Cmaj7":[[0,0,0,2],[5,4,3,2],[4,4,3,3],[5,7,7,7],[0,0,7,7],[4,0,0,2]],"Bm7":[[2,2,2,2],[4,2,2,0],[4,6,5,5],[7,6,7,0],[4,2,2,2],[2,2,5,2]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"C#m":[[1,1,0,4],[1,4,0,4],[1,4,4,4],[6,4,4,4],[6,4,4,7],[6,4,0,4]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"B":[[4,3,2,2],[4,6,7,6]],"A/C#":[[2,1,0,0],[2,1,0,4]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"B/D#":[[4,3,2,2]]},"mandolin":{"Aadd9":[[4,2,4,5],[4,7,4,0],[6,7,7,7],[2,2,2,0],[2,2,2,5],[2,2,2,-1]],"Emaj7":[[1,1,2,0],[4,6,6,0],[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1]],"Cmaj7":[[5,2,2,3],[5,5,2,0],[5,5,7,7],[4,2,3,3],[4,5,3,0],[5,2,2,0]],"Bm7":[[4,0,0,2],[4,4,5,5],[2,0,2,2],[7,4,0,7],[4,0,2,2],[4,0,2,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"C#m":[[6,6,4,0],[6,6,7,4],[6,6,7,0],[6,6,7,-1],[1,2,4,0],[1,2,4,4]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"B":[[4,1,2,2],[4,4,6,7],[4,4,6,-1],[-1,1,2,2],[-1,4,6,7],[4,1,-1,2]],"A/C#":[[6,7,4,0],[6,7,7,5],[6,7,0,0],[6,7,7,0],[6,7,7,-1],[6,-1,7,5]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"E/B":[[4,2,2,4],[4,6,7,0],[4,6,7,4],[4,6,7,7],[4,6,7,-1],[4,2,-1,4]],"B/D#":[[-1,1,2,2]]},"banjo":{"Aadd9":[[2,2,0,2,0],[-1,2,0,2,0],[7,4,5,7,0],[-1,4,5,7,0],[7,6,0,7,0],[-1,6,0,7,0]],"Emaj7":[[1,1,0,2,0],[2,1,0,1,0],[2,1,0,2,0],[1,1,4,2,0],[2,1,4,1,0],[2,1,4,2,0]],"Cmaj7":[[2,4,1,2,0],[-1,4,1,2,0],[2,5,0,2,0],[2,5,0,5,0],[5,5,0,2,0],[-1,5,0,2,0]],"Bm7":[[0,2,0,4,0],[4,2,0,0,0],[0,4,7,7,0],[4,7,0,7,0],[7,4,7,0,0],[7,7,0,4,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"C#m":[[2,1,2,2,0],[-1,1,2,2,0],[6,6,5,6,0],[-1,6,5,6,0],[2,1,2,-1,0],[6,6,5,-1,0]],"F#m":[[4,2,2,4,0],[-1,2,2,4,0],[4,6,7,7,0],[7,6,7,4,0],[7,6,7,7,0],[-1,6,7,7,0]],"B":[[1,4,0,4,0],[4,4,0,1,0],[1,4,4,4,0],[4,4,4,1,0],[4,4,4,4,0],[-1,4,4,4,0]],"A/C#":[[-1,6,5,7,0],[-1,6,-1,7,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"E/B":[[-1,4,5,6,0]],"B/D#":[[1,4,0,4,0],[1,4,4,4,0],[1,-1,0,4,0],[1,4,-1,4,0],[1,4,0,1,0],[1,4,4,1,0]]}};
+    var DBS = {"guitar":{"Emaj7":[[0,2,1,1,0,0],[0,2,1,1,0,-1],[0,2,1,1,-1,-1],[0,2,2,4,4,4],[-1,-1,2,4,4,4],[0,6,6,4,0,0]],"Cmaj7":[[-1,3,2,0,0,0],[-1,3,2,0,0,3],[-1,3,2,4,0,3],[-1,3,2,0,0,-1],[-1,3,5,0,0,0],[-1,3,5,4,0,0]],"Bm7":[[-1,2,0,2,0,2],[-1,2,0,2,3,2],[-1,2,4,2,3,2],[-1,2,4,2,3,-1],[7,5,0,7,7,5],[7,5,7,7,7,5]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Aadd9":[[-1,0,2,4,2,0],[-1,0,2,4,2,-1],[5,0,7,6,0,0],[5,7,7,6,0,0],[7,0,7,6,5,0],[5,0,7,6,5,7]],"C#m":[[-1,4,6,6,5,0],[-1,4,6,6,5,4],[-1,4,6,6,5,-1],[-1,-1,2,1,2,0],[0,4,6,6,5,0],[0,4,6,6,5,4]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"B":[[-1,2,4,4,4,2],[-1,2,4,4,4,-1],[7,9,9,8,0,7],[7,9,9,8,7,7],[7,9,9,8,0,-1],[7,9,9,8,7,-1]],"A/C#":[[-1,4,2,2,2,0],[-1,4,2,2,2,-1],[9,7,7,9,-1,-1],[-1,4,-1,2,2,0],[-1,4,2,2,-1,0],[-1,4,-1,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"E/B":[[-1,2,2,1,0,0],[-1,2,2,1,0,-1],[-1,2,2,4,0,4],[7,7,9,9,9,0],[7,7,9,9,9,7],[7,7,9,9,9,-1]],"B/D#":[[-1,6,4,4,0,-1],[-1,6,4,4,4,-1],[-1,6,-1,8,7,7],[-1,6,-1,8,0,7]]},"ukulele":{"Emaj7":[[1,3,0,2],[4,4,4,6],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Cmaj7":[[0,0,0,2],[5,4,3,2],[4,4,3,3],[5,7,7,7],[0,0,7,7],[4,0,0,2]],"Bm7":[[2,2,2,2],[4,2,2,0],[4,6,5,5],[7,6,7,0],[4,2,2,2],[2,2,5,2]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Aadd9":[[2,1,0,2],[4,1,0,0],[4,4,5,4],[6,4,7,0],[2,4,0,2],[2,4,5,2]],"C#m":[[1,1,0,4],[1,4,0,4],[1,4,4,4],[6,4,4,4],[6,4,4,7],[6,4,0,4]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"B":[[4,3,2,2],[4,6,7,6]],"A/C#":[[2,1,0,0],[2,1,0,4]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"B/D#":[[4,3,2,2]]},"mandolin":{"Emaj7":[[1,1,2,0],[4,6,6,0],[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1]],"Cmaj7":[[5,2,2,3],[5,5,2,0],[5,5,7,7],[4,2,3,3],[4,5,3,0],[5,2,2,0]],"Bm7":[[4,0,0,2],[4,4,5,5],[2,0,2,2],[7,4,0,7],[4,0,2,2],[4,0,2,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Aadd9":[[4,2,4,5],[4,7,4,0],[6,7,7,7],[2,2,2,0],[2,2,2,5],[2,2,2,-1]],"C#m":[[6,6,4,0],[6,6,7,4],[6,6,7,0],[6,6,7,-1],[1,2,4,0],[1,2,4,4]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"B":[[4,1,2,2],[4,4,6,7],[4,4,6,-1],[-1,1,2,2],[-1,4,6,7],[4,1,-1,2]],"A/C#":[[6,7,4,0],[6,7,7,5],[6,7,0,0],[6,7,7,0],[6,7,7,-1],[6,-1,7,5]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"E/B":[[4,2,2,4],[4,6,7,0],[4,6,7,4],[4,6,7,7],[4,6,7,-1],[4,2,-1,4]],"B/D#":[[-1,1,2,2]]},"banjo":{"Emaj7":[[1,1,0,2,0],[2,1,0,1,0],[2,1,0,2,0],[1,1,4,2,0],[2,1,4,1,0],[2,1,4,2,0]],"Cmaj7":[[2,4,1,2,0],[-1,4,1,2,0],[2,5,0,2,0],[2,5,0,5,0],[5,5,0,2,0],[-1,5,0,2,0]],"Bm7":[[0,2,0,4,0],[4,2,0,0,0],[0,4,7,7,0],[4,7,0,7,0],[7,4,7,0,0],[7,7,0,4,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Aadd9":[[2,2,0,2,0],[-1,2,0,2,0],[7,4,5,7,0],[-1,4,5,7,0],[7,6,0,7,0],[-1,6,0,7,0]],"C#m":[[2,1,2,2,0],[-1,1,2,2,0],[6,6,5,6,0],[-1,6,5,6,0],[2,1,2,-1,0],[6,6,5,-1,0]],"F#m":[[4,2,2,4,0],[-1,2,2,4,0],[4,6,7,7,0],[7,6,7,4,0],[7,6,7,7,0],[-1,6,7,7,0]],"B":[[1,4,0,4,0],[4,4,0,1,0],[1,4,4,4,0],[4,4,4,1,0],[4,4,4,4,0],[-1,4,4,4,0]],"A/C#":[[-1,6,5,7,0],[-1,6,-1,7,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"E/B":[[-1,4,5,6,0]],"B/D#":[[1,4,0,4,0],[1,4,4,4,0],[1,-1,0,4,0],[1,4,-1,4,0],[1,4,0,1,0],[1,4,4,1,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,90 +498,49 @@
     <h1>Heaven Knows Im Miserable Now <span class="artist-inline">– The Smiths</span></h1>
     <div class="meta">Toneart: F#</div>
     <div class="chords">
-    <pre class="block line-group line-group-last"><span class="chord">Aadd9</span>  x77600,  <span class="chord">Badd11</span>  x99800
-Use your middle, 3rd and 4th finger to keep your index finger free to
-hammer-on the 2nd string at the 5th fret, moving between A and Aadd9.
-Then slide that chord shape up 2 frets and do the same again. The open
-e string ensures that the chord remains Badd11.</pre>
-<pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">Emaj7</span>   <span class="chord">Cmaj7</span>   <span class="chord">Bm7</span>   <span class="chord">A</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">Aadd9</span>   <span class="chord">Badd11</span>   <span class="chord">Aadd9</span>   <span class="chord">Badd11</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-      <span class="chord">Emaj7</span>                  <span class="chord">C#m</span>
-I was happy in the haze of a drunken hour</pre>
-<pre class="block line-group">    <span class="chord">F#m</span>              <span class="chord">F#m/E</span>      <span class="chord">A</span>   <span class="chord">B</span>
-But heaven knows I&#x27;m miserable now</pre>
-<pre class="block line-group">      <span class="chord">Emaj7</span>                          <span class="chord">C#m</span>
-I was looking for a job, and then I found a job</pre>
-<pre class="block line-group line-group-last">    <span class="chord">F#m</span>     <span class="chord">F#m/E</span>    <span class="chord">A</span>          <span class="chord">B</span>
-And heaven knows I&#x27;m miserable now</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Emaj7</span>   <span class="chord">A</span>  <span class="chord">B</span>
-In my life</pre>
-<pre class="block line-group"><span class="chord">Emaj7</span>                   <span class="chord">A/C#</span>  <span class="chord">B</span>
-Why do I give valuable time</pre>
-<pre class="block line-group line-group-last">   <span class="chord">E</span>                <span class="chord">E/D#</span>    <span class="chord">E/C#</span> <span class="chord">E/B</span>     <span class="chord">A/C#</span> <span class="chord">B/D#</span> <span class="chord">A/C#</span> <span class="chord">B</span>
-To people who don&#x27;t care if I    live or die?</pre>
-<pre class="block line-group"><span class="section">[Instrumental]</span>
-<span class="chord">E</span> <span class="chord">E/D#</span> <span class="chord">E/C#</span> <span class="chord">E/B</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>   <span class="chord">B</span></pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-    <span class="chord">Emaj7</span>           <span class="chord">C#m</span>
-Two lovers entwined pass me by</pre>
-<pre class="block line-group">    <span class="chord">F#m</span>              <span class="chord">F#m/E</span>      <span class="chord">A</span>   <span class="chord">B</span>
-And heaven knows I&#x27;m miserable now</pre>
-<pre class="block line-group">      <span class="chord">Emaj7</span>                          <span class="chord">C#m</span>
-I was looking for a job, and then I found a job</pre>
-<pre class="block line-group line-group-last">    <span class="chord">F#m</span>     <span class="chord">F#m/E</span>    <span class="chord">A</span>          <span class="chord">B</span>
-And heaven knows I&#x27;m miserable now</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Emaj7</span>   <span class="chord">C#m</span>
-In my life</pre>
-<pre class="block line-group">    <span class="chord">F#m</span>                     <span class="chord">A</span>   <span class="chord">B</span>
-Oh, why do I give valuable time</pre>
-<pre class="block line-group line-group-last">   <span class="chord">Emaj7</span>                    <span class="chord">C#m</span>      <span class="chord">F#m</span>    <span class="chord">A</span>  <span class="chord">B</span>
-To people who don&#x27;t care if I  live or die?</pre>
-<pre class="block line-group"><span class="section">[Instrumental]</span>
-<span class="chord">Emaj7</span>   <span class="chord">Cmaj7</span>   <span class="chord">Bm7</span>   <span class="chord">A</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">Aadd9</span>   <span class="chord">Badd11</span>   <span class="chord">Aadd9</span>   <span class="chord">Badd11</span></pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-         <span class="chord">Emaj7</span>              <span class="chord">C#m</span>
-What she asked of me at the end of the day</pre>
-<pre class="block line-group">  <span class="chord">F#m</span>     <span class="chord">F#m/E</span>       <span class="chord">A</span>      <span class="chord">B</span>
-Caligula would have blushed</pre>
-<pre class="block line-group">            <span class="chord">Emaj7</span>                  <span class="chord">C#m</span>
-&quot;Oh, you&#x27;ve been in the house too long&quot; she said</pre>
-<pre class="block line-group line-group-last">    <span class="chord">F#m</span>  <span class="chord">F#m/E</span>      <span class="chord">A</span>   <span class="chord">B</span>
-And I    naturally fled</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Emaj7</span>   <span class="chord">A</span>  <span class="chord">B</span>
-In my life</pre>
-<pre class="block line-group"><span class="chord">Emaj7</span>    <span class="chord">A/C#</span>  <span class="chord">B</span>
-Why do I smile</pre>
-<pre class="block line-group line-group-last">   <span class="chord">E</span>              <span class="chord">E/D#</span>   <span class="chord">E/C#</span> <span class="chord">E/B</span>      <span class="chord">A/C#</span> <span class="chord">B/D#</span> <span class="chord">A/C#</span> <span class="chord">B</span>
-At people who I&#x27;d much rather kick in the eye?</pre>
-<pre class="block line-group"><span class="section">[Instrumental]</span>
-<span class="chord">E</span> <span class="chord">E/D#</span> <span class="chord">E/C#</span> <span class="chord">E/B</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>   <span class="chord">B</span></pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-      <span class="chord">Emaj7</span>                  <span class="chord">C#m</span>
-I was happy in the haze of a drunken hour</pre>
-<pre class="block line-group">    <span class="chord">F#m</span>              <span class="chord">F#m/E</span>      <span class="chord">A</span>   <span class="chord">B</span>
-But heaven knows I&#x27;m miserable now</pre>
-<pre class="block line-group">            <span class="chord">Emaj7</span>                  <span class="chord">C#m</span>
-&quot;Oh, you&#x27;ve been in the house too long&quot; she said</pre>
-<pre class="block line-group line-group-last">    <span class="chord">F#m</span>  <span class="chord">F#m/E</span>      <span class="chord">A</span>   <span class="chord">B</span>
-And I    naturally fled</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Emaj7</span>   <span class="chord">C#m</span>
-In my life</pre>
-<pre class="block line-group">    <span class="chord">F#m</span>                     <span class="chord">A</span>   <span class="chord">B</span>
-Oh, why do I give valuable time</pre>
-<pre class="block line-group line-group-last">   <span class="chord">Emaj7</span>                    <span class="chord">C#m</span>      <span class="chord">F#m</span>    <span class="chord">A</span>  <span class="chord">B</span>
-To people who don&#x27;t care if I  live or die?</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-<span class="chord">Emaj7</span>   <span class="chord">C#m</span>   <span class="chord">F#m</span>   <span class="chord">A</span> <span class="chord">B</span> x2</pre>
-<pre class="block line-group line-group-last"><span class="chord">Emaj7</span>   <span class="chord">Cmaj7</span>   <span class="chord">Bm7</span>   <span class="chord">A</span></pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Aadd9  x77600,  Badd11  x99800</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Use your middle, 3rd and 4th finger to keep your index finger free to</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">hammer-on the 2nd string at the 5th fret, moving between A and Aadd9.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Then slide that chord shape up 2 frets and do the same again. The open</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">e string ensures that the chord remains Badd11.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Emaj7</span><span class="chord">Cmaj7</span><span class="chord">Bm7</span><span class="chord">A</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Aadd9</span><span class="chord">Badd11</span><span class="chord">Aadd9</span><span class="chord">Badd11</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">I was </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">happy in the haze of a </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">drunken hour</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">heaven knows I&#x27;m </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">miserable n</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ow</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">looking for a job, and then I f</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">ound a job</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">heaven k</span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">nows I&#x27;m </span></span><span class="seg"><span class="chord">A</span><span class="lyr">miserable n</span></span><span class="seg"><span class="chord">B</span><span class="lyr">ow</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Emaj7</span><span class="lyr">In my li</span></span><span class="seg"><span class="chord">A</span><span class="lyr">fe</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Emaj7</span><span class="lyr">Why do I give valuable t</span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr">ime</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E</span><span class="lyr">people who don&#x27;t </span></span><span class="seg"><span class="chord">E/D#</span><span class="lyr">care if </span></span><span class="seg"><span class="chord">E/C#</span><span class="lyr">I    </span></span><span class="seg"><span class="chord">E/B</span><span class="lyr">live or </span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr">die?</span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr"></span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr"></span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">E</span><span class="chord">E/D#</span><span class="chord">E/C#</span><span class="chord">E/B</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">A</span><span class="chord">B</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Two </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">lovers entwined </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">pass me by</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">heaven knows I&#x27;m </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">miserable n</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ow</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">looking for a job, and then I f</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">ound a job</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">heaven k</span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">nows I&#x27;m </span></span><span class="seg"><span class="chord">A</span><span class="lyr">miserable n</span></span><span class="seg"><span class="chord">B</span><span class="lyr">ow</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Emaj7</span><span class="lyr">In my li</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">fe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh, </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">why do I give valuable t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ime</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">people who don&#x27;t care if </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">I  live o</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">r die?</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">Emaj7</span><span class="chord">Cmaj7</span><span class="chord">Bm7</span><span class="chord">A</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Aadd9</span><span class="chord">Badd11</span><span class="chord">Aadd9</span><span class="chord">Badd11</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">What she </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">asked of me at the </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">end of the day</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ca</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ligula w</span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">ould have bl</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ushed</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;Oh, you&#x27;ve </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">been in the house too l</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">ong&quot; she said</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">I    </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">naturally f</span></span><span class="seg"><span class="chord">A</span><span class="lyr">led</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Emaj7</span><span class="lyr">In my li</span></span><span class="seg"><span class="chord">A</span><span class="lyr">fe</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Emaj7</span><span class="lyr">Why do I </span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr">smile</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">At </span></span><span class="seg"><span class="chord">E</span><span class="lyr">people who I&#x27;d </span></span><span class="seg"><span class="chord">E/D#</span><span class="lyr">much ra</span></span><span class="seg"><span class="chord">E/C#</span><span class="lyr">ther </span></span><span class="seg"><span class="chord">E/B</span><span class="lyr">kick in t</span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr">he ey</span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">e?</span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr"></span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">E</span><span class="chord">E/D#</span><span class="chord">E/C#</span><span class="chord">E/B</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">A</span><span class="chord">B</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">I was </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">happy in the haze of a </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">drunken hour</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">heaven knows I&#x27;m </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">miserable n</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ow</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;Oh, you&#x27;ve </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">been in the house too l</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">ong&quot; she said</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">I    </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">naturally f</span></span><span class="seg"><span class="chord">A</span><span class="lyr">led</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Emaj7</span><span class="lyr">In my li</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">fe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh, </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">why do I give valuable t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ime</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">Emaj7</span><span class="lyr">people who don&#x27;t care if </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">I  live o</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">r die?</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">Emaj7 C#m F#m A B x2</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Emaj7</span><span class="chord">Cmaj7</span><span class="chord">Bm7</span><span class="chord">A</span></div></div>
     </div>
     
   </div>

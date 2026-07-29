@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Tennisbolden – Drengene fra Angora</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,112 +498,57 @@
     <h1>Tennisbolden <span class="artist-inline">– Drengene fra Angora</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">C</span>       <span class="chord">Am</span>
-Stanley,Spencer og jeg </pre>
-<pre class="block line-group"><span class="chord">Dm</span>                                    <span class="chord">G</span>
-vi har en fast tradition hver tirsdag eftermiddag</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">Am</span>              <span class="chord">Dm</span>
-Vi spiller tennis - det er mig mod dem </pre>
-<pre class="block line-group">           <span class="chord">G</span>
-og det&#x27; en gentlemansport</pre>
-<pre class="block line-group"><span class="chord">C</span>               <span class="chord">Am</span>
-Men sidste gang da vi spillede,</pre>
-<pre class="block line-group"><span class="chord">Dm</span>           <span class="chord">G</span>
-var der problemer</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">Am</span>               <span class="chord">Dm</span>            <span class="chord">G</span>
-Lige da jeg skulle serve skete det der ikke må ske for </pre>
-<pre class="block line-group"><span class="chord">F</span>                     <span class="chord">G</span>
-Jeg skød så hårdt til bolden </pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>                 <span class="chord">G</span>
-At jeg mistede kontrollen - med min serv.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>        <span class="chord">Am</span>           <span class="chord">Dm</span>                     <span class="chord">G</span>
-Så Tennisbolden - den sad lige i kuglerne på stakkels Spencer.</pre>
-<pre class="block line-group"><span class="chord">C</span>                                     <span class="chord">Am</span>
-Det er da ganske okay, det skal du da ik&#x27; tænke på</pre>
-<pre class="block line-group"><span class="chord">Dm</span>                         <span class="chord">G</span>                    <span class="chord">C</span>
-En bold lige i kuglerne er hændeligt uheld, min ven</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">Am</span>           <span class="chord">Dm</span>                       <span class="chord">G</span>
-Ja, tennisbolden - den sad lig&#x27; i kuglerne, det kan være farligt</pre>
-<pre class="block line-group"><span class="chord">C</span>                                     <span class="chord">Am</span>
-Nej det er ikke så galt, det gør skam slet ikke nas</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dm</span>                             <span class="chord">G</span>            <span class="chord">C</span>
-Jeg tar&#x27; lige en pause, så kan I spille videre imens</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-   <span class="chord">C</span>       <span class="chord">Am</span>
-Nu var det Stanley og mig </pre>
-<pre class="block line-group"><span class="chord">Dm</span>                                   <span class="chord">G</span>
-jeg sku&#x27; serve igen, og havde nerver på</pre>
-<pre class="block line-group"><span class="chord">C</span>     <span class="chord">Am</span>
-Stanley vinked&#x27; til mig og råbte: </pre>
-<pre class="block line-group"><span class="chord">Dm</span>                       <span class="chord">G</span>
-Hovsa min ven, jeg syns du virker nervøs</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">Am</span>              <span class="chord">Dm</span>      <span class="chord">G</span>
-Jeg er jo bange for at - ram&#x27; dine kugler</pre>
-<pre class="block line-group">    <span class="chord">C</span>         <span class="chord">Am</span>          
-Men Stanley var virkelig fin, han sagde: </pre>
-<pre class="block line-group"><span class="chord">Dm</span>                 <span class="chord">G</span>             
-Tænk ik&#x27; på mig, men fokusér på din serv</pre>
-<pre class="block line-group"><span class="chord">F</span>              <span class="chord">G</span>
-Jeg er en dygtig server </pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>               <span class="chord">G</span>
-Men jeg har svage nerver.....nerver. </pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>           <span class="chord">Am</span>        <span class="chord">Dm</span>                              <span class="chord">G</span>
-Så Tennisbolden - den sad lige i kuglerne på stakkels Stanley</pre>
-<pre class="block line-group"><span class="chord">C</span>                                                      <span class="chord">Am</span>
-det skal du da ik&#x27; bryd&#x27; dig om - det har jeg skam tit prøvet før</pre>
-<pre class="block line-group"><span class="chord">Dm</span>                        <span class="chord">G</span>                           <span class="chord">C</span>
-en bold i mit skridt - er ikke noget at ligge søvnløs over</pre>
-<pre class="block line-group"><span class="chord">C</span>             <span class="chord">Am</span>           <span class="chord">Dm</span>                            <span class="chord">G</span>
-Men tennisbolden - den sad lige i kuglerne man kan blive steril... </pre>
-<pre class="block line-group"><span class="chord">C</span>                                          <span class="chord">Am</span>
-&quot;Nej bare rolig min ven - jeg har det snart godt igen</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dm</span>                                 <span class="chord">G</span>          <span class="chord">C</span>
-lidt koldt på de klunker så er jeg klar på banen igen.&quot;
-(Spencer):</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">C</span>                                   <span class="chord">Am</span>
-&quot;Ja nu har jeg osse fået kølet mine klodser </pre>
-<pre class="block line-group">                    <span class="chord">Dm</span>                         <span class="chord">G</span>
-og er fit for fight igen så skal vi spille allesammen?&quot;
-(Stanley):</pre>
-<pre class="block line-group"><span class="chord">G</span>                   <span class="chord">C</span>
-&quot;Ja det syn&#x27;s jeg vi skal&quot;</pre>
-<pre class="block line-group"><span class="chord">C</span>              <span class="chord">Am</span>
-Jeg sigted&#x27; og sigted&#x27;</pre>
-<pre class="block line-group"><span class="chord">Dm</span>             <span class="chord">G</span>
-Men heldet det svigted&#x27;</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">Am</span>                      <span class="chord">Dm</span>
-så bolden først fløj hen og ramte Spencers klunker</pre>
-<pre class="block line-group line-group-last">      <span class="chord">G</span>                   <span class="chord">C</span>
-og så over på Stanleys ja jaa.....</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>     <span class="chord">Am</span>           <span class="chord">Dm</span>                     <span class="chord">G</span>
-Tennisbolden - den sad lige i dadlerne på Stanley og Spencer</pre>
-<pre class="block line-group"><span class="chord">C</span>                                      <span class="chord">Am</span>
-&quot;Jamen det gør ikke noget - hør nu det har vi jo sagt</pre>
-<pre class="block line-group"><span class="chord">Dm</span>                        <span class="chord">G</span>
-en bold lige i dadlerne - er en del af livet for os&quot;</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">Am</span>           <span class="chord">Dm</span>                    <span class="chord">G</span>
-Men tennisbolden - den sad lige i druerne og det var jo min skyld</pre>
-<pre class="block line-group"><span class="chord">C</span>                                      <span class="chord">Am</span>
-&quot;Nej det syn&#x27;s vi nu ik - vi syn&#x27;s det var force majeur</pre>
-<pre class="block line-group"><span class="chord">Dm</span>                         <span class="chord">G</span>
-en bold lige i druerne kan stort set aldrig tilskrives nogen&quot;</pre>
-<pre class="block line-group"><span class="chord">C</span>     <span class="chord">Am</span>           <span class="chord">Dm</span>                      <span class="chord">G</span>
-Tennisbolden - den sad lig&#x27; i blommerne på Spencer og Stanley</pre>
-<pre class="block line-group"><span class="chord">C</span>                               <span class="chord">Am</span>
-&quot;Det er intet problem - tænk nu ikke på os</pre>
-<pre class="block line-group"><span class="chord">Dm</span>                              <span class="chord">G</span>                     <span class="chord">C</span>
-Det er såmænd hvad der kan ske, når man går til den i sport&quot;</pre>
-<pre class="block line-group">          <span class="chord">Am</span>           <span class="chord">Dm</span>                      <span class="chord">G</span>
-Men tennisbolden - den sad lig&#x27; i sveskerne og det var jo min skyld</pre>
-<pre class="block line-group"><span class="chord">C</span>                                      <span class="chord">Am</span>
-&quot;Nej, det synes vi nu ik&#x27; - det var da mest vores skyld</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dm</span>                         <span class="chord">G</span>                       <span class="chord">C</span>
-Vi stod jo i vejen for din ellers meget vellykked&#x27; serv&quot;</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Stanley,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Spencer og jeg </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">vi har en fast tradition hver tirsdag </span></span><span class="seg"><span class="chord">G</span><span class="lyr">eftermiddag</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Vi spiller </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tennis - det er </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">mig mod dem </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og det&#x27; en </span></span><span class="seg"><span class="chord">G</span><span class="lyr">gentlemansport</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Men sidste gang </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">da vi spillede,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">var der probl</span></span><span class="seg"><span class="chord">G</span><span class="lyr">emer</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Lige da </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">jeg skulle serve </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">skete det der </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ikke må ske for </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Jeg skød så hårdt til </span></span><span class="seg"><span class="chord">G</span><span class="lyr">bolden </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">At jeg mistede kon</span></span><span class="seg"><span class="chord">G</span><span class="lyr">trollen - med min serv.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Så Tennis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bolden - den </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sad lige i kuglerne på </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stakkels Spencer.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Det er da ganske okay, det skal du da </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ik&#x27; tænke på</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">En bold lige i kuglerne er </span></span><span class="seg"><span class="chord">G</span><span class="lyr">hændeligt uheld, min </span></span><span class="seg"><span class="chord">C</span><span class="lyr">ven</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Ja, tennis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bolden - den </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sad lig&#x27; i kuglerne, det </span></span><span class="seg"><span class="chord">G</span><span class="lyr">kan være farligt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Nej det er ikke så galt, det gør skam </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">slet ikke nas</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Jeg tar&#x27; lige en pause, så kan </span></span><span class="seg"><span class="chord">G</span><span class="lyr">I spille vide</span></span><span class="seg"><span class="chord">C</span><span class="lyr">re imens</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Nu </span></span><span class="seg"><span class="chord">C</span><span class="lyr">var det </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Stanley og mig </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">jeg sku&#x27; serve igen, og havde nerver </span></span><span class="seg"><span class="chord">G</span><span class="lyr">på</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Stanle</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">y vinked&#x27; til mig og råbte: </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Hovsa min ven, jeg syns d</span></span><span class="seg"><span class="chord">G</span><span class="lyr">u virker nervøs</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Jeg er j</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">o bange for at -</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> ram&#x27; di</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ne kugler</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Stanley va</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">r virkelig fin, han sagde: </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Tænk ik&#x27; på mig, me</span></span><span class="seg"><span class="chord">G</span><span class="lyr">n fokusér på din serv</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Jeg er en dygti</span></span><span class="seg"><span class="chord">G</span><span class="lyr">g server </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Men jeg har svag</span></span><span class="seg"><span class="chord">G</span><span class="lyr">e nerver.....nerver. </span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Så Tennisbol</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">den - den </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sad lige i kuglerne på stakkels </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Stanley</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">det skal du da ik&#x27; bryd&#x27; dig om - det har jeg skam tit </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">prøvet før</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">en bold i mit skridt - er </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ikke noget at ligge søvnløs </span></span><span class="seg"><span class="chord">C</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Men tennisbold</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">en - den sad </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lige i kuglerne man kan blive </span></span><span class="seg"><span class="chord">G</span><span class="lyr">steril... </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">&quot;Nej bare rolig min ven - jeg har det snart</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> godt igen</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">lidt koldt på de klunker så er jeg </span></span><span class="seg"><span class="chord">G</span><span class="lyr">klar på ban</span></span><span class="seg"><span class="chord">C</span><span class="lyr">en igen.&quot;</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Spencer):</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">&quot;Ja nu har jeg osse fået kølet mine </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">klodser </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og er fit for fight </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">igen så skal vi spille alle</span></span><span class="seg"><span class="chord">G</span><span class="lyr">sammen?&quot;</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Stanley):</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">&quot;Ja det syn&#x27;s jeg vi</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> skal&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Jeg sigted&#x27; og </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">sigted&#x27;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Men heldet det </span></span><span class="seg"><span class="chord">G</span><span class="lyr">svigted&#x27;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">så bolden </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">først fløj hen og ramte </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">Spencers klunker</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">og så </span></span><span class="seg"><span class="chord">G</span><span class="lyr">over på Stanleys ja </span></span><span class="seg"><span class="chord">C</span><span class="lyr">jaa.....</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Tennis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bolden - den </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sad lige i dadlerne på </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Stanley og Spencer</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">&quot;Jamen det gør ikke noget - hør nu det </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">har vi jo sagt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">en bold lige i dadlerne - </span></span><span class="seg"><span class="chord">G</span><span class="lyr">er en del af livet for os&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Men tennis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bolden - den </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sad lige i druerne og </span></span><span class="seg"><span class="chord">G</span><span class="lyr">det var jo min skyld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">&quot;Nej det syn&#x27;s vi nu ik - vi syn&#x27;s det </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">var force majeur</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">en bold lige i druerne kan </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stort set aldrig tilskrives nogen&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Tennis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bolden - den </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sad lig&#x27; i blommerne på </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Spencer og Stanley</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">&quot;Det er intet problem - tænk nu </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ikke på os</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Det er såmænd hvad der kan ske, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">når man går til den i </span></span><span class="seg"><span class="chord">C</span><span class="lyr">sport&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men tennis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bolden - den </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sad lig&#x27; i sveskerne og </span></span><span class="seg"><span class="chord">G</span><span class="lyr">det var jo min skyld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">&quot;Nej, det synes vi nu ik&#x27; - det var da </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mest vores skyld</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Vi stod jo i vejen for din </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ellers meget vellykked&#x27; </span></span><span class="seg"><span class="chord">C</span><span class="lyr">serv&quot;</span></span></div></div>
     </div>
     
   </div>

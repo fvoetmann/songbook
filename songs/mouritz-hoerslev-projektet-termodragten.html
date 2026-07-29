@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Termodragten – Mouritz/Hørslev Projektet</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,73 +498,35 @@
     <h1>Termodragten <span class="artist-inline">– Mouritz/Hørslev Projektet</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">Bb</span>  <span class="chord">Eb</span>  <span class="chord">Bb</span>  <span class="chord">Eb</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Gm</span>                                               <span class="chord">Cm</span>
-Jeg forsøger at fylde min termodragt ud med mig selv</pre>
-<pre class="block line-group">                   <span class="chord">Bb</span>
-Og det er et godt job</pre>
-<pre class="block line-group line-group-last">           <span class="chord">Eb</span>
-Ja det er mit job</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Gm</span>                                            <span class="chord">Cm</span>
-Vejene er tomme, der er faldet en halv meter sne</pre>
-<pre class="block line-group">              <span class="chord">Bb</span>
-Det bare sådan det er</pre>
-<pre class="block line-group line-group-last">              <span class="chord">Eb</span>
-Det der ikke noget at gøre ved</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-    <span class="chord">Eb</span>                      <span class="chord">F</span>
-Og dig du stadig rejst din vej</pre>
-<pre class="block line-group"><span class="chord">Bb</span>                         <span class="chord">Eb</span>
-Himlen er blå det bare sådan det er</pre>
-<pre class="block line-group"><span class="chord">Eb</span>                        <span class="chord">F</span>
-Tænker du nogensinde på mig?</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb</span>                      <span class="chord">Eb</span>
-Er himlen blå der hvor du nu er?</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Gm</span>                                           <span class="chord">Cm</span>
-Jeg forsøger at holde balancen og ikke være vred</pre>
-<pre class="block line-group">          <span class="chord">Bb</span>
-Men jeg er sgu vred</pre>
-<pre class="block line-group line-group-last">           <span class="chord">Eb</span>
-Det bliver ved og ved</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Gm</span>                                                      <span class="chord">Cm</span>
-Jeg ved godt du aldrig rigtig lovede mig noget men jeg troede jo på det</pre>
-<pre class="block line-group">     <span class="chord">Bb</span>
-At vi to var</pre>
-<pre class="block line-group line-group-last">  <span class="chord">Eb</span>
-Sammen</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-    <span class="chord">Eb</span>                      <span class="chord">F</span>
-Og dig du stadig rejst din vej</pre>
-<pre class="block line-group"><span class="chord">Bb</span>                         <span class="chord">Eb</span>
-Himlen er blå det bare sådan det er</pre>
-<pre class="block line-group"><span class="chord">Eb</span>                        <span class="chord">F</span>
-Tænker du nogensinde på mig?</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb</span>                      <span class="chord">Eb</span>
-Er himlen blå der hvor du nu er?</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-    <span class="chord">Eb</span>                 <span class="chord">Bb</span>
-Ik glide, ik falde</pre>
-<pre class="block line-group line-group-last">    <span class="chord">Eb</span>                 <span class="chord">Bb</span>
-Ik glide, ik falde</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-    <span class="chord">Eb</span>                      <span class="chord">F</span>
-Og dig du stadig rejst din vej</pre>
-<pre class="block line-group"><span class="chord">Bb</span>                         <span class="chord">Eb</span>
-Himlen er blå det bare sådan det er</pre>
-<pre class="block line-group"><span class="chord">Eb</span>                        <span class="chord">F</span>
-Tænker du nogensinde på mig?</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb</span>                      <span class="chord">Eb</span>
-Er himlen blå der hvor du nu er?</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-    <span class="chord">Eb</span>                 <span class="chord">Bb</span>
-Ik glide, ik falde</pre>
-<pre class="block line-group line-group-last">    <span class="chord">Eb</span>                 <span class="chord">Bb</span>
-Ik glide, ik falde</pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Bb</span><span class="chord">Eb</span><span class="chord">Bb</span><span class="chord">Eb</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Jeg forsøger at fylde min termodragt ud med mig s</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">elv</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og det er et godt j</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ob</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ja det er m</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">it job</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Vejene er tomme, der er faldet en halv meter s</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">ne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Det bare sådan</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"> det er</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Det der ikke n</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">oget at gøre ved</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Og d</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ig du stadig rejst din v</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ej</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Himlen er blå det bare såda</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">n det er</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Tænker du nogensinde på mi</span></span><span class="seg"><span class="chord">F</span><span class="lyr">g?</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Er himlen blå der hvor d</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">u nu er?</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Jeg forsøger at holde balancen og ikke være v</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">red</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men jeg er</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"> sgu vred</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Det bliver </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ved og ved</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Jeg ved godt du aldrig rigtig lovede mig noget men jeg t</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">roede jo på det</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">At vi</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"> to var</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Sa</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">mmen</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Og d</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ig du stadig rejst din v</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ej</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Himlen er blå det bare såda</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">n det er</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Tænker du nogensinde på mi</span></span><span class="seg"><span class="chord">F</span><span class="lyr">g?</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Er himlen blå der hvor d</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">u nu er?</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Ik g</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">lide, ik falde</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ik g</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">lide, ik falde</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Og d</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ig du stadig rejst din v</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ej</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Himlen er blå det bare såda</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">n det er</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Tænker du nogensinde på mi</span></span><span class="seg"><span class="chord">F</span><span class="lyr">g?</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Er himlen blå der hvor d</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">u nu er?</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">Ik g</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">lide, ik falde</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ik g</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">lide, ik falde</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
     </div>
     
   </div>

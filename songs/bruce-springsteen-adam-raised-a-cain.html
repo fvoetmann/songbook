@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Adam Raised A Cain – Bruce Springsteen</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,133 +498,82 @@
     <h1>Adam Raised A Cain <span class="artist-inline">– Bruce Springsteen</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">Em</span>  <span class="chord">Am</span>    <span class="chord">Em</span>  <span class="chord">Am</span>    <span class="chord">Em</span>  <span class="chord">Am</span>    <span class="chord">Am</span>   <span class="chord">Em</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-        <span class="chord">Em</span>        <span class="chord">Am</span>     <span class="chord">Em</span>     <span class="chord">Am</span>
-In the summer that I was baptized,</pre>
-<pre class="block line-group">           <span class="chord">Em</span>     <span class="chord">Am</span>       <span class="chord">Am</span>  <span class="chord">Em</span>
-my father held me to his side.</pre>
-<pre class="block line-group">        <span class="chord">Em</span>     <span class="chord">Am</span>       <span class="chord">Em</span>   <span class="chord">Am</span>
-as they put me to the water,</pre>
-<pre class="block line-group line-group-last">            <span class="chord">Em</span>      <span class="chord">Am</span>      <span class="chord">Am</span>  <span class="chord">Em</span>
-he said how on that day I cried</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-        <span class="chord">Am</span>
-We were prisoners of love,</pre>
-<pre class="block line-group">  <span class="chord">C</span>
-a love in chains,</pre>
-<pre class="block line-group">       <span class="chord">Am</span>
-He was standing in the door,</pre>
-<pre class="block line-group">      <span class="chord">C</span>
-I was standing in the rain,</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Am</span>                       <span class="chord">B7</span>
-with the same hot blood burning in our veins,</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-      <span class="chord">Em</span>
-Adam raised a Cain
-Adam raised a Cain</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-        <span class="chord">Em</span>        <span class="chord">Am</span>     <span class="chord">Em</span>        <span class="chord">Am</span>
-All of the old faces,</pre>
-<pre class="block line-group">              <span class="chord">Em</span>        <span class="chord">Am</span>     <span class="chord">Em</span>        <span class="chord">Am</span>
-ask you why you&#x27;re back.</pre>
-<pre class="block line-group">        <span class="chord">Em</span>        <span class="chord">Am</span>     <span class="chord">Em</span>        <span class="chord">Am</span>
-they fit you with position,</pre>
-<pre class="block line-group line-group-last">               <span class="chord">Em</span>        <span class="chord">Am</span>     <span class="chord">Em</span>        <span class="chord">Am</span>
-and the keys to your daddy&#x27;s Cadillac</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-        <span class="chord">Am</span>
-in the darkness of your room</pre>
-<pre class="block line-group">    <span class="chord">C</span>
-your mother calls you by your true name,</pre>
-<pre class="block line-group">        <span class="chord">Am</span>
-you remember the faces,</pre>
-<pre class="block line-group">   <span class="chord">C</span>
-the places the names,</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Am</span>                              <span class="chord">B7</span>
-you know it&#x27;s never over, it&#x27;s relentless as the rain,</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-      <span class="chord">Em</span>
-Adam raised a Cain
-Adam raised a Cain</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-        <span class="chord">Em</span>        <span class="chord">Am</span>     <span class="chord">Em</span> <span class="chord">Am</span>
-in the bible Cain slew Abel,</pre>
-<pre class="block line-group">            <span class="chord">Em</span>        <span class="chord">Am</span>     <span class="chord">Em</span>   <span class="chord">Am</span>
-And east of Eden Momma he was cast,</pre>
-<pre class="block line-group">        <span class="chord">Em</span>        <span class="chord">Am</span>       <span class="chord">Em</span>    <span class="chord">Am</span>
-you&#x27;re born into this life paying,</pre>
-<pre class="block line-group line-group-last">          <span class="chord">Em</span>        <span class="chord">Am</span>        <span class="chord">Em</span>  <span class="chord">Am</span>
-for the sins of someone else&#x27;s past</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-        <span class="chord">Am</span>
-Daddy worked his whole life,</pre>
-<pre class="block line-group">   <span class="chord">C</span>
-for nothing but the pain,</pre>
-<pre class="block line-group">        <span class="chord">Am</span>
-now he walks these empty rooms,</pre>
-<pre class="block line-group">   <span class="chord">C</span>
-looking for something to blame,</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Am</span>                       <span class="chord">B7</span>
-you inherit the sins, you inherit the pain</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-      <span class="chord">Em</span>
-Adam raised a Cain
-Adam raised a Cain</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain</pre>
-<pre class="block line-group line-group-last">  <span class="chord">Am</span>                             <span class="chord">C</span>
-Lost but not forgotten from the dark heart of a dream</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-      <span class="chord">Em</span>
-Adam raised a Cain
-Adam raised a Cain</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span> <span class="chord">Em</span>
-Adam raised a Cain
-----
-Okay that&#x27;s most of it, but there are some cool licks in the background in places, so here 
-they are, all tabbed out
-at the bridge:
-E---------------------|
-A--7------------------|
-D---------------------|
-G---------4-----------|      Do this four times,
-B-------5-------------|      listen to the song for
-E---------------------|      timing.
-And also at the chorus:
-E-----------------------------|
-A--7------------7-------------|        Also do this four times,
-D------------5----------------|        Listen to the album for
-G--------5^-4-----------------|        timing.  Note that it is hard
-B-----5-----------------------|        to hear the first two notes.
-E-----------------------------|        ^ means bend up.
-I also promised the bass part, so here it is:
-For the Verse:
-E-0--3-----|
-A------5---|
-D----------|    x3
-G----------|
-The turnaround is the same, but backwards:
-E----3--0-|
-A-5-------|
-D---------|
-G---------|
-For the bridge play the chord notes as quarter notes
-For the chorus, play the same as the verse
-Well, that was hard :). The boss rocks, keep playing and have fun.</pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Am</span><span class="chord">Em</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">In the s</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ummer that</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> I was </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">baptize</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">d,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">my father h</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">eld me </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">to his si</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">de.</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">as they </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">put me </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">to the wa</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ter,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">he said how </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">on that </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">day I cr</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ied</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">We were </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">prisoners of love,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">love in chains,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">He was </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">standing in the door,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was </span></span><span class="seg"><span class="chord">C</span><span class="lyr">standing in the rain,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">with the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">same hot blood burning in</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"> our veins,</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">All of t</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">he old fac</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">es,</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">ask you why yo</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">u&#x27;re back.</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">they fit</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> you with </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">positio</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">n,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">and the keys to</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> your dadd</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">y&#x27;s Cad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">illac</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">in the d</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">arkness of your room</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">your</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> mother calls you by your true name,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">you reme</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mber the faces,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">the</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> places the names,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">you know </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">it&#x27;s never over, it&#x27;s relentless</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"> as the rain,</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">in the b</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ible Cain </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">slew Ab</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">el,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And east of </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Eden Momma</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> he was</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> cast</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">you&#x27;re b</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">orn into t</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">his life </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">paying</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">for the si</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ns of some</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">one else&#x27;s</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> pas</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">t</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Daddy wo</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rked his whole life,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">for</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> nothing but the pain,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">now he w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">alks these empty rooms,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">loo</span></span><span class="seg"><span class="chord">C</span><span class="lyr">king for something to blame,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">you inher</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">it the sins, you inherit </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">the pain</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Lo</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">st but not forgotten from the d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ark heart of a dream</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">----</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Okay that&#x27;s most of it, but there are some cool licks in the background in places, so here </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">they are, all tabbed out</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">at the bridge:</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E---------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A--7------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D---------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G---------4-----------|      Do this four times,</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">B-------5-------------|      listen to the song for</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E---------------------|      timing.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">And also at the chorus:</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E-----------------------------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A--7------------7-------------|        Also do this four times,</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D------------5----------------|        Listen to the album for</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G--------5^-4-----------------|        timing.  Note that it is hard</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">B-----5-----------------------|        to hear the first two notes.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E-----------------------------|        ^ means bend up.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">I also promised the bass part, so here it is:</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">For the Verse:</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E-0--3-----|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A------5---|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D----------|    x3</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G----------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">The turnaround is the same, but backwards:</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E----3--0-|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A-5-------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D---------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">G---------|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">For the bridge play the chord notes as quarter notes</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">For the chorus, play the same as the verse</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Well, that was hard :). The boss rocks, keep playing and have fun.</span></span></div></div>
     </div>
     
   </div>

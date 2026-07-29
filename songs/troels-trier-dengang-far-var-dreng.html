@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Dengang Far Var Dreng – Troels Trier</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,69 +498,36 @@
     <h1>Dengang Far Var Dreng <span class="artist-inline">– Troels Trier</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">G</span>               <span class="chord">G</span>            <span class="chord">G</span>                <span class="chord">C</span>
-Nu skal jeg fortælle dig om dengang far var dreng</pre>
-<pre class="block line-group"><span class="chord">D</span>           <span class="chord">D</span>                <span class="chord">C</span>                 <span class="chord">G</span>
-Vi tæsk om morg’nen, vi fik tæsk når vi gik i seng</pre>
-<pre class="block line-group"><span class="chord">G</span>                 <span class="chord">G</span>              <span class="chord">G</span>              <span class="chord">C</span>
-Vi fik tæsk til frokost, vi fik tæsk til aftensmad</pre>
-<pre class="block line-group"><span class="chord">D</span>              <span class="chord">D</span>               <span class="chord">C</span>               <span class="chord">G</span>
-Tæsk af vores nabo, når vores far og mor ikke gad</pre>
-<pre class="block line-group">   <span class="chord">C</span>          <span class="chord">C</span>            <span class="chord">C</span>           <span class="chord">C</span>
-Og i kommuneskolen måtte skolelær’en slå</pre>
-<pre class="block line-group">   <span class="chord">A</span>                <span class="chord">A</span>                 <span class="chord">A</span>                 <span class="chord">D</span>
-Så hovedet det var først og fremmest noget man tæsked’ på</pre>
-<pre class="block line-group"><span class="chord">G</span>               <span class="chord">G</span>              <span class="chord">G</span>            <span class="chord">C</span>
-Vi fik tæsk og tæsk og tæsk og ellers ingenting</pre>
-<pre class="block line-group">     <span class="chord">D</span>               <span class="chord">D</span>            <span class="chord">C</span>            <span class="chord">G</span>
-Nej du kan fand’me tro at vi fik tæsk da far dreng</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>                <span class="chord">D</span>            <span class="chord">C</span>            <span class="chord">G</span>
-du kan fand’me tro at vi fik tæsk da far dreng</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">G</span>               <span class="chord">G</span>          <span class="chord">G</span>            <span class="chord">C</span>
-Dengang var der ingen forurening og miljø</pre>
-<pre class="block line-group">    <span class="chord">D</span>                    <span class="chord">D</span>                <span class="chord">C</span>               <span class="chord">G</span>
-Nej hvis man havd’ noget affald blev det bar’ smidt i en sø</pre>
-<pre class="block line-group">   <span class="chord">G</span>               <span class="chord">G</span>                  <span class="chord">G</span>           <span class="chord">C</span>
-Og alt det der med grundvand, var der ikke noget med</pre>
-<pre class="block line-group">     <span class="chord">D</span>                  <span class="chord">D</span>                <span class="chord">C</span>            <span class="chord">G</span>
-Nej hvis der var noget giftigt, blev det bare gravet ned</pre>
-<pre class="block line-group">   <span class="chord">C</span>          <span class="chord">C</span>             <span class="chord">C</span>              <span class="chord">C</span>
-Og vi åd røde pølser, vi åd plastik og nitrit</pre>
-<pre class="block line-group">   <span class="chord">A</span>             <span class="chord">A</span>            <span class="chord">A</span>               <span class="chord">D</span>
-Og vi ku’ ses i mørke, for vi åd os’ optisk hvidt</pre>
-<pre class="block line-group"><span class="chord">G</span>              <span class="chord">G</span>            <span class="chord">G</span>             <span class="chord">C</span>
-Vi fik hjerneskader, dårlig ånde, dårlige ting</pre>
-<pre class="block line-group"><span class="chord">D</span>             <span class="chord">D</span>           <span class="chord">C</span>                <span class="chord">G</span>
-Der var ingen forurening dengang far var dreng</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>             <span class="chord">D</span>           <span class="chord">C</span>                <span class="chord">G</span>
-Der var ingen forurening dengang far var dreng</pre>
-<pre class="block line-group line-group-last"><span class="section">[Solo]</span>
-<span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span>  <span class="chord">A</span> <span class="chord">A</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span></pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">G</span>               <span class="chord">G</span>                  <span class="chord">G</span>               <span class="chord">C</span>
-Dengang far var dreng, der var der rigtige drenge til</pre>
-<pre class="block line-group">        <span class="chord">D</span>             <span class="chord">D</span>                  <span class="chord">C</span>            <span class="chord">G</span>
-Vi skød øjn’ne ud på hinanden, båd’ med luftgevær og pil</pre>
-<pre class="block line-group">    <span class="chord">G</span>             <span class="chord">G</span>               <span class="chord">G</span>               <span class="chord">C</span>
-Og nytårsaften sprang vi fingrene af med fyrværkeri</pre>
-<pre class="block line-group"><span class="chord">D</span>                 <span class="chord">D</span>                <span class="chord">C</span>                       <span class="chord">G</span>
-Det sag’ bang og bang og bang, og så var der også verdenskrig</pre>
-<pre class="block line-group">   <span class="chord">C</span>                 <span class="chord">C</span>            <span class="chord">C</span>                <span class="chord">C</span>
-Ja dengang far var dreng, smed vi atombomber på japanerne</pre>
-<pre class="block line-group">   <span class="chord">A</span>               <span class="chord">A</span>               <span class="chord">A</span>         <span class="chord">D</span>
-Og bagefter gik vi ud og smed dynamit på indianerne</pre>
-<pre class="block line-group">    <span class="chord">G</span>               <span class="chord">G</span>              <span class="chord">G</span>                <span class="chord">C</span>
-Ja, du kan fandme tro vi had’ det skægt da far var dreng</pre>
-<pre class="block line-group"><span class="chord">D</span>                 <span class="chord">D</span>             <span class="chord">C</span>                 <span class="chord">G</span>
-Så, nu er klokken otte, kan du så se og skrup’ i seng</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>             <span class="chord">D</span>             <span class="chord">C</span>                 <span class="chord">G</span>
-nu er klokken otte, kan du så se og skrup’ i seng</pre>
-<pre class="block line-group line-group-last"><span class="section">[Outro]</span>
-<span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span> <span class="chord">C</span>  <span class="chord">A</span> <span class="chord">A</span> <span class="chord">A</span> <span class="chord">D</span>  <span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span>  <span class="chord">D</span> <span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span></pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">D</span><span class="chord">D</span><span class="chord">C</span><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Nu skal jeg fort</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ælle dig om d</span></span><span class="seg"><span class="chord">G</span><span class="lyr">engang far var dr</span></span><span class="seg"><span class="chord">C</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Vi tæsk om m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">org’nen, vi fik t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">æsk når vi gik i s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Vi fik tæsk til fr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">okost, vi fik t</span></span><span class="seg"><span class="chord">G</span><span class="lyr">æsk til aftensm</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ad</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Tæsk af vores n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">abo, når vores f</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ar og mor ikke g</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ad</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og </span></span><span class="seg"><span class="chord">C</span><span class="lyr">i kommunesk</span></span><span class="seg"><span class="chord">C</span><span class="lyr">olen måtte sk</span></span><span class="seg"><span class="chord">C</span><span class="lyr">olelær’en sl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">å</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Så </span></span><span class="seg"><span class="chord">A</span><span class="lyr">hovedet det var f</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ørst og fremmest n</span></span><span class="seg"><span class="chord">A</span><span class="lyr">oget man tæsked’ p</span></span><span class="seg"><span class="chord">D</span><span class="lyr">å</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Vi fik tæsk og t</span></span><span class="seg"><span class="chord">G</span><span class="lyr">æsk og tæsk og </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ellers ingent</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ing</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Nej d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">u kan fand’me tr</span></span><span class="seg"><span class="chord">D</span><span class="lyr">o at vi fik t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">æsk da far dr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">du kan fand’me tr</span></span><span class="seg"><span class="chord">D</span><span class="lyr">o at vi fik t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">æsk da far dr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Dengang var der </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ingen forur</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ening og milj</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ø</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Nej </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hvis man havd’ noget </span></span><span class="seg"><span class="chord">D</span><span class="lyr">affald blev det b</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ar’ smidt i en s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ø</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og </span></span><span class="seg"><span class="chord">G</span><span class="lyr">alt det der med </span></span><span class="seg"><span class="chord">G</span><span class="lyr">grundvand, var der </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ikke noget m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Nej h</span></span><span class="seg"><span class="chord">D</span><span class="lyr">vis der var noget g</span></span><span class="seg"><span class="chord">D</span><span class="lyr">iftigt, blev det </span></span><span class="seg"><span class="chord">C</span><span class="lyr">bare gravet n</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og </span></span><span class="seg"><span class="chord">C</span><span class="lyr">vi åd røde </span></span><span class="seg"><span class="chord">C</span><span class="lyr">pølser, vi åd </span></span><span class="seg"><span class="chord">C</span><span class="lyr">plastik og nitr</span></span><span class="seg"><span class="chord">C</span><span class="lyr">it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og </span></span><span class="seg"><span class="chord">A</span><span class="lyr">vi ku’ ses i m</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ørke, for vi </span></span><span class="seg"><span class="chord">A</span><span class="lyr">åd os’ optisk hv</span></span><span class="seg"><span class="chord">D</span><span class="lyr">idt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Vi fik hjernesk</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ader, dårlig </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ånde, dårlige </span></span><span class="seg"><span class="chord">C</span><span class="lyr">ting</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Der var ingen </span></span><span class="seg"><span class="chord">D</span><span class="lyr">forurening d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">engang far var dr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Der var ingen </span></span><span class="seg"><span class="chord">D</span><span class="lyr">forurening d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">engang far var dr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">C</span><span class="chord">C</span><span class="chord">C</span><span class="chord">A</span><span class="chord">A</span><span class="chord">A</span><span class="chord">D</span><span class="chord">G</span><span class="chord">G</span><span class="chord">G</span><span class="chord">C</span><span class="chord">D</span><span class="chord">D</span><span class="chord">C</span><span class="chord">G</span><span class="chord">D</span><span class="chord">D</span><span class="chord">C</span><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Dengang far var </span></span><span class="seg"><span class="chord">G</span><span class="lyr">dreng, der var der </span></span><span class="seg"><span class="chord">G</span><span class="lyr">rigtige drenge t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">il</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Vi skød </span></span><span class="seg"><span class="chord">D</span><span class="lyr">øjn’ne ud på h</span></span><span class="seg"><span class="chord">D</span><span class="lyr">inanden, båd’ med l</span></span><span class="seg"><span class="chord">C</span><span class="lyr">uftgevær og p</span></span><span class="seg"><span class="chord">G</span><span class="lyr">il</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og n</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ytårsaften spr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ang vi fingrene </span></span><span class="seg"><span class="chord">G</span><span class="lyr">af med fyrværker</span></span><span class="seg"><span class="chord">C</span><span class="lyr">i</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Det sag’ bang og b</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ang og bang, og s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">å var der også verdenskr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ig</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ja </span></span><span class="seg"><span class="chord">C</span><span class="lyr">dengang far var dr</span></span><span class="seg"><span class="chord">C</span><span class="lyr">eng, smed vi </span></span><span class="seg"><span class="chord">C</span><span class="lyr">atombomber på jap</span></span><span class="seg"><span class="chord">C</span><span class="lyr">anerne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og </span></span><span class="seg"><span class="chord">A</span><span class="lyr">bagefter gik vi </span></span><span class="seg"><span class="chord">A</span><span class="lyr">ud og smed dynam</span></span><span class="seg"><span class="chord">A</span><span class="lyr">it på indi</span></span><span class="seg"><span class="chord">D</span><span class="lyr">anerne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ja, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">du kan fandme tr</span></span><span class="seg"><span class="chord">G</span><span class="lyr">o vi had’ det s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">kægt da far var d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">reng</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Så, nu er klokken </span></span><span class="seg"><span class="chord">D</span><span class="lyr">otte, kan du s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">å se og skrup’ i s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">nu er klokken </span></span><span class="seg"><span class="chord">D</span><span class="lyr">otte, kan du s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">å se og skrup’ i s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">eng</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">C</span><span class="chord">C</span><span class="chord">C</span><span class="chord">A</span><span class="chord">A</span><span class="chord">A</span><span class="chord">D</span><span class="chord">G</span><span class="chord">G</span><span class="chord">G</span><span class="chord">C</span><span class="chord">D</span><span class="chord">D</span><span class="chord">C</span><span class="chord">G</span><span class="chord">D</span><span class="chord">D</span><span class="chord">C</span><span class="chord">G</span></div></div>
     </div>
     
   </div>

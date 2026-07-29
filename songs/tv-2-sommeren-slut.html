@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Sommeren Slut – TV-2</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,61 +498,33 @@
     <h1>Sommeren Slut <span class="artist-inline">– TV-2</span></h1>
     <div class="meta">Toneart: A</div>
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">F#</span> <span class="chord">D</span> <span class="chord">Bm</span> <span class="chord">E</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">F#</span> <span class="chord">D</span> <span class="chord">Bm</span> <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">F#</span>       <span class="chord">D</span>
-Sommeren slut</pre>
-<pre class="block line-group"><span class="chord">Bm</span>      <span class="chord">E</span>                  <span class="chord">F#</span>
-  Elske højt hvert langt minut</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-Lyset væk</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bm</span>    <span class="chord">E</span>           <span class="chord">A</span>
-  Gadelygte, cykeldæk</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-   <span class="chord">Dmaj7</span>          <span class="chord">Bm7</span>
-og is i hinandens blik</pre>
-<pre class="block line-group"><span class="chord">E6</span>              <span class="chord">A</span>
-ekko af tid der gik</pre>
-<pre class="block line-group"><span class="chord">Dmaj7</span>             <span class="chord">Bm7</span>
-dråber af stivnet smil</pre>
-<pre class="block line-group line-group-last"><span class="chord">E6</span>                 <span class="chord">G</span>
-hænger bag lukkede døre</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">F#</span>       <span class="chord">D</span>
-Sommeren slut</pre>
-<pre class="block line-group"><span class="chord">Bm</span>         <span class="chord">E</span>          <span class="chord">F#</span>
-  huske at glemme, uafbrudt</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-Lyset væk</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bm</span>     <span class="chord">E</span>             <span class="chord">A</span>
-  cykellygte, ansigtstræk</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-       <span class="chord">Dmaj7</span>          <span class="chord">Bm7</span>
-viskes ud i en andens blik</pre>
-<pre class="block line-group"><span class="chord">E6</span>                  <span class="chord">A</span>
-lyden af skridt der gik</pre>
-<pre class="block line-group"><span class="chord">Dmaj7</span>            <span class="chord">Bm7</span>
-dråber af savner dig</pre>
-<pre class="block line-group line-group-last"><span class="chord">E6</span>                   <span class="chord">G</span>
-skjules bag smilende øjne</pre>
-<pre class="block line-group"><span class="section">[Solo]</span>
-<span class="chord">A</span> <span class="chord">Dmaj7</span> <span class="chord">Bm7</span> <span class="chord">E6</span></pre>
-<pre class="block line-group"><span class="chord">A</span> <span class="chord">Dmaj7</span> <span class="chord">Bm7</span> <span class="chord">E6</span></pre>
-<pre class="block line-group"><span class="chord">A</span> <span class="chord">Dmaj7</span> <span class="chord">Bm7</span> <span class="chord">E6</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span> <span class="chord">Dmaj7</span> <span class="chord">Bm7</span> <span class="chord">E6</span></pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-       <span class="chord">A</span>
-Ansigtstræk</pre>
-<pre class="block line-group">       <span class="chord">Dmaj7</span>          <span class="chord">Bm7</span>
-viskes ud i en andens blik</pre>
-<pre class="block line-group"><span class="chord">E6</span>                  <span class="chord">A</span>
-lyden af skridt der gik</pre>
-<pre class="block line-group"><span class="chord">Dmaj7</span>            <span class="chord">Bm7</span>
-dråber af savner dig</pre>
-<pre class="block line-group line-group-last"><span class="chord">E6</span>                   <span class="chord">G</span>
-skjules bag smilende øjne</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">F#</span><span class="chord">D</span><span class="chord">Bm</span><span class="chord">E</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">F#</span><span class="chord">D</span><span class="chord">Bm</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Sommeren </span></span><span class="seg"><span class="chord">D</span><span class="lyr">slut</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  Elske </span></span><span class="seg"><span class="chord">E</span><span class="lyr">højt hvert langt mi</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">nut</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Lyset </span></span><span class="seg"><span class="chord">D</span><span class="lyr">væk</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  Gade</span></span><span class="seg"><span class="chord">E</span><span class="lyr">lygte, cykel</span></span><span class="seg"><span class="chord">A</span><span class="lyr">dæk</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">og </span></span><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">is i hinandens </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">blik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">ekko af tid der </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">dråber af stivnet </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">smil</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">hænger bag lukkede </span></span><span class="seg"><span class="chord">G</span><span class="lyr">døre</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Sommeren </span></span><span class="seg"><span class="chord">D</span><span class="lyr">slut</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  huske at </span></span><span class="seg"><span class="chord">E</span><span class="lyr">glemme, uaf</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">brudt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Lyset </span></span><span class="seg"><span class="chord">D</span><span class="lyr">væk</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  cykel</span></span><span class="seg"><span class="chord">E</span><span class="lyr">lygte, ansigts</span></span><span class="seg"><span class="chord">A</span><span class="lyr">træk</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">viskes </span></span><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">ud i en andens </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">blik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">lyden af skridt der </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">dråber af savner </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">dig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">skjules bag smilende </span></span><span class="seg"><span class="chord">G</span><span class="lyr">øjne</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">Dmaj7</span><span class="chord">Bm7</span><span class="chord">E6</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">A</span><span class="chord">Dmaj7</span><span class="chord">Bm7</span><span class="chord">E6</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">A</span><span class="chord">Dmaj7</span><span class="chord">Bm7</span><span class="chord">E6</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">A</span><span class="chord">Dmaj7</span><span class="chord">Bm7</span><span class="chord">E6</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Ansigts</span></span><span class="seg"><span class="chord">A</span><span class="lyr">træk</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">viskes </span></span><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">ud i en andens </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">blik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">lyden af skridt der </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">dråber af savner </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">dig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">skjules bag smilende </span></span><span class="seg"><span class="chord">G</span><span class="lyr">øjne</span></span></div></div>
     </div>
     
   </div>

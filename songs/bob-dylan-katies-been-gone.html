@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Katies Been Gone – Bob Dylan</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,80 +498,43 @@
     <h1>Katies Been Gone <span class="artist-inline">– Bob Dylan</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"> <span class="chord">A</span>                     <span class="chord">G#m</span>
-Katie&#x27;s been gone since the spring time;</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                  <span class="chord">B7</span>
-She wrote one time&#x27;n sent her love</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G#m</span>
-Katie&#x27;s been gone for such a long time now.</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                              <span class="chord">B7</span>
-I wonder what kind of love she&#x27;s thinkin&#x27; of.</pre>
-<pre class="block line-group"><span class="chord">A</span>
-Dear Katie,</pre>
-<pre class="block line-group"><span class="chord">E</span>
-If you can hear me,</pre>
-<pre class="block line-group"><span class="chord">A</span>                <span class="chord">E</span>
-I can&#x27;t wait to have ya near me.</pre>
-<pre class="block line-group"><span class="chord">A</span>
-Oh, Katie, since ya</pre>
-<pre class="block line-group"><span class="chord">E</span>
-caught that bus,</pre>
-<pre class="block line-group"><span class="chord">A</span>                       <span class="chord">Bm</span>         <span class="chord">C#m</span>
-Well, I just don&#x27;t know how things are with us.</pre>
-<pre class="block line-group"><span class="chord">D</span>                  <span class="chord">E7</span>
-I&#x27;m still here and you&#x27;re out there.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G#m</span>
-Katie laughed when I said I was lonely.</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                  <span class="chord">B7</span>
-She said, There&#x27;s no need t&#x27;feel that way.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G#m</span>
-Katie said that I was her only one,</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                              <span class="chord">B7</span>
-But then I wonder why she didn&#x27;t wanna stay.</pre>
-<pre class="block line-group"><span class="chord">A</span>
-Dear Katie,</pre>
-<pre class="block line-group"><span class="chord">E</span>
-if I&#x27;m the only one,</pre>
-<pre class="block line-group"><span class="chord">A</span>                    <span class="chord">E</span>
-How much longer will you be gone?</pre>
-<pre class="block line-group"><span class="chord">A</span>           <span class="chord">Bm</span>                <span class="chord">C#m</span>
-Oh, Katie, won&#x27;t ya tell me straight:</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                  <span class="chord">B7</span>
-How much longer do I have to wait?</pre>
-<pre class="block line-group"><span class="chord">D</span>
-I&#x27;ll believe you,</pre>
-<pre class="block line-group"><span class="chord">E7</span>
-But please come through.</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">F</span>           <span class="chord">Dm</span>         <span class="chord">G</span>
-I know it&#x27;s wrong to be apart this long;</pre>
-<pre class="block line-group"><span class="chord">F</span>           <span class="chord">Bb</span>      <span class="chord">D</span>    <span class="chord">E</span>
-You should be here, near me.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G#m</span>               <span class="chord">F#m</span>                 <span class="chord">B</span>
-Katie&#x27;s been gone and now her face is slowly fading from my mind.</pre>
-<pre class="block line-group"><span class="chord">A</span>             <span class="chord">G#m</span>                     <span class="chord">F#m</span>               <span class="chord">B</span>
-She&#x27;s gone to find some newer places, left the old life far behind.</pre>
-<pre class="block line-group"><span class="chord">A</span>                    <span class="chord">E</span>
-Dear Katie, don&#x27;t ya miss your home?</pre>
-<pre class="block line-group"><span class="chord">A</span>                   <span class="chord">E</span>
-I don&#x27;t see why you had to roam.</pre>
-<pre class="block line-group"><span class="chord">A</span>                        <span class="chord">Bm</span>    <span class="chord">C#m</span>
-Dear Katie, since you&#x27;ve been away</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                  <span class="chord">B7</span>
-I lose a little something every day</pre>
-<pre class="block line-group"><span class="chord">D</span>                     <span class="chord">E</span>
-I need you here, but you&#x27;re still out there.</pre>
-<pre class="block line-group"><span class="chord">A</span>                   <span class="chord">E</span>
-Dear Katie, please drop me a line,</pre>
-<pre class="block line-group">     <span class="chord">F#m</span>             <span class="chord">B7</span>
-just write, Love, to tell me you&#x27;re fine.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">E</span>
-Oh, Katie, if you can hear me,</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                           <span class="chord">B7</span>
-I just can&#x27;t wait to have you near me.</pre>
-<pre class="block line-group"><span class="chord">D</span>
-I can only think where are you,</pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span>                      <span class="chord">F</span>  <span class="chord">Dm</span>        <span class="chord">A</span>
-What ya do, maybe there&#x27;s someone new.</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">K</span></span><span class="seg"><span class="chord">A</span><span class="lyr">atie&#x27;s been gone since</span></span><span class="seg"><span class="chord">G#m</span><span class="lyr"> the spring time;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">She wrote one time&#x27;n </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">sent her love</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Katie&#x27;s been gone for </span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">such a long time now.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">I wonder what kind of love she&#x27;s </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">thinkin&#x27; of.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Dear Katie,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">If you can hear me,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I can&#x27;t wait to h</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ave ya near me.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Oh, Katie, since ya</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">caught that bus,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Well, I just don&#x27;t know </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">how things </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">are with us.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">I&#x27;m still here and </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">you&#x27;re out there.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Katie laughed when I s</span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">aid I was lonely.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">She said, There&#x27;s no </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">need t&#x27;feel that way.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Katie said that I was </span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">her only one,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">But then I wonder why she didn&#x27;t </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">wanna stay.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Dear Katie,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">if I&#x27;m the only one,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">How much longer will </span></span><span class="seg"><span class="chord">E</span><span class="lyr">you be gone?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Oh, Katie, w</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">on&#x27;t ya tell me st</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">raight:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">How much longer do I </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">have to wait?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">I&#x27;ll believe you,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E7</span><span class="lyr">But please come through.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I know it&#x27;s </span></span><span class="seg"><span class="chord">F</span><span class="lyr">wrong to be </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">apart this </span></span><span class="seg"><span class="chord">G</span><span class="lyr">long;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">You should b</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">e here, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">near </span></span><span class="seg"><span class="chord">E</span><span class="lyr">me.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Katie&#x27;s been gone and </span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">now her face is sl</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">owly fading from my </span></span><span class="seg"><span class="chord">B</span><span class="lyr">mind.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">She&#x27;s gone to </span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">find some newer places, </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">left the old life </span></span><span class="seg"><span class="chord">B</span><span class="lyr">far behind.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Dear Katie, don&#x27;t ya </span></span><span class="seg"><span class="chord">E</span><span class="lyr">miss your home?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I don&#x27;t see why you </span></span><span class="seg"><span class="chord">E</span><span class="lyr">had to roam.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Dear Katie, since you&#x27;ve </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">been a</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">way</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">I lose a little somet</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">hing every day</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">I need you here, but y</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ou&#x27;re still out there.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Dear Katie, please d</span></span><span class="seg"><span class="chord">E</span><span class="lyr">rop me a line,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">just </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">write, Love, to </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">tell me you&#x27;re fine.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Oh, Katie, if you can </span></span><span class="seg"><span class="chord">E</span><span class="lyr">hear me,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">I just can&#x27;t wait to have you </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">near me.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">I can only think where are you,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">What ya do, maybe there</span></span><span class="seg"><span class="chord">F</span><span class="lyr">&#x27;s </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">someone ne</span></span><span class="seg"><span class="chord">A</span><span class="lyr">w.</span></span></div></div>
     </div>
     
   </div>

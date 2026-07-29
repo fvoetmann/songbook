@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>It Aint Me Babe – Bob Dylan</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,64 +498,32 @@
     <h1>It Aint Me Babe <span class="artist-inline">– Bob Dylan</span></h1>
     <div class="meta">Toneart: G</div>
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">G</span>               <span class="chord">C</span>      <span class="chord">G</span>             <span class="chord">D</span>          <span class="chord">G</span>
-Go &#x27;way from my window leave at your own chosen speed</pre>
-<pre class="block line-group">    <span class="chord">G</span>               <span class="chord">C</span>               <span class="chord">G</span>       <span class="chord">D</span>       <span class="chord">G</span>
-I&#x27;m not the one you want, Babe, I&#x27;m not the one you need</pre>
-<pre class="block line-group">    <span class="chord">Bm</span>                 <span class="chord">Am</span>                      <span class="chord">Bm</span>              <span class="chord">Am</span>
-You say you&#x27;re looking for someone who&#x27;s never weak but always strong</pre>
-<pre class="block line-group">    <span class="chord">Bm</span>               <span class="chord">Am</span>               <span class="chord">Bm</span>               <span class="chord">Am</span>
-To protect you and defend you whether you are right or wrong</pre>
-<pre class="block line-group line-group-last">    <span class="chord">C</span>                          <span class="chord">D</span>
-Someone to open each and every door</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-             <span class="chord">G</span>
-But it ain&#x27;t me, Babe</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">D</span>            <span class="chord">G</span>
-No, no, no, it ain&#x27;t me, Babe</pre>
-<pre class="block line-group line-group-last">         <span class="chord">C</span>         <span class="chord">D</span>       <span class="chord">G</span>
-It ain&#x27;t me you&#x27;re looking for, Babe</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-   <span class="chord">G</span>                <span class="chord">C</span>               <span class="chord">G</span>       <span class="chord">D</span>      <span class="chord">G</span>
-Go lightly from the ledge, Babe, go lightly on the ground</pre>
-<pre class="block line-group">    <span class="chord">G</span>               <span class="chord">C</span>                  <span class="chord">G</span>    <span class="chord">D</span>       <span class="chord">G</span>
-I&#x27;m not the one you want, Babe, I will only let you down</pre>
-<pre class="block line-group">    <span class="chord">Bm</span>                 <span class="chord">Am</span>                   <span class="chord">Bm</span>               <span class="chord">Am</span>
-You say you&#x27;re looking for someone who will promise never to part</pre>
-<pre class="block line-group">    <span class="chord">Bm</span>               <span class="chord">Am</span>                <span class="chord">Bm</span>               <span class="chord">Am</span>
-Someone to close his eyes for you, someone to close his heart</pre>
-<pre class="block line-group line-group-last">    <span class="chord">C</span>                            <span class="chord">D</span>
-Someone who will die for you and more </pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-             <span class="chord">G</span>
-But it ain&#x27;t me, Babe</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">D</span>            <span class="chord">G</span>
-No, no, no, it ain&#x27;t me, Babe</pre>
-<pre class="block line-group line-group-last">         <span class="chord">C</span>         <span class="chord">D</span>       <span class="chord">G</span>
-It ain&#x27;t me you&#x27;re looking for, Babe</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-   <span class="chord">G</span>                <span class="chord">C</span>      <span class="chord">G</span>            <span class="chord">D</span>               <span class="chord">G</span>
-Go melt back in the night, everything inside is made of stone</pre>
-<pre class="block line-group">        <span class="chord">G</span>               <span class="chord">C</span>          <span class="chord">G</span>      <span class="chord">D</span>        <span class="chord">G</span>
-There&#x27;s nothing in here moving and anyway I&#x27;m not alone</pre>
-<pre class="block line-group">    <span class="chord">Bm</span>                 <span class="chord">Am</span>
-You say you&#x27;re looking for someone </pre>
-<pre class="block line-group">       <span class="chord">Bm</span>                        <span class="chord">Am</span>
-Who&#x27;ll pick you up each time you fall</pre>
-<pre class="block line-group">   <span class="chord">Bm</span>              <span class="chord">Am</span>
-To gather flowers constantly</pre>
-<pre class="block line-group">        <span class="chord">Bm</span>                <span class="chord">Am</span>
-and to come each time you call</pre>
-<pre class="block line-group line-group-last">   <span class="chord">C</span>                              <span class="chord">D</span>
-A lover for your life and nothing more</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-             <span class="chord">G</span>
-But it ain&#x27;t me, Babe</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">D</span>            <span class="chord">G</span>
-No, no, no, it ain&#x27;t me, Babe</pre>
-<pre class="block line-group line-group-last">         <span class="chord">C</span>         <span class="chord">D</span>       <span class="chord">G</span>
-It ain&#x27;t me you&#x27;re looking for, Babe</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Go &#x27;way from my </span></span><span class="seg"><span class="chord">C</span><span class="lyr">window </span></span><span class="seg"><span class="chord">G</span><span class="lyr">leave at your </span></span><span class="seg"><span class="chord">D</span><span class="lyr">own chosen </span></span><span class="seg"><span class="chord">G</span><span class="lyr">speed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">G</span><span class="lyr">not the one you </span></span><span class="seg"><span class="chord">C</span><span class="lyr">want, Babe, I&#x27;m </span></span><span class="seg"><span class="chord">G</span><span class="lyr">not the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">one you </span></span><span class="seg"><span class="chord">G</span><span class="lyr">need</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">say you&#x27;re looking </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">for someone who&#x27;s never </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">weak but always </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">strong</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To p</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">rotect you and de</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">fend you whether </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">you are right or </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">wrong</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Some</span></span><span class="seg"><span class="chord">C</span><span class="lyr">one to open each and every </span></span><span class="seg"><span class="chord">D</span><span class="lyr">door</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">But it ain&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">me, Babe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">No, no, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">no, it ain&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">me, Babe</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">It ain&#x27;t </span></span><span class="seg"><span class="chord">C</span><span class="lyr">me you&#x27;re </span></span><span class="seg"><span class="chord">D</span><span class="lyr">looking </span></span><span class="seg"><span class="chord">G</span><span class="lyr">for, Babe</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Go </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lightly from the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">ledge, Babe, go </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lightly </span></span><span class="seg"><span class="chord">D</span><span class="lyr">on the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ground</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">G</span><span class="lyr">not the one you </span></span><span class="seg"><span class="chord">C</span><span class="lyr">want, Babe, I will </span></span><span class="seg"><span class="chord">G</span><span class="lyr">only </span></span><span class="seg"><span class="chord">D</span><span class="lyr">let you </span></span><span class="seg"><span class="chord">G</span><span class="lyr">down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">say you&#x27;re looking </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">for someone who will </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">promise never to </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">part</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Some</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">one to close his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">eyes for you, some</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">one to close his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">heart</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Some</span></span><span class="seg"><span class="chord">C</span><span class="lyr">one who will die for you and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">more </span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">But it ain&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">me, Babe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">No, no, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">no, it ain&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">me, Babe</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">It ain&#x27;t </span></span><span class="seg"><span class="chord">C</span><span class="lyr">me you&#x27;re </span></span><span class="seg"><span class="chord">D</span><span class="lyr">looking </span></span><span class="seg"><span class="chord">G</span><span class="lyr">for, Babe</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Go </span></span><span class="seg"><span class="chord">G</span><span class="lyr">melt back in the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">night, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">everything in</span></span><span class="seg"><span class="chord">D</span><span class="lyr">side is made of </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stone</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">There&#x27;s </span></span><span class="seg"><span class="chord">G</span><span class="lyr">nothing in here </span></span><span class="seg"><span class="chord">C</span><span class="lyr">moving and </span></span><span class="seg"><span class="chord">G</span><span class="lyr">anyway </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I&#x27;m not a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">lone</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">say you&#x27;re looking </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">for someone </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Who&#x27;ll </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">pick you up each time you </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">fall</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">gather flowers c</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">onstantly</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and to c</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">ome each time you </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">call</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">A l</span></span><span class="seg"><span class="chord">C</span><span class="lyr">over for your life and nothing </span></span><span class="seg"><span class="chord">D</span><span class="lyr">more</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">But it ain&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">me, Babe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">No, no, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">no, it ain&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">me, Babe</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">It ain&#x27;t </span></span><span class="seg"><span class="chord">C</span><span class="lyr">me you&#x27;re </span></span><span class="seg"><span class="chord">D</span><span class="lyr">looking </span></span><span class="seg"><span class="chord">G</span><span class="lyr">for, Babe</span></span></div></div>
     </div>
     
   </div>

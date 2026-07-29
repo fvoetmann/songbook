@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Sad And Lonely Times – Country Joe and the Fish</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,51 +496,27 @@
     <h1>Sad And Lonely Times <span class="artist-inline">– Country Joe and the Fish</span></h1>
     <div class="meta">Toneart: E</div>
     
-    <pre class="block line-group"><span class="chord">E</span><span class="chord">A</span>
-  2x </pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span> <span class="chord">A</span> <span class="chord">B7</span>  <span class="chord">A</span> <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">E</span>       <span class="chord">A</span>         <span class="chord">B7</span>       
-My love stands be-side me,</pre>
-<pre class="block line-group">            <span class="chord">E</span>
-through the rain; through the </pre>
-<pre class="block line-group"><span class="chord">A</span>            <span class="chord">B7</span>
-wind and the snow.       </pre>
-<pre class="block line-group">            <span class="chord">E</span>       <span class="chord">A</span> 
-Through the bad and good; you know its </pre>
-<pre class="block line-group"><span class="chord">E</span>    <span class="chord">A</span>                    <span class="chord">E</span>
-understood, that she&#x27;s my love,   </pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>      <span class="chord">B7</span>           <span class="chord">E</span>
-this I know, this I know.</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-    <span class="chord">A</span>  <span class="chord">B7</span>        <span class="chord">E</span>        <span class="chord">G#</span>
-So long, sad and lonesome times</pre>
-<pre class="block line-group">   <span class="chord">A</span>   <span class="chord">B7</span>        <span class="chord">E</span>  <span class="chord">B7</span>      
-So long, lonely days</pre>
-<pre class="block line-group">   <span class="chord">A</span>   <span class="chord">B7</span>        <span class="chord">E</span>        <span class="chord">G#</span>
-So long, sad and lonesome times,</pre>
-<pre class="block line-group line-group-last">        <span class="chord">A</span>               <span class="chord">B7</span>          <span class="chord">E</span>
-that my love s here, to show me the way.</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">E</span>       <span class="chord">A</span>         <span class="chord">B7</span>       
-My love stands be-side me,(I can&#x27;t seem to find)</pre>
-<pre class="block line-group">            <span class="chord">E</span>
-through the rain; through the (the words to tell her)</pre>
-<pre class="block line-group"><span class="chord">A</span>            <span class="chord">B7</span>
-wind and the snow.(how I feel, but I)       </pre>
-<pre class="block line-group">            <span class="chord">E</span>       <span class="chord">A</span> 
-Through the bad and good; you know its (want you, and I)</pre>
-<pre class="block line-group"><span class="chord">E</span>    <span class="chord">A</span>                    <span class="chord">E</span>
-understood, that she&#x27;s my love, (trust you and I)  </pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>      <span class="chord">B7</span>           <span class="chord">E</span>
-this I know, this I know.(love you)</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-      <span class="chord">E</span>    <span class="chord">A</span>
-And I want you and it&#x27;s (and I want you and I)</pre>
-<pre class="block line-group">       <span class="chord">E</span>    <span class="chord">A</span>                   <span class="chord">E</span>
-Always understood that she&#x27;s my love, (trust you and I love you, this I know)</pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>      <span class="chord">B7</span>           <span class="chord">E</span>
-This I know, this I know.</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"> 2x </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">E</span><span class="chord">A</span><span class="chord">B7</span><span class="chord">A</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">My love </span></span><span class="seg"><span class="chord">A</span><span class="lyr">stands be-</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">side me,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">through the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">rain; through the </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">wind and the </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">snow.       </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Through the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">bad and </span></span><span class="seg"><span class="chord">A</span><span class="lyr">good; you know its </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">under</span></span><span class="seg"><span class="chord">A</span><span class="lyr">stood, that she&#x27;s my </span></span><span class="seg"><span class="chord">E</span><span class="lyr">love,   </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">this I </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">know, this I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">know.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">So l</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ong</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">, sad and </span></span><span class="seg"><span class="chord">E</span><span class="lyr">lonesome </span></span><span class="seg"><span class="chord">G#</span><span class="lyr">times</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So </span></span><span class="seg"><span class="chord">A</span><span class="lyr">long</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">, lonely d</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ays</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So </span></span><span class="seg"><span class="chord">A</span><span class="lyr">long</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">, sad and </span></span><span class="seg"><span class="chord">E</span><span class="lyr">lonesome </span></span><span class="seg"><span class="chord">G#</span><span class="lyr">times,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">that my </span></span><span class="seg"><span class="chord">A</span><span class="lyr">love s here, to </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">show me the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">way.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">My love </span></span><span class="seg"><span class="chord">A</span><span class="lyr">stands be-</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">side me,(I can&#x27;t seem to find)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">through the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">rain; through the (the words to tell her)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">wind and the </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">snow.(how I feel, but I)       </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Through the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">bad and </span></span><span class="seg"><span class="chord">A</span><span class="lyr">good; you know its (want you, and I)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">under</span></span><span class="seg"><span class="chord">A</span><span class="lyr">stood, that she&#x27;s my </span></span><span class="seg"><span class="chord">E</span><span class="lyr">love, (trust you and I)  </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">this I </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">know, this I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">know.(love you)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">And I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">want </span></span><span class="seg"><span class="chord">A</span><span class="lyr">you and it&#x27;s (and I want you and I)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Always </span></span><span class="seg"><span class="chord">E</span><span class="lyr">under</span></span><span class="seg"><span class="chord">A</span><span class="lyr">stood that she&#x27;s my </span></span><span class="seg"><span class="chord">E</span><span class="lyr">love, (trust you and I love you, this I know)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">This I </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">know, this I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">know.</span></span></div></div>
     
     
   </div>

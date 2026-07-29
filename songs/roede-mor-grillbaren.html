@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Grillbaren – Røde Mor</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,90 +498,46 @@
     <h1>Grillbaren <span class="artist-inline">– Røde Mor</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-           <span class="chord">A</span>
-Grillbaren lukker nu </pre>
-<pre class="block line-group">                   <span class="chord">Dm</span>
-og neonlyserne går ud</pre>
-<pre class="block line-group">           <span class="chord">A</span>
-bag disken standser hun</pre>
-<pre class="block line-group">                  <span class="chord">Dm</span>
-og tørrer med sin klud</pre>
-<pre class="block line-group">    <span class="chord">Gm</span>
-Hun tæller kassen op -- papir, papir</pre>
-<pre class="block line-group">           <span class="chord">F</span>
-hun lægger mønt på mønt</pre>
-<pre class="block line-group">               <span class="chord">A</span>
-og tier på tier</pre>
-<pre class="block line-group line-group-last">           <span class="chord">Dm</span>
--- Grillbaren lukker nu</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-           <span class="chord">A</span>
-Hun samler glas og krus</pre>
-<pre class="block line-group">                        <span class="chord">Dm</span>
-og jeg kan se at hun er træt</pre>
-<pre class="block line-group">                           <span class="chord">A</span>
-Nu er det slut med pølser, chips og mos</pre>
-<pre class="block line-group">                <span class="chord">Dm</span>
-slut med dagens ret</pre>
-<pre class="block line-group">    <span class="chord">Gm</span>
-Men hun kan ikke rigtig komme afsted</pre>
-<pre class="block line-group">    <span class="chord">F</span>
-jeg tror hun drømmer at min lastbil </pre>
-<pre class="block line-group">          <span class="chord">A</span>
-tar hende med</pre>
-<pre class="block line-group line-group-last">              <span class="chord">Dm</span>
--- Grillbaren lukker nu</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-               <span class="chord">A</span>
-Ja - hun føler vibrationerne</pre>
-<pre class="block line-group">                 <span class="chord">Dm</span>
-af læder, lak og krom</pre>
-<pre class="block line-group">                 <span class="chord">A</span>
-Måske hun mærker eksplosionerne</pre>
-<pre class="block line-group">                  <span class="chord">Dm</span>
-- Nu gløder hvert atom</pre>
-<pre class="block line-group"><span class="chord">Gm</span>
-Kom, vi rider væk i mit bur af blik og glas</pre>
-<pre class="block line-group"><span class="chord">F</span>
-Se - himlen fyldes </pre>
-<pre class="block line-group">             <span class="chord">A</span>
-af benzin og gas</pre>
-<pre class="block line-group line-group-last">             <span class="chord">Dm</span>
-- Grillbaren lukker nu</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-           <span class="chord">A</span>
-Ja her ved bredden af </pre>
-<pre class="block line-group">                 <span class="chord">Dm</span>
-kulturens blanke strøm</pre>
-<pre class="block line-group">                 <span class="chord">A</span>
-Her blir man tit bedøvet af </pre>
-<pre class="block line-group">                  <span class="chord">Dm</span>
-en hed og mærklig drøm</pre>
-<pre class="block line-group"><span class="chord">Gm</span>
-Man drømmer man lever, man drømmer man ler</pre>
-<pre class="block line-group"><span class="chord">F</span>                                    <span class="chord">A</span>
-drømmer at man elsker drømmer at man ser</pre>
-<pre class="block line-group line-group-last">             <span class="chord">Dm</span>
-- Grillbaren lukker nu</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-                  <span class="chord">A</span>
-Her sidder jeg og der står hun</pre>
-<pre class="block line-group">                           <span class="chord">Dm</span>
-og se, mit bord det råber: kom</pre>
-<pre class="block line-group">             <span class="chord">A</span>
-kom ryd mig, rør mig nu</pre>
-<pre class="block line-group">                         <span class="chord">Dm</span>
-Men nej - hendes blik er tomt</pre>
-<pre class="block line-group">    <span class="chord">Gm</span>
-Hun ser forbi mig og drømmer kun fordi</pre>
-<pre class="block line-group"><span class="chord">F</span>
-hun hører de bløde sus af biler</pre>
-<pre class="block line-group">               <span class="chord">A</span>
-som kører forbi</pre>
-<pre class="block line-group line-group-last">             <span class="chord">Dm</span>
-- Grillbaren lukker nu
-&quot;Langs landevejene, den moderne kulturs nervebaner, ligger cafeterierne. I en af disse det 20. århundredes oaser finder et kort, uforløst med sted mellem en lastbilchauffør og barens servitrice.&quot;</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Grillbaren </span></span><span class="seg"><span class="chord">A</span><span class="lyr">lukker nu </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og neonlyserne går </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ud</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">bag disken </span></span><span class="seg"><span class="chord">A</span><span class="lyr">standser hun</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og tørrer med sin </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">klud</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">tæller kassen op -- papir, papir</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hun lægger </span></span><span class="seg"><span class="chord">F</span><span class="lyr">mønt på mønt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og tier på tier</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">-- Grillbar</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">en lukker nu</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Hun samler </span></span><span class="seg"><span class="chord">A</span><span class="lyr">glas og krus</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og jeg kan se at hun er </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">træt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Nu er det slut med pølser, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">chips og mos</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">slut med dagens </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ret</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">hun kan ikke rigtig komme afsted</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">jeg </span></span><span class="seg"><span class="chord">F</span><span class="lyr">tror hun drømmer at min lastbil </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">tar hende </span></span><span class="seg"><span class="chord">A</span><span class="lyr">med</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">-- Grillbaren </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lukker nu</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Ja - hun føler </span></span><span class="seg"><span class="chord">A</span><span class="lyr">vibrationerne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">af læder, lak og </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">krom</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Måske hun mærker </span></span><span class="seg"><span class="chord">A</span><span class="lyr">eksplosionerne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">- Nu gløder hvert </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">atom</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Kom, vi rider væk i mit bur af blik og glas</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Se - himlen fyldes </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">af benzin og </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gas</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">- Grillbaren </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lukker nu</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">Ja her ved </span></span><span class="seg"><span class="chord">A</span><span class="lyr">bredden af </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">kulturens blanke </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">strøm</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Her blir man tit </span></span><span class="seg"><span class="chord">A</span><span class="lyr">bedøvet af </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">en hed og mærklig </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">drøm</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Man drømmer man lever, man drømmer man ler</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">drømmer at man elsker drømmer at man </span></span><span class="seg"><span class="chord">A</span><span class="lyr">ser</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">- Grillbaren </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lukker nu</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">Her sidder jeg og </span></span><span class="seg"><span class="chord">A</span><span class="lyr">der står hun</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og se, mit bord det råber: </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">kom</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">kom ryd mig, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">rør mig nu</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men nej - hendes blik er </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">tomt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ser forbi mig og drømmer kun fordi</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">hun hører de bløde sus af biler</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">som kører forbi</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">- Grillbaren </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lukker nu</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">&quot;Langs landevejene, den moderne kulturs nervebaner, ligger cafeterierne. I en af disse det 20. århundredes oaser finder et kort, uforløst med sted mellem en lastbilchauffør og barens servitrice.&quot;</span></span></div></div>
     </div>
     
   </div>

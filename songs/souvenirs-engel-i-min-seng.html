@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Engel i min seng – Souvenirs</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,55 +496,29 @@
     <h1>Engel i min seng <span class="artist-inline">– Souvenirs</span></h1>
     
     
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-     <span class="chord">Dm</span>           <span class="chord">C</span>                  <span class="chord">F</span>
-Hele ugen har jeg følt mig skidt til mode</pre>
-<pre class="block line-group">        <span class="chord">Dm</span>          <span class="chord">C</span>            <span class="chord">F</span>
-Jeg har taget Echinaforce og Panodil</pre>
-<pre class="block line-group">           <span class="chord">Dm</span>        <span class="chord">C</span>        <span class="chord">F</span>
-Der er for meget roderi i mit hoved</pre>
-<pre class="block line-group line-group-last">      <span class="chord">Dm</span>            <span class="chord">C</span>            <span class="chord">F</span>
-Alt i alt så er min tilstand ustabil</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-               <span class="chord">Dm</span>
-Gid der kom et Rumskib </pre>
-<pre class="block line-group">   <span class="chord">Bb</span>               <span class="chord">C</span>
-og landede på min altan</pre>
-<pre class="block line-group">                  <span class="chord">Dm</span>
-Gid at jeg skulle reddes </pre>
-<pre class="block line-group">         <span class="chord">Bb</span>
-mund til mund</pre>
-<pre class="block line-group">               <span class="chord">C</span>
-på et flyvende lagen</pre>
-<pre class="block line-group">                   <span class="chord">Dm</span>
-ja bare der kom en engel</pre>
-<pre class="block line-group">    <span class="chord">C</span>                  <span class="chord">F</span>
-med lyst hår og gylden hud</pre>
-<pre class="block line-group">               <span class="chord">Dm</span>              <span class="chord">C</span>
-Gid der kom en rummand til min seng</pre>
-<pre class="block line-group">         <span class="chord">Dm</span>               <span class="chord">F</span>
-En helt igennem underskøn dreng</pre>
-<pre class="block line-group">   <span class="chord">Dm</span>         <span class="chord">C</span>              <span class="chord">Bb</span>
-en Buddha som kan noget Kama Sutra</pre>
-<pre class="block line-group">            <span class="chord">Bb</span>  <span class="chord">Am</span>          <span class="chord">Bb</span>
-Ja bare der lå en engel i min seng </pre>
-<pre class="block line-group line-group-last">               <span class="chord">Dm</span>
-en engel i min seng</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-        <span class="chord">Dm</span>              <span class="chord">C</span>            <span class="chord">F</span>
-Jeg har vendt og drejet alting meget længe</pre>
-<pre class="block line-group">        <span class="chord">Dm</span>          <span class="chord">C</span>               <span class="chord">F</span>
-jeg har også talt alvorligt med min mor</pre>
-<pre class="block line-group">      <span class="chord">Dm</span>                <span class="chord">C</span>             <span class="chord">F</span>
-andre ligger sammen med nogen i deres senge</pre>
-<pre class="block line-group">           <span class="chord">Dm</span>      <span class="chord">C</span>           <span class="chord">F</span>
-hvorfor er jeg så alene her på jord</pre>
-<pre class="block line-group">              <span class="chord">Bb</span>         <span class="chord">F</span>
-Tænk hvis jeg hørte vingesus</pre>
-<pre class="block line-group">                 <span class="chord">Bb</span>              <span class="chord">F</span>     <span class="chord">Dm</span>
-og der pludselig var et mandfolk i mit hus</pre>
-<pre class="block line-group line-group-last">            <span class="chord">Bb</span>    <span class="chord">Am</span>          <span class="chord">Bb</span>
-Ja, gid der lå en engel i min seng</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Hele </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ugen har jeg </span></span><span class="seg"><span class="chord">C</span><span class="lyr">følt mig skidt til </span></span><span class="seg"><span class="chord">F</span><span class="lyr">mode</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg har </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">taget Echina</span></span><span class="seg"><span class="chord">C</span><span class="lyr">force og Pano</span></span><span class="seg"><span class="chord">F</span><span class="lyr">dil</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Der er for </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">meget rode</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ri i mit </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hoved</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Alt i </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">alt så er min </span></span><span class="seg"><span class="chord">C</span><span class="lyr">tilstand usta</span></span><span class="seg"><span class="chord">F</span><span class="lyr">bil</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Gid der kom et </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">Rumskib </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">landede på min al</span></span><span class="seg"><span class="chord">C</span><span class="lyr">tan</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Gid at jeg skulle </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">reddes </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">mund til </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">mund</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">på et flyvende </span></span><span class="seg"><span class="chord">C</span><span class="lyr">lagen</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">ja bare der kom en </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">engel</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">med </span></span><span class="seg"><span class="chord">C</span><span class="lyr">lyst hår og gylden </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hud</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Gid der kom en </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">rummand til min </span></span><span class="seg"><span class="chord">C</span><span class="lyr">seng</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">En helt i</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">gennem underskøn </span></span><span class="seg"><span class="chord">F</span><span class="lyr">dreng</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">en </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">Buddha som </span></span><span class="seg"><span class="chord">C</span><span class="lyr">kan noget Kama </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">Sutra</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ja bare der </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lå e</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">n engel i mi</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">n seng </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">en engel i min </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">seng</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Jeg har </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">vendt og drejet </span></span><span class="seg"><span class="chord">C</span><span class="lyr">alting meget </span></span><span class="seg"><span class="chord">F</span><span class="lyr">længe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">jeg har </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">også talt al</span></span><span class="seg"><span class="chord">C</span><span class="lyr">vorligt med min </span></span><span class="seg"><span class="chord">F</span><span class="lyr">mor</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">andre </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ligger sammen med </span></span><span class="seg"><span class="chord">C</span><span class="lyr">nogen i deres </span></span><span class="seg"><span class="chord">F</span><span class="lyr">senge</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hvorfor er </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">jeg så a</span></span><span class="seg"><span class="chord">C</span><span class="lyr">lene her på </span></span><span class="seg"><span class="chord">F</span><span class="lyr">jord</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Tænk hvis jeg </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">hørte vinge</span></span><span class="seg"><span class="chord">F</span><span class="lyr">sus</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og der pludselig </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">var et mandfolk </span></span><span class="seg"><span class="chord">F</span><span class="lyr">i mit </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hus</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ja, gid der </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lå en </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">engel i min </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">seng</span></span></div></div>
     
     
   </div>

@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Lady Stardust – David Bowie</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,84 +498,47 @@
     <h1>Lady Stardust <span class="artist-inline">– David Bowie</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">A*       5 7 7 6 5 5
-C#7      x 4 6 4 6 x
-F#m7/E   0 4 4 2 x x
-Eadd9    0 2 2 1 0 2
-Emmaj7   0 2 1 0 0 0
-Em7      0 2 0 0 3 0
-Em6      0 4 2 0 2 0
-D#dim7   x x 1 2 1 2</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">A</span>                         <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">A</span>        <span class="chord">C#</span>         <span class="chord">F#m</span> <span class="chord">F#m7/E</span> <span class="chord">D</span> <span class="chord">Dsus2</span>
-*                            
-  People stared at the makeup on his face</pre>
-<pre class="block line-group"><span class="chord">A</span>                 <span class="chord">F#m</span>           <span class="chord">E</span>             <span class="chord">C#</span>
-  Laughed at his long black hair, his animal grace</pre>
-<pre class="block line-group"><span class="chord">F#m</span>                  <span class="chord">D</span>
-    The boy in the bright blue jeans</pre>
-<pre class="block line-group"><span class="chord">A</span>                   <span class="chord">C#7</span>
-  Jumped up on the stage</pre>
-<pre class="block line-group"><span class="chord">A</span>             <span class="chord">E</span>
-Lady Stardust sang his songs</pre>
-<pre class="block line-group line-group-last">  <span class="chord">D</span>                   <span class="chord">Eadd9</span> <span class="chord">E</span>
-Of darkness and disgrace</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-           <span class="chord">A6</span> <span class="chord">E</span>          <span class="chord">D</span>              <span class="chord">E</span>
-And he was al-right, the band was all together</pre>
-<pre class="block line-group">            <span class="chord">A6</span> <span class="chord">E</span>          <span class="chord">D</span>               <span class="chord">E</span>
-Yes, he was al-right, the song went on forever</pre>
-<pre class="block line-group">            <span class="chord">Em</span>      <span class="chord">Emmaj7</span>
-Yes, he was awful nice</pre>
-<pre class="block line-group"><span class="chord">Em7</span>                 <span class="chord">Em6</span>
-Really quite out of sight</pre>
-<pre class="block line-group line-group-last">            <span class="chord">A</span>   <span class="chord">E</span>      <span class="chord">D</span>    <span class="chord">Eadd9</span> <span class="chord">E</span>
-And he sang all night long</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">A</span>             <span class="chord">C#</span>              <span class="chord">F#m</span>
-*                             
-  The femme fatales emerged from shadows</pre>
-<pre class="block line-group">   <span class="chord">F#m7/E</span>         <span class="chord">D</span>        <span class="chord">Dsus2</span>
-To watch this creature fair</pre>
-<pre class="block line-group"><span class="chord">A</span>             <span class="chord">F#m</span>                 <span class="chord">E</span>                    <span class="chord">C#</span>
-  Boys stood upon their chairs to make their point of view</pre>
-<pre class="block line-group"><span class="chord">F#m</span>          <span class="chord">D</span>           <span class="chord">A</span>                  <span class="chord">C#</span>
-    I smiled sadly for a love I could not obey</pre>
-<pre class="block line-group"><span class="chord">A</span>             <span class="chord">E</span>
-Lady Stardust sang his songs</pre>
-<pre class="block line-group line-group-last">   <span class="chord">D</span>                  <span class="chord">Eadd9</span> <span class="chord">E</span>
-Of darkness and dismay</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-           <span class="chord">A6</span> <span class="chord">E</span>          <span class="chord">D</span>              <span class="chord">E</span>
-And he was al-right, the band was all together</pre>
-<pre class="block line-group">         <span class="chord">A6</span>   <span class="chord">E</span>          <span class="chord">D</span>               <span class="chord">E</span>
-Yes, he was alright, the song went on forever</pre>
-<pre class="block line-group">          <span class="chord">Em</span>         <span class="chord">Emmaj7</span>
-And he was   awful nice</pre>
-<pre class="block line-group"><span class="chord">Em7</span>              <span class="chord">Em6</span>
-Really quite paradise</pre>
-<pre class="block line-group line-group-last">            <span class="chord">A</span>   <span class="chord">E</span>      <span class="chord">D</span>    <span class="chord">Eadd9</span> <span class="chord">E</span>
-And he sang all night long</pre>
-<pre class="block line-group line-group-last"><span class="section">[Bridge]</span>
-<span class="chord">D</span>           <span class="chord">D#dim7</span>          <span class="chord">E</span>
-Ooh, how I sighed when they asked if I knew his name</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-              <span class="chord">A6</span> <span class="chord">E</span>          <span class="chord">D</span>              <span class="chord">E</span>
-Oh, they were al-right, the band was all together</pre>
-<pre class="block line-group">            <span class="chord">A6</span> <span class="chord">E</span>              <span class="chord">D</span>               <span class="chord">E</span>
-Yes, he was al-right, and the song went on forever</pre>
-<pre class="block line-group">      <span class="chord">Em</span>         <span class="chord">Emmaj7</span>
-He was   awful nice</pre>
-<pre class="block line-group"><span class="chord">Em7</span>              <span class="chord">Em6</span>
-Really quite paradise</pre>
-<pre class="block line-group line-group-last">        <span class="chord">A</span>   <span class="chord">E</span>      <span class="chord">D</span>    <span class="chord">Eadd9</span> <span class="chord">E</span>
-He sang all night long</pre>
-<pre class="block line-group line-group-last"><span class="section">[Outro]</span>
-<span class="chord">A</span>                         <span class="chord">E</span></pre>
-<pre class="block line-group line-group-last"><span class="section">[Ending]</span>
-<span class="chord">A</span></pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">A*       5 7 7 6 5 5</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C#7      x 4 6 4 6 x</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F#m7/E   0 4 4 2 x x</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Eadd9    0 2 2 1 0 2</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Emmaj7   0 2 1 0 0 0</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Em7      0 2 0 0 3 0</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Em6      0 4 2 0 2 0</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D#dim7   x x 1 2 1 2</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">*        </span></span><span class="seg"><span class="chord">C#</span><span class="lyr"> </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span><span class="seg"><span class="chord">F#m7/E</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Dsus2</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">  People stared at the makeup on his face</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Laughed at his l</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ong black hair</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, his animal g</span></span><span class="seg"><span class="chord">C#</span><span class="lyr">race</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">    The boy in the br</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ight blue jeans</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Jumped up on the s</span></span><span class="seg"><span class="chord">C#7</span><span class="lyr">tage</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Lady Stardust </span></span><span class="seg"><span class="chord">E</span><span class="lyr">sang his songs</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Of</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> darkness and disgra</span></span><span class="seg"><span class="chord">Eadd9</span><span class="lyr">ce</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And he was </span></span><span class="seg"><span class="chord">A6</span><span class="lyr">al-</span></span><span class="seg"><span class="chord">E</span><span class="lyr">right, the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">band was all to</span></span><span class="seg"><span class="chord">E</span><span class="lyr">gether</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Yes, he was </span></span><span class="seg"><span class="chord">A6</span><span class="lyr">al-</span></span><span class="seg"><span class="chord">E</span><span class="lyr">right, the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">song went on for</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ever</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Yes, he was </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">awful ni</span></span><span class="seg"><span class="chord">Emmaj7</span><span class="lyr">ce</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em7</span><span class="lyr">Really quite out of </span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">sight</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And he sang </span></span><span class="seg"><span class="chord">A</span><span class="lyr">all </span></span><span class="seg"><span class="chord">E</span><span class="lyr">night l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ong</span></span><span class="seg"><span class="chord">Eadd9</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">*             </span></span><span class="seg"><span class="chord">C#</span><span class="lyr"> </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">  The femme fatales emerged from shadows</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">F#m7/E</span><span class="lyr">watch this crea</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ture fair</span></span><span class="seg"><span class="chord">Dsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Boys stood u</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">pon their chairs to </span></span><span class="seg"><span class="chord">E</span><span class="lyr">make their point of v</span></span><span class="seg"><span class="chord">C#</span><span class="lyr">iew</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">    I smiled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">sadly for a </span></span><span class="seg"><span class="chord">A</span><span class="lyr">love I could not ob</span></span><span class="seg"><span class="chord">C#</span><span class="lyr">ey</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Lady Stardust </span></span><span class="seg"><span class="chord">E</span><span class="lyr">sang his songs</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">darkness and dismay</span></span><span class="seg"><span class="chord">Eadd9</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And he was </span></span><span class="seg"><span class="chord">A6</span><span class="lyr">al-</span></span><span class="seg"><span class="chord">E</span><span class="lyr">right, the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">band was all to</span></span><span class="seg"><span class="chord">E</span><span class="lyr">gether</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Yes, he w</span></span><span class="seg"><span class="chord">A6</span><span class="lyr">as al</span></span><span class="seg"><span class="chord">E</span><span class="lyr">right, the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">song went on for</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ever</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And he was</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">   awful ni</span></span><span class="seg"><span class="chord">Emmaj7</span><span class="lyr">ce</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em7</span><span class="lyr">Really quite para</span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">dise</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And he sang </span></span><span class="seg"><span class="chord">A</span><span class="lyr">all </span></span><span class="seg"><span class="chord">E</span><span class="lyr">night l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ong</span></span><span class="seg"><span class="chord">Eadd9</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ooh, how I s</span></span><span class="seg"><span class="chord">D#dim7</span><span class="lyr">ighed when they </span></span><span class="seg"><span class="chord">E</span><span class="lyr">asked if I knew his name</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Oh, they were </span></span><span class="seg"><span class="chord">A6</span><span class="lyr">al-</span></span><span class="seg"><span class="chord">E</span><span class="lyr">right, the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">band was all to</span></span><span class="seg"><span class="chord">E</span><span class="lyr">gether</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Yes, he was </span></span><span class="seg"><span class="chord">A6</span><span class="lyr">al-</span></span><span class="seg"><span class="chord">E</span><span class="lyr">right, and the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">song went on for</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ever</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">He was</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">   awful ni</span></span><span class="seg"><span class="chord">Emmaj7</span><span class="lyr">ce</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em7</span><span class="lyr">Really quite para</span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">dise</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">He sang </span></span><span class="seg"><span class="chord">A</span><span class="lyr">all </span></span><span class="seg"><span class="chord">E</span><span class="lyr">night l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ong</span></span><span class="seg"><span class="chord">Eadd9</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">E</span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Ending]</span></div><div class="line chords-only"><span class="chord">A</span></div></div>
     </div>
     
   </div>

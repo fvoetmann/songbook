@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Sænk Mine Skibe – TV-2</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,129 +498,65 @@
     <h1>Sænk Mine Skibe <span class="artist-inline">– TV-2</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">(Original in Eb Major)</pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">Am</span>      <span class="chord">F</span>
-Søndag aften</pre>
-<pre class="block line-group">   <span class="chord">G</span>
-Og klokken den har lagt sig lidt</pre>
-<pre class="block line-group"><span class="chord">Dm</span>          <span class="chord">G</span>
-Tiden går alligevel</pre>
-<pre class="block line-group">    <span class="chord">E/G#</span>           <span class="chord">Am</span>    <span class="chord">C/G</span>
-Jeg mærker hvert sekund</pre>
-<pre class="block line-group">    <span class="chord">F</span>             <span class="chord">C</span>
-Som prikken under huden</pre>
-<pre class="block line-group">     <span class="chord">F</span>             <span class="chord">C</span>
-Hul i maven, slag i ansigtet</pre>
-<pre class="block line-group">    <span class="chord">F</span>               <span class="chord">C</span>
-Som stemmer i det fjerne</pre>
-<pre class="block line-group line-group-last">       <span class="chord">F</span>           <span class="chord">D/F#</span>        <span class="chord">G</span>
-Der måske og måske ikke vil mig noget</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">Am</span>      <span class="chord">F</span>
-Alt står stille</pre>
-<pre class="block line-group">   <span class="chord">G</span>
-Ingenting bevæger mig</pre>
-<pre class="block line-group"><span class="chord">Dm</span>          <span class="chord">G</span>
-Dørene går op og i</pre>
-<pre class="block line-group">    <span class="chord">E/G#</span>        <span class="chord">Am</span>    <span class="chord">C/G</span>
-Og ingen træder ind</pre>
-<pre class="block line-group">    <span class="chord">F</span>             <span class="chord">C</span>
-Jeg troede vi skulle brase mure</pre>
-<pre class="block line-group"><span class="chord">F</span>                <span class="chord">C</span>
-Splintre glas og slå os fri</pre>
-<pre class="block line-group">   <span class="chord">F</span>           <span class="chord">C</span>
-Af al forsigtighed</pre>
-<pre class="block line-group line-group-last">           <span class="chord">F</span>        <span class="chord">D/F#</span>         <span class="chord">G</span>
-Sir jeg og åbner vinduet lidt på klem</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Am</span>     <span class="chord">E+/G#</span>
-Kom og dans</pre>
-<pre class="block line-group">   <span class="chord">C/G</span>     <span class="chord">Am6/F#</span>
-En sidste dans</pre>
-<pre class="block line-group">    <span class="chord">F</span>      <span class="chord">Am/E</span>      <span class="chord">Dm</span>   <span class="chord">Dm/C</span>
-Før verden lægger os ned</pre>
-<pre class="block line-group"><span class="chord">Dm</span>           <span class="chord">A+/C#</span>
-Kom smid mig ind</pre>
-<pre class="block line-group">        <span class="chord">F/C</span>      <span class="chord">Dm6/H</span>
-Til dit hamrende hjerte</pre>
-<pre class="block line-group">    <span class="chord">E/G#</span>                   <span class="chord">G/H</span>
-Før stilheden skiller os ad</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">Em/H</span>      <span class="chord">C/Bb</span>        <span class="chord">C7/G</span>
-Gå fra mig, glem mig, gør hvad du vil</pre>
-<pre class="block line-group">    <span class="chord">F</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Jeg vil ikke undvære dig</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">Em/H</span>
-Sænk mine skibe</pre>
-<pre class="block line-group">    <span class="chord">C/Bb</span>      <span class="chord">C7/G</span>
-Med drømme og håb</pre>
-<pre class="block line-group">    <span class="chord">F</span>         <span class="chord">G</span>      <span class="chord">C</span>
-Men sig at du elsker mig</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>         <span class="chord">G</span>      <span class="chord">C</span>
-Indrøm du elsker mig</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">Am</span>     <span class="chord">F</span>
-Heldigvis</pre>
-<pre class="block line-group">   <span class="chord">G</span>
-Så er du ved min side</pre>
-<pre class="block line-group">  <span class="chord">Dm</span>            <span class="chord">G</span>
-I tankerne forsvinder vi</pre>
-<pre class="block line-group"><span class="chord">E/G#</span>        <span class="chord">Am</span>    <span class="chord">C/G</span>
-Uden at se tilbage</pre>
-<pre class="block line-group">    <span class="chord">F</span>             <span class="chord">C</span>
-Og alle bange anelser</pre>
-<pre class="block line-group">    <span class="chord">F</span>             <span class="chord">C</span>
-Og alt det vi ku miste</pre>
-<pre class="block line-group">    <span class="chord">F</span>             <span class="chord">C</span>
-Er væk i samme øjeblik</pre>
-<pre class="block line-group line-group-last">   <span class="chord">F</span>            <span class="chord">D/F#</span>         <span class="chord">G</span>
-Vi rejser os og går</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-<span class="chord">Am</span>     <span class="chord">F</span>
-Nye læsere</pre>
-<pre class="block line-group">   <span class="chord">G</span>
-Kan begynde her</pre>
-<pre class="block line-group">     <span class="chord">Dm</span>            <span class="chord">G</span>
-Hvor alting bryder sammen</pre>
-<pre class="block line-group">       <span class="chord">E/G#</span>        <span class="chord">Am</span>    <span class="chord">C/G</span>
-Med et brag af et puf</pre>
-<pre class="block line-group">    <span class="chord">F</span>             <span class="chord">C</span>
-Jeg sidder der i trøjen</pre>
-<pre class="block line-group">       <span class="chord">F</span>             <span class="chord">C</span>
-Med et kæmpe lykkeligt smil</pre>
-<pre class="block line-group"><span class="chord">F</span>             <span class="chord">C</span>
-Lallende og fri</pre>
-<pre class="block line-group">    <span class="chord">F</span>      <span class="chord">C</span>
-Og ingenting</pre>
-<pre class="block line-group line-group-last">     <span class="chord">F</span>            <span class="chord">D/F#</span>
-Ingenting kan nå mig mer</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Am</span>     <span class="chord">E+/G#</span>
-Kom og dans</pre>
-<pre class="block line-group">   <span class="chord">C/G</span>     <span class="chord">Am6/F#</span>
-En sidste dans</pre>
-<pre class="block line-group">    <span class="chord">F</span>            <span class="chord">Am/E</span>    <span class="chord">Dm</span>   <span class="chord">Dm/C</span>
-Før afsløringens time er nær</pre>
-<pre class="block line-group"><span class="chord">Dm</span>           <span class="chord">A+/C#</span>
-Kom læg mig ind</pre>
-<pre class="block line-group">        <span class="chord">F/C</span>      <span class="chord">Dm6/H</span>
-Til dit hamrende hjerte</pre>
-<pre class="block line-group">    <span class="chord">E/G#</span>                   <span class="chord">G/H</span>
-Fortæl mig præcis som det er</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">Em/H</span>      <span class="chord">C/Bb</span>        <span class="chord">C7/G</span>
-Gå fra mig, glem mig, gør hvad du vil</pre>
-<pre class="block line-group">    <span class="chord">F</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Jeg vil ikke undvære dig</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">Em/H</span>
-Sænk mine skibe</pre>
-<pre class="block line-group">    <span class="chord">C/Bb</span>      <span class="chord">C7/G</span>
-Med drømme og håb</pre>
-<pre class="block line-group">    <span class="chord">F</span>         <span class="chord">G</span>      <span class="chord">C</span>
-Men sig at du elsker mig</pre>
-<pre class="block line-group"><span class="chord">F</span>         <span class="chord">G</span>      <span class="chord">C</span>
-Indrøm du elsker mig</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>         <span class="chord">Gsus4</span>  <span class="chord">C</span>
-Sig at du elsker mig</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">(Original in Eb Major)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Søndag a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ften</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og </span></span><span class="seg"><span class="chord">G</span><span class="lyr">klokken den har lagt sig lidt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Tiden går al</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ligevel</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg </span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">mærker hvert se</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">kund</span></span><span class="seg"><span class="chord">C/G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Som </span></span><span class="seg"><span class="chord">F</span><span class="lyr">prikken under </span></span><span class="seg"><span class="chord">C</span><span class="lyr">huden</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hul i</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> maven, slag i</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> ansigtet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Som </span></span><span class="seg"><span class="chord">F</span><span class="lyr">stemmer i det fj</span></span><span class="seg"><span class="chord">C</span><span class="lyr">erne</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Der mås</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ke og måske </span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">ikke vil mig</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> noget</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Alt står</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> stille</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ing</span></span><span class="seg"><span class="chord">G</span><span class="lyr">enting bevæger mig</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Dørene går o</span></span><span class="seg"><span class="chord">G</span><span class="lyr">p og i</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og i</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">ngen træder </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ind</span></span><span class="seg"><span class="chord">C/G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg </span></span><span class="seg"><span class="chord">F</span><span class="lyr">troede vi skul</span></span><span class="seg"><span class="chord">C</span><span class="lyr">le brase mure</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Splintre glas og </span></span><span class="seg"><span class="chord">C</span><span class="lyr">slå os fri</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Af </span></span><span class="seg"><span class="chord">F</span><span class="lyr">al forsigtig</span></span><span class="seg"><span class="chord">C</span><span class="lyr">hed</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Sir jeg og </span></span><span class="seg"><span class="chord">F</span><span class="lyr">åbner vin</span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">duet lidt på </span></span><span class="seg"><span class="chord">G</span><span class="lyr">klem</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Kom og </span></span><span class="seg"><span class="chord">E+/G#</span><span class="lyr">dans</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">En </span></span><span class="seg"><span class="chord">C/G</span><span class="lyr">sidste d</span></span><span class="seg"><span class="chord">Am6/F#</span><span class="lyr">ans</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Før </span></span><span class="seg"><span class="chord">F</span><span class="lyr">verden </span></span><span class="seg"><span class="chord">Am/E</span><span class="lyr">lægger os </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ned</span></span><span class="seg"><span class="chord">Dm/C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Kom smid mig </span></span><span class="seg"><span class="chord">A+/C#</span><span class="lyr">ind</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Til dit </span></span><span class="seg"><span class="chord">F/C</span><span class="lyr">hamrende </span></span><span class="seg"><span class="chord">Dm6/H</span><span class="lyr">hjerte</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Før </span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">stilheden skiller os ad</span></span><span class="seg"><span class="chord">G/H</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Gå fra mig, </span></span><span class="seg"><span class="chord">Em/H</span><span class="lyr">glem mig, </span></span><span class="seg"><span class="chord">C/Bb</span><span class="lyr">gør hvad du </span></span><span class="seg"><span class="chord">C7/G</span><span class="lyr">vil</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg </span></span><span class="seg"><span class="chord">F</span><span class="lyr">vil ikke </span></span><span class="seg"><span class="chord">G</span><span class="lyr">undvære </span></span><span class="seg"><span class="chord">C</span><span class="lyr">dig</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Sænk mine </span></span><span class="seg"><span class="chord">Em/H</span><span class="lyr">skibe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med </span></span><span class="seg"><span class="chord">C/Bb</span><span class="lyr">drømme og </span></span><span class="seg"><span class="chord">C7/G</span><span class="lyr">håb</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sig at du </span></span><span class="seg"><span class="chord">G</span><span class="lyr">elsker </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Indrøm du </span></span><span class="seg"><span class="chord">G</span><span class="lyr">elsker </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mig</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Heldigv</span></span><span class="seg"><span class="chord">F</span><span class="lyr">is</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Så </span></span><span class="seg"><span class="chord">G</span><span class="lyr">er du ved min side</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">tankerne forsv</span></span><span class="seg"><span class="chord">G</span><span class="lyr">inder vi</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E/G#</span><span class="lyr">Uden at se t</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ilbage</span></span><span class="seg"><span class="chord">C/G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lle bange anel</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ser</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lt det vi ku m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">iste</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Er v</span></span><span class="seg"><span class="chord">F</span><span class="lyr">æk i samme øje</span></span><span class="seg"><span class="chord">C</span><span class="lyr">blik</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Vi </span></span><span class="seg"><span class="chord">F</span><span class="lyr">rejser os og </span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">går</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Nye læs</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ere</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Kan</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> begynde her</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hvor </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">alting bryder </span></span><span class="seg"><span class="chord">G</span><span class="lyr">sammen</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med et </span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">brag af et p</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">uf</span></span><span class="seg"><span class="chord">C/G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sidder der i t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">røjen</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med et </span></span><span class="seg"><span class="chord">F</span><span class="lyr">kæmpe lykkelig</span></span><span class="seg"><span class="chord">C</span><span class="lyr">t smil</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Lallende og fr</span></span><span class="seg"><span class="chord">C</span><span class="lyr">i</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og i</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ngentin</span></span><span class="seg"><span class="chord">C</span><span class="lyr">g</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ingen</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ting kan nå m</span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">ig mer</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Kom og </span></span><span class="seg"><span class="chord">E+/G#</span><span class="lyr">dans</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">En </span></span><span class="seg"><span class="chord">C/G</span><span class="lyr">sidste d</span></span><span class="seg"><span class="chord">Am6/F#</span><span class="lyr">ans</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Før </span></span><span class="seg"><span class="chord">F</span><span class="lyr">afsløringens </span></span><span class="seg"><span class="chord">Am/E</span><span class="lyr">time er </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">nær</span></span><span class="seg"><span class="chord">Dm/C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Kom læg mig i</span></span><span class="seg"><span class="chord">A+/C#</span><span class="lyr">nd</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Til dit </span></span><span class="seg"><span class="chord">F/C</span><span class="lyr">hamrende </span></span><span class="seg"><span class="chord">Dm6/H</span><span class="lyr">hjerte</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Fort</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">æl mig præcis som det e</span></span><span class="seg"><span class="chord">G/H</span><span class="lyr">r</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Gå fra mig, </span></span><span class="seg"><span class="chord">Em/H</span><span class="lyr">glem mig, </span></span><span class="seg"><span class="chord">C/Bb</span><span class="lyr">gør hvad du </span></span><span class="seg"><span class="chord">C7/G</span><span class="lyr">vil</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg </span></span><span class="seg"><span class="chord">F</span><span class="lyr">vil ikke </span></span><span class="seg"><span class="chord">G</span><span class="lyr">undvære </span></span><span class="seg"><span class="chord">C</span><span class="lyr">dig</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Sænk mine </span></span><span class="seg"><span class="chord">Em/H</span><span class="lyr">skibe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med </span></span><span class="seg"><span class="chord">C/Bb</span><span class="lyr">drømme og </span></span><span class="seg"><span class="chord">C7/G</span><span class="lyr">håb</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sig at du </span></span><span class="seg"><span class="chord">G</span><span class="lyr">elsker </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mig</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Indrøm du </span></span><span class="seg"><span class="chord">G</span><span class="lyr">elsker </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Sig at du </span></span><span class="seg"><span class="chord">Gsus4</span><span class="lyr">elsker </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mig</span></span></div></div>
     </div>
     
   </div>

@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Robert Onion – Frank Black</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,86 +498,49 @@
     <h1>Robert Onion <span class="artist-inline">– Frank Black</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="chord">E</span> <span class="chord">B</span> <span class="chord">G</span> <span class="chord">C</span> <span class="chord">F#</span><span class="chord">B</span>
-            (2x)</pre>
-<pre class="block line-group"><span class="chord">E</span>                    <span class="chord">B</span>
- Robert lead me into thought</pre>
-<pre class="block line-group"><span class="chord">G</span>                      <span class="chord">C</span> 
- Onion layers wait for you</pre>
-<pre class="block line-group"><span class="chord">F#</span>                 <span class="chord">B</span> 
- Bounty of eternal fields</pre>
-<pre class="block line-group"><span class="chord">E</span>                    <span class="chord">B</span>
- Every muscle knot i feel feel</pre>
-<pre class="block line-group"><span class="chord">G</span>                        <span class="chord">C</span>
- Robert tell me what to do</pre>
-<pre class="block line-group"><span class="chord">F#</span>                        <span class="chord">B</span>
- Tell exactly what you&#x27;re not</pre>
-<pre class="block line-group"><span class="chord">E</span>      <span class="chord">G</span>       <span class="chord">C</span>
- Tails pushing grand whales</pre>
-<pre class="block line-group"><span class="chord">D</span>
- Heads hope to have the stuff</pre>
-<pre class="block line-group"><span class="chord">E</span>     <span class="chord">G</span>        <span class="chord">C</span>     
- Each flag had no sail</pre>
-<pre class="block line-group"><span class="chord">D</span>
- Can you believe enough?</pre>
-<pre class="block line-group"><span class="chord">E</span>                          <span class="chord">B</span>
- And though diana calls to you</pre>
-<pre class="block line-group"><span class="chord">G</span>                     <span class="chord">C</span>
- She will never never yield</pre>
-<pre class="block line-group"><span class="chord">F#</span>                   <span class="chord">B</span> 
- Every siren has her spot</pre>
-<pre class="block line-group"><span class="chord">E</span>     <span class="chord">G</span>       <span class="chord">C</span>
- Four hundred million</pre>
-<pre class="block line-group"><span class="chord">D</span> 
- Oh, that is very far</pre>
-<pre class="block line-group"><span class="chord">E</span>     <span class="chord">G</span>       <span class="chord">C</span>
- Robert sweet onion</pre>
-<pre class="block line-group"><span class="chord">D</span>
- Makes me feel so tired</pre>
-<pre class="block line-group"><span class="chord">E</span>   <span class="chord">G</span>    <span class="chord">C</span>         <span class="chord">F</span>          <span class="chord">D</span>
- Another layer and layers and layers oh, no</pre>
-<pre class="block line-group"><span class="chord">E</span>       <span class="chord">A</span>       <span class="chord">D</span>         <span class="chord">C#m</span>
- Robert can you find your way?</pre>
-<pre class="block line-group"><span class="chord">D</span>           <span class="chord">C</span>       <span class="chord">A</span>
- Show me the way to come</pre>
-<pre class="block line-group"><span class="chord">E</span>         <span class="chord">A</span>     <span class="chord">D</span>     <span class="chord">C#m</span>
- Zugzwang got me in a way</pre>
-<pre class="block line-group"><span class="chord">D</span>        <span class="chord">C</span>         <span class="chord">A</span>
- Under my opposing thumb</pre>
-<pre class="block line-group"><span class="chord">E</span>              <span class="chord">B</span> 
- Branishing my shield</pre>
-<pre class="block line-group"><span class="chord">G</span>                     <span class="chord">C</span> 
- Robert leads me into thought</pre>
-<pre class="block line-group"><span class="chord">F#</span>                <span class="chord">B</span> 
- Into the dimming blue</pre>
-<pre class="block line-group"><span class="chord">E</span>    <span class="chord">G</span>      <span class="chord">C</span>
- Nowhere in this world</pre>
-<pre class="block line-group"><span class="chord">D</span>
- for this old jack-tar</pre>
-<pre class="block line-group"><span class="chord">E</span>      <span class="chord">G</span>          <span class="chord">C</span>
- three cheers for robert</pre>
-<pre class="block line-group"><span class="chord">D</span>
- to the cinnabar</pre>
-<pre class="block line-group"><span class="chord">E</span>    <span class="chord">G</span>       <span class="chord">C</span>          <span class="chord">F</span>          <span class="chord">D</span>          <span class="chord">G</span>
- one ponders layers and layers and layers and layers</pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">D</span>          <span class="chord">G</span>
-layers and layers and layers  </pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">D</span>          <span class="chord">G</span>
-layers and layers and layers </pre>
-<pre class="block line-group"><span class="chord">F</span>          <span class="chord">D</span>           <span class="chord">G</span>   <span class="chord">F</span>  <span class="chord">D</span>     <span class="chord">G</span>   <span class="chord">F</span>  <span class="chord">D</span>    <span class="chord">G</span>
-layers and layers, Robert,      Robert       Robert</pre>
-<pre class="block line-group"><span class="chord">G</span> <span class="chord">F</span> <span class="chord">D</span>
-     (2x) </pre>
-<pre class="block line-group"><span class="chord">E</span>  <span class="chord">C#m</span>   <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="chord">E</span> <span class="chord">B</span> <span class="chord">G</span> <span class="chord">C</span> <span class="chord">F#</span><span class="chord">B</span>
-            (til end)</pre>
-<pre class="block line-group line-group-last">   <span class="chord">B</span>     <span class="chord">F#</span>     <span class="chord">E</span> 
-e--0-----0------0--
-b--0-----2------0--
-g--8-----3------9--
-d--9-----4------9--
-a--9-----4------7--
-e--7----(2)-----0--</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> </span></span><span class="seg"><span class="chord">B</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">F#</span><span class="lyr"> (2</span></span><span class="seg"><span class="chord">B</span><span class="lyr">x)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Robert lead me into </span></span><span class="seg"><span class="chord">B</span><span class="lyr">thought</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Onion layers wait for </span></span><span class="seg"><span class="chord">C</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr"> Bounty of eternal </span></span><span class="seg"><span class="chord">B</span><span class="lyr">fields</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Every muscle knot i </span></span><span class="seg"><span class="chord">B</span><span class="lyr">feel feel</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Robert tell me what to d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">o</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr"> Tell exactly what you&#x27;re </span></span><span class="seg"><span class="chord">B</span><span class="lyr">not</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Tails </span></span><span class="seg"><span class="chord">G</span><span class="lyr">pushing </span></span><span class="seg"><span class="chord">C</span><span class="lyr">grand whales</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Heads hope to have the stuff</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Each </span></span><span class="seg"><span class="chord">G</span><span class="lyr">flag had </span></span><span class="seg"><span class="chord">C</span><span class="lyr">no sail</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Can you believe enough?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> And though diana calls to </span></span><span class="seg"><span class="chord">B</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> She will never never </span></span><span class="seg"><span class="chord">C</span><span class="lyr">yield</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr"> Every siren has her </span></span><span class="seg"><span class="chord">B</span><span class="lyr">spot</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Four </span></span><span class="seg"><span class="chord">G</span><span class="lyr">hundred </span></span><span class="seg"><span class="chord">C</span><span class="lyr">million</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Oh, that is very far</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Rober</span></span><span class="seg"><span class="chord">G</span><span class="lyr">t sweet </span></span><span class="seg"><span class="chord">C</span><span class="lyr">onion</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Makes me feel so tired</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Ano</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ther </span></span><span class="seg"><span class="chord">C</span><span class="lyr">layer and </span></span><span class="seg"><span class="chord">F</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">layers oh, no</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Robert </span></span><span class="seg"><span class="chord">A</span><span class="lyr">can you </span></span><span class="seg"><span class="chord">D</span><span class="lyr">find your </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">way?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Show me the</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> way to </span></span><span class="seg"><span class="chord">A</span><span class="lyr">come</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Zugzwang </span></span><span class="seg"><span class="chord">A</span><span class="lyr">got me</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> in a </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">way</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> Under my</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> opposing </span></span><span class="seg"><span class="chord">A</span><span class="lyr">thumb</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Branishing my </span></span><span class="seg"><span class="chord">B</span><span class="lyr">shield</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Robert leads me into </span></span><span class="seg"><span class="chord">C</span><span class="lyr">thought</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr"> Into the dimming </span></span><span class="seg"><span class="chord">B</span><span class="lyr">blue</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> Nowh</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ere in </span></span><span class="seg"><span class="chord">C</span><span class="lyr">this world</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> for this old jack-tar</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> three </span></span><span class="seg"><span class="chord">G</span><span class="lyr">cheers for </span></span><span class="seg"><span class="chord">C</span><span class="lyr">robert</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> to the cinnabar</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> one </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ponders </span></span><span class="seg"><span class="chord">C</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">F</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">G</span><span class="lyr">layers</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">G</span><span class="lyr">layers  </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">G</span><span class="lyr">layers </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">layers and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">layers, Robe</span></span><span class="seg"><span class="chord">G</span><span class="lyr">rt, </span></span><span class="seg"><span class="chord">F</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr">  Robe</span></span><span class="seg"><span class="chord">G</span><span class="lyr">rt  </span></span><span class="seg"><span class="chord">F</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr">  Rob</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ert</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> </span></span><span class="seg"><span class="chord">F</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> (2x) </span></span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">E</span><span class="chord">C#m</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> </span></span><span class="seg"><span class="chord">B</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">F#</span><span class="lyr"> (t</span></span><span class="seg"><span class="chord">B</span><span class="lyr">il end)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">e--</span></span><span class="seg"><span class="chord">B</span><span class="lyr">0-----</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">0------</span></span><span class="seg"><span class="chord">E</span><span class="lyr">0--</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">b--0-----2------0--</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">g--8-----3------9--</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">d--9-----4------9--</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">a--9-----4------7--</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">e--7----(2)-----0--</span></span></div></div>
     </div>
     
   </div>

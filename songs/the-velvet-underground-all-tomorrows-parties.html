@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>All Tomorrows Parties – The Velvet Underground</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,33 +496,21 @@
     <h1>All Tomorrows Parties <span class="artist-inline">– The Velvet Underground</span></h1>
     
     
-    <pre class="block line-group line-group-last">Artist: The Velvet Underground
-Song: All tomorrows parties
-Tabbed by: Sergio A. Valdes
-Email: sergiovaldes1989@yahoo.com
-Tuning: Standard</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">D</span></pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">D</span>                               <span class="chord">C</span>    <span class="chord">G</span>    <span class="chord">D</span>
-And what costume shall the poor girl wear?</pre>
-<pre class="block line-group line-group-last">      <span class="chord">G</span>   <span class="chord">Em</span>            <span class="chord">A</span>
-To all tomorrow’s parties</pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">D</span>                            <span class="chord">C</span>     <span class="chord">G</span>       <span class="chord">D</span>
-A hand me down dress, from who knows where</pre>
-<pre class="block line-group">     <span class="chord">G</span>    <span class="chord">Em</span>            <span class="chord">A</span>
-To all tomorrow’s parties</pre>
-<pre class="block line-group">        <span class="chord">G</span>
-And where shall she go</pre>
-<pre class="block line-group">        <span class="chord">A</span>
-And what shall she do</pre>
-<pre class="block line-group">         <span class="chord">G</span>               <span class="chord">A</span>
-When midnight comes along</pre>
-<pre class="block line-group">          <span class="chord">D</span>                  <span class="chord">C</span>     <span class="chord">G</span>     <span class="chord">D</span>
-She’ll turn once more to Sunday’s clown</pre>
-<pre class="block line-group line-group-last">    <span class="chord">G</span>   <span class="chord">A</span>           <span class="chord">D</span>
-And cry behind the door</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Artist: The Velvet Underground</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Song: All tomorrows parties</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Tabbed by: Sergio A. Valdes</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Email: sergiovaldes1989@yahoo.com</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Tuning: Standard</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">And what costume shall the poor </span></span><span class="seg"><span class="chord">C</span><span class="lyr">girl </span></span><span class="seg"><span class="chord">G</span><span class="lyr">wear?</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To all</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> tom</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">orrow’s partie</span></span><span class="seg"><span class="chord">A</span><span class="lyr">s</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">A hand me down dress, from wh</span></span><span class="seg"><span class="chord">C</span><span class="lyr">o know</span></span><span class="seg"><span class="chord">G</span><span class="lyr">s where</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To al</span></span><span class="seg"><span class="chord">G</span><span class="lyr">l tom</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">orrow’s partie</span></span><span class="seg"><span class="chord">A</span><span class="lyr">s</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And wher</span></span><span class="seg"><span class="chord">G</span><span class="lyr">e shall she go</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And what</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> shall she do</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">When midn</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ight comes along</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">She’ll tur</span></span><span class="seg"><span class="chord">D</span><span class="lyr">n once more to Sund</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ay’s c</span></span><span class="seg"><span class="chord">G</span><span class="lyr">lown</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">G</span><span class="lyr">cry </span></span><span class="seg"><span class="chord">A</span><span class="lyr">behind the d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oor</span></span></div></div>
     
     
   </div>

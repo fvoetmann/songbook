@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>So Like Candy – Elvis Costello</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,118 +498,62 @@
     <h1>So Like Candy <span class="artist-inline">– Elvis Costello</span></h1>
     <div class="meta">Toneart: Bm</div>
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-[break]</pre>
-<pre class="block line-group"><span class="chord">E7sus4</span>                       <span class="chord">Am</span>   
- Here lies the powder and perfume</pre>
-<pre class="block line-group"><span class="chord">Am/G</span>                               <span class="chord">B7</span>    <span class="chord">F7</span>  <span class="chord">E7</span>
- The pretty clothes are scattered &#x27;round the room</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Dm7</span>
-And it&#x27;s so like Candy</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-[break]</pre>
-<pre class="block line-group"><span class="chord">E7sus4</span>                          <span class="chord">Am</span>   
- Here lies the lipstick and the face</pre>
-<pre class="block line-group"><span class="chord">Am/G</span>                          <span class="chord">B7</span>  <span class="chord">F7</span> <span class="chord">E7</span>
- The coloured tablets keep it all in place</pre>
-<pre class="block line-group">         <span class="chord">Dm7</span>
-And it&#x27;s so like Candy</pre>
-<pre class="block line-group line-group-last">        <span class="chord">Gsus4</span> <span class="chord">G</span>
-So like Candy</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>             <span class="chord">E7</span>
-What did I do to make her go</pre>
-<pre class="block line-group"><span class="chord">Am</span>           <span class="chord">Am/G</span>
-Why must she be the one</pre>
-<pre class="block line-group"><span class="chord">F</span>
-That I have to love</pre>
-<pre class="block line-group line-group-last"><span class="chord">Fm</span>        <span class="chord">C</span>
- [break]  
-So ... like Candy</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-[break]</pre>
-<pre class="block line-group"><span class="chord">E7sus4</span>                    <span class="chord">Am</span>   
- Here lies a picture of a girl</pre>
-<pre class="block line-group"><span class="chord">Am/G</span>                            <span class="chord">B7</span> <span class="chord">F7</span> <span class="chord">E7</span>
- Her arms are tight around that lucky guy</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Dm7</span>
-And it&#x27;s so like Candy</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-[break]</pre>
-<pre class="block line-group"><span class="chord">E7sus4</span>                     <span class="chord">Am</span>   
- And in her eyes a certain look</pre>
-<pre class="block line-group"><span class="chord">Am/G</span>                            <span class="chord">B7</span>   <span class="chord">F7</span>  <span class="chord">E7</span>
- I thought I&#x27;d seen the last of long a - go</pre>
-<pre class="block line-group">         <span class="chord">Dm7</span>
-And it&#x27;s so like Candy</pre>
-<pre class="block line-group line-group-last">        <span class="chord">Gsus4</span> <span class="chord">G</span>
-So like Candy</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>             <span class="chord">E7</span>
-What did I do to make her go</pre>
-<pre class="block line-group"><span class="chord">Am</span>           <span class="chord">Am/G</span>
-Why must she be the one</pre>
-<pre class="block line-group"><span class="chord">F</span>
-That I have to love</pre>
-<pre class="block line-group line-group-last"><span class="chord">Fm</span>
-So ... 
-[break]</pre>
-<pre class="block line-group"><span class="section">[Middle 8]</span>
-    <span class="chord">Fm</span>                  <span class="chord">G#</span>
-I remember the day that picture was taken</pre>
-<pre class="block line-group"><span class="chord">G#</span>         <span class="chord">C</span>
-We were so happy then</pre>
-<pre class="block line-group"><span class="chord">G</span>                  <span class="chord">C</span>
-But that&#x27;s so like Candy</pre>
-<pre class="block line-group"><span class="chord">Fm</span>                         <span class="chord">G#</span>
-She seemed so sweet to me, I was mistaken</pre>
-<pre class="block line-group"><span class="chord">G#</span>        <span class="chord">C</span>
-Oh no not that again</pre>
-<pre class="block line-group"><span class="chord">G</span>                  <span class="chord">C</span> 
-But that&#x27;s so like Candy
-             [break]</pre>
-<pre class="block line-group">               <span class="chord">G</span>    <span class="chord">C</span>   <span class="chord">C</span>
-She just can&#x27;t face the day</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>                      <span class="chord">Am</span>
-                     [  ]
-So she turns and melts away</pre>
-<pre class="block line-group line-group-last"><span class="section">[Interlude]</span>
-  <span class="chord">Am</span> <span class="chord">Am/G</span> <span class="chord">B7/F#</span> <span class="chord">F7</span>
-|  |  |   |</pre>
-<pre class="block line-group"><span class="section">[Verse 5]</span>
-[break]</pre>
-<pre class="block line-group"><span class="chord">E7sus4</span>                         <span class="chord">Am</span>   
- Here lie the records that she scratched</pre>
-<pre class="block line-group"><span class="chord">Am/G</span>                        <span class="chord">B7</span>   <span class="chord">F7</span> <span class="chord">E7</span>
- And on the sleeve I find a note attached</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Dm7</span>
-And it&#x27;s so like Candy</pre>
-<pre class="block line-group"><span class="section">[Verse 6]</span>
-[break]</pre>
-<pre class="block line-group"><span class="chord">E7sus4</span>                        <span class="chord">Am</span>   
- &quot;My Darling Dear it&#x27;s such a waste&quot;</pre>
-<pre class="block line-group"><span class="chord">F/A</span>                              <span class="chord">Am6</span>           <span class="chord">Am7</span>
- She couldn&#x27;t say &quot;Goodye&quot;, but &quot;I admire your taste&quot;</pre>
-<pre class="block line-group">         <span class="chord">Dm7</span>
-And it&#x27;s so like Candy</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dm7</span>
-So like Candy</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-<span class="chord">Am</span>      <span class="chord">Dm7</span>
-So like Candy</pre>
-<pre class="block line-group"><span class="chord">Am</span>      <span class="chord">Dm7</span>
-So like Candy</pre>
-<pre class="block line-group"><span class="chord">Am</span>      <span class="chord">Dm7</span>
-So like Candy</pre>
-<pre class="block line-group">         <span class="chord">Am</span>
-Oh oh oh oh oh oh</pre>
-<pre class="block line-group">         <span class="chord">Dm7/A</span>
-Oh oh oh oh oh oh</pre>
-<pre class="block line-group">  <span class="chord">Am</span> <span class="chord">F/A</span> <span class="chord">Am6</span><span class="chord">Am7</span>
-|  |   |  |  |</pre>
-<pre class="block line-group line-group-last">  <span class="chord">Am</span> <span class="chord">F/A</span> <span class="chord">Am6</span><span class="chord">Am7</span>
-|  |   |  |  | 
-(repeat and fade)</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">[break]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E7sus4</span><span class="lyr"> Here lies the powder and per</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">fume</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am/G</span><span class="lyr"> The pretty clothes are scattered &#x27;</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">round </span></span><span class="seg"><span class="chord">F7</span><span class="lyr">the </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">room</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And it&#x27;s </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">so like Candy</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">[break]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E7sus4</span><span class="lyr"> Here lies the lipstick and the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">face</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am/G</span><span class="lyr"> The coloured tablets keep it </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">all </span></span><span class="seg"><span class="chord">F7</span><span class="lyr">in </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">place</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And it&#x27;s </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">so like Candy</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">So like </span></span><span class="seg"><span class="chord">Gsus4</span><span class="lyr">Candy</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">What did I do </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">to make her go</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Why must she </span></span><span class="seg"><span class="chord">Am/G</span><span class="lyr">be the one</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">That I have to love</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Fm</span><span class="lyr"> [break]  </span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">So ... like Candy</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">[break]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E7sus4</span><span class="lyr"> Here lies a picture of a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">girl</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am/G</span><span class="lyr"> Her arms are tight around that </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">luc</span></span><span class="seg"><span class="chord">F7</span><span class="lyr">ky </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">guy</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And it&#x27;s </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">so like Candy</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">[break]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E7sus4</span><span class="lyr"> And in her eyes a certain </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">look</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am/G</span><span class="lyr"> I thought I&#x27;d seen the last of </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">long </span></span><span class="seg"><span class="chord">F7</span><span class="lyr">a - </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">go</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And it&#x27;s </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">so like Candy</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">So like </span></span><span class="seg"><span class="chord">Gsus4</span><span class="lyr">Candy</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">What did I do </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">to make her go</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Why must she </span></span><span class="seg"><span class="chord">Am/G</span><span class="lyr">be the one</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">That I have to love</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Fm</span><span class="lyr">So ... </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">[break]</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Middle 8]</span></div><div class="line"><span class="seg"><span class="lyr">I re</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">member the day that </span></span><span class="seg"><span class="chord">G#</span><span class="lyr">picture was taken</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#</span><span class="lyr">We were so </span></span><span class="seg"><span class="chord">C</span><span class="lyr">happy then</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">But that&#x27;s so like </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Candy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Fm</span><span class="lyr">She seemed so sweet to me, </span></span><span class="seg"><span class="chord">G#</span><span class="lyr">I was mistaken</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#</span><span class="lyr">Oh no not </span></span><span class="seg"><span class="chord">C</span><span class="lyr">that again</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">But that&#x27;s so like </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Candy</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">             [break]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">She just can&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">face </span></span><span class="seg"><span class="chord">C</span><span class="lyr">the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">day</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">                     [ </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> ]</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">So she turns and melts away</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Interlude]</span></div><div class="line"><span class="seg"><span class="lyr">| </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> | </span></span><span class="seg"><span class="chord">Am/G</span><span class="lyr"> |   </span></span><span class="seg"><span class="chord">B7/F#</span><span class="lyr">|</span></span><span class="seg"><span class="chord">F7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="lyr">[break]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E7sus4</span><span class="lyr"> Here lie the records that she </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">scratched</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am/G</span><span class="lyr"> And on the sleeve I find a </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">note </span></span><span class="seg"><span class="chord">F7</span><span class="lyr">att</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">ached</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And it&#x27;s </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">so like Candy</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="lyr">[break]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E7sus4</span><span class="lyr"> &quot;My Darling Dear it&#x27;s such a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">waste&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F/A</span><span class="lyr"> She couldn&#x27;t say &quot;Goodye&quot;, but &quot;</span></span><span class="seg"><span class="chord">Am6</span><span class="lyr">I admire your </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">taste&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And it&#x27;s </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">so like Candy</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm7</span><span class="lyr">So like Candy</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">So like </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">Candy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">So like </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">Candy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">So like </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">Candy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh oh oh </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">oh oh oh</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh oh oh </span></span><span class="seg"><span class="chord">Dm7/A</span><span class="lyr">oh oh oh</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">| </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> | </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">  | </span></span><span class="seg"><span class="chord">Am6</span><span class="lyr"> | </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr"> |</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">| </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> | </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">  | </span></span><span class="seg"><span class="chord">Am6</span><span class="lyr"> | </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr"> | </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(repeat and fade)</span></span></div></div>
     </div>
     
   </div>

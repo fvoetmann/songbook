@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Crown Of Creation – Jefferson Airplane</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,53 +496,30 @@
     <h1>Crown Of Creation <span class="artist-inline">– Jefferson Airplane</span></h1>
     <div class="meta">Toneart: Em</div>
     
-    <pre class="block line-group line-group-last">CROWN OF CREATION
-As recorded by Jefferson Airplane
-(From the 1968 Album CROWN OF CREATION)</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">Em</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">Em</span>  <span class="chord">Bm</span>      <span class="chord">F</span>           <span class="chord">Em</span>
-You are the crown of creation.</pre>
-<pre class="block line-group">    <span class="chord">Bm</span>      <span class="chord">F</span>           <span class="chord">Em</span>
-You are the crown of creation,</pre>
-<pre class="block line-group line-group-last">           <span class="chord">Bm</span>     <span class="chord">D</span>        <span class="chord">Em</span>
-And you&#x27;ve got no place to go.</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">Em</span>            <span class="chord">Bm</span>          <span class="chord">F</span>          <span class="chord">Em</span>
-Soon you&#x27;ll attain the stability you strive for,</pre>
-<pre class="block line-group">       <span class="chord">Bm</span>   <span class="chord">F</span>             <span class="chord">Em</span>
-In the only way that it&#x27;s granted:</pre>
-<pre class="block line-group line-group-last">     <span class="chord">Bm</span>              <span class="chord">D</span>              <span class="chord">Em</span>
-In a place among the fossils of our time.</pre>
-<pre class="block line-group line-group-last"><span class="section">[Guitar Solo]</span>
-<span class="chord">Em</span></pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Em</span>
-In loyalty to their kind</pre>
-<pre class="block line-group">     <span class="chord">C</span>                    <span class="chord">Em</span>
-They can not tolerate our minds.</pre>
-<pre class="block line-group"><span class="chord">Em</span>
-In loyalty to our kind</pre>
-<pre class="block line-group line-group-last">   <span class="chord">C</span>                        <span class="chord">Bm</span>
-We can not tolerate their obstruction!</pre>
-<pre class="block line-group"><span class="section">[Guitar Solo]</span>
-<span class="chord">Em</span>  <span class="chord">Am</span> <span class="chord">Bm</span> <span class="chord">D</span> <span class="chord">A</span> <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="chord">Em</span>  <span class="chord">Am</span> <span class="chord">Em</span>  <span class="chord">Em</span> <span class="chord">Am</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">Em</span></pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Em</span>      <span class="chord">G</span>
-Life is change.</pre>
-<pre class="block line-group"><span class="chord">Bb</span>      <span class="chord">C</span>                <span class="chord">Bb</span>    <span class="chord">C</span>
- How it differs from the rocks.</pre>
-<pre class="block line-group"><span class="chord">Bb</span>         <span class="chord">G</span>              <span class="chord">Bb</span>           <span class="chord">G</span>
- I&#x27;ve seen their ways too often for my liking.</pre>
-<pre class="block line-group"><span class="chord">Bb</span>             <span class="chord">C</span>
- New worlds to gain.</pre>
-<pre class="block line-group"><span class="chord">Bb</span>          <span class="chord">C</span>         <span class="chord">Bb</span>       <span class="chord">G</span>
- My life is to survive and be alive</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb</span>      <span class="chord">C</span> <span class="chord">Bb</span> <span class="chord">C</span>
-for you.</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">CROWN OF CREATION</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">As recorded by Jefferson Airplane</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(From the 1968 Album CROWN OF CREATION)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Em</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">You </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">are the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">crown of cre</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ation.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">are the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">crown of cre</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ation,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And you&#x27;ve </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">got no </span></span><span class="seg"><span class="chord">D</span><span class="lyr">place to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">go.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Soon you&#x27;ll at</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">tain the sta</span></span><span class="seg"><span class="chord">F</span><span class="lyr">bility you </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">strive for,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">In the </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">only </span></span><span class="seg"><span class="chord">F</span><span class="lyr">way that it&#x27;s </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">granted:</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">In a </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">place among the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fossils of our </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">time.</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Guitar Solo]</span></div><div class="line chords-only"><span class="chord">Em</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">In loyalty to their kind</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They </span></span><span class="seg"><span class="chord">C</span><span class="lyr">can not tolerate our </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">minds.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">In loyalty to our kind</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">We </span></span><span class="seg"><span class="chord">C</span><span class="lyr">can not tolerate their ob</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">struction!</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Guitar Solo]</span></div><div class="line chords-only"><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Bm</span><span class="chord">D</span><span class="chord">A</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">Em</span><span class="chord">Am</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Em</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Life is </span></span><span class="seg"><span class="chord">G</span><span class="lyr">change.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> How it </span></span><span class="seg"><span class="chord">C</span><span class="lyr">differs from the </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">rocks.</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> I&#x27;ve seen </span></span><span class="seg"><span class="chord">G</span><span class="lyr">their ways too </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">often for my </span></span><span class="seg"><span class="chord">G</span><span class="lyr">liking.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> New worlds to </span></span><span class="seg"><span class="chord">C</span><span class="lyr">gain.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> My life is </span></span><span class="seg"><span class="chord">C</span><span class="lyr">to survive</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"> and be a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">live</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">for you.</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
     
     
   </div>

@@ -406,18 +406,8 @@ CHORD_DIAGRAM_JS = """  <script>
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -503,7 +493,7 @@ CHORD_DIAGRAM_JS = """  <script>
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -648,7 +638,6 @@ CHORD_DIAGRAM_JS = """  <script>
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -871,18 +860,93 @@ def group_lines(lines: list) -> list:
     return groups or [[]]
 
 
-def render_section(header: str, body: str, remove_blank_lines: bool = False) -> str:
+def parse_chord_positions(chord_line: str) -> list:
+    """Extract (column, chord_name) pairs from a chord-only line, where
+    column is the character position with [ch]/[/ch] tags stripped out."""
+    chords = []
+    col, i = 0, 0
+    while i < len(chord_line):
+        if chord_line[i:i + 4] == "[ch]":
+            end = chord_line.find("[/ch]", i)
+            if end != -1:
+                name = chord_line[i + 4:end]
+                chords.append((col, name))
+                col += len(name)
+                i = end + 5
+                continue
+        col += 1
+        i += 1
+    return chords
+
+
+def render_chord_lyric_line(chord_line: str, lyric_line: str) -> str:
+    """Render a chord-only line paired with the lyric line it aligns to as
+    a sequence of <span class="seg"> stacks (chord above the exact lyric
+    slice it precedes), so alignment works under a proportional font."""
+    chords = parse_chord_positions(chord_line)
+    parts = []
+    if chords[0][0] > 0:
+        parts.append((None, lyric_line[:chords[0][0]]))
+    for idx, (pos, name) in enumerate(chords):
+        end = chords[idx + 1][0] if idx + 1 < len(chords) else len(lyric_line)
+        end = max(end, pos)
+        text = lyric_line[pos:end] if pos < len(lyric_line) else ""
+        parts.append((name, text))
+
+    segs = []
+    for name, text in parts:
+        chord_html = f'<span class="chord">{html.escape(name)}</span>' if name else ""
+        lyr_html = f'<span class="lyr">{html.escape(text)}</span>' if (text or name) else ""
+        segs.append(f'<span class="seg">{chord_html}{lyr_html}</span>')
+    return f'<div class="line">{"".join(segs)}</div>'
+
+
+def render_chord_lines(lines: list) -> str:
+    """Render a group's lines: pair each chord-only line with the plain
+    lyric line directly below it (position-anchored), render standalone
+    chord-only lines (no lyric to align to) as a simple chord row, and
+    plain lines as-is."""
+    out = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        if is_chord_only_line(line) and nxt.strip() and not is_chord_only_line(nxt) and "[ch]" not in nxt:
+            out.append(render_chord_lyric_line(line, nxt))
+            i += 2
+            continue
+        if is_chord_only_line(line):
+            chord_spans = "".join(
+                f'<span class="chord">{html.escape(name)}</span>'
+                for _, name in parse_chord_positions(line)
+            )
+            out.append(f'<div class="line chords-only">{chord_spans}</div>')
+        else:
+            styled = re.sub(r"\[ch\](.*?)\[/ch\]", r'<span class="chord">\1</span>', html.escape(line))
+            out.append(f'<div class="line"><span class="seg"><span class="lyr">{styled}</span></span></div>')
+        i += 1
+    return "\n".join(out)
+
+
+def render_section(header: str, body: str, remove_blank_lines: bool = False, is_tab: bool = False) -> str:
     if remove_blank_lines:
         body = re.sub(r"\n[ \t]*\n", "\n", body)
     groups = group_lines(body.lstrip("\n").split("\n"))
 
     blocks = []
     for i, group in enumerate(groups):
-        escaped = html.escape("\n".join(group))
-        styled = re.sub(r"\[ch\](.*?)\[/ch\]", r'<span class="chord">\1</span>', escaped)
-        header_html = f'<span class="section">{html.escape(header)}</span>\n' if i == 0 and header else ""
         cls = "block line-group" + (" line-group-last" if i == len(groups) - 1 else "")
-        blocks.append(f'<pre class="{cls}">{header_html}{styled}</pre>')
+        if is_tab:
+            escaped = html.escape("\n".join(group))
+            styled = re.sub(r"\[ch\](.*?)\[/ch\]", r'<span class="chord">\1</span>', escaped)
+            header_html = f'<span class="section">{html.escape(header)}</span>\n' if i == 0 and header else ""
+            blocks.append(f'<pre class="{cls}">{header_html}{styled}</pre>')
+        else:
+            header_div = (
+                f'<div class="line section-line"><span class="section">{html.escape(header)}</span></div>'
+                if i == 0 and header else ""
+            )
+            blocks.append(f'<div class="{cls}">{header_div}{render_chord_lines(group)}</div>')
     return "\n".join(blocks)
 
 
@@ -901,7 +965,7 @@ def content_to_html(content: str) -> tuple:
     auto_small_font = layout == "double" and max_text_width > 60
 
     chord_blocks = "\n".join(render_section(h, b, remove_blank_lines=True) for h, b in chord_sections)
-    tab_blocks = "\n".join(render_section(h, b, remove_blank_lines=False) for h, b in tab_sections)
+    tab_blocks = "\n".join(render_section(h, b, remove_blank_lines=False, is_tab=True) for h, b in tab_sections)
 
     return chord_blocks, tab_blocks, layout, auto_small_font
 
@@ -945,11 +1009,11 @@ def make_song_html(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>{html.escape(title)} – {html.escape(artist)}</title>
   <style>
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ font-family: monospace; background: #ddd; padding: 24px; }}
+    body {{ font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }}
     .page {{
       background: white;
       width: 210mm;
@@ -964,15 +1028,24 @@ def make_song_html(
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }}
     .meta a {{ color: #999; }}
-    pre.block {{
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {{
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }}
-    pre.block.line-group {{ break-inside: avoid; margin-bottom: 0; }}
-    pre.block.line-group-last {{ margin-bottom: 6px; }}
-    body.font-small pre.block {{ font-size: 8pt; }}{double_css}
+    .block.line-group {{ break-inside: avoid; margin-bottom: 0; }}
+    .block.line-group-last {{ margin-bottom: 6px; }}
+    body.font-small .block {{ font-size: 8pt; }}{double_css}
+    pre.block {{
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }}
+    div.block {{ font-family: 'Source Sans 3', sans-serif; }}
+    .line {{ display: flex; flex-wrap: wrap; align-items: flex-end; }}
+    .line.chords-only .chord {{ margin-right: 1.4em; }}
+    .seg {{ display: inline-flex; flex-direction: column; align-items: flex-start; }}
+    .seg .lyr {{ white-space: pre; }}
+    .seg .lyr:empty::before {{ content: "\\00a0"; }}
+    .seg .chord {{ font-size: 0.85em; line-height: 1.3; }}
     .tab-section {{ margin-top: 8mm; }}
     .chord {{ color: #b00020; font-weight: bold; cursor: help; }}
     .section {{ color: #777; font-style: italic; font-weight: bold; }}
@@ -984,7 +1057,7 @@ def make_song_html(
       body {{ background: white; padding: 0; }}
       .page {{ width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }}
       @page {{ size: A4; margin: 12mm 14mm; }}
-      pre.block {{ break-inside: avoid; }}
+      .block {{ break-inside: avoid; }}
       .tab-section {{ break-before: page; }}
     }}
   </style>

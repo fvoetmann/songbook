@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Poor Edward – Tom Waits</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -76,7 +85,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"B7":[[-1,2,1,2,0,2],[-1,2,4,2,4,2],[-1,2,4,2,4,-1],[7,6,7,8,7,7],[7,6,7,8,7,-1],[7,9,7,8,0,7]],"E7":[[0,2,0,1,0,0],[0,2,0,1,3,0],[0,2,2,1,3,0],[0,2,0,1,0,-1],[0,2,0,1,3,-1],[0,2,2,1,3,-1]],"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]]},"ukulele":{"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"B7":[[2,3,2,2],[4,3,2,0],[4,6,5,6],[4,3,2,2],[2,3,5,2],[4,3,5,2]],"E7":[[1,2,0,2],[4,4,4,5],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]]},"mandolin":{"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"B7":[[4,1,0,2],[4,4,6,5],[2,1,2,2],[4,1,2,2],[4,1,0,-1],[4,4,6,7]],"E7":[[1,0,2,0],[4,2,5,4],[4,0,7,4],[4,6,5,0],[7,6,7,7],[-1,2,2,4]],"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]]},"banjo":{"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"B7":[[1,2,0,4,0],[4,2,0,1,0],[4,4,4,7,0],[7,4,4,4,0],[1,2,0,1,0],[1,4,0,4,0]],"E7":[[0,1,0,2,0],[2,1,0,0,0],[0,4,5,6,0],[6,4,5,0,0],[2,1,0,2,0],[0,1,3,2,0]],"Dm":[[0,2,3,3,0],[3,2,3,0,0],[3,2,3,3,0],[-1,2,3,3,0],[0,7,6,7,0],[7,7,6,0,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]]}};
+    var DBS = {"guitar":{"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"B7":[[-1,2,1,2,0,2],[-1,2,4,2,4,2],[-1,2,4,2,4,-1],[7,6,7,8,7,7],[7,6,7,8,7,-1],[7,9,7,8,0,7]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]]},"ukulele":{"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"B7":[[2,3,2,2],[4,3,2,0],[4,6,5,6],[4,3,2,2],[2,3,5,2],[4,3,5,2]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"B7":[[4,1,0,2],[4,4,6,5],[2,1,2,2],[4,1,2,2],[4,1,0,-1],[4,4,6,7]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]]},"banjo":{"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"B7":[[1,2,0,4,0],[4,2,0,1,0],[4,4,4,7,0],[7,4,4,4,0],[1,2,0,1,0],[1,4,0,4,0]],"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,58 +496,37 @@
     <h1>Poor Edward <span class="artist-inline">– Tom Waits</span></h1>
     
     
-    <pre class="block line-group">Poor Edward by Tom Waits
-Transcribed by Johan Jeppsson
-Standard tuning
-Capo on 1st fret
-Tom sings this ridicously low. If you want to transpose it, you could use this table:
-<span class="chord">Em</span> -&gt; <span class="chord">Am</span>
-<span class="chord">B7</span> -&gt; <span class="chord">E7</span>
-<span class="chord">Am</span> -&gt; <span class="chord">Dm</span>
-<span class="chord">E</span>  -&gt; <span class="chord">A</span></pre>
-<pre class="block line-group">        <span class="chord">Em</span>                  <span class="chord">B7</span>
-Did you hear the news about Edward?</pre>
-<pre class="block line-group">       <span class="chord">Em</span>          <span class="chord">Am</span>   
-On the back of his head </pre>
-<pre class="block line-group"><span class="chord">B7</span>     <span class="chord">Em</span>
-he had another face</pre>
-<pre class="block line-group"><span class="chord">E</span>        <span class="chord">Am</span>
-Was it a woman&#x27;s face </pre>
-<pre class="block line-group">           <span class="chord">B7</span>
-or a young girl?</pre>
-<pre class="block line-group">             <span class="chord">Em</span>              <span class="chord">Am</span>
-They said to remove it would kill him</pre>
-<pre class="block line-group">                   <span class="chord">B7</span>
-So poor Edward was doomed</pre>
-<pre class="block line-group">                <span class="chord">Em</span>       <span class="chord">Am</span>
-That face could laugh and cry</pre>
-<pre class="block line-group"><span class="chord">B7</span>         <span class="chord">Em</span>
-It was his devil twin</pre>
-<pre class="block line-group"><span class="chord">E</span>            <span class="chord">Am</span>
-At night she spoke to him</pre>
-<pre class="block line-group">                     <span class="chord">B7</span>
-Things heard only in hell</pre>
-<pre class="block line-group">          <span class="chord">Em</span>            <span class="chord">Am</span>
-They were impossible to separate</pre>
-<pre class="block line-group">                     <span class="chord">B7</span>
-Chained together for life</pre>
-<pre class="block line-group">            <span class="chord">Em</span>              <span class="chord">Am</span>   
-Finally the bell tolled his doom</pre>
-<pre class="block line-group"><span class="chord">B7</span>        <span class="chord">Em</span>
-He took a suite of rooms</pre>
-<pre class="block line-group"><span class="chord">E</span>        <span class="chord">Am</span>
-And hung himself and her </pre>
-<pre class="block line-group">                 <span class="chord">B7</span>
-from the balcony irons</pre>
-<pre class="block line-group">           <span class="chord">Em</span>             <span class="chord">Am</span>
-Some still believe he was freed from her</pre>
-<pre class="block line-group">                   <span class="chord">B7</span>
-But I knew her too well</pre>
-<pre class="block line-group">          <span class="chord">Em</span>           <span class="chord">Am</span>
-I say she drove him to suicide</pre>
-<pre class="block line-group line-group-last">                        <span class="chord">B7</span>
-And took poor Edward to hell 
-(It&#x27;s nice to disolve the dominant (<span class="chord">B7</span>) with the tonic (<span class="chord">Em</span>) here at the end)</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Poor Edward by Tom Waits</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Transcribed by Johan Jeppsson</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Standard tuning</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Capo on 1st fret</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Tom sings this ridicously low. If you want to transpose it, you could use this table:</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Em -&gt; Am</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">B7 -&gt; E7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am -&gt; Dm</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E  -&gt; A</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Did you </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hear the news about </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">Edward?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">On the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">back of his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">head </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">B7</span><span class="lyr">he had </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">another face</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Was it a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">woman&#x27;s face </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">or a young </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">girl?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They said to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">remove it would </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">kill him</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So poor Edward was </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">doomed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">That face could </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">laugh and</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> cry</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">B7</span><span class="lyr">It was his </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">devil twin</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">At night she </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">spoke to him</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Things heard only in </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">hell</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They were </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">impossible to </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">separate</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Chained together for </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">life</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Finally the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">bell tolled his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">doom</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">B7</span><span class="lyr">He took a </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">suite of rooms</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And hung </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">himself and her </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">from the balcony </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">irons</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Some still </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">believe he was </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">freed from her</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But I knew her too </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">well</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I say she </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">drove him to </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">suicide</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And took poor Edward to </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">hell </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(It&#x27;s nice to disolve the dominant (B7) with the tonic (Em) here at the end)</span></span></div></div>
     
     
   </div>

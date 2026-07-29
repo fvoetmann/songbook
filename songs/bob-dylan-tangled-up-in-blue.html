@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Tangled Up In Blue – Bob Dylan</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -76,7 +85,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"G6":[[3,2,0,0,0,0],[3,2,0,0,3,0],[3,2,0,4,0,0],[3,2,2,0,3,0],[3,2,0,4,3,0],[3,2,2,0,3,3]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Asus4":[[-1,0,0,2,3,0],[-1,0,2,2,3,0],[-1,0,2,2,3,-1],[5,0,0,7,5,0],[5,0,0,7,5,5],[5,5,0,7,5,0]]},"ukulele":{"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"G6":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Asus4":[[2,2,0,0],[2,2,0,5],[2,4,0,5],[2,4,5,5],[7,4,0,0],[7,4,5,0]]},"mandolin":{"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"G6":[[0,0,2,0],[0,0,7,7],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,2,2,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Asus4":[[2,0,0,0],[2,0,5,0],[2,2,5,0],[2,2,5,5],[2,2,5,-1],[-1,7,5,0]]},"banjo":{"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"G6":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"F#m":[[4,2,2,4,0],[-1,2,2,4,0],[4,6,7,7,0],[7,6,7,4,0],[7,6,7,7,0],[-1,6,7,7,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Asus4":[[0,2,3,2,0],[0,2,5,0,0],[2,2,3,0,0],[0,2,5,2,0],[2,2,3,2,0],[2,2,5,0,0]]}};
+    var DBS = {"guitar":{"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Asus4":[[-1,0,0,2,3,0],[-1,0,2,2,3,0],[-1,0,2,2,3,-1],[5,0,0,7,5,0],[5,0,0,7,5,5],[5,5,0,7,5,0]],"G6":[[3,2,0,0,0,0],[3,2,0,0,3,0],[3,2,0,4,0,0],[3,2,2,0,3,0],[3,2,0,4,3,0],[3,2,2,0,3,3]]},"ukulele":{"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Asus4":[[2,2,0,0],[2,2,0,5],[2,4,0,5],[2,4,5,5],[7,4,0,0],[7,4,5,0]],"G6":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]]},"mandolin":{"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Asus4":[[2,0,0,0],[2,0,5,0],[2,2,5,0],[2,2,5,5],[2,2,5,-1],[-1,7,5,0]],"G6":[[0,0,2,0],[0,0,7,7],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,2,2,0]]},"banjo":{"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"F#m":[[4,2,2,4,0],[-1,2,2,4,0],[4,6,7,7,0],[7,6,7,4,0],[7,6,7,7,0],[-1,6,7,7,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Asus4":[[0,2,3,2,0],[0,2,5,0,0],[2,2,3,0,0],[0,2,5,2,0],[2,2,3,2,0],[2,2,5,0,0]],"G6":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,200 +496,100 @@
     <h1>Tangled Up In Blue <span class="artist-inline">– Bob Dylan</span></h1>
     <div class="meta">Toneart: A</div>
     
-    <pre class="block line-group"><span class="section">[Chords]</span>
-<span class="chord">A</span> <span class="chord">G6</span> <span class="chord">A</span> <span class="chord">G6</span> <span class="chord">A</span> <span class="chord">G6</span> <span class="chord">D</span>  x2 </pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span> <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span> <span class="chord">E</span> <span class="chord">F#m</span> <span class="chord">A</span> <span class="chord">D</span> <span class="chord">E</span> <span class="chord">G</span> <span class="chord">D</span> <span class="chord">A</span> <span class="chord">Asus</span></pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">A</span> <span class="chord">Asus4</span> <span class="chord">A</span> <span class="chord">Asus4</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">A</span>                     <span class="chord">G6</span> 
-Early one mornin&#x27; the sun was shinin&#x27;,</pre>
-<pre class="block line-group"><span class="chord">A</span>               <span class="chord">G6</span> 
-I was layin&#x27; in bed</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">G6</span> 
-Wond&#x27;rin&#x27; if she&#x27;d changed at all</pre>
-<pre class="block line-group">       <span class="chord">D</span>               
-If her hair was still red.</pre>
-<pre class="block line-group"><span class="chord">A</span>                       <span class="chord">G6</span> 
-Her folks they said our lives together</pre>
-<pre class="block line-group"><span class="chord">A</span>                 <span class="chord">G6</span> 
-Sure was gonna be rough</pre>
-<pre class="block line-group"><span class="chord">A</span>                          <span class="chord">G6</span> 
-They never did like Mama&#x27;s homemade dress</pre>
-<pre class="block line-group">       <span class="chord">D</span> 
-Papa&#x27;s bankbook wasn&#x27;t big enough.</pre>
-<pre class="block line-group"><span class="chord">E</span>                         <span class="chord">F#m</span> 
-And I was standin&#x27; on the side of the road</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span> 
-Rain fallin&#x27; on my shoes</pre>
-<pre class="block line-group"><span class="chord">E</span>                   <span class="chord">F#m</span> 
-Heading out for the East Coast</pre>
-<pre class="block line-group">     <span class="chord">A</span>                    <span class="chord">D</span>            <span class="chord">E</span> 
-Lord knows I&#x27;ve paid some dues gettin&#x27; through,</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>       <span class="chord">D</span>     <span class="chord">A</span>    <span class="chord">Asus</span>  <span class="chord">A</span>  <span class="chord">Asus</span>
-Tangled up in blue.</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">A</span>                     <span class="chord">G6</span> 
-She was married when we first met</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Soon to be divorced</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-I helped her out of a jam, I guess,</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-But I used a little too much force.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-We drove that car as far as we could</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Abandoned it out West</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Split up on a dark sad night</pre>
-<pre class="block line-group">        <span class="chord">D</span>
-Both agreeing it was best.</pre>
-<pre class="block line-group"><span class="chord">E</span>                    <span class="chord">F#m</span> 
-She turned around to look at me</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span> 
-As I was walkin&#x27; away</pre>
-<pre class="block line-group"><span class="chord">E</span>               <span class="chord">F#m</span> 
-I heard her say over my shoulder,</pre>
-<pre class="block line-group">     <span class="chord">A</span>                    <span class="chord">D</span>            <span class="chord">E</span> 
-&quot;We&#x27;ll meet again someday on the avenue,&quot;</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>       <span class="chord">D</span>     <span class="chord">A</span>    <span class="chord">Asus</span>  <span class="chord">A</span>  <span class="chord">Asus</span>
-Tangled up in blue.</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">A</span>                     <span class="chord">G6</span> 
-I had a job in the great north woods</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Working as a cook for a spell</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-But I never did like it all that much</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-And one day the ax just fell.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-So I drifted down to New Orleans</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Where I happened to be employed</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Workin&#x27; for a while on a fishin&#x27; boat</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-Right outside of Delacroix.</pre>
-<pre class="block line-group"><span class="chord">E</span>                              <span class="chord">F#m</span> 
-But all the while I was alone</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span> 
-The past was close behind,</pre>
-<pre class="block line-group"><span class="chord">E</span>                              <span class="chord">F#m</span> 
-I seen a lot of women</pre>
-<pre class="block line-group">     <span class="chord">A</span>                    <span class="chord">D</span>            <span class="chord">E</span> 
-But she never escaped my mind, and I just grew</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>       <span class="chord">D</span>     <span class="chord">A</span>    <span class="chord">Asus</span>  <span class="chord">A</span>  <span class="chord">Asus</span>
-Tangled up in blue.</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-<span class="chord">A</span>                     <span class="chord">G6</span> 
-She was workin&#x27; in a topless place</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-And I stopped in for a beer,</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-I just kept lookin&#x27; at the side of her face</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-In the spotlight so clear.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-And later on as the crowd thinned out</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-I&#x27;s just about to do the same,</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-She was standing there in back of my chair</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-Said to me, &quot;Don&#x27;t I know your name?&quot;</pre>
-<pre class="block line-group"><span class="chord">E</span>                    <span class="chord">F#m</span> 
-I muttered somethin&#x27; underneath my breath,</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span> 
-She studied the lines on my face.</pre>
-<pre class="block line-group"><span class="chord">E</span>                              <span class="chord">F#m</span> 
-I must admit I felt a little uneasy</pre>
-<pre class="block line-group">     <span class="chord">A</span>                    <span class="chord">D</span>            <span class="chord">E</span> 
-When she bent down to tie the laces of my shoe,</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>       <span class="chord">D</span>     <span class="chord">A</span>    <span class="chord">Asus</span>  <span class="chord">A</span>  <span class="chord">Asus</span>
-Tangled up in blue.</pre>
-<pre class="block line-group"><span class="section">[Verse 5]</span>
-<span class="chord">A</span>                <span class="chord">G6</span>          
-She lit a burner on the stove </pre>
-<pre class="block line-group">     <span class="chord">A</span>            <span class="chord">G6</span>
-and offered me a pipe</pre>
-<pre class="block line-group"><span class="chord">A</span>                      <span class="chord">G6</span>                        
-&quot;I thought you&#x27;d never say hello,&quot; she said</pre>
-<pre class="block line-group">     <span class="chord">D</span>
-&quot;You look like the silent type.&quot;</pre>
-<pre class="block line-group"> <span class="chord">A</span>                       <span class="chord">G6</span> 
-Then she opened up a book of poems</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-And handed it to me</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Written by an Italian poet</pre>
-<pre class="block line-group">     <span class="chord">D</span> 
-From the thirteenth century.       </pre>
-<pre class="block line-group"><span class="chord">E</span>                     <span class="chord">F#m</span> 
-And every one of them words rang true</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span> 
-And glowed like burnin&#x27; coal</pre>
-<pre class="block line-group"><span class="chord">E</span>                              <span class="chord">F#m</span> 
-Pourin&#x27; off of every page</pre>
-<pre class="block line-group">     <span class="chord">A</span>                    <span class="chord">D</span>            <span class="chord">E</span> 
-Like it was written in my soul from me to you,</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>       <span class="chord">D</span>     <span class="chord">A</span>    <span class="chord">Asus</span>  <span class="chord">A</span>  <span class="chord">Asus</span>
-Tangled up in blue.</pre>
-<pre class="block line-group"><span class="section">[Verse 6]</span>
-<span class="chord">A</span>                     <span class="chord">G6</span> 
-I lived with them on Montague Street</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-In a basement down the stairs,</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-There was music in the cafes at night</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-And revolution in the air.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Then he started into dealing with slaves</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-And something inside of him died.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-She had to sell everything she owned</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-And froze up inside.</pre>
-<pre class="block line-group"><span class="chord">E</span>                    <span class="chord">F#m</span> 
-And when finally the bottom fell out</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span> 
-I became withdrawn,</pre>
-<pre class="block line-group"><span class="chord">E</span>                              <span class="chord">F#m</span> 
-The only thing I knew how to do</pre>
-<pre class="block line-group">     <span class="chord">A</span>                    <span class="chord">D</span>            <span class="chord">E</span> 
-Was to keep on keepin&#x27; on like a bird that flew,</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>       <span class="chord">D</span>     <span class="chord">A</span>    <span class="chord">Asus</span>  <span class="chord">A</span>  <span class="chord">Asus</span>
-Tangled up in blue.</pre>
-<pre class="block line-group"><span class="section">[Verse 7]</span>
-<span class="chord">A</span>                     <span class="chord">G6</span> 
-So now I&#x27;m goin&#x27; back again,</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-I got to get to her somehow.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-All the people we used to know</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-They&#x27;re an illusion to me now.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Some are mathematicians</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Some are carpenter&#x27;s wives.</pre>
-<pre class="block line-group"><span class="chord">A</span>                     <span class="chord">G6</span> 
-Don&#x27;t know how it all got started,</pre>
-<pre class="block line-group">      <span class="chord">D</span>
-I don&#x27;t know what they&#x27;re doin&#x27; with their lives.</pre>
-<pre class="block line-group"><span class="chord">E</span>                 <span class="chord">F#m</span> 
-But me, I&#x27;m still on the road</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span> 
-Headin&#x27; for another joint</pre>
-<pre class="block line-group"><span class="chord">E</span>             <span class="chord">F#m</span> 
-We always did feel the same,</pre>
-<pre class="block line-group">     <span class="chord">A</span>                    <span class="chord">D</span>            <span class="chord">E</span> 
-We just saw it from a different point of view,</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>       <span class="chord">D</span>     <span class="chord">A</span>    <span class="chord">Asus</span>  <span class="chord">A</span>  <span class="chord">Asus</span>
-Tangled up in blue.</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Chords]</span></div><div class="line"><span class="seg"><span class="lyr">A G6 A G6 A G6 D  x2 </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">E</span><span class="chord">F#m</span><span class="chord">A</span><span class="chord">D</span><span class="chord">E</span><span class="chord">F#m</span><span class="chord">A</span><span class="chord">D</span><span class="chord">E</span><span class="chord">G</span><span class="chord">D</span><span class="chord">A</span><span class="chord">Asus</span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">Asus4</span><span class="chord">A</span><span class="chord">Asus4</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Early one mornin&#x27; the </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">sun was shinin&#x27;,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I was layin&#x27; in </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">bed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Wond&#x27;rin&#x27; if she&#x27;d </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">changed at all</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">If her </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hair was still red.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Her folks they said our </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">lives together</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Sure was gonna be </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">rough</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">They never did like Mama&#x27;s </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">homemade dress</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Papa&#x27;s </span></span><span class="seg"><span class="chord">D</span><span class="lyr">bankbook wasn&#x27;t big enough.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And I was standin&#x27; on the </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">side of the road</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Rain fallin&#x27; on my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">shoes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Heading out for the </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">East Coast</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Lord </span></span><span class="seg"><span class="chord">A</span><span class="lyr">knows I&#x27;ve paid some </span></span><span class="seg"><span class="chord">D</span><span class="lyr">dues gettin&#x27; </span></span><span class="seg"><span class="chord">E</span><span class="lyr">through,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tangled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">up in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blue.</span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">She was married when w</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">e first met</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Soon to be divorced</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I helped her out of a </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">jam, I guess,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But I </span></span><span class="seg"><span class="chord">D</span><span class="lyr">used a little too much force.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">We drove that car as f</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">ar as we could</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Abandoned it out West</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Split up on a dark sad</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> night</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Both agr</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eeing it was best.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">She turned around to </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">look at me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">As I was walkin&#x27; aw</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ay</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">I heard her say </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">over my shoulder,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;We&#x27;l</span></span><span class="seg"><span class="chord">A</span><span class="lyr">l meet again someday </span></span><span class="seg"><span class="chord">D</span><span class="lyr">on the avenue</span></span><span class="seg"><span class="chord">E</span><span class="lyr">,&quot;</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tangled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">up in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blue.</span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I had a job in the gre</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">at north woods</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Working as a cook for </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">a spell</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">But I never did like i</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">t all that much</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And on</span></span><span class="seg"><span class="chord">D</span><span class="lyr">e day the ax just fell.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">So I drifted down to N</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">ew Orleans</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Where I happened to be</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> employed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Workin&#x27; for a while on</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> a fishin&#x27; boat</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Right </span></span><span class="seg"><span class="chord">D</span><span class="lyr">outside of Delacroix.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">But all the while I was alone</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">The past was close </span></span><span class="seg"><span class="chord">D</span><span class="lyr">behind,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">I seen a lot of women</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But s</span></span><span class="seg"><span class="chord">A</span><span class="lyr">he never escaped my m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ind, and I ju</span></span><span class="seg"><span class="chord">E</span><span class="lyr">st grew</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tangled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">up in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blue.</span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">She was workin&#x27; in a t</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">opless place</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And I stopped in for a</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> beer,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I just kept lookin&#x27; at</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> the side of her face</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">In the</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> spotlight so clear.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And later on as the cr</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">owd thinned out</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I&#x27;s just about to do t</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">he same,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">She was standing there</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> in back of my chair</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Said t</span></span><span class="seg"><span class="chord">D</span><span class="lyr">o me, &quot;Don&#x27;t I know your name?&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">I muttered somethin&#x27; </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">underneath my breath,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">She studied the lin</span></span><span class="seg"><span class="chord">D</span><span class="lyr">es on my face.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">I must admit I felt a little un</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">easy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">When </span></span><span class="seg"><span class="chord">A</span><span class="lyr">she bent down to tie </span></span><span class="seg"><span class="chord">D</span><span class="lyr">the laces of </span></span><span class="seg"><span class="chord">E</span><span class="lyr">my shoe,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tangled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">up in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blue.</span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">She lit a burner </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">on the stove </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and o</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ffered me a p</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">ipe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">&quot;I thought you&#x27;d never </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">say hello,&quot; she said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;You </span></span><span class="seg"><span class="chord">D</span><span class="lyr">look like the silent type.&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">T</span></span><span class="seg"><span class="chord">A</span><span class="lyr">hen she opened up a book</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> of poems</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And handed it to me</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Written by an Italian </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">poet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">From </span></span><span class="seg"><span class="chord">D</span><span class="lyr">the thirteenth century.       </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And every one of them </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">words rang true</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And glowed like bur</span></span><span class="seg"><span class="chord">D</span><span class="lyr">nin&#x27; coal</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Pourin&#x27; off of every page</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Like </span></span><span class="seg"><span class="chord">A</span><span class="lyr">it was written in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">soul from me </span></span><span class="seg"><span class="chord">E</span><span class="lyr">to you,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tangled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">up in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blue.</span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I lived with them on M</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">ontague Street</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">In a basement down the</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> stairs,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">There was music in the</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> cafes at night</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And re</span></span><span class="seg"><span class="chord">D</span><span class="lyr">volution in the air.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Then he started into d</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">ealing with slaves</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And something inside o</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">f him died.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">She had to sell everyt</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">hing she owned</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And fr</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oze up inside.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And when finally the </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">bottom fell out</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I became withdrawn,</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">The only thing I knew how to do</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Was t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">o keep on keepin&#x27; on </span></span><span class="seg"><span class="chord">D</span><span class="lyr">like a bird t</span></span><span class="seg"><span class="chord">E</span><span class="lyr">hat flew,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tangled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">up in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blue.</span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 7]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">So now I&#x27;m goin&#x27; back </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">again,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I got to get to her so</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">mehow.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">All the people we used</span></span><span class="seg"><span class="chord">G6</span><span class="lyr"> to know</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They&#x27;r</span></span><span class="seg"><span class="chord">D</span><span class="lyr">e an illusion to me now.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Some are mathematician</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">s</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Some are carpenter&#x27;s w</span></span><span class="seg"><span class="chord">G6</span><span class="lyr">ives.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Don&#x27;t know how it all </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">got started,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I don&#x27;</span></span><span class="seg"><span class="chord">D</span><span class="lyr">t know what they&#x27;re doin&#x27; with their lives.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">But me, I&#x27;m still </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">on the road</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Headin&#x27; for another</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> joint</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">We always did </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">feel the same,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We ju</span></span><span class="seg"><span class="chord">A</span><span class="lyr">st saw it from a diff</span></span><span class="seg"><span class="chord">D</span><span class="lyr">erent point o</span></span><span class="seg"><span class="chord">E</span><span class="lyr">f view,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tangled </span></span><span class="seg"><span class="chord">D</span><span class="lyr">up in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">blue.</span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus</span><span class="lyr"></span></span></div></div>
     
     
   </div>

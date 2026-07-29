@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Strawberry Fields Forever – The Beatles</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -78,7 +87,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"Emaj7":[[0,2,1,1,0,0],[0,2,1,1,0,-1],[0,2,1,1,-1,-1],[0,2,2,4,4,4],[-1,-1,2,4,4,4],[0,6,6,4,0,0]],"E7":[[0,2,0,1,0,0],[0,2,0,1,3,0],[0,2,2,1,3,0],[0,2,0,1,0,-1],[0,2,0,1,3,-1],[0,2,2,1,3,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Em7":[[0,2,0,0,0,0],[0,2,0,0,0,3],[0,2,0,0,3,0],[0,2,2,0,3,0],[0,2,0,0,3,3],[0,2,0,4,0,3]],"F#7":[[2,1,2,3,2,0],[2,1,2,3,2,2],[2,1,2,3,2,-1],[2,4,2,3,2,0],[2,4,2,3,2,2],[2,4,4,3,2,0]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"Dmaj7":[[-1,-1,0,2,2,2],[-1,5,0,6,7,5],[-1,5,7,6,7,5],[-1,-1,0,6,7,5],[-1,5,7,6,7,-1],[2,0,0,2,2,2]]},"ukulele":{"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Emaj7":[[1,3,0,2],[4,4,4,6],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"E7":[[1,2,0,2],[4,4,4,5],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Em7":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"F#7":[[3,4,2,4],[3,6,0,4],[6,6,6,7],[3,1,2,1],[3,1,2,4],[3,4,2,1]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"Dmaj7":[[2,2,2,4],[7,6,5,4],[6,6,5,5],[2,2,2,0],[2,2,2,5],[7,6,5,0]]},"mandolin":{"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"Emaj7":[[1,1,2,0],[4,6,6,0],[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1]],"E7":[[1,0,2,0],[4,2,5,4],[4,0,7,4],[4,6,5,0],[7,6,7,7],[-1,2,2,4]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Em7":[[0,0,2,0],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,0,7,7],[-1,2,2,3]],"F#7":[[3,2,4,2],[3,4,4,0],[6,4,7,6],[-1,4,1,0],[-1,4,4,6],[-1,4,7,6]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"Dmaj7":[[7,4,4,5],[2,0,4,2],[6,4,5,5],[-1,0,0,2],[-1,0,4,2],[7,4,0,5]]},"banjo":{"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"Emaj7":[[1,1,0,2,0],[2,1,0,1,0],[2,1,0,2,0],[1,1,4,2,0],[2,1,4,1,0],[2,1,4,2,0]],"E7":[[0,1,0,2,0],[2,1,0,0,0],[0,4,5,6,0],[6,4,5,0,0],[2,1,0,2,0],[0,1,3,2,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Em7":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]],"F#7":[[2,3,2,4,0],[4,3,2,2,0],[4,3,2,4,0],[2,3,5,4,0],[4,3,5,2,0],[-1,3,2,4,0]],"F#m":[[4,2,2,4,0],[-1,2,2,4,0],[4,6,7,7,0],[7,6,7,4,0],[7,6,7,7,0],[-1,6,7,7,0]],"Dmaj7":[[0,2,2,4,0],[4,2,2,0,0],[0,6,7,7,0],[7,6,7,0,0],[0,2,3,4,0],[4,2,3,0,0]]}};
+    var DBS = {"guitar":{"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Em7":[[0,2,0,0,0,0],[0,2,0,0,0,3],[0,2,0,0,3,0],[0,2,2,0,3,0],[0,2,0,0,3,3],[0,2,0,4,0,3]],"F#7":[[2,1,2,3,2,0],[2,1,2,3,2,2],[2,1,2,3,2,-1],[2,4,2,3,2,0],[2,4,2,3,2,2],[2,4,4,3,2,0]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"Dmaj7":[[-1,-1,0,2,2,2],[-1,5,0,6,7,5],[-1,5,7,6,7,5],[-1,-1,0,6,7,5],[-1,5,7,6,7,-1],[2,0,0,2,2,2]],"F#m":[[2,0,4,2,2,2],[2,4,4,2,2,2],[2,0,4,2,2,-1],[2,4,4,2,2,-1],[-1,-1,4,2,2,2],[2,4,4,2,-1,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]]},"ukulele":{"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Em7":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"F#7":[[3,4,2,4],[3,6,0,4],[6,6,6,7],[3,1,2,1],[3,1,2,4],[3,4,2,1]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"Dmaj7":[[2,2,2,4],[7,6,5,4],[6,6,5,5],[2,2,2,0],[2,2,2,5],[7,6,5,0]],"F#m":[[2,1,2,0],[2,1,2,4],[6,6,5,4],[6,6,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Em7":[[0,0,2,0],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,0,7,7],[-1,2,2,3]],"F#7":[[3,2,4,2],[3,4,4,0],[6,4,7,6],[-1,4,1,0],[-1,4,4,6],[-1,4,7,6]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"Dmaj7":[[7,4,4,5],[2,0,4,2],[6,4,5,5],[-1,0,0,2],[-1,0,4,2],[7,4,0,5]],"F#m":[[-1,4,4,5],[2,4,4,2],[2,4,4,5],[2,4,4,-1],[6,4,0,5],[6,4,4,5]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]]},"banjo":{"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Em7":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]],"F#7":[[2,3,2,4,0],[4,3,2,2,0],[4,3,2,4,0],[2,3,5,4,0],[4,3,5,2,0],[-1,3,2,4,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"Dmaj7":[[0,2,2,4,0],[4,2,2,0,0],[0,6,7,7,0],[7,6,7,0,0],[0,2,3,4,0],[4,2,3,0,0]],"F#m":[[4,2,2,4,0],[-1,2,2,4,0],[4,6,7,7,0],[7,6,7,4,0],[7,6,7,7,0],[-1,6,7,7,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,113 +498,70 @@
     <h1>Strawberry Fields Forever <span class="artist-inline">– The Beatles</span></h1>
     <div class="meta">Toneart: Bb</div>
     <div class="chords">
-    <pre class="block line-group line-group-last">Strawberry Fields Forever By The Beatles
-Capo 1st fret
-Chords used:
-<span class="chord">E</span>*     x79997
-<span class="chord">Emaj7</span>  x79897
-<span class="chord">E7</span>     x79797
-F#m*   x9(11)(11)(10)9
-<span class="chord">D</span>*     x57775
-<span class="chord">A</span>*     577655
-<span class="chord">A</span>      x02220
-<span class="chord">Em7</span>    022030
-<span class="chord">F#7</span>    242322
-<span class="chord">D</span>      xx0232
-<span class="chord">F#m</span>    244222
-<span class="chord">E</span>      022100</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-| <span class="chord">E</span>*  <span class="chord">Emaj7</span> | <span class="chord">E7</span>      | <span class="chord">F#m</span>* <span class="chord">E</span>*  | <span class="chord">D</span>* <span class="chord">A</span>* |
-                                  (2/4)</pre>
-<pre class="block line-group"><span class="section">[Chorus 1]</span>
-<span class="chord">A</span>
-  Let me take you down,</pre>
-<pre class="block line-group">                  <span class="chord">Em7</span>
-&#x27;cause I&#x27;m going to
-Strawberry fields</pre>
-<pre class="block line-group"><span class="chord">F#7</span>
-  Nothing is real</pre>
-<pre class="block line-group">    <span class="chord">D</span>              <span class="chord">F#7</span>
-And nothing to get hung about</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dmaj7</span>                <span class="chord">A</span>
-Strawberry fields forever</pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">E</span>*        <span class="chord">Emaj7</span>     <span class="chord">E7</span>
-Living is easy with eyes closed</pre>
-<pre class="block line-group"><span class="chord">F#m</span>      <span class="chord">E</span>               <span class="chord">D</span>
-Misunderstanding all you see</pre>
-<pre class="block line-group"><span class="chord">D</span>             <span class="chord">E</span>               <span class="chord">A</span>
- It&#x27;s getting hard to be someone,</pre>
-<pre class="block line-group">                  <span class="chord">F#m</span>
-but it all works out</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>           <span class="chord">E</span>              <span class="chord">D</span>   <span class="chord">A</span>
- It doesn&#x27;t matter much to me</pre>
-<pre class="block line-group"><span class="section">[Chorus 2]</span>
-<span class="chord">A</span>
-  Let me take you down,</pre>
-<pre class="block line-group">                  <span class="chord">Em7</span>
-&#x27;cause I&#x27;m going to
-Strawberry fields</pre>
-<pre class="block line-group"><span class="chord">F#7</span>
-  Nothing is real</pre>
-<pre class="block line-group">    <span class="chord">D</span>              <span class="chord">F#7</span>
-And nothing to get hung about</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dmaj7</span>                <span class="chord">A</span>
-Strawberry fields forever</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">E</span>*        <span class="chord">Emaj7</span>        <span class="chord">E7</span>
-No one, I think, is in my tree</pre>
-<pre class="block line-group"><span class="chord">F#m</span>         <span class="chord">E</span>               <span class="chord">D</span>
- I mean, it must be high or low</pre>
-<pre class="block line-group"><span class="chord">D</span>             <span class="chord">E</span>                     <span class="chord">A</span>
- That is, you can&#x27;t, you know, tune in</pre>
-<pre class="block line-group">           <span class="chord">F#m</span>
-But it&#x27;s alright</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>           <span class="chord">E</span>                  <span class="chord">D</span>   <span class="chord">A</span>
- That is, I think it&#x27;s not too bad</pre>
-<pre class="block line-group"><span class="section">[Chorus 3]</span>
-<span class="chord">A</span>
-  Let me take you down,</pre>
-<pre class="block line-group">                  <span class="chord">Em7</span>
-&#x27;cause I&#x27;m going to
-Strawberry fields</pre>
-<pre class="block line-group"><span class="chord">F#7</span>
-  Nothing is real</pre>
-<pre class="block line-group">    <span class="chord">D</span>              <span class="chord">F#7</span>
-And nothing to get hung about</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dmaj7</span>                <span class="chord">A</span>
-Strawberry fields forever</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">E</span>*      <span class="chord">Emaj7</span>   <span class="chord">E7</span>
-Always, no, sometimes, think it&#x27;s me</pre>
-<pre class="block line-group"><span class="chord">F#m</span>               <span class="chord">E</span>                <span class="chord">D</span>
- But, you know, I know when it&#x27;s a dream</pre>
-<pre class="block line-group"><span class="chord">D</span>             <span class="chord">E</span>               <span class="chord">A</span>
- I think, er, no, I mean, er, yes</pre>
-<pre class="block line-group">             <span class="chord">F#m</span>
-But it&#x27;s all wrong</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>           <span class="chord">E</span>            <span class="chord">D</span>   <span class="chord">A</span>
- That is, I think I disagree</pre>
-<pre class="block line-group"><span class="section">[Chorus 4]</span>
-<span class="chord">A</span>
-  Let me take you down,</pre>
-<pre class="block line-group">                  <span class="chord">Em7</span>
-&#x27;cause I&#x27;m going to
-Strawberry fields</pre>
-<pre class="block line-group"><span class="chord">F#7</span>
-  Nothing is real</pre>
-<pre class="block line-group">    <span class="chord">D</span>              <span class="chord">F#7</span>
-And nothing to get hung about</pre>
-<pre class="block line-group"><span class="chord">Dmaj7</span>                <span class="chord">A</span>     <span class="chord">F#m</span>
-Strawberry fields forever</pre>
-<pre class="block line-group"><span class="chord">Dmaj7</span>               <span class="chord">A</span>
-Strawberry fields forever</pre>
-<pre class="block line-group line-group-last"><span class="chord">Dmaj7</span>      <span class="chord">E</span>         <span class="chord">D</span>
-Strawberry fields forever</pre>
-<pre class="block line-group line-group-last"><span class="section">[Outro]</span>
- (fade out)
-| <span class="chord">A</span>    | <span class="chord">A</span>    | <span class="chord">A</span>    | <span class="chord">A</span>    |
-| <span class="chord">A</span>    | <span class="chord">A</span>    | <span class="chord">A</span>    | <span class="chord">A</span>    |</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Strawberry Fields Forever By The Beatles</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Capo 1st fret</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Chords used:</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E*     x79997</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Emaj7  x79897</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E7     x79797</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F#m*   x9(11)(11)(10)9</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D*     x57775</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A*     577655</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A      x02220</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Em7    022030</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F#7    242322</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D      xx0232</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F#m    244222</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E      022100</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="lyr">| E*  Emaj7 | E7      | F#m* E*  | D* A* |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">                                  (2/4)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 1]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Let me take you down,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;cause I&#x27;m going t</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr">o</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Strawberry fields</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#7</span><span class="lyr">  Nothing is real</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">D</span><span class="lyr">nothing to get </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">hung about</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">Strawberry fields for</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ever</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">E*        Emaj7 E7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Living is easy with eyes closed</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">Misunders</span></span><span class="seg"><span class="chord">E</span><span class="lyr">tanding all you </span></span><span class="seg"><span class="chord">D</span><span class="lyr">see</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> It&#x27;s getting </span></span><span class="seg"><span class="chord">E</span><span class="lyr">hard to be someo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ne,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">but it all works o</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ut</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> It doesn&#x27;t </span></span><span class="seg"><span class="chord">E</span><span class="lyr">matter much to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">me</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 2]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Let me take you down,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;cause I&#x27;m going t</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr">o</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Strawberry fields</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#7</span><span class="lyr">  Nothing is real</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">D</span><span class="lyr">nothing to get </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">hung about</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">Strawberry fields for</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ever</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">E*        Emaj7 E7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">No one, I think, is in my tree</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr"> I mean, it </span></span><span class="seg"><span class="chord">E</span><span class="lyr">must be high or </span></span><span class="seg"><span class="chord">D</span><span class="lyr">low</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> That is, you </span></span><span class="seg"><span class="chord">E</span><span class="lyr">can&#x27;t, you know, tune </span></span><span class="seg"><span class="chord">A</span><span class="lyr">in</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But it&#x27;s al</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">right</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> That is, I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">think it&#x27;s not too </span></span><span class="seg"><span class="chord">D</span><span class="lyr">bad</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 3]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Let me take you down,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;cause I&#x27;m going t</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr">o</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Strawberry fields</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#7</span><span class="lyr">  Nothing is real</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">D</span><span class="lyr">nothing to get </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">hung about</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">Strawberry fields for</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ever</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">E*      Emaj7 E7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Always, no, sometimes, think it&#x27;s me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr"> But, you know, I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">know when it&#x27;s a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">dream</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> I think, er, </span></span><span class="seg"><span class="chord">E</span><span class="lyr">no, I mean, er, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">yes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But it&#x27;s all </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">wrong</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> That is, I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">think I disag</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ree</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 4]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Let me take you down,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;cause I&#x27;m going t</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr">o</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Strawberry fields</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#7</span><span class="lyr">  Nothing is real</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">D</span><span class="lyr">nothing to get </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">hung about</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">Strawberry fields for</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ever</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">Strawberry fields fo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">rever</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">Strawberry </span></span><span class="seg"><span class="chord">E</span><span class="lyr">fields for</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ever</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr"> (fade out)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| A    | A    | A    | A    |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| A    | A    | A    | A    |</span></span></div></div>
     </div>
     
   </div>

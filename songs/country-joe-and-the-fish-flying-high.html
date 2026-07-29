@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Flying High – Country Joe and the Fish</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,46 +496,28 @@
     <h1>Flying High <span class="artist-inline">– Country Joe and the Fish</span></h1>
     
     
-    <pre class="block line-group">[intro]</pre>
-<pre class="block line-group"><span class="chord">Am</span>
-[verse]</pre>
-<pre class="block line-group">    <span class="chord">Am</span>           <span class="chord">D</span>     <span class="chord">Am</span>      <span class="chord">D</span>      <span class="chord">Am</span>         <span class="chord">D</span>     <span class="chord">Am</span>      <span class="chord">D</span>
-I&#x27;m stuck on the L.A. freeway     got rain water in my boots</pre>
-<pre class="block line-group">   <span class="chord">Am</span>           <span class="chord">D</span>            <span class="chord">Am</span>      <span class="chord">D</span>          <span class="chord">Am</span>            <span class="chord">D</span>     <span class="chord">Am</span>    <span class="chord">D</span>
-My thumb&#x27;s done froze  can&#x27;t feel my toes     I feel a little destitute</pre>
-<pre class="block line-group"><span class="chord">Am</span>              <span class="chord">D</span>         <span class="chord">Am</span>      <span class="chord">D</span>               <span class="chord">Am</span>          <span class="chord">D</span>         <span class="chord">Am</span>    <span class="chord">D</span>
-Wheels throwing water all over my axe     and Mr. Jones won&#x27;t lend me a hand</pre>
-<pre class="block line-group"><span class="chord">Am</span>          <span class="chord">D</span>         <span class="chord">Am</span>     <span class="chord">D</span>              <span class="chord">Am</span>
-Up come two cats in a Cadillac     and they say    Won&#x27;t you hop in, man?</pre>
-<pre class="block line-group">       <span class="chord">C</span>         <span class="chord">Bb</span>             <span class="chord">Am</span>  <span class="chord">D</span>  <span class="chord">Am</span>  <span class="chord">D</span>        <span class="chord">Am</span>  <span class="chord">D</span>  <span class="chord">Am</span>  <span class="chord">D</span>
-I went flying    high   all the way        all the way
-[verse]</pre>
-<pre class="block line-group">    <span class="chord">Am</span>         <span class="chord">D</span>                <span class="chord">Am</span>     <span class="chord">D</span>           <span class="chord">Am</span>            <span class="chord">D</span>          <span class="chord">Am</span>    <span class="chord">D</span>
-The one that&#x27;s driving  s&#x27;got a bowler hat     the other&#x27;s got a fez on his head</pre>
-<pre class="block line-group">     <span class="chord">Am</span>              <span class="chord">D</span>        <span class="chord">Am</span>     <span class="chord">D</span>            <span class="chord">Am</span>    <span class="chord">D</span>        <span class="chord">Am</span>    <span class="chord">D</span>
-They turn around and grin and I grin back     but not a word was said</pre>
-<pre class="block line-group">     <span class="chord">Am</span>          <span class="chord">D</span>          <span class="chord">Am</span>           <span class="chord">D</span>                <span class="chord">Am</span>       <span class="chord">D</span>            <span class="chord">Am</span>    <span class="chord">D</span>
-So I took out my harp and I played &#x27;em a tune     I could see they were diggin&#x27; it</pre>
-<pre class="block line-group">         <span class="chord">Am</span>           <span class="chord">D</span>            <span class="chord">Am</span>           <span class="chord">D</span>             <span class="chord">Am</span>
-Then the one with the fez  well he turns and he says     we&#x27;d like to help you make your trip</pre>
-<pre class="block line-group">       <span class="chord">C</span>         <span class="chord">Bb</span>             <span class="chord">Am</span>  <span class="chord">D</span>  <span class="chord">Am</span>  <span class="chord">D</span>        <span class="chord">Am</span>  <span class="chord">D</span>  <span class="chord">Am</span>  <span class="chord">D</span>
-I went flying    high   all the way        all the way
-[verse]</pre>
-<pre class="block line-group">   <span class="chord">Am</span>              <span class="chord">D</span>         <span class="chord">Am</span>         <span class="chord">D</span>           <span class="chord">Am</span>         <span class="chord">D</span>          <span class="chord">Am</span>    <span class="chord">D</span>
-He said   We can&#x27;t leave him out in the rain     he just might freeze and die</pre>
-<pre class="block line-group">   <span class="chord">Am</span>      <span class="chord">D</span>       <span class="chord">Am</span>   <span class="chord">D</span>             <span class="chord">Am</span>       <span class="chord">D</span>           <span class="chord">Am</span>     <span class="chord">D</span>
-So why not put him on a plane     and send him home in the sky?</pre>
-<pre class="block line-group">        <span class="chord">Am</span>             <span class="chord">D</span>    <span class="chord">Am</span>       <span class="chord">D</span>       <span class="chord">Am</span>             <span class="chord">D</span>     <span class="chord">Am</span>     <span class="chord">D</span>
-So they took me to the L.A. airport     laid twenty dollars in my hand</pre>
-<pre class="block line-group">       <span class="chord">Am</span>      <span class="chord">D</span>     <span class="chord">Am</span>         <span class="chord">D</span>       <span class="chord">Am</span>
-Well I paid my fare  I&#x27;m in the air     flying back home again</pre>
-<pre class="block line-group">           <span class="chord">C</span>         <span class="chord">Bb</span>               <span class="chord">Am</span>    <span class="chord">D</span>  <span class="chord">Am</span>
-And I went flying    high     all the way
-[outro]</pre>
-<pre class="block line-group"><span class="chord">D</span>           <span class="chord">Am</span>  <span class="chord">D</span>  <span class="chord">Am</span>   <span class="chord">D</span>       <span class="chord">Am</span>   <span class="chord">D</span>
-Yes all the way         all the way</pre>
-<pre class="block line-group line-group-last">           <span class="chord">C</span>         <span class="chord">Bb</span>               <span class="chord">Am</span>      <span class="chord">D</span>       <span class="chord">Am</span>
-And I went flying    high     all the way     all the way</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">[intro]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">[verse]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">stuck on the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">L.A. f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">reeway  </span></span><span class="seg"><span class="chord">D</span><span class="lyr">   got </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rain water </span></span><span class="seg"><span class="chord">D</span><span class="lyr">in my </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">boots</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">My </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">thumb&#x27;s done </span></span><span class="seg"><span class="chord">D</span><span class="lyr">froze  can&#x27;t </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">feel my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">toes     I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">feel a little </span></span><span class="seg"><span class="chord">D</span><span class="lyr">destit</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ute</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Wheels throwing </span></span><span class="seg"><span class="chord">D</span><span class="lyr">water all </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">axe     and Mr. </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Jones won&#x27;t </span></span><span class="seg"><span class="chord">D</span><span class="lyr">lend me a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hand</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Up come two </span></span><span class="seg"><span class="chord">D</span><span class="lyr">cats in a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Cadilla</span></span><span class="seg"><span class="chord">D</span><span class="lyr">c     and they </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">say    Won&#x27;t you hop in, man?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I went </span></span><span class="seg"><span class="chord">C</span><span class="lyr">flying    </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">high   all the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> al</span></span><span class="seg"><span class="chord">D</span><span class="lyr">l the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">[verse]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">one that&#x27;s </span></span><span class="seg"><span class="chord">D</span><span class="lyr">driving  s&#x27;got a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bowler </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hat     the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">other&#x27;s got a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fez on his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">head</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">turn around and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">grin and </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">I grin </span></span><span class="seg"><span class="chord">D</span><span class="lyr">back     but </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">not a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">word was </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">said</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">took out my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">harp and I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">played &#x27;em a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">tune     I could </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">see they </span></span><span class="seg"><span class="chord">D</span><span class="lyr">were diggin&#x27; </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">it</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Then the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">one with the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fez  well he </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">turns and he </span></span><span class="seg"><span class="chord">D</span><span class="lyr">says     we&#x27;d </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">like to help you make your trip</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I went </span></span><span class="seg"><span class="chord">C</span><span class="lyr">flying    </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">high   all the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> al</span></span><span class="seg"><span class="chord">D</span><span class="lyr">l the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">[verse]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">He </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">said   We can&#x27;t </span></span><span class="seg"><span class="chord">D</span><span class="lyr">leave him </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">out in the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">rain     he </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">just might </span></span><span class="seg"><span class="chord">D</span><span class="lyr">freeze and </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">die</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">why not </span></span><span class="seg"><span class="chord">D</span><span class="lyr">put him </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">on a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">plane     and </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">send him </span></span><span class="seg"><span class="chord">D</span><span class="lyr">home in the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">sky?</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So they </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">took me to the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">L.A. </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">airport  </span></span><span class="seg"><span class="chord">D</span><span class="lyr">   laid </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">twenty dollars </span></span><span class="seg"><span class="chord">D</span><span class="lyr">in my </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hand</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Well I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">paid my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fare  </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">I&#x27;m in the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">air     </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">flying back home again</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I went </span></span><span class="seg"><span class="chord">C</span><span class="lyr">flying    </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">high     all the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">[outro]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Yes all the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> al</span></span><span class="seg"><span class="chord">D</span><span class="lyr">l the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And I went </span></span><span class="seg"><span class="chord">C</span><span class="lyr">flying    </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">high     all the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way     </span></span><span class="seg"><span class="chord">D</span><span class="lyr">all the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way</span></span></div></div>
     
     
   </div>

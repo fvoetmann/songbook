@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Julia – The Beatles</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -76,7 +85,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"Am6":[[-1,0,2,2,1,2],[5,3,4,5,5,0],[5,3,4,5,5,5],[5,3,4,5,5,-1],[5,0,4,5,5,0],[5,0,4,5,5,5]],"Am7":[[-1,0,2,0,1,0],[-1,0,2,0,1,3],[-1,0,2,2,1,3],[-1,0,2,0,1,-1],[5,3,5,0,5,0],[5,3,5,0,5,3]],"A7":[[-1,0,2,0,2,0],[-1,0,2,0,2,3],[-1,0,2,2,2,3],[-1,0,2,0,2,-1],[5,4,5,0,5,3],[5,4,5,0,5,0]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"Em7":[[0,2,0,0,0,0],[0,2,0,0,0,3],[0,2,0,0,3,0],[0,2,2,0,3,0],[0,2,0,0,3,3],[0,2,0,4,0,3]],"Em6":[[0,2,2,0,2,0],[0,4,2,0,0,0],[0,2,2,0,2,3],[0,4,2,0,0,3],[0,2,2,4,2,3],[0,4,2,4,0,3]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Gm7":[[3,1,0,0,3,1],[3,1,0,3,3,1],[3,1,3,0,3,1],[3,1,3,0,3,3],[3,1,3,3,3,1],[3,1,3,3,3,3]],"Gm9":[[3,0,0,3,3,1],[3,1,0,2,3,1],[3,0,3,3,3,1],[3,1,3,2,3,1],[3,1,3,2,3,3],[3,1,3,2,3,-1]],"F9":[[1,0,1,0,1,1],[1,0,1,0,1,3],[1,0,1,2,1,3],[1,3,1,2,1,3],[1,0,1,0,1,-1],[-1,8,7,8,8,8]],"Fm7":[[1,3,1,1,1,1],[1,3,1,1,1,-1],[1,3,1,1,-1,-1],[-1,-1,3,5,4,4],[-1,8,6,8,6,8],[-1,3,1,1,1,1]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"Cmaj7":[[-1,3,2,0,0,0],[-1,3,2,0,0,3],[-1,3,2,4,0,3],[-1,3,2,0,0,-1],[-1,3,5,0,0,0],[-1,3,5,4,0,0]],"C/E":[[0,3,2,0,1,0],[0,3,2,0,1,3],[0,3,2,0,1,-1],[-1,-1,2,0,1,0],[-1,-1,2,0,1,3],[0,3,2,0,-1,-1]]},"ukulele":{"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"Am6":[[2,4,2,3],[5,4,2,0],[5,6,0,0],[5,6,5,7],[2,0,0,0],[2,0,2,0]],"Am7":[[0,0,0,0],[2,4,3,3],[0,4,5,3],[5,4,3,0],[0,0,5,7],[5,7,0,0]],"A7":[[0,1,0,0],[2,4,3,4],[6,4,3,0],[0,4,5,4],[6,7,5,7],[6,7,0,0]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"Em7":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"Em6":[[0,1,0,2],[4,4,3,4],[0,4,7,4],[4,7,0,4],[6,7,7,7],[0,1,0,4]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Gm7":[[0,2,1,1],[3,5,3,5],[0,5,6,5],[0,2,3,1],[3,2,3,1],[3,2,3,5]],"Gm9":[[0,2,1,0],[2,2,3,1],[3,2,3,0],[2,5,3,5],[3,5,3,0],[0,5,6,0]],"F9":[[0,0,1,0],[0,3,1,0],[0,3,1,3],[2,5,3,3],[0,5,5,3],[5,5,3,0]],"Fm7":[[1,3,1,3],[5,5,4,6],[1,0,1,3],[5,5,4,3]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"Cmaj7":[[0,0,0,2],[5,4,3,2],[4,4,3,3],[5,7,7,7],[0,0,7,7],[4,0,0,2]],"C/E":[[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[5,4,0,3],[5,4,0,7]]},"mandolin":{"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"Am6":[[2,2,3,2],[2,4,3,0],[5,2,0,2],[5,4,0,0],[5,4,7,5],[2,2,3,0]],"Am7":[[2,2,3,3],[2,5,3,0],[0,2,3,5],[5,2,0,3],[5,5,0,0],[5,5,7,5]],"A7":[[2,2,4,3],[2,5,4,0],[0,2,4,5],[0,7,4,0],[6,5,0,0],[6,5,7,5]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"Em7":[[0,0,2,0],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,0,7,7],[-1,2,2,3]],"Em6":[[4,2,4,3],[4,5,4,0],[6,5,7,7],[-1,2,2,3],[-1,2,4,3],[0,2,2,0]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Gm7":[[0,0,1,1],[0,3,5,6],[3,3,5,3],[0,0,1,3],[0,3,1,1],[0,3,1,3]],"Gm9":[[0,0,0,1],[0,3,0,6],[0,3,5,5],[0,7,5,6],[0,0,0,6],[2,0,1,3]],"F9":[[0,1,0,1],[0,1,3,1],[2,3,3,3],[0,3,3,5],[5,3,0,3],[0,3,6,5]],"Fm7":[[1,1,3,1],[5,3,6,4],[-1,3,3,4],[-1,3,6,4],[1,3,3,1],[1,3,3,4]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"Cmaj7":[[5,2,2,3],[5,5,2,0],[5,5,7,7],[4,2,3,3],[4,5,3,0],[5,2,2,0]],"C/E":[[-1,2,3,3],[-1,2,3,0]]},"banjo":{"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"Am6":[[2,2,1,4,0],[4,2,1,2,0],[4,5,5,7,0],[7,5,5,4,0],[2,2,1,2,0],[4,2,1,4,0]],"Am7":[[2,2,1,2,0],[-1,2,1,2,0],[5,5,5,7,0],[7,5,5,5,0],[7,5,5,7,0],[-1,5,5,7,0]],"A7":[[2,2,2,2,0],[2,2,2,5,0],[5,2,2,2,0],[-1,2,2,2,0],[5,6,5,7,0],[7,6,5,5,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"Em7":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]],"Em6":[[2,4,2,2,0],[2,4,2,5,0],[5,4,2,2,0],[-1,4,2,2,0],[2,4,2,-1,0],[2,0,0,2,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Gm7":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"Gm9":[[0,2,3,3,0],[3,2,3,0,0],[3,2,3,3,0],[3,2,3,5,0],[5,2,3,3,0],[-1,2,3,3,0]],"F9":[[1,2,1,3,0],[3,2,1,1,0],[1,0,1,3,0],[3,0,1,1,0],[3,2,1,3,0],[1,2,4,3,0]],"Fm7":[[1,1,1,3,0],[3,1,1,1,0],[3,5,4,6,0],[6,5,4,3,0],[3,1,1,3,0],[1,1,4,3,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"Cmaj7":[[2,4,1,2,0],[-1,4,1,2,0],[2,5,0,2,0],[2,5,0,5,0],[5,5,0,2,0],[-1,5,0,2,0]],"C/E":[[2,0,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[2,0,1,-1,0],[2,-1,1,2,0],[2,5,-1,2,0]]}};
+    var DBS = {"guitar":{"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"Am7":[[-1,0,2,0,1,0],[-1,0,2,0,1,3],[-1,0,2,2,1,3],[-1,0,2,0,1,-1],[5,3,5,0,5,0],[5,3,5,0,5,3]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Gm7":[[3,1,0,0,3,1],[3,1,0,3,3,1],[3,1,3,0,3,1],[3,1,3,0,3,3],[3,1,3,3,3,1],[3,1,3,3,3,3]],"Gm9":[[3,0,0,3,3,1],[3,1,0,2,3,1],[3,0,3,3,3,1],[3,1,3,2,3,1],[3,1,3,2,3,3],[3,1,3,2,3,-1]],"A7":[[-1,0,2,0,2,0],[-1,0,2,0,2,3],[-1,0,2,2,2,3],[-1,0,2,0,2,-1],[5,4,5,0,5,3],[5,4,5,0,5,0]],"F9":[[1,0,1,0,1,1],[1,0,1,0,1,3],[1,0,1,2,1,3],[1,3,1,2,1,3],[1,0,1,0,1,-1],[-1,8,7,8,8,8]],"Fm7":[[1,3,1,1,1,1],[1,3,1,1,1,-1],[1,3,1,1,-1,-1],[-1,-1,3,5,4,4],[-1,8,6,8,6,8],[-1,3,1,1,1,1]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"Am6":[[-1,0,2,2,1,2],[5,3,4,5,5,0],[5,3,4,5,5,5],[5,3,4,5,5,-1],[5,0,4,5,5,0],[5,0,4,5,5,5]],"Em7":[[0,2,0,0,0,0],[0,2,0,0,0,3],[0,2,0,0,3,0],[0,2,2,0,3,0],[0,2,0,0,3,3],[0,2,0,4,0,3]],"Em6":[[0,2,2,0,2,0],[0,4,2,0,0,0],[0,2,2,0,2,3],[0,4,2,0,0,3],[0,2,2,4,2,3],[0,4,2,4,0,3]],"C/E":[[0,3,2,0,1,0],[0,3,2,0,1,3],[0,3,2,0,1,-1],[-1,-1,2,0,1,0],[-1,-1,2,0,1,3],[0,3,2,0,-1,-1]],"Cmaj7":[[-1,3,2,0,0,0],[-1,3,2,0,0,3],[-1,3,2,4,0,3],[-1,3,2,0,0,-1],[-1,3,5,0,0,0],[-1,3,5,4,0,0]]},"ukulele":{"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"Am7":[[0,0,0,0],[2,4,3,3],[0,4,5,3],[5,4,3,0],[0,0,5,7],[5,7,0,0]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Gm7":[[0,2,1,1],[3,5,3,5],[0,5,6,5],[0,2,3,1],[3,2,3,1],[3,2,3,5]],"Gm9":[[0,2,1,0],[2,2,3,1],[3,2,3,0],[2,5,3,5],[3,5,3,0],[0,5,6,0]],"A7":[[0,1,0,0],[2,4,3,4],[6,4,3,0],[0,4,5,4],[6,7,5,7],[6,7,0,0]],"F9":[[0,0,1,0],[0,3,1,0],[0,3,1,3],[2,5,3,3],[0,5,5,3],[5,5,3,0]],"Fm7":[[1,3,1,3],[5,5,4,6],[1,0,1,3],[5,5,4,3]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"Am6":[[2,4,2,3],[5,4,2,0],[5,6,0,0],[5,6,5,7],[2,0,0,0],[2,0,2,0]],"Em7":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"Em6":[[0,1,0,2],[4,4,3,4],[0,4,7,4],[4,7,0,4],[6,7,7,7],[0,1,0,4]],"C/E":[[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[5,4,0,3],[5,4,0,7]],"Cmaj7":[[0,0,0,2],[5,4,3,2],[4,4,3,3],[5,7,7,7],[0,0,7,7],[4,0,0,2]]},"mandolin":{"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"Am7":[[2,2,3,3],[2,5,3,0],[0,2,3,5],[5,2,0,3],[5,5,0,0],[5,5,7,5]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Gm7":[[0,0,1,1],[0,3,5,6],[3,3,5,3],[0,0,1,3],[0,3,1,1],[0,3,1,3]],"Gm9":[[0,0,0,1],[0,3,0,6],[0,3,5,5],[0,7,5,6],[0,0,0,6],[2,0,1,3]],"A7":[[2,2,4,3],[2,5,4,0],[0,2,4,5],[0,7,4,0],[6,5,0,0],[6,5,7,5]],"F9":[[0,1,0,1],[0,1,3,1],[2,3,3,3],[0,3,3,5],[5,3,0,3],[0,3,6,5]],"Fm7":[[1,1,3,1],[5,3,6,4],[-1,3,3,4],[-1,3,6,4],[1,3,3,1],[1,3,3,4]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"Am6":[[2,2,3,2],[2,4,3,0],[5,2,0,2],[5,4,0,0],[5,4,7,5],[2,2,3,0]],"Em7":[[0,0,2,0],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,0,7,7],[-1,2,2,3]],"Em6":[[4,2,4,3],[4,5,4,0],[6,5,7,7],[-1,2,2,3],[-1,2,4,3],[0,2,2,0]],"C/E":[[-1,2,3,3],[-1,2,3,0]],"Cmaj7":[[5,2,2,3],[5,5,2,0],[5,5,7,7],[4,2,3,3],[4,5,3,0],[5,2,2,0]]},"banjo":{"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"Am7":[[2,2,1,2,0],[-1,2,1,2,0],[5,5,5,7,0],[7,5,5,5,0],[7,5,5,7,0],[-1,5,5,7,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Gm7":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"Gm9":[[0,2,3,3,0],[3,2,3,0,0],[3,2,3,3,0],[3,2,3,5,0],[5,2,3,3,0],[-1,2,3,3,0]],"A7":[[2,2,2,2,0],[2,2,2,5,0],[5,2,2,2,0],[-1,2,2,2,0],[5,6,5,7,0],[7,6,5,5,0]],"F9":[[1,2,1,3,0],[3,2,1,1,0],[1,0,1,3,0],[3,0,1,1,0],[3,2,1,3,0],[1,2,4,3,0]],"Fm7":[[1,1,1,3,0],[3,1,1,1,0],[3,5,4,6,0],[6,5,4,3,0],[3,1,1,3,0],[1,1,4,3,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"Am6":[[2,2,1,4,0],[4,2,1,2,0],[4,5,5,7,0],[7,5,5,4,0],[2,2,1,2,0],[4,2,1,4,0]],"Em7":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]],"Em6":[[2,4,2,2,0],[2,4,2,5,0],[5,4,2,2,0],[-1,4,2,2,0],[2,4,2,-1,0],[2,0,0,2,0]],"C/E":[[2,0,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[2,0,1,-1,0],[2,-1,1,2,0],[2,5,-1,2,0]],"Cmaj7":[[2,4,1,2,0],[-1,4,1,2,0],[2,5,0,2,0],[2,5,0,5,0],[5,5,0,2,0],[-1,5,0,2,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,55 +496,38 @@
     <h1>Julia <span class="artist-inline">– The Beatles</span></h1>
     <div class="meta">Toneart: D</div>
     
-    <pre class="block line-group line-group-last">These chords work great with me. I normally pick them like it&#x27;s done 
-in the song but you could strum them too, I guess.
-*Capo on 2nd fret to match the Beatles&#x27; recording.
-       --------------------------------------------------------------
- <span class="chord">C</span>    <span class="chord">Am6</span>|<span class="chord">Am7</span>|<span class="chord">A7</span> |<span class="chord">Em</span> |<span class="chord">Em7</span>|<span class="chord">Em6</span>| <span class="chord">G</span> |<span class="chord">Gm7</span>|<span class="chord">Gm9</span>|<span class="chord">F9</span> |<span class="chord">Fm7</span>|<span class="chord">Bm</span> | <span class="chord">C</span> |<span class="chord">Cmaj7</span>|Em(b6)|  <span class="chord">C</span>
- H  e:-2-|-3-|-5-|-3-|-x-|-x-|-3-|-3-|-5-|-3-|-4-|-2-|-0-|--0--|--x---|  H
- O  B:-1-|-1-|-5-|-0-|-3-|-2-|-0-|-3-|-3-|-1-|-1-|-3-|-1-|--0--|--1---|  O
- R  G:-2-|-2-|-6-|-0-|-0-|-0-|-0-|-3-|-3-|-2-|-1-|-4-|-0-|--0--|--0---|  R
- D  D:-2-|-2-|-5-|-2-|-2-|-2-|-0-|-3-|-3-|-1-|-1-|-4-|-2-|--2--|--2---|  D 
- S  A:-0-|-0-|-7-|-2-|-x-|-2-|-2-|-5-|-5-|-3-|-3-|-2-|-3-|--3--|--x---|  S
-    E:(0)|(0)|-5-|-0-|-0-|-0-|-3-|-3-|-3-|-1-|-1-|(2)|(0)|--x--|--0---|
-                                                               (=C/E)               
-       --------------------------------------------------------------</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">C</span>              <span class="chord">Am7</span>           <span class="chord">Em</span>        <span class="chord">Em</span> 
-Half of what I say is meaningless</pre>
-<pre class="block line-group"><span class="chord">C</span>            <span class="chord">Am7</span>                <span class="chord">Em</span>   <span class="chord">G</span>
-But I say it just to reach you, Juli-a</pre>
-<pre class="block line-group"><span class="chord">C</span>   <span class="chord">Am7</span>   <span class="chord">Gm7</span> <span class="chord">Gm9</span>   <span class="chord">A7</span>    <span class="chord">A7</span>     <span class="chord">F9</span>    <span class="chord">Fm7</span>
-Julia,    Julia,    ocean child, calls me</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">Am7</span>           <span class="chord">Em</span>   <span class="chord">G</span>
-So I sing a song of love, Juli-a</pre>
-<pre class="block line-group"><span class="chord">C</span>   <span class="chord">Am7</span>   <span class="chord">Gm7</span>      <span class="chord">Gm9</span>   <span class="chord">A7</span>    <span class="chord">A7</span>     <span class="chord">F9</span>    <span class="chord">Fm7</span> 
-Julia,    seashell eyes, windy smile, calls me</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>           <span class="chord">Am7</span>           <span class="chord">Em</span> <span class="chord">G</span>  <span class="chord">C</span>    <span class="chord">C</span>
-So I sing a song of love, Ju-ulia</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Bm</span>          <span class="chord">Bm</span>              <span class="chord">C</span>         <span class="chord">C</span>   <span class="chord">Am7</span>       <span class="chord">Am6</span>
-Her hair of floating sky is shimmering,   glimmering,</pre>
-<pre class="block line-group line-group-last"><span class="chord">Em7</span>    <span class="chord">Em6</span>   <span class="chord">C/E</span>  <span class="chord">Em</span>
-In the sun 
-          0-x-2-0-1-0 C/E = Em(b6)</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">C</span>   <span class="chord">Am7</span>   <span class="chord">Gm7</span> <span class="chord">Gm9</span>   <span class="chord">A7</span>      <span class="chord">A7</span>    <span class="chord">F9</span>    <span class="chord">Fm7</span>
-Julia,    Julia,    morning moon, touch me</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">Am7</span>           <span class="chord">Em</span> <span class="chord">G</span>  <span class="chord">C</span>    <span class="chord">C</span>
-So I sing a song of love, Ju-ulia</pre>
-<pre class="block line-group"><span class="chord">C</span>             <span class="chord">Am7</span>            <span class="chord">Em</span>   <span class="chord">Em</span>
-When I cannot sing my heart
-<span class="chord">C</span>          <span class="chord">Am7</span>            <span class="chord">Em</span> <span class="chord">G</span> (<span class="chord">C</span>)
-I can only speak my mind, Ju-ulia </pre>
-<pre class="block line-group"><span class="chord">C</span>   <span class="chord">Am7</span>   <span class="chord">Gm7</span>      <span class="chord">Gm9</span>   <span class="chord">A7</span>     <span class="chord">A7</span>     <span class="chord">F9</span>    <span class="chord">Fm7</span>
-Julia,    sleeping sand, silent cloud, touch me
-<span class="chord">C</span>           <span class="chord">Am7</span>           <span class="chord">Em</span> <span class="chord">G</span> (<span class="chord">C</span>)
-So I sing a song of love, Ju-ulia</pre>
-<pre class="block line-group"><span class="chord">C</span>   <span class="chord">Am7</span>   <span class="chord">Gm7</span>   <span class="chord">Gm9</span>   <span class="chord">A7</span>   <span class="chord">A7</span>   <span class="chord">F9</span>    <span class="chord">Fm7</span>
-      mmm...mmmmm...mmm      ...calls me</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>           <span class="chord">Am7</span>              <span class="chord">G</span>   <span class="chord">C</span>  <span class="chord">G</span>   <span class="chord">C</span>  <span class="chord">Em</span> <span class="chord">G</span>  <span class="chord">Cmaj7</span>
-So I sing a song of love for Julia, Julia, Ju-ulia</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">These chords work great with me. I normally pick them like it&#x27;s done </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">in the song but you could strum them too, I guess.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">*Capo on 2nd fret to match the Beatles&#x27; recording.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">       --------------------------------------------------------------</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> C Am6|Am7|A7 |Em |Em7|Em6| G |Gm7|Gm9|F9 |Fm7|Bm | C |Cmaj7|Em(b6)|  C</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> H  e:-2-|-3-|-5-|-3-|-x-|-x-|-3-|-3-|-5-|-3-|-4-|-2-|-0-|--0--|--x---|  H</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> O  B:-1-|-1-|-5-|-0-|-3-|-2-|-0-|-3-|-3-|-1-|-1-|-3-|-1-|--0--|--1---|  O</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> R  G:-2-|-2-|-6-|-0-|-0-|-0-|-0-|-3-|-3-|-2-|-1-|-4-|-0-|--0--|--0---|  R</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> D  D:-2-|-2-|-5-|-2-|-2-|-2-|-0-|-3-|-3-|-1-|-1-|-4-|-2-|--2--|--2---|  D </span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> S  A:-0-|-0-|-7-|-2-|-x-|-2-|-2-|-5-|-5-|-3-|-3-|-2-|-3-|--3--|--x---|  S</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">    E:(0)|(0)|-5-|-0-|-0-|-0-|-3-|-3-|-3-|-1-|-1-|(2)|(0)|--x--|--0---|</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">                                                               (=C/E)               </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">       --------------------------------------------------------------</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Half of what I </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">say is meaning</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">less</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But I say it </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">just to reach you, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Juli-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">a</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">a,    </span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">Gm9</span><span class="lyr">a,    </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">ocean </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">child, </span></span><span class="seg"><span class="chord">F9</span><span class="lyr">calls </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">So I sing a </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">song of love, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Juli-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">a</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">a,    </span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">seashell </span></span><span class="seg"><span class="chord">Gm9</span><span class="lyr">eyes, </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">windy </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">smile, </span></span><span class="seg"><span class="chord">F9</span><span class="lyr">calls </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">So I sing a </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">song of love, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Ju-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">uli</span></span><span class="seg"><span class="chord">C</span><span class="lyr">a</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Her hair of </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">floating sky is </span></span><span class="seg"><span class="chord">C</span><span class="lyr">shimmering</span></span><span class="seg"><span class="chord">C</span><span class="lyr">,   </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">glimmering</span></span><span class="seg"><span class="chord">Am6</span><span class="lyr">,</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Em7</span><span class="lyr">In the </span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">sun </span></span><span class="seg"><span class="chord">C/E</span><span class="lyr"></span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">          0-x-2-0-1-0 C/E = Em(b6)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">a,    </span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">Gm9</span><span class="lyr">a,    </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">morning </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">moon, </span></span><span class="seg"><span class="chord">F9</span><span class="lyr">touch </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">So I sing a </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">song of love, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Ju-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">uli</span></span><span class="seg"><span class="chord">C</span><span class="lyr">a</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">When I cannot </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">sing my heart</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C Am7 Em G (C)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">I can only speak my mind, Ju-ulia </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">a,    </span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">sleeping </span></span><span class="seg"><span class="chord">Gm9</span><span class="lyr">sand, </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">silent </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">cloud, </span></span><span class="seg"><span class="chord">F9</span><span class="lyr">touch </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">me</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C Am7 Em G (C)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">So I sing a song of love, Ju-ulia</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">  mmm.</span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">..mmmm</span></span><span class="seg"><span class="chord">Gm9</span><span class="lyr">m...mm</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">m    </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">  ...</span></span><span class="seg"><span class="chord">F9</span><span class="lyr">calls </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">So I sing a </span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">song of love for </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">C</span><span class="lyr">a, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Juli</span></span><span class="seg"><span class="chord">C</span><span class="lyr">a, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Ju-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">uli</span></span><span class="seg"><span class="chord">Cmaj7</span><span class="lyr">a</span></span></div></div>
     
     
   </div>

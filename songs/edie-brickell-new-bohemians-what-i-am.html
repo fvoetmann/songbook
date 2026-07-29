@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>What I Am – Edie Brickell &amp; New Bohemians</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,93 +498,46 @@
     <h1>What I Am <span class="artist-inline">– Edie Brickell &amp; New Bohemians</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="chord">Bsus2</span>
-  x24422</pre>
-<pre class="block line-group"><span class="chord">Asus2</span>
-  x02200</pre>
-<pre class="block line-group"><span class="chord">Em</span>
-     022000</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>
-      xx0232</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">Bsus2</span> <span class="chord">D</span> <span class="chord">Asus2</span> <span class="chord">Bsus2</span>
-        x2</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Bsus2</span>            <span class="chord">D</span>
-I&#x27;m not aware of too many things</pre>
-<pre class="block line-group">  <span class="chord">Asus2</span>                   <span class="chord">Bsus2</span>            <span class="chord">Bsus2</span>  <span class="chord">D</span>  <span class="chord">Asus2</span>  <span class="chord">Bsus2</span>
-I know what I know if you know what I mean</pre>
-<pre class="block line-group"><span class="chord">Bsus2</span>            <span class="chord">D</span>
-I&#x27;m not aware of too many things</pre>
-<pre class="block line-group">  <span class="chord">Asus2</span>                   <span class="chord">Bsus2</span>            <span class="chord">Bsus2</span>  <span class="chord">D</span>  <span class="chord">Asus2</span>  <span class="chord">Bsus2</span>
-I know what I know if you know what I mean</pre>
-<pre class="block line-group">   <span class="chord">Bsus2</span>    <span class="chord">D</span>   <span class="chord">Asus2</span>            <span class="chord">Bsus2</span>
-Philosophy,     is the talk on a cereal box</pre>
-<pre class="block line-group">  <span class="chord">Bsus2</span>     <span class="chord">D</span>   <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-Religion,       is a smile on a dog</pre>
-<pre class="block line-group"><span class="chord">Bsus2</span>            <span class="chord">D</span>
-I&#x27;m not aware of too many things</pre>
-<pre class="block line-group line-group-last">  <span class="chord">Asus2</span>                   <span class="chord">Bsus2</span>            <span class="chord">Bsus2</span>  <span class="chord">D</span>  <span class="chord">Asus2</span>  <span class="chord">Bsus2</span>
-I know what I know if you know what I mean</pre>
-<pre class="block line-group line-group-last"><span class="section">[Bridge]</span>
-<span class="chord">Em</span>              <span class="chord">D</span>               <span class="chord">Em</span>              <span class="chord">D</span>
-Choke me in the shallow water before I get too deep</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or what?</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or....?</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-    <span class="chord">Bsus2</span>            <span class="chord">D</span>
-Oh, I&#x27;m not aware of too many things</pre>
-<pre class="block line-group">  <span class="chord">Asus2</span>                   <span class="chord">Bsus2</span>            <span class="chord">Bsus2</span>  <span class="chord">D</span>  <span class="chord">Asus2</span>  <span class="chord">Bsus2</span>
-I know what I know if you know what I mean</pre>
-<pre class="block line-group">   <span class="chord">Bsus2</span>    <span class="chord">D</span>   <span class="chord">Asus2</span>            <span class="chord">Bsus2</span>
-Philosophy,     is a walk on the slippery rocks</pre>
-<pre class="block line-group">  <span class="chord">Bsus2</span>     <span class="chord">D</span>   <span class="chord">Asus2</span>             <span class="chord">Bsus2</span>
-Religion,       is a light in the fog</pre>
-<pre class="block line-group"><span class="chord">Bsus2</span>            <span class="chord">D</span>
-I&#x27;m not aware of too many things</pre>
-<pre class="block line-group line-group-last">  <span class="chord">Asus2</span>                   <span class="chord">Bsus2</span>            <span class="chord">Bsus2</span>  <span class="chord">D</span>  <span class="chord">Asus2</span>  <span class="chord">Bsus2</span>
-I know what I know if you know what I mean</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Em</span>              <span class="chord">D</span>               <span class="chord">Em</span>              <span class="chord">D</span>
-Choke me in the shallow water before I get too deep</pre>
-<pre class="block line-group line-group-last"><span class="chord">Em</span>              <span class="chord">D</span>               <span class="chord">Em</span>              <span class="chord">D</span>
-Choke me in the shallow water before I get too deep</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or what?</pre>
-<pre class="block line-group"><span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or what?</pre>
-<pre class="block line-group"><span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or what you are&#x27;s</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or - what?
-(Interlude/Instrumental)</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Em</span>              <span class="chord">D</span>               <span class="chord">Em</span>              <span class="chord">D</span>
-Choke me in the shallow water before I get too deep</pre>
-<pre class="block line-group"><span class="chord">Em</span>              <span class="chord">D</span>               <span class="chord">Em</span>              <span class="chord">D</span>
-Choke me in the shallow water before I get too deep
-(Repeat 3 times with chorus progression)</pre>
-<pre class="block line-group">                     <span class="chord">Bsus2</span>  <span class="chord">D</span>
-Don&#x27;t let me get too deep</pre>
-<pre class="block line-group">                     <span class="chord">Asus2</span>  <span class="chord">Bsus2</span>
-Don&#x27;t let me get too deep</pre>
-<pre class="block line-group">                     <span class="chord">Bsus2</span>
-Don&#x27;t let me get too deep</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>                   <span class="chord">Asus2</span>  <span class="chord">Bsus2</span>
-Don&#x27;t let me get too deep</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or what?</pre>
-<pre class="block line-group"><span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or what?</pre>
-<pre class="block line-group"><span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or what you are&#x27;s</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bsus2</span>        <span class="chord">D</span>              <span class="chord">Asus2</span>           <span class="chord">Bsus2</span>
-What I am is what I am, you what you are or - what?</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">  x24422</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Asus2</span><span class="lyr">  x02200</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">     022000</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">      xx0232</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">  x2</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">I&#x27;m not aware of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">too many things</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">know what I know if you </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">know what I mean</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">I&#x27;m not aware of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">too many things</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">know what I know if you </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">know what I mean</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Phi</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">losophy, </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">is the talk on a </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">cereal box</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Re</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">ligion,   </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">is a smile on a </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">dog</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">I&#x27;m not aware of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">too many things</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">know what I know if you </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">know what I mean</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Choke me in the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">shallow water be</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">fore I get too d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eep</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">what?</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or.</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">...?</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Oh, </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">I&#x27;m not aware of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">too many things</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">know what I know if you </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">know what I mean</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Phi</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">losophy, </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">is a walk on the </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">slippery rocks</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Re</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">ligion,   </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">is a light in the </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">fog</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">I&#x27;m not aware of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">too many things</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">know what I know if you </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">know what I mean</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Choke me in the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">shallow water be</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">fore I get too d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eep</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Choke me in the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">shallow water be</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">fore I get too d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eep</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">what?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">what?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">what you are&#x27;s</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">- what?</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Interlude/Instrumental)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Choke me in the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">shallow water be</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">fore I get too d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eep</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Choke me in the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">shallow water be</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">fore I get too d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eep</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Repeat 3 times with chorus progression)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Don&#x27;t let me get too </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">deep</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Don&#x27;t let me get too </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">deep</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Don&#x27;t let me get too </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">deep</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Don&#x27;t let me get too</span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"> deep</span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">what?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">what?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">what you are&#x27;s</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bsus2</span><span class="lyr">What I am is </span></span><span class="seg"><span class="chord">D</span><span class="lyr">what I am, you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">what you are or </span></span><span class="seg"><span class="chord">Bsus2</span><span class="lyr">- what?</span></span></div></div>
     </div>
     
   </div>

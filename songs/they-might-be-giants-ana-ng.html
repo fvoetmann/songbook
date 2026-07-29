@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Ana Ng – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,93 +498,48 @@
     <h1>Ana Ng <span class="artist-inline">– They Might Be Giants</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">Standard Tuning</pre>
-<pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">Em</span> <span class="chord">C</span> <span class="chord">D</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">Em</span> <span class="chord">C</span> <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">Em</span>                  <span class="chord">C</span>         <span class="chord">D</span>
-Make a hole with a gun perpendicular</pre>
-<pre class="block line-group"><span class="chord">Em</span>                    <span class="chord">C</span>         <span class="chord">D</span>
-To the name of this town in a desktop globe</pre>
-<pre class="block line-group"><span class="chord">E</span>                <span class="chord">Am</span> <span class="chord">G</span>    <span class="chord">C</span>  <span class="chord">G</span>
-Exit wound in a foreign nation</pre>
-<pre class="block line-group"><span class="chord">D</span>                        <span class="chord">C</span>            <span class="chord">D</span>
-Showing the home of the one this was written for</pre>
-<pre class="block line-group"><span class="chord">Em</span>                  <span class="chord">C</span>      <span class="chord">D</span>
-My apartment looks upside down from there</pre>
-<pre class="block line-group"><span class="chord">Em</span>                  <span class="chord">C</span>        <span class="chord">D</span>
-Water spirals the wrong way out the sink</pre>
-<pre class="block line-group"><span class="chord">E</span>                   <span class="chord">Am</span>  <span class="chord">G</span>     <span class="chord">C</span> <span class="chord">G</span>
-And her voice is a backwards record</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>                      <span class="chord">C</span>      <span class="chord">D</span>
-It&#x27;s like a whirlpool and it never ends</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>    <span class="chord">C</span>        <span class="chord">D</span>                       <span class="chord">C</span>
-Ana Ng and I are getting old and we still haven&#x27;t walked</pre>
-<pre class="block line-group"><span class="chord">G</span>           <span class="chord">Bb</span>               <span class="chord">C</span>    <span class="chord">D</span>
-In the glow of each other&#x27;s majestic presence</pre>
-<pre class="block line-group"><span class="chord">G</span>       <span class="chord">C</span>       <span class="chord">D</span>                      <span class="chord">C</span>
-Listen Ana hear my words, they&#x27;re the ones you would think</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>           <span class="chord">Bb</span>              <span class="chord">C</span>      <span class="chord">D</span>
-I would say if there was a me for you</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">Em</span>               <span class="chord">C</span> <span class="chord">D</span>
-All alone at the &#x27;64 World&#x27;s Fair</pre>
-<pre class="block line-group"><span class="chord">Em</span>                      <span class="chord">C</span>          <span class="chord">D</span>
-Eighty dolls yelling &quot;Small girl after all&quot;</pre>
-<pre class="block line-group"><span class="chord">E</span>                 <span class="chord">Am</span>   <span class="chord">G</span> <span class="chord">C</span> <span class="chord">G</span>
-Who was at the Dupont Pavilion?</pre>
-<pre class="block line-group"><span class="chord">D</span>                        <span class="chord">C</span>             <span class="chord">D</span>
-Why was the bench still warm? Who had been there?</pre>
-<pre class="block line-group"><span class="chord">Em</span>                     <span class="chord">C</span>            <span class="chord">D</span>
-Or the time when the storm tangled up the wire</pre>
-<pre class="block line-group"><span class="chord">Em</span>                   <span class="chord">C</span>          <span class="chord">D</span>
-To the horn on the pole at the bus depot</pre>
-<pre class="block line-group"><span class="chord">E</span>                       <span class="chord">Am</span>   <span class="chord">G</span>  <span class="chord">C</span>  <span class="chord">G</span>
-And in the back of the edge of hearing</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>                              <span class="chord">C</span>          <span class="chord">D</span>
-These are the words that the voice was repeating:</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>    <span class="chord">C</span>        <span class="chord">D</span>                       <span class="chord">C</span>
-Ana Ng and I are getting old and we still haven&#x27;t walked</pre>
-<pre class="block line-group"><span class="chord">G</span>           <span class="chord">Bb</span>               <span class="chord">C</span>    <span class="chord">D</span>
-In the glow of each other&#x27;s majestic presence</pre>
-<pre class="block line-group"><span class="chord">G</span>       <span class="chord">C</span>       <span class="chord">D</span>                      <span class="chord">C</span>
-Listen Ana hear my words, they&#x27;re the ones you would think</pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span>           <span class="chord">Bb</span>              <span class="chord">C</span>      <span class="chord">D</span>
-I would say if there was a me for you</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">C</span>           <span class="chord">D</span>              <span class="chord">G</span>        <span class="chord">D</span>      <span class="chord">C</span>
-When I was driving once I saw this painted on a bridge:</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>                 <span class="chord">D</span>      <span class="chord">G</span>       <span class="chord">D</span>         <span class="chord">C</span>
-&quot;I don&#x27;t want the world, I just want your half&quot;</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Em</span>                  <span class="chord">C</span>           <span class="chord">D</span>
-They don&#x27;t need me here, and I know you&#x27;re there</pre>
-<pre class="block line-group"><span class="chord">Em</span>                    <span class="chord">C</span>            <span class="chord">D</span>
-Where the world goes by like the humid air</pre>
-<pre class="block line-group"><span class="chord">E</span>                     <span class="chord">Am</span> <span class="chord">G</span>   <span class="chord">C</span>  <span class="chord">G</span>
-And it sticks like a broken record</pre>
-<pre class="block line-group"><span class="chord">D</span>                         <span class="chord">Am</span> <span class="chord">G</span>   <span class="chord">C</span>  <span class="chord">G</span>
-Everything sticks like a broken record</pre>
-<pre class="block line-group"><span class="chord">D</span>                    <span class="chord">Am</span> <span class="chord">G</span>   <span class="chord">C</span>    <span class="chord">G</span>
-Everything sticks until it goes away</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>                     <span class="chord">C</span>          <span class="chord">D</span>
-And the truth is, we don&#x27;t know anything</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
- (x2)</pre>
-<pre class="block line-group"><span class="chord">G</span>    <span class="chord">C</span>        <span class="chord">D</span>                       <span class="chord">C</span>
-Ana Ng and I are getting old and we still haven&#x27;t walked</pre>
-<pre class="block line-group"><span class="chord">G</span>           <span class="chord">Bb</span>               <span class="chord">C</span>    <span class="chord">D</span>
-In the glow of each other&#x27;s majestic presence</pre>
-<pre class="block line-group"><span class="chord">G</span>       <span class="chord">C</span>       <span class="chord">D</span>                      <span class="chord">C</span>
-Listen Ana hear my words, they&#x27;re the ones you would think</pre>
-<pre class="block line-group"><span class="chord">G</span>           <span class="chord">Bb</span>              <span class="chord">C</span>      <span class="chord">D</span>
-I would say if there was a me for you</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb</span>  <span class="chord">C</span></pre>
-<pre class="block line-group line-group-last"><span class="section">[Outro]</span>
-<span class="chord">Bb</span> <span class="chord">C</span></pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Standard Tuning</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Em</span><span class="chord">C</span><span class="chord">D</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Em</span><span class="chord">C</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Make a hole with a g</span></span><span class="seg"><span class="chord">C</span><span class="lyr">un perpend</span></span><span class="seg"><span class="chord">D</span><span class="lyr">icular</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">To the name of this to</span></span><span class="seg"><span class="chord">C</span><span class="lyr">wn in a de</span></span><span class="seg"><span class="chord">D</span><span class="lyr">sktop globe</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Exit wound in a f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ore</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ign n</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ati</span></span><span class="seg"><span class="chord">G</span><span class="lyr">on</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Showing the home of the o</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ne this was w</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ritten for</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">My apartment looks u</span></span><span class="seg"><span class="chord">C</span><span class="lyr">pside d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">own from there</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Water spirals the wr</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ong way o</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ut the sink</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And her voice is a b</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ackw</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ards r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ec</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ord</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">It&#x27;s like a whirlpool a</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nd it n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ever ends</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Ana N</span></span><span class="seg"><span class="chord">C</span><span class="lyr">g and I a</span></span><span class="seg"><span class="chord">D</span><span class="lyr">re getting old and we st</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ill haven&#x27;t walked</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">In the glow </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">of each other&#x27;s m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ajest</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ic presence</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Listen A</span></span><span class="seg"><span class="chord">C</span><span class="lyr">na hear </span></span><span class="seg"><span class="chord">D</span><span class="lyr">my words, they&#x27;re the o</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nes you would think</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I would say </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">if there was a m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">e for y</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ou</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">All alone at the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">&#x27;6</span></span><span class="seg"><span class="chord">D</span><span class="lyr">4 World&#x27;s Fair</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Eighty dolls yelling &quot;Sm</span></span><span class="seg"><span class="chord">C</span><span class="lyr">all girl af</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ter all&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Who was at the Dup</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ont P</span></span><span class="seg"><span class="chord">G</span><span class="lyr">av</span></span><span class="seg"><span class="chord">C</span><span class="lyr">il</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ion?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Why was the bench still w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">arm? Who had b</span></span><span class="seg"><span class="chord">D</span><span class="lyr">een there?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Or the time when the st</span></span><span class="seg"><span class="chord">C</span><span class="lyr">orm tangled u</span></span><span class="seg"><span class="chord">D</span><span class="lyr">p the wire</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">To the horn on the po</span></span><span class="seg"><span class="chord">C</span><span class="lyr">le at the b</span></span><span class="seg"><span class="chord">D</span><span class="lyr">us depot</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And in the back of the e</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">dge o</span></span><span class="seg"><span class="chord">G</span><span class="lyr">f h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ear</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ing</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">These are the words that the vo</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ice was rep</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eating:</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Ana N</span></span><span class="seg"><span class="chord">C</span><span class="lyr">g and I a</span></span><span class="seg"><span class="chord">D</span><span class="lyr">re getting old and we st</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ill haven&#x27;t walked</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">In the glow </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">of each other&#x27;s m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ajest</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ic presence</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Listen A</span></span><span class="seg"><span class="chord">C</span><span class="lyr">na hear </span></span><span class="seg"><span class="chord">D</span><span class="lyr">my words, they&#x27;re the o</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nes you would think</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I would say </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">if there was a m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">e for y</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ou</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">When I was d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">riving once I s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">aw this p</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ainted </span></span><span class="seg"><span class="chord">C</span><span class="lyr">on a bridge:</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">&quot;I don&#x27;t want the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">world, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">I just w</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ant your h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">alf&quot;</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">They don&#x27;t need me h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ere, and I k</span></span><span class="seg"><span class="chord">D</span><span class="lyr">now you&#x27;re there</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Where the world goes b</span></span><span class="seg"><span class="chord">C</span><span class="lyr">y like the hu</span></span><span class="seg"><span class="chord">D</span><span class="lyr">mid air</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And it sticks like a b</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rok</span></span><span class="seg"><span class="chord">G</span><span class="lyr">en r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">eco</span></span><span class="seg"><span class="chord">G</span><span class="lyr">rd</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Everything sticks like a b</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rok</span></span><span class="seg"><span class="chord">G</span><span class="lyr">en r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">eco</span></span><span class="seg"><span class="chord">G</span><span class="lyr">rd</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Everything sticks unt</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">il </span></span><span class="seg"><span class="chord">G</span><span class="lyr">it g</span></span><span class="seg"><span class="chord">C</span><span class="lyr">oes a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">way</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">And the truth is, we d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">on&#x27;t know a</span></span><span class="seg"><span class="chord">D</span><span class="lyr">nything</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> (x2)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Ana N</span></span><span class="seg"><span class="chord">C</span><span class="lyr">g and I a</span></span><span class="seg"><span class="chord">D</span><span class="lyr">re getting old and we st</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ill haven&#x27;t walked</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">In the glow </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">of each other&#x27;s m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ajest</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ic presence</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Listen A</span></span><span class="seg"><span class="chord">C</span><span class="lyr">na hear </span></span><span class="seg"><span class="chord">D</span><span class="lyr">my words, they&#x27;re the o</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nes you would think</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I would say </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">if there was a m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">e for y</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ou</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Bb</span><span class="chord">C</span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line chords-only"><span class="chord">Bb</span><span class="chord">C</span></div></div>
     </div>
     
   </div>

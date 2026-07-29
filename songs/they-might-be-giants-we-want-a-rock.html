@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>We Want A Rock – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -78,7 +87,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"B":[[-1,2,4,4,4,2],[-1,2,4,4,4,-1],[7,9,9,8,0,7],[7,9,9,8,7,7],[7,9,9,8,0,-1],[7,9,9,8,7,-1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]]},"ukulele":{"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"B":[[4,3,2,2],[4,6,7,6]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"B":[[4,1,2,2],[4,4,6,7],[4,4,6,-1],[-1,1,2,2],[-1,4,6,7],[4,1,-1,2]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]]},"banjo":{"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"B":[[1,4,0,4,0],[4,4,0,1,0],[1,4,4,4,0],[4,4,4,1,0],[4,4,4,4,0],[-1,4,4,4,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]]}};
+    var DBS = {"guitar":{"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"B":[[-1,2,4,4,4,2],[-1,2,4,4,4,-1],[7,9,9,8,0,7],[7,9,9,8,7,7],[7,9,9,8,0,-1],[7,9,9,8,7,-1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]]},"ukulele":{"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"B":[[4,3,2,2],[4,6,7,6]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"B":[[4,1,2,2],[4,4,6,7],[4,4,6,-1],[-1,1,2,2],[-1,4,6,7],[4,1,-1,2]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]]},"banjo":{"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"B":[[1,4,0,4,0],[4,4,0,1,0],[1,4,4,4,0],[4,4,4,1,0],[4,4,4,4,0],[-1,4,4,4,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,113 +498,58 @@
     <h1>We Want A Rock <span class="artist-inline">– They Might Be Giants</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">Artist: They Might Be Giants
-Song: We Want A Rock
-Album: Flood</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">C</span> <span class="chord">G</span> <span class="chord">D</span> <span class="chord">G</span>  x4</pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">Am</span>           <span class="chord">D</span>            <span class="chord">G</span>                <span class="chord">C</span>
-Where was I? I forgot the point that I was making </pre>
-<pre class="block line-group">  <span class="chord">Am</span>            <span class="chord">B</span>                  <span class="chord">Em</span>            <span class="chord">Em</span> <span class="chord">D</span> 
-I said if I was smart that I would save up for a piece of string</pre>
-<pre class="block line-group line-group-last">      <span class="chord">C</span>       <span class="chord">G</span>        <span class="chord">D</span>       <span class="chord">G</span>
-And a rock to wind the string around</pre>
-<pre class="block line-group"><span class="section">[Pre-Chorus 1]</span>
-<span class="chord">C</span>    <span class="chord">G</span>    <span class="chord">D</span>       <span class="chord">G</span> 
-Everybody wants a rock to </pre>
-<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G</span>        <span class="chord">D</span>      <span class="chord">G</span>
-Wind a piece of string around</pre>
-<pre class="block line-group"><span class="chord">C</span>    <span class="chord">G</span>    <span class="chord">D</span>       <span class="chord">G</span>
-Everybody wants a rock to </pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>      <span class="chord">G</span>        <span class="chord">D</span>      <span class="chord">G</span>
-Wind a piece of string around</pre>
-<pre class="block line-group"><span class="section">[Chorus 1]</span>
-<span class="chord">A</span>         <span class="chord">B</span>         <span class="chord">C</span> <span class="chord">D</span> 
-Throw the crib door wide</pre>
-<pre class="block line-group"><span class="chord">G</span>       <span class="chord">D</span>      <span class="chord">C</span>      
-Let the people crawl inside </pre>
-<pre class="block line-group"><span class="chord">A</span>       <span class="chord">B</span>       <span class="chord">C</span>  <span class="chord">D</span>
-Someone in this town</pre>
-<pre class="block line-group"><span class="chord">G</span>            <span class="chord">D</span>          <span class="chord">C</span>      
-Is trying to burn their playhouse down</pre>
-<pre class="block line-group">             <span class="chord">G</span>        <span class="chord">D</span>        <span class="chord">G</span>
-They want to stop the ones who want</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">G</span>      <span class="chord">D</span>       <span class="chord">G</span>
-A rock to wind a string around</pre>
-<pre class="block line-group"><span class="chord">C</span>        <span class="chord">G</span>    <span class="chord">D</span>       <span class="chord">G</span>
-But everybody wants a rock to</pre>
-<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G</span>        <span class="chord">D</span>       <span class="chord">G</span>
-Wind a piece of string around</pre>
-<pre class="block line-group"><span class="chord">A</span>        <span class="chord">B</span>     <span class="chord">C</span>      <span class="chord">D</span>
-Throw the crib door wide</pre>
-<pre class="block line-group"><span class="chord">G</span>        <span class="chord">D</span>      <span class="chord">C</span>      
-Let the people crawl inside </pre>
-<pre class="block line-group"><span class="chord">A</span>       <span class="chord">B</span>       <span class="chord">C</span>  <span class="chord">D</span>
-Someone in this town</pre>
-<pre class="block line-group"><span class="chord">G</span>            <span class="chord">D</span>          <span class="chord">C</span>      
-Is trying to burn their playhouse down</pre>
-<pre class="block line-group">             <span class="chord">G</span>        <span class="chord">D</span>        <span class="chord">G</span>
-They want to stop the ones who want</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">G</span>      <span class="chord">D</span>       <span class="chord">G</span>
-A rock to wind a string around</pre>
-<pre class="block line-group"><span class="chord">C</span>        <span class="chord">G</span>    <span class="chord">D</span>       <span class="chord">G</span>
-But everybody wants a rock to</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>      <span class="chord">G</span>        <span class="chord">D</span>       <span class="chord">G</span>
-Wind a piece of string around</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">Am</span>          <span class="chord">D</span>              <span class="chord">G</span>            <span class="chord">C</span>
-If I were a carpenter, I&#x27;d hammer on my piglet</pre>
-<pre class="block line-group">    <span class="chord">Am</span>                <span class="chord">B</span>               <span class="chord">Em</span>            <span class="chord">Em</span> <span class="chord">D</span> 
-I&#x27;d collect the seven dollars and I&#x27;d buy a big prosthetic forehead</pre>
-<pre class="block line-group line-group-last">    <span class="chord">C</span>       <span class="chord">G</span>     <span class="chord">D</span>    <span class="chord">G</span> 
-and wear it on my real head</pre>
-<pre class="block line-group"><span class="section">[Pre-Chorus 2]</span>
-<span class="chord">C</span>    <span class="chord">G</span>    <span class="chord">D</span>     <span class="chord">G</span> 
-Everybody wants prosthetic</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">G</span>        <span class="chord">D</span>    <span class="chord">G</span> 
-Foreheads on their real heads</pre>
-<pre class="block line-group"><span class="chord">C</span>    <span class="chord">G</span>    <span class="chord">D</span>     <span class="chord">G</span> 
-Everybody wants prosthetic</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>         <span class="chord">G</span>        <span class="chord">D</span>    <span class="chord">G</span>  
-Foreheads on their real heads</pre>
-<pre class="block line-group"><span class="section">[Chorus 2]</span>
-<span class="chord">A</span>         <span class="chord">B</span>         <span class="chord">C</span> <span class="chord">D</span> 
-Throw the crib door wide</pre>
-<pre class="block line-group"><span class="chord">G</span>       <span class="chord">D</span>      <span class="chord">C</span>
-Let the people crawl inside</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">B</span>    <span class="chord">C</span> <span class="chord">D</span> 
-Someone in this town</pre>
-<pre class="block line-group"><span class="chord">G</span>            <span class="chord">D</span>          <span class="chord">C</span>
-Is trying to burn their playhouse down</pre>
-<pre class="block line-group">             <span class="chord">G</span>        <span class="chord">D</span>        <span class="chord">G</span>
-They want to stop the ones who want</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">G</span>            <span class="chord">D</span>     <span class="chord">G</span>
-Prosthetic foreheads on their heads</pre>
-<pre class="block line-group"><span class="chord">C</span>        <span class="chord">G</span>    <span class="chord">D</span>     <span class="chord">G</span>
-But everybody wants prosthetic</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>         <span class="chord">G</span>        <span class="chord">D</span>    <span class="chord">G</span>
-Foreheads on their real heads</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Em</span>   <span class="chord">Em</span> <span class="chord">D</span>  <span class="chord">C</span>  <span class="chord">G</span>  <span class="chord">D</span>  <span class="chord">G</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">Em</span>   <span class="chord">Em</span> <span class="chord">D</span>  <span class="chord">C</span>  <span class="chord">G</span>  <span class="chord">D</span>  <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="section">[Chorus 3]</span>
-<span class="chord">A</span>         <span class="chord">B</span>         <span class="chord">C</span> <span class="chord">D</span> 
-Throw the crib door wide</pre>
-<pre class="block line-group"><span class="chord">G</span>       <span class="chord">D</span>      <span class="chord">C</span>
-Let the people crawl inside</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">B</span>    <span class="chord">C</span> <span class="chord">D</span> 
-Someone in this town</pre>
-<pre class="block line-group"><span class="chord">G</span>            <span class="chord">D</span>          <span class="chord">C</span>
-Is trying to burn their foreheads down</pre>
-<pre class="block line-group">             <span class="chord">G</span>        <span class="chord">D</span>        <span class="chord">G</span>
-They want to stop the ones who want</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">G</span>      <span class="chord">D</span>      <span class="chord">G</span>
-A rock to wind a string around</pre>
-<pre class="block line-group"><span class="chord">C</span>        <span class="chord">G</span>    <span class="chord">D</span>       <span class="chord">G</span>
-But everybody wants a rock to</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>      <span class="chord">G</span>        <span class="chord">D</span>      <span class="chord">G</span>
-Wind a piece of string around</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Artist: They Might Be Giants</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Song: We Want A Rock</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Album: Flood</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="lyr">C G D G  x4</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Where was I? </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I forgot the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">point that I was </span></span><span class="seg"><span class="chord">C</span><span class="lyr">making </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">said if I was </span></span><span class="seg"><span class="chord">B</span><span class="lyr">smart that I would </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">save up for a </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">pie</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ce of string</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">rock to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">wind the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">round</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Pre-Chorus 1]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">rock to </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Wind a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">piece of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string </span></span><span class="seg"><span class="chord">G</span><span class="lyr">around</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">rock to </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Wind a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">piece of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string </span></span><span class="seg"><span class="chord">G</span><span class="lyr">around</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 1]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Throw the </span></span><span class="seg"><span class="chord">B</span><span class="lyr">crib door </span></span><span class="seg"><span class="chord">C</span><span class="lyr">wi</span></span><span class="seg"><span class="chord">D</span><span class="lyr">de</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Let the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">people </span></span><span class="seg"><span class="chord">C</span><span class="lyr">crawl inside </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Someone </span></span><span class="seg"><span class="chord">B</span><span class="lyr">in this </span></span><span class="seg"><span class="chord">C</span><span class="lyr">tow</span></span><span class="seg"><span class="chord">D</span><span class="lyr">n</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Is trying to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">burn their </span></span><span class="seg"><span class="chord">C</span><span class="lyr">playhouse down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They want to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stop the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ones who </span></span><span class="seg"><span class="chord">G</span><span class="lyr">want</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">A rock to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">wind a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">round</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">rock to</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Wind a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">piece of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">round</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Throw the</span></span><span class="seg"><span class="chord">B</span><span class="lyr"> crib </span></span><span class="seg"><span class="chord">C</span><span class="lyr">door wi</span></span><span class="seg"><span class="chord">D</span><span class="lyr">de</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Let the p</span></span><span class="seg"><span class="chord">D</span><span class="lyr">eople c</span></span><span class="seg"><span class="chord">C</span><span class="lyr">rawl inside </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Someone </span></span><span class="seg"><span class="chord">B</span><span class="lyr">in this </span></span><span class="seg"><span class="chord">C</span><span class="lyr">tow</span></span><span class="seg"><span class="chord">D</span><span class="lyr">n</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Is trying to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">burn their </span></span><span class="seg"><span class="chord">C</span><span class="lyr">playhouse down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They want to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stop the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ones who </span></span><span class="seg"><span class="chord">G</span><span class="lyr">want</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">A rock to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">wind a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">round</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">rock to</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Wind a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">piece of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string a</span></span><span class="seg"><span class="chord">G</span><span class="lyr">round</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">If I were a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">carpenter, I&#x27;d </span></span><span class="seg"><span class="chord">G</span><span class="lyr">hammer on my </span></span><span class="seg"><span class="chord">C</span><span class="lyr">piglet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;d </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">collect the seven </span></span><span class="seg"><span class="chord">B</span><span class="lyr">dollars and I&#x27;d </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">buy a big pros</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">the</span></span><span class="seg"><span class="chord">D</span><span class="lyr">tic forehead</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">and </span></span><span class="seg"><span class="chord">C</span><span class="lyr">wear it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">on my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">real </span></span><span class="seg"><span class="chord">G</span><span class="lyr">head</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Pre-Chorus 2]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants </span></span><span class="seg"><span class="chord">G</span><span class="lyr">prosthetic</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Foreheads </span></span><span class="seg"><span class="chord">G</span><span class="lyr">on their </span></span><span class="seg"><span class="chord">D</span><span class="lyr">real </span></span><span class="seg"><span class="chord">G</span><span class="lyr">heads</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants </span></span><span class="seg"><span class="chord">G</span><span class="lyr">prosthetic</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Foreheads </span></span><span class="seg"><span class="chord">G</span><span class="lyr">on their </span></span><span class="seg"><span class="chord">D</span><span class="lyr">real </span></span><span class="seg"><span class="chord">G</span><span class="lyr">heads</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 2]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Throw the </span></span><span class="seg"><span class="chord">B</span><span class="lyr">crib door </span></span><span class="seg"><span class="chord">C</span><span class="lyr">wi</span></span><span class="seg"><span class="chord">D</span><span class="lyr">de</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Let the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">people </span></span><span class="seg"><span class="chord">C</span><span class="lyr">crawl inside</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Someone in </span></span><span class="seg"><span class="chord">B</span><span class="lyr">this </span></span><span class="seg"><span class="chord">C</span><span class="lyr">to</span></span><span class="seg"><span class="chord">D</span><span class="lyr">wn</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Is trying to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">burn their </span></span><span class="seg"><span class="chord">C</span><span class="lyr">playhouse down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They want to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stop the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ones who </span></span><span class="seg"><span class="chord">G</span><span class="lyr">want</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Prosthetic </span></span><span class="seg"><span class="chord">G</span><span class="lyr">foreheads on </span></span><span class="seg"><span class="chord">D</span><span class="lyr">their </span></span><span class="seg"><span class="chord">G</span><span class="lyr">heads</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants </span></span><span class="seg"><span class="chord">G</span><span class="lyr">prosthetic</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Foreheads </span></span><span class="seg"><span class="chord">G</span><span class="lyr">on their </span></span><span class="seg"><span class="chord">D</span><span class="lyr">real </span></span><span class="seg"><span class="chord">G</span><span class="lyr">heads</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line chords-only"><span class="chord">Em</span><span class="chord">Em</span><span class="chord">D</span><span class="chord">C</span><span class="chord">G</span><span class="chord">D</span><span class="chord">G</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Em</span><span class="chord">Em</span><span class="chord">D</span><span class="chord">C</span><span class="chord">G</span><span class="chord">D</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 3]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Throw the </span></span><span class="seg"><span class="chord">B</span><span class="lyr">crib door </span></span><span class="seg"><span class="chord">C</span><span class="lyr">wi</span></span><span class="seg"><span class="chord">D</span><span class="lyr">de</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Let the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">people </span></span><span class="seg"><span class="chord">C</span><span class="lyr">crawl inside</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Someone in </span></span><span class="seg"><span class="chord">B</span><span class="lyr">this </span></span><span class="seg"><span class="chord">C</span><span class="lyr">to</span></span><span class="seg"><span class="chord">D</span><span class="lyr">wn</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Is trying to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">burn their </span></span><span class="seg"><span class="chord">C</span><span class="lyr">foreheads down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They want to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stop the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ones who </span></span><span class="seg"><span class="chord">G</span><span class="lyr">want</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">A rock to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">wind a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string </span></span><span class="seg"><span class="chord">G</span><span class="lyr">around</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But every</span></span><span class="seg"><span class="chord">G</span><span class="lyr">body </span></span><span class="seg"><span class="chord">D</span><span class="lyr">wants a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">rock to</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Wind a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">piece of </span></span><span class="seg"><span class="chord">D</span><span class="lyr">string </span></span><span class="seg"><span class="chord">G</span><span class="lyr">around</span></span></div></div>
     </div>
     
   </div>

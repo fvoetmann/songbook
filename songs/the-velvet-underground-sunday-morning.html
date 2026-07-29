@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Sunday Morning – The Velvet Underground</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,74 +498,40 @@
     <h1>Sunday Morning <span class="artist-inline">– The Velvet Underground</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">Sunday Morning by The Velvet Underground
-from &quot;The Velvet Underground &amp; Nico 1967&quot; Verve
-written by Lou Reed
-Here is an open chord version for guitar.
-Tuning: Down one semitone.</pre>
-<pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">G</span>        <span class="chord">C</span>        <span class="chord">G</span>        <span class="chord">C</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">G</span>      <span class="chord">C</span>         <span class="chord">G</span> 
-Sunday morning</pre>
-<pre class="block line-group">           <span class="chord">C</span>        <span class="chord">G</span> 
-Brings the dawn in</pre>
-<pre class="block line-group"><span class="chord">G/F#</span>        <span class="chord">Em</span>
-It&#x27;s just a restless feeling</pre>
-<pre class="block line-group"><span class="chord">A</span>        <span class="chord">D</span>
-By  my  side</pre>
-<pre class="block line-group"><span class="chord">G</span>     <span class="chord">C</span>         <span class="chord">G</span>
-Early dawning</pre>
-<pre class="block line-group">       <span class="chord">C</span>        <span class="chord">G</span>
-Sunday Morning</pre>
-<pre class="block line-group"><span class="chord">G/F#</span>           <span class="chord">Em</span>
-It&#x27;s just the wasted years</pre>
-<pre class="block line-group line-group-last">    <span class="chord">A</span>        <span class="chord">D</span>
-So close  behind</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>            <span class="chord">C</span>                 <span class="chord">G</span>
-Watchout the worlds behind ya</pre>
-<pre class="block line-group">                   <span class="chord">C</span>
-Theres always some one around ya</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Am</span>                      <span class="chord">F</span>    <span class="chord">D</span>
-who will call... it&#x27;s nothin at all</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">G</span>      <span class="chord">C</span>         <span class="chord">G</span>
-Sunday Morning</pre>
-<pre class="block line-group">        <span class="chord">C</span>        <span class="chord">G</span>
-And I&#x27;m falling</pre>
-<pre class="block line-group"><span class="chord">G/F#</span>       <span class="chord">Em</span>
-I&#x27;ve got a feeling</pre>
-<pre class="block line-group">       <span class="chord">A</span>         <span class="chord">D</span>
-I dont want to know.</pre>
-<pre class="block line-group"><span class="chord">G</span>     <span class="chord">C</span>         <span class="chord">G</span>
-Early dawning</pre>
-<pre class="block line-group">       <span class="chord">C</span>        <span class="chord">G</span>
-Sunday morning</pre>
-<pre class="block line-group"><span class="chord">G/F#</span>         <span class="chord">Em</span>
-It&#x27;s all the streets you crossed</pre>
-<pre class="block line-group line-group-last">    <span class="chord">A</span>         <span class="chord">D</span>
-not so long ago</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>            <span class="chord">C</span>                 <span class="chord">G</span>
-Watchout the worlds behind ya</pre>
-<pre class="block line-group">                   <span class="chord">C</span>
-Theres always some one around ya</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Am</span>                      <span class="chord">F</span>    <span class="chord">D</span>
-who will call... it&#x27;s nothin at all</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>            <span class="chord">C</span>                  <span class="chord">G</span>
-Watchout the worlds behind ya</pre>
-<pre class="block line-group">                   <span class="chord">C</span>
-Theres always some one around ya</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Am</span>                      <span class="chord">F</span>    <span class="chord">D</span>
-who will call... it&#x27;s nothin at all</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-<span class="chord">G</span>      <span class="chord">C</span>         <span class="chord">G</span> 
-Sunday morning</pre>
-<pre class="block line-group">       <span class="chord">C</span>         <span class="chord">G</span> 
-Sunday morning</pre>
-<pre class="block line-group line-group-last">       <span class="chord">C</span>         <span class="chord">G</span></pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Sunday Morning by The Velvet Underground</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">from &quot;The Velvet Underground &amp; Nico 1967&quot; Verve</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">written by Lou Reed</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Here is an open chord version for guitar.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Tuning: Down one semitone.</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Sunday </span></span><span class="seg"><span class="chord">C</span><span class="lyr">morning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Brings the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">dawn in</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G/F#</span><span class="lyr">It&#x27;s just a </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">restless feeling</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">By  my  s</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ide</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Early </span></span><span class="seg"><span class="chord">C</span><span class="lyr">dawning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Sunday </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Morning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G/F#</span><span class="lyr">It&#x27;s just the w</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">asted years</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">So c</span></span><span class="seg"><span class="chord">A</span><span class="lyr">lose  beh</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ind</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Watchout the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">worlds behind ya</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Theres always some </span></span><span class="seg"><span class="chord">C</span><span class="lyr">one around ya</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">who will </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">call... it&#x27;s nothin at a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ll</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Sunday </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Morning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I&#x27;m </span></span><span class="seg"><span class="chord">C</span><span class="lyr">falling</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G/F#</span><span class="lyr">I&#x27;ve got a </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">feeling</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I dont </span></span><span class="seg"><span class="chord">A</span><span class="lyr">want to kn</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ow.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Early </span></span><span class="seg"><span class="chord">C</span><span class="lyr">dawning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Sunday </span></span><span class="seg"><span class="chord">C</span><span class="lyr">morning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G/F#</span><span class="lyr">It&#x27;s all the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">streets you crossed</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">not </span></span><span class="seg"><span class="chord">A</span><span class="lyr">so long ag</span></span><span class="seg"><span class="chord">D</span><span class="lyr">o</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Watchout the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">worlds behind ya</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Theres always some </span></span><span class="seg"><span class="chord">C</span><span class="lyr">one around ya</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">who will </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">call... it&#x27;s nothin at a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ll</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Watchout the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">worlds behind ya</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Theres always some </span></span><span class="seg"><span class="chord">C</span><span class="lyr">one around ya</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">who will </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">call... it&#x27;s nothin at a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ll</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Sunday </span></span><span class="seg"><span class="chord">C</span><span class="lyr">morning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Sunday </span></span><span class="seg"><span class="chord">C</span><span class="lyr">morning</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">G</span></div></div>
     </div>
     <div class="tab-section"><pre class="block line-group line-group-last">Sunday morning...
 *repeat  &quot;Sunday morning&quot; to fade

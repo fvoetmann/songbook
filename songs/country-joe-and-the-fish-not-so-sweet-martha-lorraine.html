@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Not So Sweet Martha Lorraine – Country Joe and the Fish</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,96 +498,51 @@
     <h1>Not So Sweet Martha Lorraine <span class="artist-inline">– Country Joe and the Fish</span></h1>
     
     <div class="chords">
-    <pre class="block line-group">[intro]</pre>
-<pre class="block line-group line-group-last"><span class="chord">G#m</span>   <span class="chord">F#m</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">E</span>                <span class="chord">A</span>      <span class="chord">E</span>              <span class="chord">A</span>
-She hides in the attic  concealed on a shelf</pre>
-<pre class="block line-group"><span class="chord">E</span>                 <span class="chord">A</span>          <span class="chord">E</span>        <span class="chord">A</span>
-Behind volumes of literature based on herself</pre>
-<pre class="block line-group"><span class="chord">E</span>                   <span class="chord">A</span>          <span class="chord">E</span>         <span class="chord">A</span>
-And runs across the pages like some tiny elf</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
- Knowing that it&#x27;s hard to find</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
- Stuff way back in her mind</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
- Winds up spending all of her time</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
- Trying to memorize every line</pre>
-<pre class="block line-group line-group-last">      <span class="chord">E</span>       <span class="chord">A</span><span class="chord">E</span>     <span class="chord">A</span>      <span class="chord">E</span>        <span class="chord">A</span>
-Sweet Lorraine    ah   sweet Lorraine</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">E</span>             <span class="chord">A</span>           <span class="chord">E</span>     <span class="chord">A</span>
-Sweet lady of death wants me to die</pre>
-<pre class="block line-group"><span class="chord">E</span>               <span class="chord">A</span>         <span class="chord">E</span>           <span class="chord">A</span>
-So she can come sit by my bedside and sigh</pre>
-<pre class="block line-group"><span class="chord">E</span>                 <span class="chord">A</span>          <span class="chord">E</span>              <span class="chord">A</span>
-And wipe away the tears from all my friends eyes</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
-And then softly she will explain</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
-Just exactly who was to blame</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
-For causing me to go insane</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
-And finally blow out my brains</pre>
-<pre class="block line-group line-group-last">      <span class="chord">E</span>       <span class="chord">A</span><span class="chord">E</span>     <span class="chord">A</span>      <span class="chord">E</span>        <span class="chord">A</span>
-Sweet Lorraine    ah   sweet Lorraine</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-         <span class="chord">E</span>
-Well you know that it&#x27;s a shame and a pity</pre>
-<pre class="block line-group">         <span class="chord">D</span>
-You were raised up in the city</pre>
-<pre class="block line-group">        <span class="chord">E</span>             <span class="chord">D</span>
-And you never learned nothing &#x27;bout country </pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span>   <span class="chord">A</span>    <span class="chord">E</span>             <span class="chord">A</span>    <span class="chord">E</span> <span class="chord">A</span>
-ways ah  &#x27;bout country ways   </pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">E</span>          <span class="chord">A</span>        <span class="chord">E</span>          <span class="chord">A</span>
-The joy of life she dresses in black</pre>
-<pre class="block line-group"><span class="chord">E</span>              <span class="chord">A</span>       <span class="chord">E</span>               <span class="chord">A</span>
-With celestial secrets engraved in her back</pre>
-<pre class="block line-group"><span class="chord">E</span>                  <span class="chord">A</span>             <span class="chord">E</span>             <span class="chord">A</span>
-And her face keeps flashing that she&#x27;s got the knack</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
-But you know when you look into her eyes</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
-All she&#x27;s learned she&#x27;s had to memorize</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
-And the only way you&#x27;ll ever get her high</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
-Is to let her do her thing and then watch you die</pre>
-<pre class="block line-group">      <span class="chord">E</span>       <span class="chord">A</span><span class="chord">E</span>     <span class="chord">A</span>      <span class="chord">E</span>        <span class="chord">A</span>
-Sweet Lorraine    ah   sweet Lorraine
-[verse]</pre>
-<pre class="block line-group"><span class="chord">E</span>
-Now she&#x27;s the one who gives us all those magical things</pre>
-<pre class="block line-group"><span class="chord">E</span>
-And reads us stories out of the I Ching</pre>
-<pre class="block line-group"><span class="chord">E</span>
-Then she passes out a whole new basket of rings</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
-That when you put on your hand</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
-Makes you one of the Angel Band</pre>
-<pre class="block line-group"><span class="chord">G#m</span>
-And gives you the power to be a man</pre>
-<pre class="block line-group"><span class="chord">F#m</span>
-But what it does for her you never quite understand</pre>
-<pre class="block line-group">      <span class="chord">E</span>       <span class="chord">A</span><span class="chord">E</span>     <span class="chord">A</span>      <span class="chord">E</span>        <span class="chord">A</span>
-Sweet Lorraine    ah   sweet Lorraine
-[outro]</pre>
-<pre class="block line-group">         <span class="chord">E</span>
-Well you know that it&#x27;s a shame and a pity</pre>
-<pre class="block line-group">         <span class="chord">D</span>
-You were raised up in the city</pre>
-<pre class="block line-group">        <span class="chord">E</span>             <span class="chord">D</span>                     <span class="chord">E</span>     <span class="chord">A</span>
-And you never learned nothing &#x27;bout country ways</pre>
-<pre class="block line-group"><span class="chord">E</span>        <span class="chord">A</span>       <span class="chord">E</span>              <span class="chord">A</span>       <span class="chord">E</span>     <span class="chord">A</span>
-Oh &#x27;bout country ways  oh &#x27;bout country ways</pre>
-<pre class="block line-group line-group-last"><span class="chord">E</span>           <span class="chord">A</span>       <span class="chord">E</span>         <span class="chord">A</span>       <span class="chord">E</span>      <span class="chord">A</span>
-Yeah, about country ways  oh  country ways ...</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">[intro]</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">G#m</span><span class="chord">F#m</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">She hides in the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">attic  </span></span><span class="seg"><span class="chord">E</span><span class="lyr">concealed on a </span></span><span class="seg"><span class="chord">A</span><span class="lyr">shelf</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Behind volumes of </span></span><span class="seg"><span class="chord">A</span><span class="lyr">literature </span></span><span class="seg"><span class="chord">E</span><span class="lyr">based on </span></span><span class="seg"><span class="chord">A</span><span class="lyr">herself</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And runs across the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">pages like </span></span><span class="seg"><span class="chord">E</span><span class="lyr">some tiny </span></span><span class="seg"><span class="chord">A</span><span class="lyr">elf</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr"> Knowing that it&#x27;s hard to find</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr"> Stuff way back in her mind</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr"> Winds up spending all of her time</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr"> Trying to memorize every line</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Sweet </span></span><span class="seg"><span class="chord">E</span><span class="lyr">Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr">   ah </span></span><span class="seg"><span class="chord">A</span><span class="lyr">  sweet</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Sweet lady of </span></span><span class="seg"><span class="chord">A</span><span class="lyr">death wants </span></span><span class="seg"><span class="chord">E</span><span class="lyr">me to </span></span><span class="seg"><span class="chord">A</span><span class="lyr">die</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">So she can come </span></span><span class="seg"><span class="chord">A</span><span class="lyr">sit by my </span></span><span class="seg"><span class="chord">E</span><span class="lyr">bedside and </span></span><span class="seg"><span class="chord">A</span><span class="lyr">sigh</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And wipe away the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">tears from </span></span><span class="seg"><span class="chord">E</span><span class="lyr">all my friends </span></span><span class="seg"><span class="chord">A</span><span class="lyr">eyes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr">And then softly she will explain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">Just exactly who was to blame</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr">For causing me to go insane</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">And finally blow out my brains</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Sweet </span></span><span class="seg"><span class="chord">E</span><span class="lyr">Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr">   ah </span></span><span class="seg"><span class="chord">A</span><span class="lyr">  sweet</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Well you </span></span><span class="seg"><span class="chord">E</span><span class="lyr">know that it&#x27;s a shame and a pity</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You were </span></span><span class="seg"><span class="chord">D</span><span class="lyr">raised up in the city</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And you </span></span><span class="seg"><span class="chord">E</span><span class="lyr">never learned </span></span><span class="seg"><span class="chord">D</span><span class="lyr">nothing &#x27;bout country </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">ways</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> ah  </span></span><span class="seg"><span class="chord">E</span><span class="lyr">&#x27;bout country </span></span><span class="seg"><span class="chord">A</span><span class="lyr">ways </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">The joy of </span></span><span class="seg"><span class="chord">A</span><span class="lyr">life she </span></span><span class="seg"><span class="chord">E</span><span class="lyr">dresses in </span></span><span class="seg"><span class="chord">A</span><span class="lyr">black</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">With celestial </span></span><span class="seg"><span class="chord">A</span><span class="lyr">secrets </span></span><span class="seg"><span class="chord">E</span><span class="lyr">engraved in her </span></span><span class="seg"><span class="chord">A</span><span class="lyr">back</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And her face keeps </span></span><span class="seg"><span class="chord">A</span><span class="lyr">flashing that </span></span><span class="seg"><span class="chord">E</span><span class="lyr">she&#x27;s got the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">knack</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr">But you know when you look into her eyes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">All she&#x27;s learned she&#x27;s had to memorize</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr">And the only way you&#x27;ll ever get her high</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">Is to let her do her thing and then watch you die</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Sweet </span></span><span class="seg"><span class="chord">E</span><span class="lyr">Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr">   ah </span></span><span class="seg"><span class="chord">A</span><span class="lyr">  sweet</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">[verse]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Now she&#x27;s the one who gives us all those magical things</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">And reads us stories out of the I Ching</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Then she passes out a whole new basket of rings</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr">That when you put on your hand</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">Makes you one of the Angel Band</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#m</span><span class="lyr">And gives you the power to be a man</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">But what it does for her you never quite understand</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Sweet </span></span><span class="seg"><span class="chord">E</span><span class="lyr">Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr">   ah </span></span><span class="seg"><span class="chord">A</span><span class="lyr">  sweet</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Lorraine</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">[outro]</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Well you </span></span><span class="seg"><span class="chord">E</span><span class="lyr">know that it&#x27;s a shame and a pity</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You were </span></span><span class="seg"><span class="chord">D</span><span class="lyr">raised up in the city</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And you </span></span><span class="seg"><span class="chord">E</span><span class="lyr">never learned </span></span><span class="seg"><span class="chord">D</span><span class="lyr">nothing &#x27;bout country </span></span><span class="seg"><span class="chord">E</span><span class="lyr">ways</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Oh &#x27;bout </span></span><span class="seg"><span class="chord">A</span><span class="lyr">country </span></span><span class="seg"><span class="chord">E</span><span class="lyr">ways  oh &#x27;bout </span></span><span class="seg"><span class="chord">A</span><span class="lyr">country </span></span><span class="seg"><span class="chord">E</span><span class="lyr">ways</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Yeah, about </span></span><span class="seg"><span class="chord">A</span><span class="lyr">country </span></span><span class="seg"><span class="chord">E</span><span class="lyr">ways  oh  </span></span><span class="seg"><span class="chord">A</span><span class="lyr">country </span></span><span class="seg"><span class="chord">E</span><span class="lyr">ways ..</span></span><span class="seg"><span class="chord">A</span><span class="lyr">.</span></span></div></div>
     </div>
     
   </div>

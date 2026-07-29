@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Memo To Human Resources – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,55 +496,28 @@
     <h1>Memo To Human Resources <span class="artist-inline">– They Might Be Giants</span></h1>
     
     
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">C</span>               <span class="chord">Em</span>       <span class="chord">F</span>             <span class="chord">G</span>
-I&#x27;ll be in the back, and I don&#x27;t need the help</pre>
-<pre class="block line-group">    <span class="chord">C</span>                 <span class="chord">Em</span>       <span class="chord">F</span>            <span class="chord">G</span>
-I&#x27;m good here in the back; I&#x27;m good all by myself</pre>
-<pre class="block line-group">    <span class="chord">F</span>
-I&#x27;m busy taking stock of all the things that I forgot</pre>
-<pre class="block line-group line-group-last">    <span class="chord">F</span>                                                  <span class="chord">Em7</span>
-And making mental notes of just exactly where I lost the plot</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-  <span class="chord">C</span>                <span class="chord">Em</span>           <span class="chord">F</span>          <span class="chord">G</span>
-I stuck around too long feeling sorry for myself</pre>
-<pre class="block line-group">  <span class="chord">C</span>          <span class="chord">Em</span>           <span class="chord">F</span>                  <span class="chord">G</span>
-A disinvited guest rifles through the bathroom shelf</pre>
-<pre class="block line-group">    <span class="chord">F</span>
-I&#x27;m searching for some disbelief that I can still suspend</pre>
-<pre class="block line-group line-group-last">    <span class="chord">F</span>                                                     <span class="chord">Em7</span>
-But never mind the furthermore, the plea is self-defense a-gain</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">F</span>        <span class="chord">Dm</span>     <span class="chord">G</span>       <span class="chord">Em</span>     <span class="chord">Am</span>
-Then the people came to talk me down</pre>
-<pre class="block line-group">    <span class="chord">F</span>          <span class="chord">G</span>
-And I got some advice</pre>
-<pre class="block line-group"><span class="chord">F</span>        <span class="chord">Dm</span>     <span class="chord">G</span>       <span class="chord">Em</span>     <span class="chord">Am</span>
-Then the people came to talk me down</pre>
-<pre class="block line-group">    <span class="chord">F</span>            <span class="chord">G</span>
-But I don&#x27;t need advice</pre>
-<pre class="block line-group line-group-last"> <span class="chord">Fm</span>       <span class="chord">C</span>
-I&#x27;m down</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">C</span>           <span class="chord">Em</span>       <span class="chord">F</span>              <span class="chord">G</span>
-Later in my car I considered what you said</pre>
-<pre class="block line-group">    <span class="chord">C</span>               <span class="chord">Em</span>       <span class="chord">F</span>                <span class="chord">G</span>
-I&#x27;m good here in my car; I&#x27;m good with what you said</pre>
-<pre class="block line-group">    <span class="chord">F</span>
-And I&#x27;d be shouting out to you, but I was mighty hoarse</pre>
-<pre class="block line-group line-group-last"><span class="chord">F</span>                                                             <span class="chord">Em7</span>
-Talk you through the finer points and issues much too small to force</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">F</span>        <span class="chord">Dm</span>     <span class="chord">G</span>       <span class="chord">Em</span>     <span class="chord">Am</span>
-Then the people came to talk me down</pre>
-<pre class="block line-group">    <span class="chord">F</span>          <span class="chord">G</span>
-And I got some advice</pre>
-<pre class="block line-group"><span class="chord">F</span>        <span class="chord">Dm</span>     <span class="chord">G</span>       <span class="chord">Em</span>     <span class="chord">Am</span>
-Then the people came to talk me down</pre>
-<pre class="block line-group">    <span class="chord">F</span>            <span class="chord">G</span>
-But I don&#x27;t need advice</pre>
-<pre class="block line-group line-group-last"> <span class="chord">Fm</span>       <span class="chord">C</span>
-I&#x27;m down</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I&#x27;ll be in the b</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ack, and </span></span><span class="seg"><span class="chord">F</span><span class="lyr">I don&#x27;t need t</span></span><span class="seg"><span class="chord">G</span><span class="lyr">he help</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">C</span><span class="lyr">good here in the b</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ack; I&#x27;m </span></span><span class="seg"><span class="chord">F</span><span class="lyr">good all by m</span></span><span class="seg"><span class="chord">G</span><span class="lyr">yself</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">F</span><span class="lyr">busy taking stock of all the things that I forgot</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F</span><span class="lyr">making mental notes of just exactly where I lost th</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr">e plot</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">stuck around too </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">long feeling </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sorry for m</span></span><span class="seg"><span class="chord">G</span><span class="lyr">yself</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="seg"><span class="chord">C</span><span class="lyr">disinvited </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">guest rifles </span></span><span class="seg"><span class="chord">F</span><span class="lyr">through the bathroo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">m shelf</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">F</span><span class="lyr">searching for some disbelief that I can still suspend</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">F</span><span class="lyr">never mind the furthermore, the plea is self-defense a</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr">-gain</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Then the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">people </span></span><span class="seg"><span class="chord">G</span><span class="lyr">came to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">talk me</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F</span><span class="lyr">I got some </span></span><span class="seg"><span class="chord">G</span><span class="lyr">advice</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Then the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">people </span></span><span class="seg"><span class="chord">G</span><span class="lyr">came to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">talk me</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">F</span><span class="lyr">I don&#x27;t need </span></span><span class="seg"><span class="chord">G</span><span class="lyr">advice</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">&#x27;m down</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Later in my </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">car I con</span></span><span class="seg"><span class="chord">F</span><span class="lyr">sidered what yo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">u said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">C</span><span class="lyr">good here in my </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">car; I&#x27;m </span></span><span class="seg"><span class="chord">F</span><span class="lyr">good with what yo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">u said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F</span><span class="lyr">I&#x27;d be shouting out to you, but I was mighty hoarse</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Talk you through the finer points and issues much too small to</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr"> force</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Then the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">people </span></span><span class="seg"><span class="chord">G</span><span class="lyr">came to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">talk me</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">F</span><span class="lyr">I got some </span></span><span class="seg"><span class="chord">G</span><span class="lyr">advice</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Then the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">people </span></span><span class="seg"><span class="chord">G</span><span class="lyr">came to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">talk me</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> down</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">F</span><span class="lyr">I don&#x27;t need </span></span><span class="seg"><span class="chord">G</span><span class="lyr">advice</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">&#x27;m down</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
     
     
   </div>

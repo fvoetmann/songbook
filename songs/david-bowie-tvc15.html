@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Tvc15 – David Bowie</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -78,7 +87,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"F7":[[1,0,1,2,1,1],[1,3,1,2,1,1],[1,0,1,2,1,-1],[1,3,1,2,1,-1],[1,3,1,2,-1,-1],[-1,-1,3,5,4,5]],"G7":[[3,2,0,0,0,1],[3,2,0,0,3,1],[3,2,3,0,3,1],[3,2,3,0,3,3],[3,2,3,4,3,3],[3,2,3,0,3,-1]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Fm":[[1,3,3,1,1,1],[1,3,3,1,1,-1],[-1,-1,3,1,1,1],[1,3,3,1,-1,-1],[-1,3,3,1,1,1],[-1,3,3,1,1,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]]},"ukulele":{"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"F7":[[2,3,1,3],[5,5,5,6],[2,0,1,0],[2,0,1,3],[2,3,1,0],[2,5,5,3]],"G7":[[0,2,1,2],[4,5,3,5],[0,5,7,5],[0,2,3,2],[0,5,3,2],[4,2,3,2]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Fm":[[1,0,1,3],[5,5,4,3]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]]},"mandolin":{"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"F7":[[2,1,3,1],[5,3,6,5],[-1,3,3,5],[-1,3,6,5],[2,1,0,1],[2,3,3,1]],"G7":[[0,0,2,1],[4,3,5,3],[0,3,2,1],[0,0,2,3],[0,3,2,3],[0,0,2,-1]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Fm":[[-1,3,3,4],[1,3,3,1],[1,3,3,4],[1,3,3,-1],[5,3,3,4],[1,-1,3,1]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]]},"banjo":{"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"F7":[[1,2,1,3,0],[3,2,1,1,0],[3,2,1,3,0],[1,2,4,3,0],[3,2,4,1,0],[-1,2,1,3,0]],"G7":[[0,0,0,3,0],[3,0,0,0,0],[0,4,0,3,0],[3,4,0,0,0],[0,4,3,3,0],[3,4,3,0,0]],"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"Fm":[[3,1,1,3,0],[-1,1,1,3,0],[3,5,6,6,0],[6,5,6,3,0],[6,5,6,6,0],[-1,5,6,6,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]]}};
+    var DBS = {"guitar":{"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Fm":[[1,3,3,1,1,1],[1,3,3,1,1,-1],[-1,-1,3,1,1,1],[1,3,3,1,-1,-1],[-1,3,3,1,1,1],[-1,3,3,1,1,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"F7":[[1,0,1,2,1,1],[1,3,1,2,1,1],[1,0,1,2,1,-1],[1,3,1,2,1,-1],[1,3,1,2,-1,-1],[-1,-1,3,5,4,5]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]]},"ukulele":{"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Fm":[[1,0,1,3],[5,5,4,3]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"F7":[[2,3,1,3],[5,5,5,6],[2,0,1,0],[2,0,1,3],[2,3,1,0],[2,5,5,3]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]]},"mandolin":{"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Fm":[[-1,3,3,4],[1,3,3,1],[1,3,3,4],[1,3,3,-1],[5,3,3,4],[1,-1,3,1]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"F7":[[2,1,3,1],[5,3,6,5],[-1,3,3,5],[-1,3,6,5],[2,1,0,1],[2,3,3,1]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]]},"banjo":{"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"Fm":[[3,1,1,3,0],[-1,1,1,3,0],[3,5,6,6,0],[6,5,6,3,0],[6,5,6,6,0],[-1,5,6,6,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"F7":[[1,2,1,3,0],[3,2,1,1,0],[3,2,1,3,0],[1,2,4,3,0],[3,2,4,1,0],[-1,2,1,3,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,100 +498,61 @@
     <h1>Tvc15 <span class="artist-inline">– David Bowie</span></h1>
     
     <div class="chords">
-    <pre class="block line-group">This is the first tab I submit after the death of the Duke, I just can&#x27;t get over it but I really believe
-this is a good way to pay tribute to him.
-Station To Station is one of my favourite Bowie albums, and TVC15 is certainly one of the greatest tunes
-on it, so I thought it was a pity not to have a proper tab for it. There is a nice anecdote regarding
-this song... Legend has it that it was inspired by a completely stoned Iggy Pop who thought that Bowie&#x27;s
-TV was going to swallow his girlfriend. This got the Duke to write a song about a holographic TV named
-TVC15.
-Rate the tab with 5 stars for more Bowie anecdotes... and leave a comment if you wish.
-Enjoy the song!
-/ <span class="chord">C</span> / <span class="chord">C</span> / <span class="chord">C</span> / <span class="chord">C</span> /
-/ <span class="chord">F7</span> / <span class="chord">F7</span> / <span class="chord">C</span> / <span class="chord">C</span> / 
-/ <span class="chord">G7</span> / <span class="chord">G7</span> / <span class="chord">C</span> / <span class="chord">C</span> /</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">Am</span>           <span class="chord">C</span>              <span class="chord">Am</span>
-  Up every evening &#x27;bout half eight or nine</pre>
-<pre class="block line-group">         <span class="chord">C</span>           <span class="chord">Am</span>            <span class="chord">C</span>                  <span class="chord">Am</span>
-I give my complete attention to a very good friend of mine</pre>
-<pre class="block line-group"><span class="chord">C</span>             <span class="chord">Am</span>            <span class="chord">C</span>                <span class="chord">Am</span>
-  He&#x27;s quadraphonic, he&#x27;s a, he&#x27;s got more channels</pre>
-<pre class="block line-group"><span class="chord">F</span>                      <span class="chord">Fm</span> 
-  So hologramic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>              <span class="chord">Am</span>             <span class="chord">C</span>          <span class="chord">Am</span>
-  I brought my baby home, she, she sat around forlorn</pre>
-<pre class="block line-group"><span class="chord">C</span>         <span class="chord">Am</span>     <span class="chord">C</span>          <span class="chord">Am</span>
-  She saw my TVC15, baby&#x27;s gone, she</pre>
-<pre class="block line-group"><span class="chord">C</span>                   <span class="chord">Am</span>
-  She crawled right in, oh my</pre>
-<pre class="block line-group"><span class="chord">C</span>                   <span class="chord">Am</span>
-  She crawled right in my</pre>
-<pre class="block line-group"><span class="chord">F</span>                      <span class="chord">Fm</span>
-  So hologramic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">E</span>                       <span class="chord">G</span>
-  Oh, so demonic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">Am</span>          <span class="chord">C</span>               <span class="chord">Am</span>
-  Maybe if I pray every, each night I sit there pleading</pre>
-<pre class="block line-group"><span class="chord">C</span>                <span class="chord">Am</span>             <span class="chord">C</span>               <span class="chord">Am</span>
-  &quot;Send back my dream test baby, she&#x27;s my main feature&quot;</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">Am</span>   <span class="chord">C</span>              <span class="chord">Am</span>
-  My TVC15, he just stares back unblinking</pre>
-<pre class="block line-group"><span class="chord">F</span>                      <span class="chord">Fm</span>
-  So hologramic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>              <span class="chord">Am</span>
-  One of these nights I may just</pre>
-<pre class="block line-group"><span class="chord">C</span>                 <span class="chord">Am</span>         <span class="chord">C</span>           <span class="chord">Am</span>
-  Jump down that rainbow way, be with my baby, then</pre>
-<pre class="block line-group"><span class="chord">C</span>             <span class="chord">Am</span>
-  We&#x27;ll spend some time together</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">Am</span>          <span class="chord">C</span>   <span class="chord">Am</span>
-  So hologramic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">F</span>                             <span class="chord">Fm</span>
-  My baby&#x27;s in there someplace, love&#x27;s rating in the sky</pre>
-<pre class="block line-group"><span class="chord">E</span>                      <span class="chord">G</span>
-  So hologramic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">F7</span>
-Transition, transmission, </pre>
-<pre class="block line-group"><span class="chord">A</span>
-transition, transmission</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">D</span>  <span class="chord">C</span>  <span class="chord">D</span>   <span class="chord">C</span>    <span class="chord">D</span>  <span class="chord">C</span>
-  Oh my TVC15, oh oh, TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">D</span>  <span class="chord">C</span>  <span class="chord">D</span>   <span class="chord">C</span>    <span class="chord">D</span>  <span class="chord">C</span>
-  Oh my TVC15, oh oh, TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">D</span>  <span class="chord">C</span>  <span class="chord">D</span>   <span class="chord">C</span>    <span class="chord">D</span>  <span class="chord">C</span>
-  Oh my TVC15, oh oh, TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">D</span>  <span class="chord">C</span>  <span class="chord">D</span>   <span class="chord">C</span>    <span class="chord">D</span>  <span class="chord">C</span>
-  Oh my TVC15, oh oh, TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>           <span class="chord">Am</span>          <span class="chord">C</span>               <span class="chord">Am</span>
-  Maybe if I pray every, each night I sit there pleading</pre>
-<pre class="block line-group"><span class="chord">C</span>                <span class="chord">Am</span>             <span class="chord">C</span>               <span class="chord">Am</span>
-  &quot;Send back my dream test baby, she&#x27;s my main feature&quot;</pre>
-<pre class="block line-group"><span class="chord">C</span>       <span class="chord">Am</span>   <span class="chord">C</span>              <span class="chord">Am</span>
-  My TVC15, he just stares back unblinking</pre>
-<pre class="block line-group"><span class="chord">F</span>                      <span class="chord">Fm</span>
-  So hologramic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">C</span>              <span class="chord">Am</span>
-  One of these nights I may just</pre>
-<pre class="block line-group"><span class="chord">C</span>                 <span class="chord">Am</span>         <span class="chord">C</span>           <span class="chord">Am</span>
-  Jump down that rainbow way, be with my baby, then</pre>
-<pre class="block line-group"><span class="chord">C</span>             <span class="chord">Am</span>
-  We&#x27;ll spend some time together</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">Am</span>          <span class="chord">C</span>   <span class="chord">Am</span>
-  So hologramic, oh my TVC15</pre>
-<pre class="block line-group"><span class="chord">F</span>                             <span class="chord">Fm</span>
-  My baby&#x27;s in there someplace, love&#x27;s rating in the sky</pre>
-<pre class="block line-group"><span class="chord">E</span>                      <span class="chord">G</span>
-  So hologramic, oh my TVC15
-/ <span class="chord">C</span> / <span class="chord">C</span> / <span class="chord">C</span> / <span class="chord">C</span> /
-/ <span class="chord">F7</span> / <span class="chord">F7</span> / <span class="chord">C</span> / <span class="chord">C</span> / 
-/ <span class="chord">G7</span> / <span class="chord">F7</span> / <span class="chord">C</span> / <span class="chord">C</span> /</pre>
-<pre class="block line-group"><span class="chord">F7</span>
-Transition, transmission, </pre>
-<pre class="block line-group"><span class="chord">A</span>
-transition, transmission</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>       <span class="chord">D</span>  <span class="chord">C</span>  <span class="chord">D</span>   <span class="chord">C</span>    <span class="chord">D</span>  <span class="chord">C</span>
-  Oh my TVC15, oh oh, TVC15
-...repeat to fade</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">This is the first tab I submit after the death of the Duke, I just can&#x27;t get over it but I really believe</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">this is a good way to pay tribute to him.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Station To Station is one of my favourite Bowie albums, and TVC15 is certainly one of the greatest tunes</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">on it, so I thought it was a pity not to have a proper tab for it. There is a nice anecdote regarding</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">this song... Legend has it that it was inspired by a completely stoned Iggy Pop who thought that Bowie&#x27;s</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">TV was going to swallow his girlfriend. This got the Duke to write a song about a holographic TV named</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">TVC15.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Rate the tab with 5 stars for more Bowie anecdotes... and leave a comment if you wish.</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Enjoy the song!</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">/ C / C / C / C /</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">/ F7 / F7 / C / C / </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">/ G7 / G7 / C / C /</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Up every </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">evening &#x27;bout</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> half eight or </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">nine</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I give my</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> complete at</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tention to a v</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ery good friend of </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mine</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  He&#x27;s quadrap</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">honic, he&#x27;s a,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> he&#x27;s got more ch</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">annels</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">  So hologramic, oh my </span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">TVC15</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I brought my </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">baby home, she,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> she sat ar</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ound forlorn</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  She saw </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">my TVC1</span></span><span class="seg"><span class="chord">C</span><span class="lyr">5, baby&#x27;s g</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">one, she</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  She crawled right </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">in, oh my</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  She crawled right </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">in my</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">  So hologramic, oh my </span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">TVC15</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">  Oh, so demonic, oh my </span></span><span class="seg"><span class="chord">G</span><span class="lyr">TVC15</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Maybe if I</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> pray every,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> each night I si</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">t there pleading</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  &quot;Send back my d</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ream test baby,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> she&#x27;s my main f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">eature&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  My TVC</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">15, h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">e just stares b</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ack unblinking</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">  So hologramic, oh my </span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">TVC15</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  One of these </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">nights I may just</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Jump down that r</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ainbow way,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> be with my </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">baby, then</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  We&#x27;ll spend </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">some time together</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  So hologr</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">amic, oh my </span></span><span class="seg"><span class="chord">C</span><span class="lyr">TVC1</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">5</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">  My baby&#x27;s in there someplace</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">, love&#x27;s rating in the sky</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">  So hologramic, oh my </span></span><span class="seg"><span class="chord">G</span><span class="lyr">TVC15</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F7</span><span class="lyr">Transition, transmission, </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">transition, transmission</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Oh my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">TVC</span></span><span class="seg"><span class="chord">C</span><span class="lyr">15,</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> oh </span></span><span class="seg"><span class="chord">C</span><span class="lyr">oh, T</span></span><span class="seg"><span class="chord">D</span><span class="lyr">VC1</span></span><span class="seg"><span class="chord">C</span><span class="lyr">5</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Oh my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">TVC</span></span><span class="seg"><span class="chord">C</span><span class="lyr">15,</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> oh </span></span><span class="seg"><span class="chord">C</span><span class="lyr">oh, T</span></span><span class="seg"><span class="chord">D</span><span class="lyr">VC1</span></span><span class="seg"><span class="chord">C</span><span class="lyr">5</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Oh my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">TVC</span></span><span class="seg"><span class="chord">C</span><span class="lyr">15,</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> oh </span></span><span class="seg"><span class="chord">C</span><span class="lyr">oh, T</span></span><span class="seg"><span class="chord">D</span><span class="lyr">VC1</span></span><span class="seg"><span class="chord">C</span><span class="lyr">5</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Oh my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">TVC</span></span><span class="seg"><span class="chord">C</span><span class="lyr">15,</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> oh </span></span><span class="seg"><span class="chord">C</span><span class="lyr">oh, T</span></span><span class="seg"><span class="chord">D</span><span class="lyr">VC1</span></span><span class="seg"><span class="chord">C</span><span class="lyr">5</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Maybe if I</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> pray every,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> each night I si</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">t there pleading</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  &quot;Send back my d</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ream test baby,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> she&#x27;s my main f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">eature&quot;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  My TVC</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">15, h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">e just stares b</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ack unblinking</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">  So hologramic, oh my </span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">TVC15</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  One of these </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">nights I may just</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Jump down that r</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ainbow way,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> be with my </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">baby, then</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  We&#x27;ll spend </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">some time together</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  So hologr</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">amic, oh my </span></span><span class="seg"><span class="chord">C</span><span class="lyr">TVC1</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">5</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">  My baby&#x27;s in there someplace</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">, love&#x27;s rating in the sky</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">  So hologramic, oh my </span></span><span class="seg"><span class="chord">G</span><span class="lyr">TVC15</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">/ C / C / C / C /</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">/ F7 / F7 / C / C / </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">/ G7 / F7 / C / C /</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F7</span><span class="lyr">Transition, transmission, </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">transition, transmission</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Oh my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">TVC</span></span><span class="seg"><span class="chord">C</span><span class="lyr">15,</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> oh </span></span><span class="seg"><span class="chord">C</span><span class="lyr">oh, T</span></span><span class="seg"><span class="chord">D</span><span class="lyr">VC1</span></span><span class="seg"><span class="chord">C</span><span class="lyr">5</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">...repeat to fade</span></span></div></div>
     </div>
     
   </div>

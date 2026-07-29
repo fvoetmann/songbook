@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Falsk Matematik – Peps Blodsband</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,103 +498,53 @@
     <h1>Falsk Matematik <span class="artist-inline">– Peps Blodsband</span></h1>
     <div class="meta">Toneart: E</div>
     <div class="chords">
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">G</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">G</span>
-Ett o ett e två</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Två o två e fyra</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Lönerna dom e låga</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Men varorna e dyra</pre>
-<pre class="block line-group">        <span class="chord">C</span>
-Ska de&#x27; va så svårt att fatta</pre>
-<pre class="block line-group">                       <span class="chord">G</span>
-Att det e falsk matematik</pre>
-<pre class="block line-group">             <span class="chord">D</span>
-Som gör den fattige så fattig</pre>
-<pre class="block line-group line-group-last">       <span class="chord">C</span>                 <span class="chord">G</span>    <span class="chord">D</span>
-O den rike så förbannat rik</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">G</span>
-Två o två är fyra</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Fyra o fyre e åtta</pre>
-<pre class="block line-group"><span class="chord">G</span>
-En del har femton badrum</pre>
-<pre class="block line-group"><span class="chord">G</span>
-O jag har en sprucken potta</pre>
-<pre class="block line-group">        <span class="chord">C</span>
-Ska de&#x27; va så svårt att fatta</pre>
-<pre class="block line-group">                       <span class="chord">G</span>
-Att det e falsk matematik</pre>
-<pre class="block line-group">             <span class="chord">D</span>
-Som gör den fattige så fattig</pre>
-<pre class="block line-group line-group-last">       <span class="chord">C</span>                 <span class="chord">G</span>   <span class="chord">D</span>
-O den rike så förbannat rik</pre>
-<pre class="block line-group"><span class="section">[Solo]</span>
-<span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span></pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">G</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">D</span>
-* 2</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">G</span>
-Tre o tre e sex</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Sex o sex e tolv</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Fru Wallenberg putsar naglarna</pre>
-<pre class="block line-group"><span class="chord">G</span>
-O fru Svensson skurar golv</pre>
-<pre class="block line-group">        <span class="chord">C</span>
-Ska de&#x27; va så svårt att fatta</pre>
-<pre class="block line-group">                       <span class="chord">G</span>
-Att det e falsk matematik</pre>
-<pre class="block line-group">             <span class="chord">D</span>
-Som gör den fattige så fattig</pre>
-<pre class="block line-group line-group-last">       <span class="chord">C</span>                 <span class="chord">G</span>    <span class="chord">D</span>
-O den rike så förbannat rik</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-<span class="chord">G</span>
-Noll o noll e noll</pre>
-<pre class="block line-group"><span class="chord">G</span>
-O noll noll noll noll noll</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Var du än släpper slantarna</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Så rullar dom åt samma håll</pre>
-<pre class="block line-group">        <span class="chord">C</span>
-Ska de&#x27; va så svårt att fatta</pre>
-<pre class="block line-group">                       <span class="chord">G</span>
-Att det e falsk matematik</pre>
-<pre class="block line-group">             <span class="chord">D</span>
-Som gör den fattige så fattig</pre>
-<pre class="block line-group line-group-last">       <span class="chord">C</span>                 <span class="chord">G</span>  <span class="chord">D</span>
-O den rike så förbannat rik</pre>
-<pre class="block line-group"><span class="section">[Solo]</span>
-<span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">G</span></pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">G</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">G</span> <span class="chord">D</span>
-* 4</pre>
-<pre class="block line-group"><span class="section">[Verse 5]</span>
-<span class="chord">G</span>
-Noll o noll e noll</pre>
-<pre class="block line-group"><span class="chord">G</span>
-O noll noll noll noll noll</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Var du än släpper slantarna</pre>
-<pre class="block line-group"><span class="chord">G</span>
-Så rullar dom åt samma håll</pre>
-<pre class="block line-group">        <span class="chord">C</span>
-Ska de&#x27; va så svårt att fatta</pre>
-<pre class="block line-group">                       <span class="chord">G</span>
-Att det e falsk matematik</pre>
-<pre class="block line-group">             <span class="chord">D</span>
-Som gör den fattige så fattig</pre>
-<pre class="block line-group line-group-last">       <span class="chord">C</span>                 <span class="chord">G</span>  <span class="chord">D</span>
-O den rike så förbannat rik</pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Ett o ett e två</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Två o två e fyra</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Lönerna dom e låga</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Men varorna e dyra</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ska de&#x27; </span></span><span class="seg"><span class="chord">C</span><span class="lyr">va så svårt att fatta</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Att det e falsk matemat</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Som gör den f</span></span><span class="seg"><span class="chord">D</span><span class="lyr">attige så fattig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">O den r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ike så förbannat r</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Två o två är fyra</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Fyra o fyre e åtta</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">En del har femton badrum</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">O jag har en sprucken potta</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ska de&#x27; </span></span><span class="seg"><span class="chord">C</span><span class="lyr">va så svårt att fatta</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Att det e falsk matemat</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Som gör den f</span></span><span class="seg"><span class="chord">D</span><span class="lyr">attige så fattig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">O den r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ike så förbannat r</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">G</span><span class="chord">G</span><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">C</span><span class="chord">G</span><span class="chord">G</span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">* </span></span><span class="seg"><span class="chord">C</span><span class="lyr">2</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tre o tre e sex</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Sex o sex e tolv</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Fru Wallenberg putsar naglarna</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">O fru Svensson skurar golv</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ska de&#x27; </span></span><span class="seg"><span class="chord">C</span><span class="lyr">va så svårt att fatta</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Att det e falsk matemat</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Som gör den f</span></span><span class="seg"><span class="chord">D</span><span class="lyr">attige så fattig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">O den r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ike så förbannat r</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Noll o noll e noll</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">O noll noll noll noll noll</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Var du än släpper slantarna</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Så rullar dom åt samma håll</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ska de&#x27; </span></span><span class="seg"><span class="chord">C</span><span class="lyr">va så svårt att fatta</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Att det e falsk matemat</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Som gör den f</span></span><span class="seg"><span class="chord">D</span><span class="lyr">attige så fattig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">O den r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ike så förbannat r</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">G</span><span class="chord">G</span><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">C</span><span class="chord">G</span><span class="chord">G</span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">* </span></span><span class="seg"><span class="chord">C</span><span class="lyr">4</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Noll o noll e noll</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">O noll noll noll noll noll</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Var du än släpper slantarna</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Så rullar dom åt samma håll</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ska de&#x27; </span></span><span class="seg"><span class="chord">C</span><span class="lyr">va så svårt att fatta</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Att det e falsk matemat</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Som gör den f</span></span><span class="seg"><span class="chord">D</span><span class="lyr">attige så fattig</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">O den r</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ike så förbannat r</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ik</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
     </div>
     
   </div>

@@ -40,7 +40,7 @@ def count_pages(pdf_path: Path) -> int:
 
 COMBINED_CSS_OVERRIDES = """
 <style>
-pre.block { break-inside: auto !important; }
+.block { break-inside: auto !important; }
 .tab-section { break-before: auto !important; }
 </style>"""
 
@@ -156,8 +156,8 @@ def make_combined_html(entries: list[dict], song_bodies: list[str], shared_css: 
     .chords {{ column-count: 2; column-gap: 8mm; }}
     /* Each song starts on a new page */
     .page {{ break-before: page; }}
-    /* Allow large pre blocks to split across pages rather than being pushed to the next page whole */
-    pre.block {{ break-inside: auto; }}
+    /* Allow large blocks to split across pages rather than being pushed to the next page whole */
+    .block {{ break-inside: auto; }}
     /* Allow tab sections to flow naturally rather than always forcing a page break */
     .tab-section {{ break-before: auto; }}
   </style>

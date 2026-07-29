@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>You Probably Get That A Lot – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,72 +498,37 @@
     <h1>You Probably Get That A Lot <span class="artist-inline">– They Might Be Giants</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">G</span>      <span class="chord">Em</span>       <span class="chord">C</span>   <span class="chord">A7</span>
-Do you mind, excuse me</pre>
-<pre class="block line-group">   <span class="chord">G</span>            <span class="chord">Em</span>
-I saw you over there</pre>
-<pre class="block line-group">            <span class="chord">C</span>
-Can I just tell you</pre>
-<pre class="block line-group"><span class="chord">A7</span>                 <span class="chord">G</span>
-Although there are millions of</pre>
-<pre class="block line-group">   <span class="chord">Em</span>               <span class="chord">C</span>                   <span class="chord">A7</span>
-Cephalophores that wander through this world</pre>
-<pre class="block line-group">            <span class="chord">G</span>               <span class="chord">Em</span>
-You&#x27;ve got something extra going on</pre>
-<pre class="block line-group line-group-last">   <span class="chord">C</span>                  <span class="chord">A7</span>
-I think you probably know</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Em</span>           <span class="chord">F#7</span>         <span class="chord">Am</span>     <span class="chord">Am/C</span>
-You probably get that a lot</pre>
-<pre class="block line-group line-group-last">     <span class="chord">Em</span>              <span class="chord">F#7</span>         <span class="chord">Am</span>    <span class="chord">Am/C</span>  <span class="chord">G</span>
-I&#x27;ll bet that people say that a lot to you, girl</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">G</span>                       <span class="chord">Em</span>                   <span class="chord">C</span>    <span class="chord">A</span>
-The way you swing your head while strolling fancy free</pre>
-<pre class="block line-group"><span class="chord">G</span>                     <span class="chord">Em</span>           <span class="chord">C</span>          <span class="chord">A</span>
-Or melting down some army guys to make green tea</pre>
-<pre class="block line-group"><span class="chord">A7</span>                 <span class="chord">G</span>
-Though there are millions of</pre>
-<pre class="block line-group">   <span class="chord">Em</span>               <span class="chord">C</span>                   <span class="chord">A7</span>
-Cephalophores that wander through this world</pre>
-<pre class="block line-group">            <span class="chord">G</span>               <span class="chord">Em</span>
-You&#x27;ve got something extra going on</pre>
-<pre class="block line-group line-group-last">   <span class="chord">C</span>                  <span class="chord">A7</span>
-I think you probably know</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Em</span>           <span class="chord">F#7</span>      <span class="chord">Am</span>     <span class="chord">Am/C</span>
-You probably already know</pre>
-<pre class="block line-group">    <span class="chord">Em</span>             <span class="chord">F#7</span>        <span class="chord">Am</span>  <span class="chord">Am/C</span>   <span class="chord">G</span>
-You act like I am stating the obvious
-[middle 8]
-(N.C., single notes)</pre>
-<pre class="block line-group"><span class="chord">G</span>     <span class="chord">A</span>   <span class="chord">B</span>   <span class="chord">C</span>    <span class="chord">D</span>    <span class="chord">E</span>    <span class="chord">F#</span>    <span class="chord">G</span>    <span class="chord">A</span>    <span class="chord">B</span>    <span class="chord">C</span> <span class="chord">D</span>  <span class="chord">G</span>
-It&#x27;s the way you swing your head while strolling fancy free</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>   <span class="chord">C</span>  <span class="chord">B</span>    <span class="chord">A</span>    <span class="chord">G</span>   <span class="chord">F#</span> <span class="chord">E</span>  <span class="chord">D</span>   <span class="chord">C</span>  <span class="chord">B</span>    <span class="chord">A</span>      <span class="chord">G</span>
-Or melting down some army guys to make green tea</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">G</span>      <span class="chord">Em</span>                 <span class="chord">C</span>            <span class="chord">Am</span>
-As the headless horseman said to his associate</pre>
-<pre class="block line-group">     <span class="chord">G</span>          <span class="chord">Em</span>              <span class="chord">C</span>      <span class="chord">Am</span>
-The bodiless baboonsman cradled in his arms</pre>
-<pre class="block line-group"><span class="chord">A7</span>        <span class="chord">G</span>
-Although millions of</pre>
-<pre class="block line-group">   <span class="chord">Em</span>              <span class="chord">C</span>                <span class="chord">A7</span>
-Cephalophores are marching past my door</pre>
-<pre class="block line-group">           <span class="chord">G</span>         <span class="chord">Em</span>
-They&#x27;re invisible to me</pre>
-<pre class="block line-group line-group-last">           <span class="chord">C</span>            <span class="chord">A7</span>
-Except for one cephalophore</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">Em</span>           <span class="chord">F#7</span>        <span class="chord">Am</span>     <span class="chord">Am/C</span>
-You probably get that a lot</pre>
-<pre class="block line-group">     <span class="chord">Em</span>              <span class="chord">F#7</span>        <span class="chord">Am</span>       <span class="chord">Am/C</span>
-I&#x27;ll bet that people say that a lot while you</pre>
-<pre class="block line-group">        <span class="chord">Em</span>            <span class="chord">F#7</span>       <span class="chord">Am</span>      <span class="chord">Am/C</span>
-Are sarcastically lip-syncing along</pre>
-<pre class="block line-group line-group-last">    <span class="chord">Em</span>         <span class="chord">F#7</span>       <span class="chord">Am</span>        <span class="chord">Am/C</span>    <span class="chord">G</span>
-To words they felt were spoken spontaneous-ly</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Do you </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">mind, exc</span></span><span class="seg"><span class="chord">C</span><span class="lyr">use </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">aw you over t</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">here</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Can I just t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ell you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A7</span><span class="lyr">Although there are </span></span><span class="seg"><span class="chord">G</span><span class="lyr">millions of</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Cep</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">halophores that w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ander through this w</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You&#x27;ve got s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">omething extra g</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">oing on</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">hink you probably k</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">now</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">You probably </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">get that a l</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ot</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I&#x27;ll </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">bet that people </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">say that a l</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ot to </span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">you, g</span></span><span class="seg"><span class="chord">G</span><span class="lyr">irl</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">The way you swing your h</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ead while strolling f</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ancy </span></span><span class="seg"><span class="chord">A</span><span class="lyr">free</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Or melting down some a</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">rmy guys to m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ake green t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ea</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A7</span><span class="lyr">Though there are mi</span></span><span class="seg"><span class="chord">G</span><span class="lyr">llions of</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Cep</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">halophores that w</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ander through this w</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You&#x27;ve got s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">omething extra g</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">oing on</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">hink you probably k</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">now</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">You probably </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">already k</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">now</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">act like I am s</span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">tating the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">obvi</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">ous</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">[middle 8]</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(N.C., single notes)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">It&#x27;s t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">he w</span></span><span class="seg"><span class="chord">B</span><span class="lyr">ay y</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ou sw</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ing y</span></span><span class="seg"><span class="chord">E</span><span class="lyr">our h</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">ead wh</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ile s</span></span><span class="seg"><span class="chord">A</span><span class="lyr">troll</span></span><span class="seg"><span class="chord">B</span><span class="lyr">ing f</span></span><span class="seg"><span class="chord">C</span><span class="lyr">an</span></span><span class="seg"><span class="chord">D</span><span class="lyr">cy </span></span><span class="seg"><span class="chord">G</span><span class="lyr">free</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Or m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">elt</span></span><span class="seg"><span class="chord">B</span><span class="lyr">ing d</span></span><span class="seg"><span class="chord">A</span><span class="lyr">own s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ome </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">arm</span></span><span class="seg"><span class="chord">E</span><span class="lyr">y g</span></span><span class="seg"><span class="chord">D</span><span class="lyr">uys </span></span><span class="seg"><span class="chord">C</span><span class="lyr">to </span></span><span class="seg"><span class="chord">B</span><span class="lyr">make </span></span><span class="seg"><span class="chord">A</span><span class="lyr">green t</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ea</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">As the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">headless horseman s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">aid to his as</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">sociate</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The b</span></span><span class="seg"><span class="chord">G</span><span class="lyr">odiless bab</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">oonsman cradled </span></span><span class="seg"><span class="chord">C</span><span class="lyr">in his </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">arms</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A7</span><span class="lyr">Although m</span></span><span class="seg"><span class="chord">G</span><span class="lyr">illions of</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Cep</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">halophores are m</span></span><span class="seg"><span class="chord">C</span><span class="lyr">arching past my d</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">oor</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They&#x27;re inv</span></span><span class="seg"><span class="chord">G</span><span class="lyr">isible to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Except for </span></span><span class="seg"><span class="chord">C</span><span class="lyr">one cephaloph</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">ore</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">You probably </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">get that a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">lot</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;ll </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">bet that people </span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">say that a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">lot while</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr"> you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Are sarc</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">astically lip-</span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">syncing al</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ong</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To w</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ords they f</span></span><span class="seg"><span class="chord">F#7</span><span class="lyr">elt were s</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">poken spon</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">taneous-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ly</span></span></div></div>
     </div>
     
   </div>

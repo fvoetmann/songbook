@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Entertaineren – C.V. Jørgensen</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,64 +498,33 @@
     <h1>Entertaineren <span class="artist-inline">– C.V. Jørgensen</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last"><span class="section">[Intro/Outro]</span>
-<span class="chord">G</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">C</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">G</span>                      <span class="chord">C</span>
-  Du har svar på næsten alting</pre>
-<pre class="block line-group">       <span class="chord">G</span>              <span class="chord">C</span>
-Er den legemlig-gjorte EDB</pre>
-<pre class="block line-group">       <span class="chord">Am</span>                  <span class="chord">G</span>
-Du har alt under kontrol og tager aldrig fejl</pre>
-<pre class="block line-group">   <span class="chord">C</span>              <span class="chord">Em</span>                <span class="chord">G</span>
-Du ved hvad der er værd at investere i</pre>
-<pre class="block line-group">              <span class="chord">Em</span>                <span class="chord">B</span>
-For du har studeret i New York, London og Paris</pre>
-<pre class="block line-group">           <span class="chord">Am</span>                <span class="chord">C</span>
-Kan argumentere på en hidtil, ukendt akedemisk vis</pre>
-<pre class="block line-group">          <span class="chord">Am</span>                 <span class="chord">Bm</span>
-Men du er mere død en et fossil</pre>
-<pre class="block line-group line-group-last">          <span class="chord">Bm</span>                    <span class="chord">C</span>     <span class="chord">C</span>
-Og det er hemmeligheden bag mit smil</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">G</span>                     <span class="chord">C</span>
-  Du er den store entertainer</pre>
-<pre class="block line-group">   <span class="chord">G</span>                      <span class="chord">C</span>
-Et skarpt registrerende geni</pre>
-<pre class="block line-group">      <span class="chord">Am</span>                 <span class="chord">G</span>
-Du er internationalt, karrieregal</pre>
-<pre class="block line-group">      <span class="chord">C</span>         <span class="chord">Em</span>         <span class="chord">G</span>
-På turne med monologer uden mening i</pre>
-<pre class="block line-group">       <span class="chord">Em</span>                         <span class="chord">B</span>
-Der er praktisk talt intet på dit repertoire</pre>
-<pre class="block line-group">           <span class="chord">Am</span>                        <span class="chord">C</span>
-selv om du underholder eliten ved den Franske Riviera</pre>
-<pre class="block line-group">      <span class="chord">Am</span>                  <span class="chord">Bm</span>
-Er du mere død end et fossil</pre>
-<pre class="block line-group line-group-last">          <span class="chord">Bm</span>                    <span class="chord">C</span>    <span class="chord">C</span>
-Og det er hemmeligheden bag mit smil</pre>
-<pre class="block line-group"><span class="section">[Instrumental Verse]</span>
-<span class="chord">G</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">C</span> <span class="chord">Am</span><span class="chord">G</span> <span class="chord">C</span><span class="chord">Em</span> <span class="chord">B</span>
- | | | | | | | |</pre>
-<pre class="block line-group line-group-last"><span class="chord">Am</span><span class="chord">C</span> <span class="chord">Am</span><span class="chord">Bm</span><span class="chord">Bm</span><span class="chord">C</span> <span class="chord">C</span>
- | | | | | | |</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">G</span>                         <span class="chord">C</span>
-  Jeg nærer en afgrundsdyb beundring</pre>
-<pre class="block line-group">        <span class="chord">G</span>                          <span class="chord">C</span>
-For dit selv-iscenesættende One-man show</pre>
-<pre class="block line-group">          <span class="chord">Am</span>                                    <span class="chord">G</span>
-Og kan du bruge mig til noget vil jeg være indforstået</pre>
-<pre class="block line-group">    <span class="chord">C</span>          <span class="chord">Em</span>               <span class="chord">G</span>
-Med blot at redigere i din Scrap-bog</pre>
-<pre class="block line-group">      <span class="chord">Em</span>                            <span class="chord">B</span>
-Du så godt som næsten stivnet i din endelige form</pre>
-<pre class="block line-group"><span class="chord">Am</span>                         <span class="chord">C</span>
-Intet rører sig i dig mere, stilstanden er næsten for enorm</pre>
-<pre class="block line-group">         <span class="chord">Am</span>                  <span class="chord">Bm</span>
-Og du er mere død end et fossil</pre>
-<pre class="block line-group line-group-last">          <span class="chord">Bm</span>                        <span class="chord">C</span>   <span class="chord">C</span>
-Og det er hemmeligheden bag mit smil</pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro/Outro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  Du har svar på næsten</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> alting</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Er den </span></span><span class="seg"><span class="chord">G</span><span class="lyr">legemlig-gjorte</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> EDB</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Du har </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">alt under kontrol og</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> tager aldrig fejl</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Du </span></span><span class="seg"><span class="chord">C</span><span class="lyr">ved hvad der er</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> værd at investere</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> i</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For du har stu</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">deret i New York, </span></span><span class="seg"><span class="chord">B</span><span class="lyr">London og Paris</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Kan argumen</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tere på en hidtil,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> ukendt akedemisk vis</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men du er </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mere død en et foss</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">il</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Og det er </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">hemmeligheden bag mit </span></span><span class="seg"><span class="chord">C</span><span class="lyr">smil</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  Du er den store ente</span></span><span class="seg"><span class="chord">C</span><span class="lyr">rtainer</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Et </span></span><span class="seg"><span class="chord">G</span><span class="lyr">skarpt registrerende ge</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ni</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Du er </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">internationalt, kar</span></span><span class="seg"><span class="chord">G</span><span class="lyr">rieregal</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">På tur</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ne med mon</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ologer uden</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> mening i</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Der er </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">praktisk talt intet på dit </span></span><span class="seg"><span class="chord">B</span><span class="lyr">repertoire</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">selv om du </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">underholder eliten ved den</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> Franske Riviera</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Er du </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mere død end et foss</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">il</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Og det er </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">hemmeligheden bag mit </span></span><span class="seg"><span class="chord">C</span><span class="lyr">smil</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental Verse]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">| |</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> |</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> |</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  Jeg nærer en afgrundsdyb</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> beundring</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For dit </span></span><span class="seg"><span class="chord">G</span><span class="lyr">selv-iscenesættende One-man</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> show</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og kan du </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bruge mig til noget vil jeg være indfo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">rstået</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med </span></span><span class="seg"><span class="chord">C</span><span class="lyr">blot at red</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">igere i din Scrap</span></span><span class="seg"><span class="chord">G</span><span class="lyr">-bog</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Du så </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">godt som næsten stivnet i din </span></span><span class="seg"><span class="chord">B</span><span class="lyr">endelige form</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Intet rører sig i dig mere,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> stilstanden er næsten for enorm</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og du er </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mere død end et foss</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">il</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Og det er </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">hemmeligheden bag mit smil</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
     </div>
     
   </div>

@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Mammal – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,85 +498,44 @@
     <h1>Mammal <span class="artist-inline">– They Might Be Giants</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">Artist: They Might Be Giants
-Song: Mammal
-Album: Apollo 18</pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">E</span>              <span class="chord">F#m</span>      <span class="chord">F#m/E</span>        <span class="chord">D</span>               <span class="chord">A</span>
-Glass of milk, standing in between extinction in the cold</pre>
-<pre class="block line-group">      <span class="chord">B</span>                 <span class="chord">E</span>       <span class="chord">A</span>
-And explosive radiating growth</pre>
-<pre class="block line-group">        <span class="chord">E</span>         <span class="chord">A</span>
-So the warm blood flows</pre>
-<pre class="block line-group line-group-last">            <span class="chord">E</span>          <span class="chord">A</span>         <span class="chord">F#</span>
-Through the large four-chambered heart</pre>
-<pre class="block line-group line-group-last"><span class="section">[Pre-chorus]</span>
-<span class="chord">A</span>   <span class="chord">E/G#</span>        <span class="chord">F#m</span>  <span class="chord">E</span>      <span class="chord">A</span>        <span class="chord">E/G#</span>      <span class="chord">B</span>
-Maintaining the very high metabolism rate they have</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">A</span>  <span class="chord">B</span>    <span class="chord">C#m</span> <span class="chord">B/D#</span>
-Mammal,  Mammal</pre>
-<pre class="block line-group"><span class="chord">E</span>               <span class="chord">F#m</span>     <span class="chord">A</span>            <span class="chord">B</span>
-Their names are called, they raise a paw</pre>
-<pre class="block line-group">    <span class="chord">C#m</span>      <span class="chord">B/D#</span>
-The bat, the cat</pre>
-<pre class="block line-group"><span class="chord">E</span>           <span class="chord">F#m</span>
-Dolphin and dog</pre>
-<pre class="block line-group line-group-last">  <span class="chord">A</span>            <span class="chord">B</span>
-Koala bear and hog</pre>
-<pre class="block line-group"><span class="section">[Instrumental]</span>
-<span class="chord">A</span>  <span class="chord">E/G#</span>   <span class="chord">F#m</span>  <span class="chord">C#m</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>  <span class="chord">E/G#</span>   <span class="chord">B</span></pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
- <span class="chord">E</span>              <span class="chord">F#m</span>  <span class="chord">F#m/E</span>    <span class="chord">D</span>   <span class="chord">A</span>
-One of us might lose his hair</pre>
-<pre class="block line-group">             <span class="chord">B</span>                        <span class="chord">E</span>     <span class="chord">B</span>
-But you&#x27;re reminded that it once was there</pre>
-<pre class="block line-group"><span class="chord">F#m</span>      <span class="chord">F#m/E</span>     <span class="chord">D</span>    <span class="chord">A</span>
-From the embryonic whale</pre>
-<pre class="block line-group">        <span class="chord">B</span>              <span class="chord">E</span>   <span class="chord">A</span>
-To the monkey with no tail</pre>
-<pre class="block line-group">        <span class="chord">E</span>         <span class="chord">A</span>
-So the warm blood flows</pre>
-<pre class="block line-group">         <span class="chord">E</span>         <span class="chord">A</span>              <span class="chord">E</span>   <span class="chord">A</span>
-With the red blood cells, lacking nuclei</pre>
-<pre class="block line-group line-group-last">            <span class="chord">E</span>          <span class="chord">A</span>         <span class="chord">F#</span>
-Through the large four-chambered heart</pre>
-<pre class="block line-group line-group-last"><span class="section">[Pre-chorus]</span>
-<span class="chord">A</span>   <span class="chord">E/G#</span>        <span class="chord">F#m</span>  <span class="chord">E</span>      <span class="chord">A</span>        <span class="chord">E/G#</span>      <span class="chord">B</span>
-Maintaining the very high metabolism rate they have</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">A</span>  <span class="chord">B</span>    <span class="chord">C#m</span> <span class="chord">B/D#</span>
-Mammal,  Mammal</pre>
-<pre class="block line-group"><span class="chord">E</span>               <span class="chord">F#m</span>     <span class="chord">A</span>            <span class="chord">B</span>
-Their names are called, they raise a paw</pre>
-<pre class="block line-group">    <span class="chord">C#m</span>      <span class="chord">B/D#</span>
-The bat, the cat</pre>
-<pre class="block line-group"><span class="chord">E</span>           <span class="chord">F#m</span>
-Dolphin and dog</pre>
-<pre class="block line-group line-group-last">  <span class="chord">A</span>            <span class="chord">B</span>
-Koala bear and hog</pre>
-<pre class="block line-group"><span class="section">[Pre-chorus]</span>
- (extended)</pre>
-<pre class="block line-group"><span class="chord">A</span>  <span class="chord">E/G#</span>       <span class="chord">F#m</span>    <span class="chord">C#m</span>      <span class="chord">A</span>          <span class="chord">E/G#</span>    <span class="chord">B</span>
-Placental the sister of her brother Marsupial</pre>
-<pre class="block line-group"><span class="chord">A</span>     <span class="chord">E/G#</span>          <span class="chord">F#m</span> <span class="chord">E</span>
-Their cousin called Monotreme</pre>
-<pre class="block line-group line-group-last">     <span class="chord">A</span>         <span class="chord">E/G#</span>    <span class="chord">B</span>
-Dead uncle Allotheria</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">A</span>  <span class="chord">B</span>    <span class="chord">C#m</span> <span class="chord">B/D#</span>
-Mammal,  Mammal</pre>
-<pre class="block line-group"><span class="chord">E</span>               <span class="chord">F#m</span>     <span class="chord">A</span>            <span class="chord">B</span>
-Their names are called, they raise a paw</pre>
-<pre class="block line-group">    <span class="chord">C#m</span>      <span class="chord">B/D#</span>  <span class="chord">E</span>           <span class="chord">F#m</span>
-The bat, the cat,  dolphin and dog</pre>
-<pre class="block line-group"><span class="chord">A</span>              <span class="chord">B</span>        <span class="chord">C#m</span>      <span class="chord">B/D#</span>
-Koala bear and hog, the fox, the ox</pre>
-<pre class="block line-group">  <span class="chord">E</span>          <span class="chord">F#m</span>
-Giraffe and shrew</pre>
-<pre class="block line-group line-group-last"> <span class="chord">A</span>       <span class="chord">B</span>     <span class="chord">C#m</span>
-Echidna, caribou</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Artist: They Might Be Giants</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Song: Mammal</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Album: Apollo 18</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Glass of milk, </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">standing </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">in between ex</span></span><span class="seg"><span class="chord">D</span><span class="lyr">tinction in the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">cold</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And ex</span></span><span class="seg"><span class="chord">B</span><span class="lyr">plosive radiating </span></span><span class="seg"><span class="chord">E</span><span class="lyr">growth</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So the w</span></span><span class="seg"><span class="chord">E</span><span class="lyr">arm blood </span></span><span class="seg"><span class="chord">A</span><span class="lyr">flows</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Through the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">large four-</span></span><span class="seg"><span class="chord">A</span><span class="lyr">chambered </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">heart</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Pre-chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Main</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">taining the </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">very </span></span><span class="seg"><span class="chord">E</span><span class="lyr">high me</span></span><span class="seg"><span class="chord">A</span><span class="lyr">tabolism </span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">rate they </span></span><span class="seg"><span class="chord">B</span><span class="lyr">have</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Mam</span></span><span class="seg"><span class="chord">B</span><span class="lyr">mal, </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr"> Mam</span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">mal</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Their names are </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">called, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">they raise a </span></span><span class="seg"><span class="chord">B</span><span class="lyr">paw</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">bat, the </span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">cat</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Dolphin and </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">dog</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ko</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ala bear and </span></span><span class="seg"><span class="chord">B</span><span class="lyr">hog</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">E/G#</span><span class="chord">F#m</span><span class="chord">C#m</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">A</span><span class="chord">E/G#</span><span class="chord">B</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">O</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ne of us might </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">lose </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">his hair</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But you&#x27;re re</span></span><span class="seg"><span class="chord">B</span><span class="lyr">minded that it once was t</span></span><span class="seg"><span class="chord">E</span><span class="lyr">here</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">From the </span></span><span class="seg"><span class="chord">F#m/E</span><span class="lyr">embryonic </span></span><span class="seg"><span class="chord">D</span><span class="lyr">whale</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To the m</span></span><span class="seg"><span class="chord">B</span><span class="lyr">onkey with no t</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ail</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So the w</span></span><span class="seg"><span class="chord">E</span><span class="lyr">arm blood </span></span><span class="seg"><span class="chord">A</span><span class="lyr">flows</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">With the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">red blood </span></span><span class="seg"><span class="chord">A</span><span class="lyr">cells, lacking </span></span><span class="seg"><span class="chord">E</span><span class="lyr">nucl</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ei</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Through the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">large four-</span></span><span class="seg"><span class="chord">A</span><span class="lyr">chambered </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">heart</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Pre-chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Main</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">taining the </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">very </span></span><span class="seg"><span class="chord">E</span><span class="lyr">high me</span></span><span class="seg"><span class="chord">A</span><span class="lyr">tabolism </span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">rate they </span></span><span class="seg"><span class="chord">B</span><span class="lyr">have</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Mam</span></span><span class="seg"><span class="chord">B</span><span class="lyr">mal, </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr"> Mam</span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">mal</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Their names are </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">called, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">they raise a </span></span><span class="seg"><span class="chord">B</span><span class="lyr">paw</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">bat, the </span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">cat</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Dolphin and </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">dog</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ko</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ala bear and </span></span><span class="seg"><span class="chord">B</span><span class="lyr">hog</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Pre-chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> (extended)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Pla</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">cental the </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">sister </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">of her br</span></span><span class="seg"><span class="chord">A</span><span class="lyr">other Marsu</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">pial</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Their </span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">cousin called </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">Mono</span></span><span class="seg"><span class="chord">E</span><span class="lyr">treme</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Dead </span></span><span class="seg"><span class="chord">A</span><span class="lyr">uncle Allo</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">theria</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Mam</span></span><span class="seg"><span class="chord">B</span><span class="lyr">mal, </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr"> Mam</span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">mal</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Their names are </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">called, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">they raise a </span></span><span class="seg"><span class="chord">B</span><span class="lyr">paw</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">bat, the </span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">cat,  </span></span><span class="seg"><span class="chord">E</span><span class="lyr">dolphin and </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">dog</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Koala bear and </span></span><span class="seg"><span class="chord">B</span><span class="lyr">hog, the </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">fox, the </span></span><span class="seg"><span class="chord">B/D#</span><span class="lyr">ox</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Gi</span></span><span class="seg"><span class="chord">E</span><span class="lyr">raffe and s</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">hrew</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">E</span></span><span class="seg"><span class="chord">A</span><span class="lyr">chidna, </span></span><span class="seg"><span class="chord">B</span><span class="lyr">caribo</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">u</span></span></div></div>
     </div>
     
   </div>

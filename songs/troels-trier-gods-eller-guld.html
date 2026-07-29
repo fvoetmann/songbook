@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Gods Eller Guld – Troels Trier</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,70 +496,36 @@
     <h1>Gods Eller Guld <span class="artist-inline">– Troels Trier</span></h1>
     
     
-    <pre class="block line-group line-group-last"><span class="section">[Intro]</span>
-<span class="chord">G</span> <span class="chord">Am</span> <span class="chord">D</span> <span class="chord">Em</span> <span class="chord">Am</span> <span class="chord">Cm</span> <span class="chord">D</span> <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-    <span class="chord">Em</span>                      <span class="chord">Bm</span>              <span class="chord">C</span>                 <span class="chord">G</span>
-Fra barndommen husker jeg drengen Per, han sad ved landsbyens gadekær</pre>
-<pre class="block line-group">     <span class="chord">Bm</span>                    <span class="chord">Em</span>                   <span class="chord">Am</span>            <span class="chord">D</span>
-Hans tøj var snavset, hans hår fuld af lus, han kom kommunens fattighus</pre>
-<pre class="block line-group">    <span class="chord">Em</span>                  <span class="chord">Bm</span>                <span class="chord">C</span>                 <span class="chord">G</span>
-Han længtes tit mod den anden bred, mod Brugsens Lis så hans kærlighed</pre>
-<pre class="block line-group line-group-last">       <span class="chord">Am</span>                  <span class="chord">D</span>                 <span class="chord">Am</span>                  <span class="chord">D</span>
-Hendes hår var gyldent og kjolen var smuk, hun ænsede ikke drengens suk åhåhåhåh</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>         <span class="chord">Em</span>                 <span class="chord">Am</span>           <span class="chord">D</span>
-Lykken er hverken gods eller guld, men den ligner</pre>
-<pre class="block line-group">     <span class="chord">Em</span>                <span class="chord">Am</span>                   <span class="chord">Am</span>                 <span class="chord">D</span>
-For den som er fattig græder, og den som har røven fuld går og griner</pre>
-<pre class="block line-group"><span class="chord">G</span>        <span class="chord">Bm</span>                   <span class="chord">C</span>                     <span class="chord">D</span>
-Lykken er ikke til salg, men umulig at få hvis du er flad</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Em</span>             <span class="chord">Am</span>               <span class="chord">Am</span>     <span class="chord">Cm</span>  <span class="chord">D</span>   <span class="chord">D</span>
-                                         *      *       
-Så hvis lykken hverken er gods eller guld, så følges de oftest ad</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">Em</span>                 <span class="chord">Bm</span>              <span class="chord">C</span>                          <span class="chord">G</span>
-Per blev voksen og rejste bort, og slog sig på tips og han var vild med sport</pre>
-<pre class="block line-group">   <span class="chord">Bm</span>                      <span class="chord">Em</span>                <span class="chord">Am</span>            <span class="chord">D</span>
-En skønne dag vandt han en kvart million, og købte en Esso-tankstation</pre>
-<pre class="block line-group"><span class="chord">Em</span>           <span class="chord">Bm</span>             <span class="chord">C</span>               <span class="chord">G</span>
-Lavprissupermarked kom, og snart var brugsforeningen tom</pre>
-<pre class="block line-group line-group-last">        <span class="chord">Am</span>                     <span class="chord">D</span>               <span class="chord">Am</span>                        <span class="chord">D</span>
-Det var slut med spejderhagl og kirsebærvin, men Per solgte mer’ og mer’ benzin åhåh</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>         <span class="chord">Em</span>                 <span class="chord">Am</span>           <span class="chord">D</span>
-Lykken er hverken gods eller guld, men den ligner</pre>
-<pre class="block line-group">     <span class="chord">Em</span>                <span class="chord">Am</span>                   <span class="chord">Am</span>                 <span class="chord">D</span>
-For den som er fattig græder, og den som har røven fuld går og griner</pre>
-<pre class="block line-group"><span class="chord">G</span>        <span class="chord">Bm</span>                   <span class="chord">C</span>                     <span class="chord">D</span>
-Lykken er ikke til salg, men umulig at få hvis du er flad</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Em</span>             <span class="chord">Am</span>               <span class="chord">Am</span>     <span class="chord">Cm</span>  <span class="chord">D</span>   <span class="chord">D</span>
-                                         *      *       
-Så hvis lykken hverken er gods eller guld, så følges de oftest ad</pre>
-<pre class="block line-group line-group-last"><span class="section">[Instrumental]</span>
-<span class="chord">G</span> <span class="chord">Am</span> <span class="chord">D</span> <span class="chord">Em</span> <span class="chord">Am</span> <span class="chord">Cm</span> <span class="chord">D</span> <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-  <span class="chord">Em</span>                       <span class="chord">Bm</span>            <span class="chord">C</span>                   <span class="chord">G</span>
-Snart bygged’ Per som blev millionær, en villa ved landsbyens gadekær</pre>
-<pre class="block line-group">    <span class="chord">Bm</span>             <span class="chord">Em</span>                <span class="chord">Am</span>                <span class="chord">D</span>
-Med udsigt til den anden bred, hvor Brugsen den er revet ned</pre>
-<pre class="block line-group"><span class="chord">Em</span>                <span class="chord">Bm</span>                 <span class="chord">C</span>            <span class="chord">G</span>
-Der kan man se en gravsten stå, over Lis som døde fattig og grå</pre>
-<pre class="block line-group line-group-last">  <span class="chord">Am</span>                  <span class="chord">D</span>        <span class="chord">Am</span>                <span class="chord">D</span>
-I jorden ligger hendes lig, mens Per er lykkelig og rig åhåhåh</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">G</span>         <span class="chord">Em</span>                 <span class="chord">Am</span>           <span class="chord">D</span>
-Lykken er hverken gods eller guld, men den ligner</pre>
-<pre class="block line-group">     <span class="chord">Em</span>                <span class="chord">Am</span>                   <span class="chord">Am</span>                 <span class="chord">D</span>
-For den som er fattig græder, og den som har røven fuld går og griner</pre>
-<pre class="block line-group"><span class="chord">G</span>        <span class="chord">Bm</span>                   <span class="chord">C</span>                     <span class="chord">D</span>
-Lykken er ikke til salg, men umulig at få hvis du er flad</pre>
-<pre class="block line-group line-group-last">         <span class="chord">Em</span>             <span class="chord">Am</span>               <span class="chord">Am</span>     <span class="chord">Cm</span>  <span class="chord">D</span>   <span class="chord">D</span>
-                                         *      *       
-Så hvis lykken hverken er gods eller guld, så følges de oftest ad     ja</pre>
-<pre class="block line-group line-group-last"><span class="section">[Instrumental]</span>
-<span class="chord">G</span><span class="chord">Am</span> <span class="chord">D</span> <span class="chord">Em</span> <span class="chord">Am</span> <span class="chord">Cm</span> <span class="chord">D</span> <span class="chord">D</span>
-         x3</pre>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">Am</span><span class="chord">D</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Cm</span><span class="chord">D</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Fra </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">barndommen husker jeg dr</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">engen Per, han s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ad ved landsbyens </span></span><span class="seg"><span class="chord">G</span><span class="lyr">gadekær</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hans </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">tøj var snavset, hans </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hår fuld af lus, han </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">kom kommunens </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fattighus</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Han </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">længtes tit mod den </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">anden bred, mod Br</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ugsens Lis så hans</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> kærlighed</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Hendes </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hår var gyldent og k</span></span><span class="seg"><span class="chord">D</span><span class="lyr">jolen var smuk, hu</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">n ænsede ikke drenge</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ns suk åhåhåhåh</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Lykken er </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hverken gods eller </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">guld, men den</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> ligner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For d</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">en som er fattig g</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ræder, og den som har</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> røven fuld går og </span></span><span class="seg"><span class="chord">D</span><span class="lyr">griner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Lykken er</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"> ikke til salg, men u</span></span><span class="seg"><span class="chord">C</span><span class="lyr">mulig at få hvis du er</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> flad</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">  *</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">  *</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Så hvis lykken hverken er gods eller guld, så følges de oftest ad</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Per blev voksen og </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">rejste bort, og </span></span><span class="seg"><span class="chord">C</span><span class="lyr">slog sig på tips og han var</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> vild med sport</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">En </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">skønne dag vandt han en </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">kvart million, og </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">købte en Esso-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">tankstation</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Lavprissuperm</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">arked kom, og s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nart var brugsfo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">reningen tom</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Det var </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">slut med spejderhagl og</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> kirsebærvin, me</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">n Per solgte mer’ og mer’ </span></span><span class="seg"><span class="chord">D</span><span class="lyr">benzin åhåh</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Lykken er </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hverken gods eller </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">guld, men den</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> ligner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For d</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">en som er fattig g</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ræder, og den som har</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> røven fuld går og </span></span><span class="seg"><span class="chord">D</span><span class="lyr">griner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Lykken er</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"> ikke til salg, men u</span></span><span class="seg"><span class="chord">C</span><span class="lyr">mulig at få hvis du er</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> flad</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">  *</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">  *</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Så hvis lykken hverken er gods eller guld, så følges de oftest ad</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">Am</span><span class="chord">D</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Cm</span><span class="chord">D</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Sn</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">art bygged’ Per som blev </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">millionær, en </span></span><span class="seg"><span class="chord">C</span><span class="lyr">villa ved landsbyens</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> gadekær</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">udsigt til den </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">anden bred, hvor B</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rugsen den er reve</span></span><span class="seg"><span class="chord">D</span><span class="lyr">t ned</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Der kan man se en </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">gravsten stå, over </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Lis som døde </span></span><span class="seg"><span class="chord">G</span><span class="lyr">fattig og grå</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">jorden ligger hendes</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> lig, men</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">s Per er lykkelig </span></span><span class="seg"><span class="chord">D</span><span class="lyr">og rig åhåhåh</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Lykken er </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hverken gods eller </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">guld, men den</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> ligner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For d</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">en som er fattig g</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ræder, og den som har</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> røven fuld går og </span></span><span class="seg"><span class="chord">D</span><span class="lyr">griner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Lykken er</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"> ikke til salg, men u</span></span><span class="seg"><span class="chord">C</span><span class="lyr">mulig at få hvis du er</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> flad</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">  *</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">  *</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Så hvis lykken hverken er gods eller guld, så følges de oftest ad     ja</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> x3</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span><span class="seg"><span class="chord">Cm</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
     
     
   </div>

@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>I Burn Today – Frank Black</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,96 +498,50 @@
     <h1>I Burn Today <span class="artist-inline">– Frank Black</span></h1>
     <div class="meta">Toneart: C</div>
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Intro]</span>
- </pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">C</span>           <span class="chord">Am</span>  <span class="chord">Em</span>             <span class="chord">C</span>
-  I knew a girl  with sad blue eyes</pre>
-<pre class="block line-group">             <span class="chord">Am</span>      <span class="chord">Em</span>              <span class="chord">C</span>
-  But at the feast I lost my psychic prize</pre>
-<pre class="block line-group">           <span class="chord">Am</span>           <span class="chord">F</span>             <span class="chord">Am</span>
-  I did forget what the tarot maid did say</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>          <span class="chord">Am</span>    <span class="chord">Em</span>       <span class="chord">C</span>
-  I burn today,  I burn today</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">C</span>               <span class="chord">Am</span>    <span class="chord">Em</span>         <span class="chord">C</span>
-  Our house was filled with many birds</pre>
-<pre class="block line-group">              <span class="chord">Am</span>       <span class="chord">Em</span>               <span class="chord">C</span>
-  She said to me I can understand their words</pre>
-<pre class="block line-group">                <span class="chord">Am</span>   <span class="chord">F</span>        <span class="chord">Am</span>
-  The land will shake so run away</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>          <span class="chord">Am</span> <span class="chord">Em</span>          <span class="chord">C</span>
-  I burn today,  I burn today</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
- <span class="chord">G</span>                 <span class="chord">F</span>
-  Yes today I will burn</pre>
-<pre class="block line-group line-group-last"> <span class="chord">Em</span>              <span class="chord">G</span>
-  For the times I did not learn</pre>
-<pre class="block line-group"><span class="section">[Break]</span>
- <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">Em</span> <span class="chord">C</span></pre>
-<pre class="block line-group"> <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">Em</span> <span class="chord">C</span></pre>
-<pre class="block line-group"> <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">F</span>  <span class="chord">Am</span></pre>
-<pre class="block line-group line-group-last"> <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">Em</span> <span class="chord">C</span></pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">C</span>              <span class="chord">Am</span> <span class="chord">Em</span>             <span class="chord">C</span>
-  She said our fun, its time has come</pre>
-<pre class="block line-group">                <span class="chord">Am</span>          <span class="chord">Em</span>              <span class="chord">C</span>
-  Hold my heart strings and have yourself a strum</pre>
-<pre class="block line-group">          <span class="chord">Am</span>   <span class="chord">F</span>                 <span class="chord">Am</span>
-  No nevermore this song will we play</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">Am</span>  <span class="chord">Em</span>         <span class="chord">C</span>
-  I burn today,  I burn today</pre>
-<pre class="block line-group"><span class="chord">C</span>             <span class="chord">Am</span> <span class="chord">Em</span>           <span class="chord">C</span>
-  And as I drank in old Paris</pre>
-<pre class="block line-group">              <span class="chord">Am</span>            <span class="chord">Em</span>                 <span class="chord">C</span>
-  She lay her cards just to see what she would see</pre>
-<pre class="block line-group">                <span class="chord">Am</span>           <span class="chord">F</span>                 <span class="chord">Am</span>
-  Down by the water you will find your happys days</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>           <span class="chord">Am</span> <span class="chord">Em</span>       <span class="chord">C</span> 
-  I burn today I burn today</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
- <span class="chord">G</span>                 <span class="chord">F</span>
-  Yes today I will burn</pre>
-<pre class="block line-group line-group-last"> <span class="chord">Em</span>              <span class="chord">G</span>
-  For the times I did not learn</pre>
-<pre class="block line-group"><span class="section">[Break]</span>
- <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">Em</span> <span class="chord">C</span></pre>
-<pre class="block line-group"> <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">Em</span> <span class="chord">C</span></pre>
-<pre class="block line-group"> <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">F</span>  <span class="chord">Am</span></pre>
-<pre class="block line-group line-group-last"> <span class="chord">C</span> <span class="chord">Am</span> <span class="chord">Em</span> <span class="chord">C</span></pre>
-<pre class="block line-group"><span class="section">[Verse 5]</span>
-<span class="chord">C</span>              <span class="chord">Am</span> <span class="chord">Em</span>             <span class="chord">C</span>
-  I ran so fast in to the North</pre>
-<pre class="block line-group">             <span class="chord">Am</span>          <span class="chord">Em</span>              <span class="chord">C</span>
-  No snow on me then so he said thence forth</pre>
-<pre class="block line-group">                <span class="chord">Am</span>   <span class="chord">F</span>             <span class="chord">Am</span>
-  I let snow fall on a frozen yesterday</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>           <span class="chord">Am</span>   <span class="chord">Em</span>       <span class="chord">C</span> 
-  I burn today I burn today</pre>
-<pre class="block line-group"><span class="section">[Verse 6]</span>
-<span class="chord">C</span>         <span class="chord">Am</span>     <span class="chord">Em</span>      <span class="chord">C</span>
-  If my head is hanging down</pre>
-<pre class="block line-group">                <span class="chord">Am</span>          <span class="chord">Em</span>              <span class="chord">C</span>
-  I feel her arms and her legs are all around</pre>
-<pre class="block line-group">                <span class="chord">Am</span>   <span class="chord">F</span>        <span class="chord">Am</span>
-  And we make love beside the waterway</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>           <span class="chord">Am</span>   <span class="chord">Em</span>       <span class="chord">C</span> 
-  I burn today I burn today</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
- <span class="chord">G</span>                 <span class="chord">F</span>
-  Yes today I will burn</pre>
-<pre class="block line-group line-group-last"> <span class="chord">Em</span>              <span class="chord">G</span>
-  For the times I did not learn</pre>
-<pre class="block line-group"><span class="section">[Verse 7]</span>
-<span class="chord">C</span>              <span class="chord">Am</span> <span class="chord">Em</span>       <span class="chord">C</span>
-  Behold the rose of Jericho</pre>
-<pre class="block line-group">                <span class="chord">Am</span>  <span class="chord">Em</span>           <span class="chord">C</span>
-  How many lives I really do no know</pre>
-<pre class="block line-group">                   <span class="chord">Am</span>    <span class="chord">F</span>             <span class="chord">Am</span>
-  Though with the rain I know it will return</pre>
-<pre class="block line-group line-group-last"> <span class="chord">C</span>        <span class="chord">Am</span>   <span class="chord">Em</span>        <span class="chord">C</span>   
-  Today I burn,  Today I burn</pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">G</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I knew a g</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">irl </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> with sad blue </span></span><span class="seg"><span class="chord">C</span><span class="lyr">eyes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  But at the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">feast I </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">lost my psychic </span></span><span class="seg"><span class="chord">C</span><span class="lyr">prize</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  I did for</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">get what the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">tarot maid did</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> say</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn to</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">day,  </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I burn to</span></span><span class="seg"><span class="chord">C</span><span class="lyr">day</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Our house was </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">filled</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> with many </span></span><span class="seg"><span class="chord">C</span><span class="lyr">birds</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  She said to </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">me I can </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">understand their </span></span><span class="seg"><span class="chord">C</span><span class="lyr">words</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  The land will </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">shake</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> so run a</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn to</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">day</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">,  I burn to</span></span><span class="seg"><span class="chord">C</span><span class="lyr">day</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Yes today I will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">burn</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> For the times I</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> did not learn</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Break]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">F</span><span class="chord">Am</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  She said our </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">fun</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">, its time has </span></span><span class="seg"><span class="chord">C</span><span class="lyr">come</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  Hold my heart </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">strings and </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">have yourself a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">strum</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  No never</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">more </span></span><span class="seg"><span class="chord">F</span><span class="lyr">this song will we </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">play</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn to</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">day,</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">  I burn to</span></span><span class="seg"><span class="chord">C</span><span class="lyr">day</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  And as I dra</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">nk </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">in old Paris</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  She lay her </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">cards just to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">see what she would </span></span><span class="seg"><span class="chord">C</span><span class="lyr">see</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  Down by the wa</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ter you will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">find your happys d</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ays</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn tod</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I burn to</span></span><span class="seg"><span class="chord">C</span><span class="lyr">day</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Yes today I will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">burn</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> For the times I</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> did not learn</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Break]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">F</span><span class="chord">Am</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I ran so fast</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> in</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> to the North</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  No snow on </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">me then so h</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">e said thence fo</span></span><span class="seg"><span class="chord">C</span><span class="lyr">rth</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  I let snow fal</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">l on </span></span><span class="seg"><span class="chord">F</span><span class="lyr">a frozen yeste</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rday</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn tod</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay I </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">burn toda</span></span><span class="seg"><span class="chord">C</span><span class="lyr">y</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  If my he</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ad is h</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">anging d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">own</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  I feel her arm</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">s and her le</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">gs are all aroun</span></span><span class="seg"><span class="chord">C</span><span class="lyr">d</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  And we make lo</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ve be</span></span><span class="seg"><span class="chord">F</span><span class="lyr">side the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">waterway</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn tod</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay I </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">burn toda</span></span><span class="seg"><span class="chord">C</span><span class="lyr">y</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Yes today I will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">burn</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> For the times I</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> did not learn</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 7]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Behold the ro</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">se </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">of Jerich</span></span><span class="seg"><span class="chord">C</span><span class="lyr">o</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  How many lives</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> I r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">eally do no k</span></span><span class="seg"><span class="chord">C</span><span class="lyr">now</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  Though with the r</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ain I </span></span><span class="seg"><span class="chord">F</span><span class="lyr">know it will r</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">eturn</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">C</span><span class="lyr"> Today I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">burn,</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">  Today I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">burn</span></span></div></div>
     </div>
     
   </div>

@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Birdhouse In Your Soul – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,123 +498,65 @@
     <h1>Birdhouse In Your Soul <span class="artist-inline">– They Might Be Giants</span></h1>
     <div class="meta">Toneart: C</div>
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">C</span>             <span class="chord">Dm7</span>                  <span class="chord">Eb</span>
-I&#x27;m your only friend, I&#x27;m not your only friend</pre>
-<pre class="block line-group">    <span class="chord">F</span>            <span class="chord">Bb</span>
-But I&#x27;m a little glowing friend</pre>
-<pre class="block line-group line-group-last">    <span class="chord">Cm</span>             <span class="chord">Db</span>            <span class="chord">G/D</span>
-But really I&#x27;m not actually your friend, but I am</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>      <span class="chord">C/E</span>         <span class="chord">F</span>
-Blue canary in the outlet by the light switch</pre>
-<pre class="block line-group"><span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
-Who watches over you</pre>
-<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group">               <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it</pre>
-<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet</pre>
-<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group"><span class="chord">C</span>   <span class="chord">F</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>   <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">C</span>        <span class="chord">F</span>              <span class="chord">C</span>        <span class="chord">F</span>
-I have a secret to tell from my electrical well</pre>
-<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">C7</span>              <span class="chord">F</span>               <span class="chord">G</span>
-It&#x27;s a simple message and I&#x27;m leaving out the whistles and bells</pre>
-<pre class="block line-group"><span class="chord">C</span>                <span class="chord">F</span>             <span class="chord">C</span>          <span class="chord">F</span>
-So the room must listen to me, filibuster vigilantly</pre>
-<pre class="block line-group"><span class="chord">C</span>  <span class="chord">G/B</span>     <span class="chord">C7</span>          <span class="chord">F</span>                  <span class="chord">G</span>
-My name is blue canary one note spelled l-i-t-e</pre>
-<pre class="block line-group"><span class="chord">Am</span>         <span class="chord">F</span>
-My story&#x27;s infinite</pre>
-<pre class="block line-group line-group-last"><span class="chord">D7</span>                <span class="chord">F</span>               <span class="chord">G</span>
-Like the longines symphonette, it doesn&#x27;t rest</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">C</span>      <span class="chord">C/E</span>         <span class="chord">F</span>
-Blue canary in the outlet by the light switch</pre>
-<pre class="block line-group"><span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
-Who watches over you</pre>
-<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group">               <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it</pre>
-<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet</pre>
-<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group"><span class="chord">C</span>    <span class="chord">F</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span>    <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">Am</span>   <span class="chord">F</span>   <span class="chord">D7</span>   <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="chord">Am</span>   <span class="chord">F</span>   <span class="chord">D7</span>   <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="chord">F#m</span>  <span class="chord">D</span>   <span class="chord">B7</span>   <span class="chord">D</span></pre>
-<pre class="block line-group"><span class="chord">E</span>    <span class="chord">E/D</span> <span class="chord">A/C#</span>  <span class="chord">E/B</span></pre>
-<pre class="block line-group"><span class="chord">A</span>             <span class="chord">Bm7</span>                  <span class="chord">C</span>
-I&#x27;m your only friend, I&#x27;m not your only friend</pre>
-<pre class="block line-group">    <span class="chord">D</span>            <span class="chord">G</span>       
-But I&#x27;m a little glowing friend</pre>
-<pre class="block line-group line-group-last">    <span class="chord">Am</span>             <span class="chord">Bb</span>            <span class="chord">G/B</span>
-But really I&#x27;m not actually your friend, but I am</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">C</span>                 <span class="chord">F</span>           <span class="chord">C</span>               <span class="chord">F</span>
-There&#x27;s a picture opposite me of my primitive ancestry</pre>
-<pre class="block line-group"><span class="chord">C</span>     <span class="chord">G/B</span>      <span class="chord">C7</span>               <span class="chord">F</span>                <span class="chord">G</span>
-Which stood on rocky shores and kept the beaches shipwreck-free</pre>
-<pre class="block line-group"><span class="chord">C</span>          <span class="chord">F</span>                 <span class="chord">C</span>               <span class="chord">F</span>
-Though I respect that a lot, I&#x27;d be fired if that were my job</pre>
-<pre class="block line-group"><span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">C7</span>            <span class="chord">F</span>                   <span class="chord">G</span>
-After killing Jason off and countless screaming argonauts</pre>
-<pre class="block line-group"><span class="chord">Am</span>          <span class="chord">F</span>
-Bluebird of friendliness</pre>
-<pre class="block line-group line-group-last"><span class="chord">D7</span>            <span class="chord">F</span>           <span class="chord">G</span>
-Like guardian angels it&#x27;s always near</pre>
-<pre class="block line-group"><span class="section">[Chorus 2]</span>
-<span class="chord">C</span>      <span class="chord">C/E</span>         <span class="chord">F</span>
-Blue canary in the outlet by the light switch</pre>
-<pre class="block line-group"><span class="chord">C/G</span>         <span class="chord">F/A</span>  <span class="chord">G/B</span>
-Who watches over you</pre>
-<pre class="block line-group"><span class="chord">C</span>      <span class="chord">G/B</span>    <span class="chord">F/A</span>       <span class="chord">F</span>       <span class="chord">Eb</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group">               <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it</pre>
-<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet</pre>
-<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>   <span class="chord">C/E</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group"><span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
-While you&#x27;re at it, keep the nightlight on inside</pre>
-<pre class="block line-group">        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
-the birdhouse in your soul</pre>
-<pre class="block line-group"><span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it</pre>
-<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet</pre>
-<pre class="block line-group"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group"><span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
-While you&#x27;re at it, keep the nightlight on inside</pre>
-<pre class="block line-group">        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
-the birdhouse in your soul</pre>
-<pre class="block line-group"><span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it</pre>
-<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet</pre>
-<pre class="block line-group line-group-last"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span>
-Make a little birdhouse in your soul</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-<span class="chord">F</span>                   <span class="chord">C/G</span>                 <span class="chord">F/A</span>  <span class="chord">G/B</span>
-While you&#x27;re at it, keep the nightlight on inside</pre>
-<pre class="block line-group">        <span class="chord">C</span>     <span class="chord">G/B</span>     <span class="chord">F/A</span>    <span class="chord">F</span>
-the birdhouse in your soul</pre>
-<pre class="block line-group"><span class="chord">Eb</span>             <span class="chord">Ab/Eb</span>
-Not to put too fine a point on it</pre>
-<pre class="block line-group"><span class="chord">Eb</span>               <span class="chord">Ab/Eb</span>
-Say I&#x27;m the only bee in your bonnet</pre>
-<pre class="block line-group line-group-last"><span class="chord">Eb</span>     <span class="chord">Cm</span>     <span class="chord">Ab</span>        <span class="chord">G</span>       <span class="chord">C</span></pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I&#x27;m your only </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">friend, I&#x27;m not your </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">only friend</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">F</span><span class="lyr">I&#x27;m a little </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">glowing friend</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">really I&#x27;m not </span></span><span class="seg"><span class="chord">Db</span><span class="lyr">actually your </span></span><span class="seg"><span class="chord">G/D</span><span class="lyr">friend, but I am</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Blue ca</span></span><span class="seg"><span class="chord">C/E</span><span class="lyr">nary in the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">outlet by the light switch</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C/G</span><span class="lyr">Who watches </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">over </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">little </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">F</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">soul</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Not to put too </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">fine a point on it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Say I&#x27;m the only </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">bee in your bonnet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">little </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">G</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">soul</span></span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">F</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I have a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">secret to tell </span></span><span class="seg"><span class="chord">C</span><span class="lyr">from my e</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lectrical well</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">It&#x27;s a </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">simple </span></span><span class="seg"><span class="chord">C7</span><span class="lyr">message and I&#x27;m </span></span><span class="seg"><span class="chord">F</span><span class="lyr">leaving out the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">whistles and bells</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">So the room must </span></span><span class="seg"><span class="chord">F</span><span class="lyr">listen to me, </span></span><span class="seg"><span class="chord">C</span><span class="lyr">filibuster </span></span><span class="seg"><span class="chord">F</span><span class="lyr">vigilantly</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">My </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">name is </span></span><span class="seg"><span class="chord">C7</span><span class="lyr">blue canary </span></span><span class="seg"><span class="chord">F</span><span class="lyr">one note spelled l-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">i-t-e</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">My story&#x27;s </span></span><span class="seg"><span class="chord">F</span><span class="lyr">infinite</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D7</span><span class="lyr">Like the longines </span></span><span class="seg"><span class="chord">F</span><span class="lyr">symphonette, it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">doesn&#x27;t rest</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Blue ca</span></span><span class="seg"><span class="chord">C/E</span><span class="lyr">nary in the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">outlet by the light switch</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C/G</span><span class="lyr">Who watches </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">over </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">little </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">F</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">soul</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Not to put too </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">fine a point on it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Say I&#x27;m the only </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">bee in your bonnet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">little </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">G</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">soul</span></span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">F</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line chords-only"><span class="chord">Am</span><span class="chord">F</span><span class="chord">D7</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">Am</span><span class="chord">F</span><span class="chord">D7</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">F#m</span><span class="chord">D</span><span class="chord">B7</span><span class="chord">D</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">E</span><span class="chord">E/D</span><span class="chord">A/C#</span><span class="chord">E/B</span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I&#x27;m your only </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">friend, I&#x27;m not your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">only friend</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I&#x27;m a little </span></span><span class="seg"><span class="chord">G</span><span class="lyr">glowing friend</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">really I&#x27;m not </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">actually your </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">friend, but I am</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">There&#x27;s a picture </span></span><span class="seg"><span class="chord">F</span><span class="lyr">opposite me </span></span><span class="seg"><span class="chord">C</span><span class="lyr">of my primitive </span></span><span class="seg"><span class="chord">F</span><span class="lyr">ancestry</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Which </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">stood on </span></span><span class="seg"><span class="chord">C7</span><span class="lyr">rocky shores and </span></span><span class="seg"><span class="chord">F</span><span class="lyr">kept the beaches </span></span><span class="seg"><span class="chord">G</span><span class="lyr">shipwreck-free</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Though I re</span></span><span class="seg"><span class="chord">F</span><span class="lyr">spect that a lot, </span></span><span class="seg"><span class="chord">C</span><span class="lyr">I&#x27;d be fired if </span></span><span class="seg"><span class="chord">F</span><span class="lyr">that were my job</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">After </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">killing </span></span><span class="seg"><span class="chord">C7</span><span class="lyr">Jason off and </span></span><span class="seg"><span class="chord">F</span><span class="lyr">countless screaming </span></span><span class="seg"><span class="chord">G</span><span class="lyr">argonauts</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Bluebird of </span></span><span class="seg"><span class="chord">F</span><span class="lyr">friendliness</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D7</span><span class="lyr">Like guardian </span></span><span class="seg"><span class="chord">F</span><span class="lyr">angels it&#x27;s </span></span><span class="seg"><span class="chord">G</span><span class="lyr">always near</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 2]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Blue ca</span></span><span class="seg"><span class="chord">C/E</span><span class="lyr">nary in the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">outlet by the light switch</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C/G</span><span class="lyr">Who watches </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">over </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">little </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">F</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">soul</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Not to put too </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">fine a point on it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Say I&#x27;m the only </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">bee in your bonnet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">little </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">G</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">soul</span></span><span class="seg"><span class="chord">C/E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">While you&#x27;re at it, </span></span><span class="seg"><span class="chord">C/G</span><span class="lyr">keep the nightlight </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">on in</span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">side</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">the bird</span></span><span class="seg"><span class="chord">C</span><span class="lyr">house </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">soul</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Not to put too </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">fine a point on it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Say I&#x27;m the only </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">bee in your bonnet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">little </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">G</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">soul</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">While you&#x27;re at it, </span></span><span class="seg"><span class="chord">C/G</span><span class="lyr">keep the nightlight </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">on in</span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">side</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">the bird</span></span><span class="seg"><span class="chord">C</span><span class="lyr">house </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">soul</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Not to put too </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">fine a point on it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Say I&#x27;m the only </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">bee in your bonnet</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Make a </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">little </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">birdhouse </span></span><span class="seg"><span class="chord">G</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">soul</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">While you&#x27;re at it, </span></span><span class="seg"><span class="chord">C/G</span><span class="lyr">keep the nightlight </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">on in</span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">side</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">the bird</span></span><span class="seg"><span class="chord">C</span><span class="lyr">house </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">in your </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">soul</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Not to put too </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">fine a point on it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb</span><span class="lyr">Say I&#x27;m the only </span></span><span class="seg"><span class="chord">Ab/Eb</span><span class="lyr">bee in your bonnet</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Eb</span><span class="chord">Cm</span><span class="chord">Ab</span><span class="chord">G</span><span class="chord">C</span></div></div>
     </div>
     <div class="tab-section"><pre class="block line-group">Make a little birdhouse in your soul
 

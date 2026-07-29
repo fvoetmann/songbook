@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Someone Keeps Moving My Chair – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,87 +498,52 @@
     <h1>Someone Keeps Moving My Chair <span class="artist-inline">– They Might Be Giants</span></h1>
     
     <div class="chords">
-    <pre class="block line-group">They Might Be Giants -- Someone Keeps Moving My Chair
-Capo 3
-Intro:</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">C</span>
-Verse 1:</pre>
-<pre class="block line-group">         <span class="chord">D</span>     <span class="chord">C</span>
-Mr. Horrible</pre>
-<pre class="block line-group">    <span class="chord">D</span>          <span class="chord">C</span>
-Mr. Horrible</pre>
-<pre class="block line-group">    <span class="chord">D</span>              <span class="chord">C</span>        <span class="chord">D</span>   <span class="chord">C</span>
-Telephone call for Mr. Horrible</pre>
-<pre class="block line-group">    <span class="chord">D</span>             <span class="chord">G</span>           <span class="chord">Em</span>       <span class="chord">A</span>
-But before he can talk to the ugliness men</pre>
-<pre class="block line-group">             <span class="chord">Bm</span>       <span class="chord">A</span>        <span class="chord">G</span>
-There&#x27;s some horrible business left</pre>
-<pre class="block line-group">    <span class="chord">A</span>      <span class="chord">Bm</span>
-For him to attend to</pre>
-<pre class="block line-group">  <span class="chord">A</span>         <span class="chord">G</span>            <span class="chord">A</span>              <span class="chord">Bm</span>
-Something unpleasant has spilled on his brain</pre>
-<pre class="block line-group">      <span class="chord">A</span>          <span class="chord">G</span>        <span class="chord">A</span>
-As he sponges it off they say
-Verse 2:</pre>
-<pre class="block line-group">              <span class="chord">D</span>     <span class="chord">C</span>
-&quot;Is this Horrible?</pre>
-<pre class="block line-group">             <span class="chord">D</span>      <span class="chord">C</span>
-Is this Horrible?</pre>
-<pre class="block line-group">         <span class="chord">D</span>        <span class="chord">C</span>         <span class="chord">D</span>       <span class="chord">C</span>
-It&#x27;s the ugliness men, Mr. Horrible</pre>
-<pre class="block line-group">           <span class="chord">D</span>         <span class="chord">G</span>
-We&#x27;re just trying to bug you</pre>
-<pre class="block line-group">   <span class="chord">Em</span>               <span class="chord">A</span>
-We thought that our dreadfulness</pre>
-<pre class="block line-group"><span class="chord">Bm</span>         <span class="chord">A</span>          <span class="chord">G</span>       <span class="chord">A</span>
-Might be a thing to annoy you with&quot;
-Chorus:</pre>
-<pre class="block line-group">    <span class="chord">G</span>                           <span class="chord">A</span>
-But Mr. Horrible says, &quot;I don&#x27;t mind
-The thing that bothers me is</pre>
-<pre class="block line-group"><span class="chord">D</span>   <span class="chord">D</span>   <span class="chord">G</span>     <span class="chord">D</span>  <span class="chord">A</span>   <span class="chord">D</span>  <span class="chord">A</span> <span class="chord">D</span> <span class="chord">Bm</span>      <span class="chord">E</span>
-Someone keeps moving my-y-y chair&quot;</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">C</span>  <span class="chord">D</span> <span class="chord">C</span>
-Verse 3:</pre>
-<pre class="block line-group">           <span class="chord">D</span>          <span class="chord">C</span>            <span class="chord">D</span>        <span class="chord">C</span>
-&quot;Would you mind if we balance this glass of milk</pre>
-<pre class="block line-group">           <span class="chord">D</span>        <span class="chord">C</span>          <span class="chord">D</span>            <span class="chord">C</span>
-Where your visiting friend accidentally was killed?</pre>
-<pre class="block line-group">            <span class="chord">D</span>         <span class="chord">G</span>         <span class="chord">Em</span>      <span class="chord">A</span>
-Would it be okay with you if we wrote a reminder</pre>
-<pre class="block line-group">   <span class="chord">Bm</span>              <span class="chord">A</span>      <span class="chord">G</span>  <span class="chord">A</span>          <span class="chord">Bm</span>
-Of things we&#x27;ll forget to do today otherwise,</pre>
-<pre class="block line-group"><span class="chord">A</span>       <span class="chord">G</span>           <span class="chord">A</span>          <span class="chord">Bm</span>     <span class="chord">A</span>
-Using a green magic marker, if it&#x27;s alright</pre>
-<pre class="block line-group">       <span class="chord">G</span>            <span class="chord">A</span>
-On the back of your head?&quot;
-Verse 4:</pre>
-<pre class="block line-group">         <span class="chord">D</span>      <span class="chord">C</span>
-Mr. Horrible</pre>
-<pre class="block line-group">         <span class="chord">D</span>      <span class="chord">C</span>
-Mr. Horrible</pre>
-<pre class="block line-group">          <span class="chord">D</span>             <span class="chord">C</span>            <span class="chord">D</span>      <span class="chord">C</span>
-We&#x27;re not done with you yet Mr. Horrible</pre>
-<pre class="block line-group">            <span class="chord">D</span>            <span class="chord">G</span>            <span class="chord">Em</span>       <span class="chord">A</span>
-You have to try on these pants so the Ugliness Men</pre>
-<pre class="block line-group">      <span class="chord">Bm</span>              <span class="chord">A</span>         <span class="chord">G</span>          <span class="chord">A</span>     <span class="chord">Bm</span>
-Can decide if they&#x27;re just as embarrassing as we think</pre>
-<pre class="block line-group">   <span class="chord">A</span>          <span class="chord">G</span>          <span class="chord">A</span>
-We have to be sure about this
-Chorus:</pre>
-<pre class="block line-group">    <span class="chord">G</span>                           <span class="chord">A</span>
-But Mr. Horrible says, &quot;I don&#x27;t mind
-The thing that bothers me is</pre>
-<pre class="block line-group"><span class="chord">D</span>   <span class="chord">D</span>   <span class="chord">G</span>     <span class="chord">D</span>  <span class="chord">A</span>   <span class="chord">D</span>  <span class="chord">A</span> <span class="chord">D</span> <span class="chord">Bm</span>      <span class="chord">E</span>
-Someone keeps moving my-y-y chair&quot;</pre>
-<pre class="block line-group"><span class="chord">D</span>   <span class="chord">D</span>   <span class="chord">G</span>     <span class="chord">D</span>  <span class="chord">A</span>   <span class="chord">D</span>  <span class="chord">A</span> <span class="chord">D</span> <span class="chord">Bm</span>   <span class="chord">E</span>        <span class="chord">F#</span>
-Someone keeps moving my-y-y chaa-aaaaaaaa-aair
-Chorus:</pre>
-<pre class="block line-group">    <span class="chord">G</span>                           <span class="chord">A</span>
-Mr. Horrible says, &quot;I don&#x27;t mind
-The thing that bothers me is</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>   <span class="chord">D</span>   <span class="chord">G</span>     <span class="chord">D</span>  <span class="chord">A</span>   <span class="chord">D</span>  <span class="chord">A</span> <span class="chord">D</span> <span class="chord">Bm</span>      <span class="chord">E</span>   <span class="chord">D</span>
-Someone keeps moving my-y-y chair&quot; </pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They Might Be Giants -- Someone Keeps Moving My Chair</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Capo 3</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Intro:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ve</span></span><span class="seg"><span class="chord">C</span><span class="lyr">rse</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> 1</span></span><span class="seg"><span class="chord">C</span><span class="lyr">:</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mr. Horri</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ble</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mr. </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Horrible</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Tele</span></span><span class="seg"><span class="chord">D</span><span class="lyr">phone call for </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Mr. Horri</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ble</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">D</span><span class="lyr">before he can </span></span><span class="seg"><span class="chord">G</span><span class="lyr">talk to the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ugliness </span></span><span class="seg"><span class="chord">A</span><span class="lyr">men</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">There&#x27;s some </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">horrible </span></span><span class="seg"><span class="chord">A</span><span class="lyr">business </span></span><span class="seg"><span class="chord">G</span><span class="lyr">left</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For </span></span><span class="seg"><span class="chord">A</span><span class="lyr">him to </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">attend to</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So</span></span><span class="seg"><span class="chord">A</span><span class="lyr">mething un</span></span><span class="seg"><span class="chord">G</span><span class="lyr">pleasant has </span></span><span class="seg"><span class="chord">A</span><span class="lyr">spilled on his </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">brain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">As he </span></span><span class="seg"><span class="chord">A</span><span class="lyr">sponges it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">off they </span></span><span class="seg"><span class="chord">A</span><span class="lyr">say</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Verse 2:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;Is this Horri</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ble?</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Is this Horri</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ble?</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ugliness </span></span><span class="seg"><span class="chord">C</span><span class="lyr">men, Mr. H</span></span><span class="seg"><span class="chord">D</span><span class="lyr">orrible</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We&#x27;re just </span></span><span class="seg"><span class="chord">D</span><span class="lyr">trying to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">bug you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">thought that our </span></span><span class="seg"><span class="chord">A</span><span class="lyr">dreadfulness</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">Might be a </span></span><span class="seg"><span class="chord">A</span><span class="lyr">thing to an</span></span><span class="seg"><span class="chord">G</span><span class="lyr">noy you </span></span><span class="seg"><span class="chord">A</span><span class="lyr">with&quot;</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Chorus:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Mr. Horrible says, &quot;I don&#x27;t </span></span><span class="seg"><span class="chord">A</span><span class="lyr">mind</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">The thing that bothers me is</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Some</span></span><span class="seg"><span class="chord">D</span><span class="lyr">one </span></span><span class="seg"><span class="chord">G</span><span class="lyr">keeps </span></span><span class="seg"><span class="chord">D</span><span class="lyr">mov</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ing </span></span><span class="seg"><span class="chord">D</span><span class="lyr">my-</span></span><span class="seg"><span class="chord">A</span><span class="lyr">y-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">y </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">chair&quot;</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ve</span></span><span class="seg"><span class="chord">C</span><span class="lyr">rse</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> 3</span></span><span class="seg"><span class="chord">C</span><span class="lyr">:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;Would you </span></span><span class="seg"><span class="chord">D</span><span class="lyr">mind if we </span></span><span class="seg"><span class="chord">C</span><span class="lyr">balance this </span></span><span class="seg"><span class="chord">D</span><span class="lyr">glass of </span></span><span class="seg"><span class="chord">C</span><span class="lyr">milk</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Where your </span></span><span class="seg"><span class="chord">D</span><span class="lyr">visiting </span></span><span class="seg"><span class="chord">C</span><span class="lyr">friend acci</span></span><span class="seg"><span class="chord">D</span><span class="lyr">dentally was </span></span><span class="seg"><span class="chord">C</span><span class="lyr">killed?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Would it be </span></span><span class="seg"><span class="chord">D</span><span class="lyr">okay with </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you if we </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">wrote a </span></span><span class="seg"><span class="chord">A</span><span class="lyr">reminder</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Of </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">things we&#x27;ll for</span></span><span class="seg"><span class="chord">A</span><span class="lyr">get to </span></span><span class="seg"><span class="chord">G</span><span class="lyr">do </span></span><span class="seg"><span class="chord">A</span><span class="lyr">today other</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">wise,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Using a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">green magic </span></span><span class="seg"><span class="chord">A</span><span class="lyr">marker, if </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">it&#x27;s al</span></span><span class="seg"><span class="chord">A</span><span class="lyr">right</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">On the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">back of your </span></span><span class="seg"><span class="chord">A</span><span class="lyr">head?&quot;</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Verse 4:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mr. Horri</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ble</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mr. Horri</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ble</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We&#x27;re not </span></span><span class="seg"><span class="chord">D</span><span class="lyr">done with you </span></span><span class="seg"><span class="chord">C</span><span class="lyr">yet Mr. Horri</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ble</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You have to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">try on these </span></span><span class="seg"><span class="chord">G</span><span class="lyr">pants so the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Ugliness </span></span><span class="seg"><span class="chord">A</span><span class="lyr">Men</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Can de</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">cide if they&#x27;re </span></span><span class="seg"><span class="chord">A</span><span class="lyr">just as em</span></span><span class="seg"><span class="chord">G</span><span class="lyr">barrassing </span></span><span class="seg"><span class="chord">A</span><span class="lyr">as we </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">think</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We </span></span><span class="seg"><span class="chord">A</span><span class="lyr">have to be </span></span><span class="seg"><span class="chord">G</span><span class="lyr">sure about </span></span><span class="seg"><span class="chord">A</span><span class="lyr">this</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Chorus:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Mr. Horrible says, &quot;I don&#x27;t </span></span><span class="seg"><span class="chord">A</span><span class="lyr">mind</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">The thing that bothers me is</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Some</span></span><span class="seg"><span class="chord">D</span><span class="lyr">one </span></span><span class="seg"><span class="chord">G</span><span class="lyr">keeps </span></span><span class="seg"><span class="chord">D</span><span class="lyr">mov</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ing </span></span><span class="seg"><span class="chord">D</span><span class="lyr">my-</span></span><span class="seg"><span class="chord">A</span><span class="lyr">y-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">y </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">chair&quot;</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Some</span></span><span class="seg"><span class="chord">D</span><span class="lyr">one </span></span><span class="seg"><span class="chord">G</span><span class="lyr">keeps </span></span><span class="seg"><span class="chord">D</span><span class="lyr">mov</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ing </span></span><span class="seg"><span class="chord">D</span><span class="lyr">my-</span></span><span class="seg"><span class="chord">A</span><span class="lyr">y-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">y </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">chaa-</span></span><span class="seg"><span class="chord">E</span><span class="lyr">aaaaaaaa-</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">aair</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Chorus:</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mr. </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Horrible says, &quot;I don&#x27;t mind</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">The thing that bothers me is</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Some</span></span><span class="seg"><span class="chord">D</span><span class="lyr">one </span></span><span class="seg"><span class="chord">G</span><span class="lyr">keeps </span></span><span class="seg"><span class="chord">D</span><span class="lyr">mov</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ing </span></span><span class="seg"><span class="chord">D</span><span class="lyr">my-</span></span><span class="seg"><span class="chord">A</span><span class="lyr">y-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">y </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">chair&quot; </span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
     </div>
     
   </div>

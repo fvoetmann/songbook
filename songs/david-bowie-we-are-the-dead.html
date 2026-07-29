@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>We Are The Dead – David Bowie</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,105 +498,53 @@
     <h1>We Are The Dead <span class="artist-inline">– David Bowie</span></h1>
     
     <div class="chords">
-    <pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">Gm</span>  <span class="chord">Bb/F</span>  <span class="chord">F</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">Gm</span>  <span class="chord">Bb/F</span>  <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">Gm</span>                <span class="chord">Bb/F</span>   <span class="chord">F</span>
-Something kind of hit me today, I looked at you and</pre>
-<pre class="block line-group"><span class="chord">Dm</span>                 <span class="chord">D</span>          <span class="chord">Eb</span>   <span class="chord">Bb/D</span>
-Wondered if you saw things my way</pre>
-<pre class="block line-group"><span class="chord">F</span>           <span class="chord">D7/F#</span>      <span class="chord">Gm</span>
-People will hold us to blame</pre>
-<pre class="block line-group line-group-last">   <span class="chord">Bb/F</span>      <span class="chord">Eb</span>     <span class="chord">C7/E</span>   <span class="chord">F</span>
-It hit me today, it hit me today</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-      <span class="chord">Gm</span>        <span class="chord">Bb/F</span>          <span class="chord">F</span>
-We&#x27;re taking it hard all the time</pre>
-<pre class="block line-group">                     <span class="chord">Dm</span>       <span class="chord">D</span>            <span class="chord">Eb</span>               <span class="chord">Bb/D</span>
-Why don&#x27;t we pass it by, just reply you&#x27;ve changed your mind</pre>
-<pre class="block line-group">      <span class="chord">F</span>                 <span class="chord">D7/F#</span>       <span class="chord">Gm</span>
-We&#x27;re fighting with the eyes of the blind</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb/F</span>      <span class="chord">Eb</span>    <span class="chord">C7/E</span>      <span class="chord">F</span>         <span class="chord">F/Eb</span>  <span class="chord">Dm7</span>  <span class="chord">Bb</span>
-Taking it hard, taking it hard, yet now</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-   <span class="chord">Ab</span>               <span class="chord">Gb6</span>     <span class="chord">F</span>                   <span class="chord">Cm</span>
-We feel that we are paper, choking on you nightly</pre>
-<pre class="block line-group">     <span class="chord">Eb/Bb</span>            <span class="chord">Ab</span>            <span class="chord">Gb6</span>                <span class="chord">F</span>
-They tell me son, we want you, be elusive, but don&#x27;t walk far</pre>
-<pre class="block line-group">          <span class="chord">Cm</span>              <span class="chord">Eb/Bb</span>     <span class="chord">Ab</span>                   <span class="chord">Gb6</span>
-For we&#x27;re breaking in the new boys, deceive your next of kin</pre>
-<pre class="block line-group">           <span class="chord">F</span>                 <span class="chord">Cm</span>           <span class="chord">Eb/Bb</span>       <span class="chord">Ab</span>
-For you&#x27;re dancing where the dogs decay, defecating ecstasy</pre>
-<pre class="block line-group">               <span class="chord">Gb6</span>         <span class="chord">F</span>
-You&#x27;re just an ally of the leecher</pre>
-<pre class="block line-group"> <span class="chord">Cm</span>             <span class="chord">Eb/Bb</span>               <span class="chord">Ab</span>               <span class="chord">Gb6</span>
-Locator for the virgin King, but I love you in your fuck me pumps</pre>
-<pre class="block line-group">         <span class="chord">F</span>                 <span class="chord">Cm</span>
-And your nimble dress that trails</pre>
-<pre class="block line-group">    <span class="chord">Eb/Bb</span>               <span class="chord">Ab</span>                <span class="chord">Gb6</span>              <span class="chord">F</span>
-Oh, dress yourself, my urchin one, for I hear them on the rails</pre>
-<pre class="block line-group">           <span class="chord">Cm</span>            <span class="chord">Bb</span>           <span class="chord">Ab</span>
-Because of all we&#x27;ve seen, because of all we&#x27;ve said</pre>
-<pre class="block line-group line-group-last"><span class="chord">Gb6</span>         <span class="chord">D</span>  <span class="chord">C/E</span>  <span class="chord">D</span>  <span class="chord">C/E</span>
-We are the dead</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">Gm</span>                <span class="chord">Bb/F</span>          <span class="chord">F</span>
-One thing kind of touched me today</pre>
-<pre class="block line-group">                    <span class="chord">Dm</span>             <span class="chord">D</span>            <span class="chord">Eb</span>  <span class="chord">Bb/D</span>
-I looked at you and counted all the times we had laid</pre>
-<pre class="block line-group"><span class="chord">F</span>            <span class="chord">D7/F#</span>             <span class="chord">Gm</span>
-Pressing our love through the night</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb/F</span>         <span class="chord">Eb</span>     <span class="chord">C7/E</span>            <span class="chord">F</span>
-Knowing it&#x27;s right, knowing it&#x27;s right</pre>
-<pre class="block line-group"><span class="section">[Verse 4]</span>
-<span class="chord">Gm</span>             <span class="chord">Bb/F</span>            <span class="chord">F</span>
-Now I&#x27;m hoping some one will care</pre>
-<pre class="block line-group">              <span class="chord">Dm</span>          <span class="chord">D</span>          <span class="chord">Eb</span>     <span class="chord">Bb/D</span>
-Living on the breath of a hope to be shared</pre>
-<pre class="block line-group"><span class="chord">F</span>               <span class="chord">D7/F#</span>        <span class="chord">Gm</span>
-Trusting on the sons of our love</pre>
-<pre class="block line-group line-group-last">     <span class="chord">Bb/F</span>         <span class="chord">Eb</span>    <span class="chord">C7/E</span>         <span class="chord">F</span>         <span class="chord">F/Eb</span>  <span class="chord">Dm7</span>  <span class="chord">Bb</span>
-That someone will care, someone will care, but now</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-        <span class="chord">Ab</span>              <span class="chord">Gb6</span>         <span class="chord">F</span>                          <span class="chord">Cm</span>
-We&#x27;re today&#x27;s scrambled creatures, locked in tomorrow&#x27;s double feature</pre>
-<pre class="block line-group"><span class="chord">Eb/Bb</span>             <span class="chord">Ab</span>          <span class="chord">Gb6</span>               <span class="chord">F</span>
-Heaven&#x27;s on the pillow, its silence competes with hell</pre>
-<pre class="block line-group">       <span class="chord">Cm</span>               <span class="chord">Bb</span>             <span class="chord">Ab</span>               <span class="chord">Gb6</span>
-It&#x27;s a twenty four hour service, guaranteed to make you tell</pre>
-<pre class="block line-group">        <span class="chord">F</span>                   <span class="chord">Cm</span>
-And the streets are full of press men</pre>
-<pre class="block line-group">        <span class="chord">Bb</span>               <span class="chord">Ab</span>
-Bent on getting hung and buried</pre>
-<pre class="block line-group">        <span class="chord">Gb6</span>        <span class="chord">F</span>            <span class="chord">Cm</span>                <span class="chord">Bb</span>
-And the legendary curtains are drawn round Baby Bankrupt</pre>
-<pre class="block line-group">    <span class="chord">Ab</span>                     <span class="chord">Gb6</span>
-Who sucks you while you&#x27;re sleeping</pre>
-<pre class="block line-group">         <span class="chord">F</span>            <span class="chord">Cm</span>
-It&#x27;s the theater of financiers</pre>
-<pre class="block line-group">            <span class="chord">Bb</span>            <span class="chord">Ab</span>
-Count them, fifty round a table</pre>
-<pre class="block line-group"><span class="chord">Gb6</span>                   <span class="chord">F</span>
-White and dressed to kill</pre>
-<pre class="block line-group">     <span class="chord">Cm</span>                 <span class="chord">Bb</span>
-Oh caress yourself, my juicy</pre>
-<pre class="block line-group">       <span class="chord">Ab</span>                 <span class="chord">Gb6</span>
-For my hands have all but withered</pre>
-<pre class="block line-group">   <span class="chord">F</span>                 <span class="chord">Cm</span>                 <span class="chord">Bb</span>               <span class="chord">Ab</span>
-Oh dress yourself my urchin one, for I hear them on the stairs</pre>
-<pre class="block line-group">           <span class="chord">Gb6</span>            <span class="chord">F</span>
-Because of all we&#x27;ve seen</pre>
-<pre class="block line-group"><span class="chord">Cm</span>         <span class="chord">Bb</span>
-Because of all we&#x27;ve said</pre>
-<pre class="block line-group"><span class="chord">D</span>          <span class="chord">C/E</span>   <span class="chord">D</span>
-We are the dead</pre>
-<pre class="block line-group"><span class="chord">C/E</span>          <span class="chord">D</span>   <span class="chord">C/E</span>  <span class="chord">D</span>
-We are the dead</pre>
-<pre class="block line-group line-group-last"><span class="chord">C/E</span>          <span class="chord">D</span>   <span class="chord">C/E</span>  <span class="chord">D</span>  <span class="chord">C/E</span>
-We are the dead</pre>
-<pre class="block line-group line-group-last"><span class="section">[Outro]</span>
-<span class="chord">Gm</span>  <span class="chord">Bb/F</span>  <span class="chord">F</span></pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Gm</span><span class="chord">Bb/F</span><span class="chord">F</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Gm</span><span class="chord">Bb/F</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Something kind of </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">hit me </span></span><span class="seg"><span class="chord">F</span><span class="lyr">today, I looked at you and</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Wondered if you saw</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> things my </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">way</span></span><span class="seg"><span class="chord">Bb/D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">People will </span></span><span class="seg"><span class="chord">D7/F#</span><span class="lyr">hold us to </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">blame</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">It </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">hit me tod</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ay, it </span></span><span class="seg"><span class="chord">C7/E</span><span class="lyr">hit me </span></span><span class="seg"><span class="chord">F</span><span class="lyr">today</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">We&#x27;re </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">taking it </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">hard all the t</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ime</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Why don&#x27;t we pass it </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">by, just </span></span><span class="seg"><span class="chord">D</span><span class="lyr">reply you&#x27;ve </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">changed your mind</span></span><span class="seg"><span class="chord">Bb/D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We&#x27;re </span></span><span class="seg"><span class="chord">F</span><span class="lyr">fighting with the </span></span><span class="seg"><span class="chord">D7/F#</span><span class="lyr">eyes of the </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">blind</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb/F</span><span class="lyr">Taking it </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">hard, </span></span><span class="seg"><span class="chord">C7/E</span><span class="lyr">taking it </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hard, yet </span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr">now</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">We </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">feel that we are </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">paper, c</span></span><span class="seg"><span class="chord">F</span><span class="lyr">hoking on you nightl</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">y</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They </span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">tell me son, we w</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">ant you, be el</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">usive, but don&#x27;t wa</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lk far</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For we&#x27;re </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">breaking in the </span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">new boys, </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">deceive your next of </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">kin</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For you&#x27;re </span></span><span class="seg"><span class="chord">F</span><span class="lyr">dancing where the </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">dogs decay, d</span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">efecating ec</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">stasy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You&#x27;re just an </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">ally of the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">leecher</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">L</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">ocator for the </span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">virgin King, but I l</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">ove you in your f</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">uck me pumps</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And your </span></span><span class="seg"><span class="chord">F</span><span class="lyr">nimble dress that </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">trails</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh, </span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">dress yourself, my u</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">rchin one, for I h</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">ear them on the r</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ails</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Because of </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">all we&#x27;ve seen</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">, because of </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">all we&#x27;ve said</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Gb6</span><span class="lyr">We are the d</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ead</span></span><span class="seg"><span class="chord">C/E</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">C/E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">One thing kind of </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">touched me tod</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ay</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I looked at you and </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">counted all the</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> times we had</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr"> lai</span></span><span class="seg"><span class="chord">Bb/D</span><span class="lyr">d</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Pressing our </span></span><span class="seg"><span class="chord">D7/F#</span><span class="lyr">love through the n</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ight</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb/F</span><span class="lyr">Knowing it&#x27;s </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">right, </span></span><span class="seg"><span class="chord">C7/E</span><span class="lyr">knowing it&#x27;s rig</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ht</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Now I&#x27;m hoping </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">some one will ca</span></span><span class="seg"><span class="chord">F</span><span class="lyr">re</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Living on the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">breath of a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hope to be </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">shared</span></span><span class="seg"><span class="chord">Bb/D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Trusting on the </span></span><span class="seg"><span class="chord">D7/F#</span><span class="lyr">sons of our l</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ove</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">That </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">someone will </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">care, </span></span><span class="seg"><span class="chord">C7/E</span><span class="lyr">someone will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">care, but </span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr">now</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">We&#x27;re to</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">day&#x27;s scrambled </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">creatures, l</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ocked in tomorrow&#x27;s double </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">feature</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">Heaven&#x27;s on the pi</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">llow, its si</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">lence competes wit</span></span><span class="seg"><span class="chord">F</span><span class="lyr">h hell</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s a </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">twenty four hour </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">service, guaran</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">teed to make you </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">tell</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">streets are full of </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">press men</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Bent on </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">getting hung and </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">buried</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And the </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">legendary c</span></span><span class="seg"><span class="chord">F</span><span class="lyr">urtains are d</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">rawn round Baby Ba</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">nkrupt</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Who </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">sucks you while you&#x27;re </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">sleeping</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">theater of fi</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">nanciers</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Count them, </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">fifty round a </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">table</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gb6</span><span class="lyr">White and dressed to k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ill</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh ca</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">ress yourself, my j</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">uicy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For my </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">hands have all but </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">withered</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh </span></span><span class="seg"><span class="chord">F</span><span class="lyr">dress yourself my </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">urchin one, for I h</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ear them on the s</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">tairs</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Because of </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">all we&#x27;ve seen</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Cm</span><span class="lyr">Because of </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">all we&#x27;ve said</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">We are the </span></span><span class="seg"><span class="chord">C/E</span><span class="lyr">dead</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C/E</span><span class="lyr">We are the de</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ad</span></span><span class="seg"><span class="chord">C/E</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C/E</span><span class="lyr">We are the de</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ad</span></span><span class="seg"><span class="chord">C/E</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">C/E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line chords-only"><span class="chord">Gm</span><span class="chord">Bb/F</span><span class="chord">F</span></div></div>
     </div>
     
   </div>

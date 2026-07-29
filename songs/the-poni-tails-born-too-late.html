@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Born Too Late – The Poni-Tails</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,54 +496,29 @@
     <h1>Born Too Late <span class="artist-inline">– The Poni-Tails</span></h1>
     
     
-    <pre class="block line-group line-group-last">Artist: The Poni-Tails
-Title: Born Too Late</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">E</span>        <span class="chord">C#m</span>      <span class="chord">F#m</span>    <span class="chord">B</span>      <span class="chord">E</span>
-Born too late for you to notice me</pre>
-<pre class="block line-group">   <span class="chord">G#m</span>     <span class="chord">F#m</span>    <span class="chord">B</span>        <span class="chord">E</span>         <span class="chord">C#m</span>
-To you, Im just a kid that you won&#x27;t date</pre>
-<pre class="block line-group line-group-last"><span class="chord">F#m</span>       <span class="chord">B</span>        <span class="chord">E</span>     <span class="chord">C#m</span>  <span class="chord">F#m</span>  <span class="chord">B</span>
-Why was I born too late?</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">E</span>        <span class="chord">C#m</span>     <span class="chord">F#m</span>    <span class="chord">B</span>         <span class="chord">E</span>        <span class="chord">G#m</span>
-Born too late to have a chance to win your love</pre>
-<pre class="block line-group">   <span class="chord">F#m7</span>    <span class="chord">B7</span>      <span class="chord">E</span>     <span class="chord">C#m</span>
-Oh why, oh why was it my fate</pre>
-<pre class="block line-group line-group-last"><span class="chord">F#m</span>   <span class="chord">B</span>        <span class="chord">E</span>     <span class="chord">A</span>  <span class="chord">E</span>  <span class="chord">E7</span>
-To be born too late?</pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-  <span class="chord">A</span>                  <span class="chord">E</span>
-I see you walk with another</pre>
-<pre class="block line-group">  <span class="chord">A</span>                <span class="chord">E</span>  <span class="chord">E7</span>
-I wish it could be me</pre>
-<pre class="block line-group">  <span class="chord">A</span>                    <span class="chord">E</span>
-I long to hold you and kiss you</pre>
-<pre class="block line-group line-group-last">      <span class="chord">F#</span>                <span class="chord">B</span>
-But I know it never can be
-For I was</pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">E</span>        <span class="chord">C#m</span>      <span class="chord">F#m</span>    <span class="chord">B</span>
-Born too late for you to care</pre>
-<pre class="block line-group">    <span class="chord">E</span>        <span class="chord">G#m</span>
-Now my heart cries</pre>
-<pre class="block line-group">  <span class="chord">F#m</span>        <span class="chord">B</span>          <span class="chord">E</span>        <span class="chord">C#m</span>
-Because your heart just couldn&#x27;t wait</pre>
-<pre class="block line-group line-group-last"><span class="chord">F#m</span>       <span class="chord">B</span>        <span class="chord">E</span>             <span class="chord">C</span>
-Why was I born too late?</pre>
-<pre class="block line-group"><span class="section">[Key Change]</span>
-<span class="chord">F</span>        <span class="chord">Dm</span>       <span class="chord">Gm</span>     <span class="chord">C</span>
-Born too late for you to care</pre>
-<pre class="block line-group">    <span class="chord">F</span>        <span class="chord">Am</span>
-Now my heart cries</pre>
-<pre class="block line-group">   <span class="chord">Gm</span>        <span class="chord">C</span>          <span class="chord">F</span>        <span class="chord">Dm</span>
-Because your heart just couldn&#x27;t wait</pre>
-<pre class="block line-group"><span class="chord">Gm</span>        <span class="chord">C</span>        <span class="chord">F</span>  <span class="chord">D#</span>    <span class="chord">D7</span>
-Why was I born too la-a-a-a-ate?</pre>
-<pre class="block line-group"><span class="chord">Gm</span>        <span class="chord">C</span>        <span class="chord">F</span>
-Why was I born too late?</pre>
-<pre class="block line-group line-group-last"><span class="chord">A#</span>  <span class="chord">F</span>
-Too late</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Artist: The Poni-Tails</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Title: Born Too Late</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Born too </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">late for </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">you to </span></span><span class="seg"><span class="chord">B</span><span class="lyr">notice </span></span><span class="seg"><span class="chord">E</span><span class="lyr">me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">you, Im </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">just a </span></span><span class="seg"><span class="chord">B</span><span class="lyr">kid that </span></span><span class="seg"><span class="chord">E</span><span class="lyr">you won&#x27;t </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">date</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">Why was I </span></span><span class="seg"><span class="chord">B</span><span class="lyr">born too </span></span><span class="seg"><span class="chord">E</span><span class="lyr">late?</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr"></span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Born too </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">late to </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">have a </span></span><span class="seg"><span class="chord">B</span><span class="lyr">chance to </span></span><span class="seg"><span class="chord">E</span><span class="lyr">win your </span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">love</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh </span></span><span class="seg"><span class="chord">F#m7</span><span class="lyr">why, oh </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">why was </span></span><span class="seg"><span class="chord">E</span><span class="lyr">it my </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">fate</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">To be </span></span><span class="seg"><span class="chord">B</span><span class="lyr">born too </span></span><span class="seg"><span class="chord">E</span><span class="lyr">late?</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span><span class="seg"><span class="chord">E7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">see you walk with a</span></span><span class="seg"><span class="chord">E</span><span class="lyr">nother</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">wish it could be </span></span><span class="seg"><span class="chord">E</span><span class="lyr">me</span></span><span class="seg"><span class="chord">E7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">long to hold you and </span></span><span class="seg"><span class="chord">E</span><span class="lyr">kiss you</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But I </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">know it never can </span></span><span class="seg"><span class="chord">B</span><span class="lyr">be</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">For I was</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Born too </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">late for </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">you to </span></span><span class="seg"><span class="chord">B</span><span class="lyr">care</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Now </span></span><span class="seg"><span class="chord">E</span><span class="lyr">my heart </span></span><span class="seg"><span class="chord">G#m</span><span class="lyr">cries</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Be</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">cause your </span></span><span class="seg"><span class="chord">B</span><span class="lyr">heart just </span></span><span class="seg"><span class="chord">E</span><span class="lyr">couldn&#x27;t </span></span><span class="seg"><span class="chord">C#m</span><span class="lyr">wait</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">Why was I </span></span><span class="seg"><span class="chord">B</span><span class="lyr">born too </span></span><span class="seg"><span class="chord">E</span><span class="lyr">late?</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Key Change]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Born too </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">late for </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">you to </span></span><span class="seg"><span class="chord">C</span><span class="lyr">care</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Now </span></span><span class="seg"><span class="chord">F</span><span class="lyr">my heart </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">cries</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Bec</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ause your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">heart just </span></span><span class="seg"><span class="chord">F</span><span class="lyr">couldn&#x27;t </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">wait</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Why was I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">born too </span></span><span class="seg"><span class="chord">F</span><span class="lyr">la-</span></span><span class="seg"><span class="chord">D#</span><span class="lyr">a-a-a-</span></span><span class="seg"><span class="chord">D7</span><span class="lyr">ate?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Why was I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">born too </span></span><span class="seg"><span class="chord">F</span><span class="lyr">late?</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">A#</span><span class="lyr">Too </span></span><span class="seg"><span class="chord">F</span><span class="lyr">late</span></span></div></div>
     
     
   </div>

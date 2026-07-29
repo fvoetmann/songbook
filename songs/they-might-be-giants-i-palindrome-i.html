@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>I Palindrome I – They Might Be Giants</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -76,7 +85,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"F6":[[1,0,0,2,1,1],[1,3,0,2,1,1],[1,3,0,2,3,1],[1,3,3,2,3,1],[1,0,0,2,1,-1],[1,3,0,2,1,-1]],"D/A":[[-1,0,0,2,3,2],[-1,0,4,2,3,2],[-1,0,4,2,3,-1],[5,0,0,7,7,5],[5,5,0,7,7,5],[5,0,7,7,7,5]],"D/F#":[[2,0,0,2,3,2],[2,0,4,2,3,2],[2,0,0,2,3,-1],[2,0,4,2,3,-1],[2,0,0,2,-1,-1],[-1,-1,4,2,3,2]],"G/D":[[-1,5,0,0,0,3],[-1,5,0,4,0,3],[-1,5,5,0,0,3],[-1,5,0,4,3,3],[-1,5,5,4,0,3],[-1,5,5,4,3,3]],"A/C#":[[-1,4,2,2,2,0],[-1,4,2,2,2,-1],[9,7,7,9,-1,-1],[-1,4,-1,2,2,0],[-1,4,2,2,-1,0],[-1,4,-1,6,5,5]],"G/B":[[-1,2,0,0,0,3],[-1,2,0,0,3,3],[-1,2,0,4,0,3],[-1,2,0,4,3,3],[-1,2,0,0,0,-1],[-1,2,0,0,3,-1]],"G6":[[3,2,0,0,0,0],[3,2,0,0,3,0],[3,2,0,4,0,0],[3,2,2,0,3,0],[3,2,0,4,3,0],[3,2,2,0,3,3]],"D6":[[-1,-1,0,2,0,2],[-1,5,4,4,3,5],[-1,5,4,4,0,5],[-1,5,7,7,7,7],[2,0,0,2,0,2],[2,0,0,4,0,2]]},"ukulele":{"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"F6":[[2,2,1,3],[5,5,5,5],[2,0,1,0],[2,2,1,0],[2,0,1,3],[2,5,5,3]],"D/F#":[[7,6,5,0],[7,6,5,5]],"G/D":[[0,2,3,2],[4,2,3,2],[4,2,3,5]],"A/C#":[[2,1,0,0],[2,1,0,4]],"G6":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"D6":[[2,2,2,2],[4,2,2,0],[4,6,5,5],[7,6,7,0],[2,2,2,0],[4,2,2,2]]},"mandolin":{"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"F6":[[2,0,3,1],[5,3,5,5],[-1,3,3,5],[-1,3,5,5],[2,0,0,1],[2,3,3,1]],"D/A":[[2,0,0,2],[2,0,5,2],[2,4,5,2],[2,4,5,5],[2,4,5,-1],[2,0,-1,2]],"D/F#":[[-1,4,5,5],[-1,4,5,2]],"G/D":[[-1,0,2,3],[7,5,5,7],[7,5,-1,7]],"A/C#":[[6,7,4,0],[6,7,7,5],[6,7,0,0],[6,7,7,0],[6,7,7,-1],[6,-1,7,5]],"G/B":[[4,0,2,3],[4,0,5,3],[4,5,5,3],[4,5,5,7],[4,5,5,-1],[4,0,-1,3]],"G6":[[0,0,2,0],[0,0,7,7],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,2,2,0]],"D6":[[7,4,0,7],[2,0,2,2],[4,0,0,2],[4,4,5,5],[-1,0,0,2],[-1,0,2,2]]},"banjo":{"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"Bb":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"F6":[[0,2,1,3,0],[3,2,1,0,0],[0,5,6,7,0],[7,5,6,0,0],[3,2,1,3,0],[-1,2,1,3,0]],"D/A":[[-1,2,3,4,0],[7,7,7,4,0],[7,7,7,0,0],[7,7,7,7,0],[7,7,-1,4,0],[7,-1,7,0,0]],"D/F#":[[4,2,3,0,0],[4,2,3,4,0],[4,7,7,7,0],[4,2,-1,0,0],[4,2,3,-1,0],[4,7,-1,7,0]],"G/D":[[0,0,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[0,4,0,0,0],[0,4,0,5,0],[0,0,0,5,0]],"A/C#":[[-1,6,5,7,0],[-1,6,-1,7,0]],"G/B":[[-1,-1,0,0,0],[-1,4,3,0,0],[-1,4,3,5,0],[-1,4,0,0,0],[-1,7,0,5,0],[-1,7,0,0,0]],"G6":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]],"D6":[[0,2,0,4,0],[4,2,0,0,0],[0,4,7,7,0],[4,7,0,7,0],[7,4,7,0,0],[7,7,0,4,0]]}};
+    var DBS = {"guitar":{"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"F6":[[1,0,0,2,1,1],[1,3,0,2,1,1],[1,3,0,2,3,1],[1,3,3,2,3,1],[1,0,0,2,1,-1],[1,3,0,2,1,-1]],"D/A":[[-1,0,0,2,3,2],[-1,0,4,2,3,2],[-1,0,4,2,3,-1],[5,0,0,7,7,5],[5,5,0,7,7,5],[5,0,7,7,7,5]],"D/F#":[[2,0,0,2,3,2],[2,0,4,2,3,2],[2,0,0,2,3,-1],[2,0,4,2,3,-1],[2,0,0,2,-1,-1],[-1,-1,4,2,3,2]],"G/D":[[-1,5,0,0,0,3],[-1,5,0,4,0,3],[-1,5,5,0,0,3],[-1,5,0,4,3,3],[-1,5,5,4,0,3],[-1,5,5,4,3,3]],"A/C#":[[-1,4,2,2,2,0],[-1,4,2,2,2,-1],[9,7,7,9,-1,-1],[-1,4,-1,2,2,0],[-1,4,2,2,-1,0],[-1,4,-1,6,5,5]],"G/B":[[-1,2,0,0,0,3],[-1,2,0,0,3,3],[-1,2,0,4,0,3],[-1,2,0,4,3,3],[-1,2,0,0,0,-1],[-1,2,0,0,3,-1]],"G6":[[3,2,0,0,0,0],[3,2,0,0,3,0],[3,2,0,4,0,0],[3,2,2,0,3,0],[3,2,0,4,3,0],[3,2,2,0,3,3]]},"ukulele":{"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"F6":[[2,2,1,3],[5,5,5,5],[2,0,1,0],[2,2,1,0],[2,0,1,3],[2,5,5,3]],"D/F#":[[7,6,5,0],[7,6,5,5]],"G/D":[[0,2,3,2],[4,2,3,2],[4,2,3,5]],"A/C#":[[2,1,0,0],[2,1,0,4]],"G6":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]]},"mandolin":{"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"F6":[[2,0,3,1],[5,3,5,5],[-1,3,3,5],[-1,3,5,5],[2,0,0,1],[2,3,3,1]],"D/A":[[2,0,0,2],[2,0,5,2],[2,4,5,2],[2,4,5,5],[2,4,5,-1],[2,0,-1,2]],"D/F#":[[-1,4,5,5],[-1,4,5,2]],"G/D":[[-1,0,2,3],[7,5,5,7],[7,5,-1,7]],"A/C#":[[6,7,4,0],[6,7,7,5],[6,7,0,0],[6,7,7,0],[6,7,7,-1],[6,-1,7,5]],"G/B":[[4,0,2,3],[4,0,5,3],[4,5,5,3],[4,5,5,7],[4,5,5,-1],[4,0,-1,3]],"G6":[[0,0,2,0],[0,0,7,7],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,2,2,0]]},"banjo":{"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"Bb":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"F6":[[0,2,1,3,0],[3,2,1,0,0],[0,5,6,7,0],[7,5,6,0,0],[3,2,1,3,0],[-1,2,1,3,0]],"D/A":[[-1,2,3,4,0],[7,7,7,4,0],[7,7,7,0,0],[7,7,7,7,0],[7,7,-1,4,0],[7,-1,7,0,0]],"D/F#":[[4,2,3,0,0],[4,2,3,4,0],[4,7,7,7,0],[4,2,-1,0,0],[4,2,3,-1,0],[4,7,-1,7,0]],"G/D":[[0,0,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[0,4,0,0,0],[0,4,0,5,0],[0,0,0,5,0]],"A/C#":[[-1,6,5,7,0],[-1,6,-1,7,0]],"G/B":[[-1,-1,0,0,0],[-1,4,3,0,0],[-1,4,3,5,0],[-1,4,0,0,0],[-1,7,0,5,0],[-1,7,0,0,0]],"G6":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,92 +496,47 @@
     <h1>I Palindrome I <span class="artist-inline">– They Might Be Giants</span></h1>
     <div class="meta">Toneart: D</div>
     
-    <pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">D</span>        <span class="chord">G</span>           <span class="chord">Em</span>           <span class="chord">A</span>       <span class="chord">Bm</span> <span class="chord">G</span>   <span class="chord">Em</span>  <span class="chord">A</span>
-Some day mother will die and I&#x27;ll get the mo-ney</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>         <span class="chord">G</span>               <span class="chord">Em</span>      <span class="chord">A</span>      <span class="chord">Bm</span>  <span class="chord">G</span>   <span class="chord">Em</span>  <span class="chord">A</span>
-Mom leans down and says, &quot;My sentiments exactly,</pre>
-<pre class="block line-group line-group-last"><span class="section">[Bridge]</span>
-<span class="chord">Bb</span>    <span class="chord">F6</span>         <span class="chord">G</span>        <span class="chord">A</span>          <span class="chord">Bm</span>
-  You son of a bitch.&quot;  I palindrome I</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-   <span class="chord">G</span>          <span class="chord">Em</span>    <span class="chord">A</span>          <span class="chord">Bm</span>
-(I palindrome I)  I palindrome I</pre>
-<pre class="block line-group">   <span class="chord">G</span>          <span class="chord">Em</span>
-(I palindrome I)</pre>
-<pre class="block line-group line-group-last">    <span class="chord">A</span>      <span class="chord">Bm</span>         <span class="chord">D/A</span>        <span class="chord">G</span>           <span class="chord">D/F#</span>     <span class="chord">Em</span>  <span class="chord">G/D</span>  <span class="chord">A/C#</span>
-And I am a snake head eating the head on the opposite side
-          (snake                 head)               (snake    head)</pre>
-<pre class="block line-group"><span class="section">[Post-Chorus]</span>
-             <span class="chord">G/B</span>     <span class="chord">D/A</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group line-group-last">             <span class="chord">G6</span>      <span class="chord">D</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">D</span>        <span class="chord">G</span>           <span class="chord">Em</span>            <span class="chord">A</span>        <span class="chord">Bm</span>     <span class="chord">G</span>    <span class="chord">Em</span>  <span class="chord">A</span>
-See that bulletproof dress hanging from the clothesline</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span>       <span class="chord">G</span>       <span class="chord">Em</span>             <span class="chord">A</span>      <span class="chord">Bm</span>  <span class="chord">G</span>  <span class="chord">Em</span>  <span class="chord">A</span>
-See the medical chart with the random zig-zag</pre>
-<pre class="block line-group line-group-last"><span class="section">[Bridge]</span>
-<span class="chord">Bb</span>       <span class="chord">F6</span>         <span class="chord">G</span>        <span class="chord">A</span>        <span class="chord">Bm</span>
-Now I&#x27;ll help it decide, I palindrome I</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-   <span class="chord">G</span>          <span class="chord">Em</span>    <span class="chord">A</span>          <span class="chord">Bm</span>
-(I palindrome I)  I palindrome I</pre>
-<pre class="block line-group">   <span class="chord">G</span>          <span class="chord">Em</span>
-(I palindrome I)</pre>
-<pre class="block line-group line-group-last">    <span class="chord">A</span>      <span class="chord">Bm</span>         <span class="chord">D/A</span>        <span class="chord">G</span>           <span class="chord">D/F#</span>     <span class="chord">Em</span>  <span class="chord">G/D</span>  <span class="chord">A/C#</span>
-And I am a snake head eating the head on the opposite side
-          (snake                 head)               (snake    head)</pre>
-<pre class="block line-group"><span class="section">[Post-Chorus]</span>
-             <span class="chord">G/B</span>     <span class="chord">D/A</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group">             <span class="chord">G6</span>      <span class="chord">D/F#</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group">             <span class="chord">Bm</span>      <span class="chord">D/A</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group line-group-last">             <span class="chord">G6</span>      <span class="chord">D</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group"><span class="section">[Middle 8]</span>
-<span class="chord">G</span>       <span class="chord">A</span>    <span class="chord">Bm</span>       <span class="chord">A/C#</span>
-  &quot;Son I am a-ble,&quot; she said,</pre>
-<pre class="block line-group">     <span class="chord">D</span>         <span class="chord">Em</span>          <span class="chord">D/F#</span>       <span class="chord">G</span>
-&quot;though you scare me.&quot; &quot;Watch,&quot; said I,
-    <span class="chord">A</span>       <span class="chord">Bm</span>        <span class="chord">A</span> /C#     <span class="chord">D6</span>         <span class="chord">Em</span>
-&quot;Beloved,&quot; I said, &quot;watch me scare you though.&quot;</pre>
-<pre class="block line-group line-group-last">     <span class="chord">D/F#</span>    <span class="chord">G</span>      <span class="chord">A</span>
-Said she, &quot;Able am I, son.&quot;</pre>
-<pre class="block line-group"><span class="section">[Verse 3]</span>
-<span class="chord">D</span>       <span class="chord">G</span>                <span class="chord">Em</span>       <span class="chord">A</span>
-See the spring of the grandfather clock</pre>
-<pre class="block line-group">  <span class="chord">Bm</span>  <span class="chord">G</span>           <span class="chord">Em</span>     <span class="chord">A</span>
-unwinding
-    (Egad, a base tone denotes a bad</pre>
-<pre class="block line-group"> <span class="chord">D</span>         <span class="chord">G</span>           <span class="chord">Em</span>      <span class="chord">A</span>
- See the hands of my offspring making
-(age)</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bm</span>  <span class="chord">G</span>           <span class="chord">Em</span>     <span class="chord">A</span>
-windmills
-  (Egad, a base tone denotes a bad age)</pre>
-<pre class="block line-group line-group-last"><span class="section">[Bridge]</span>
-<span class="chord">Bb</span>    <span class="chord">F6</span>         <span class="chord">G</span>      <span class="chord">A</span>          <span class="chord">Bm</span>
-  Dad palindrome dad. I palindrome I</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-   <span class="chord">G</span>          <span class="chord">Em</span>    <span class="chord">A</span>          <span class="chord">Bm</span>
-(I palindrome I)  I palindrome I</pre>
-<pre class="block line-group">   <span class="chord">G</span>          <span class="chord">Em</span>
-(I palindrome I)</pre>
-<pre class="block line-group line-group-last">    <span class="chord">A</span>      <span class="chord">Bm</span>         <span class="chord">D/A</span>        <span class="chord">G</span>           <span class="chord">D/F#</span>     <span class="chord">Em</span>  <span class="chord">G/D</span>  <span class="chord">A/C#</span>
-And I am a snake head eating the head on the opposite side
-          (snake                 head)               (snake    head)</pre>
-<pre class="block line-group"><span class="section">[Post-Chorus]</span>
-<span class="chord">G/B</span>     <span class="chord">D/A</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group">             <span class="chord">G6</span>      <span class="chord">D/F#</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group">             <span class="chord">Bm</span>      <span class="chord">D/A</span>
-I palindrome I  (manonam)</pre>
-<pre class="block line-group line-group-last">             <span class="chord">G6</span>      <span class="chord">D</span></pre>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Some day </span></span><span class="seg"><span class="chord">G</span><span class="lyr">mother will </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">die and I&#x27;ll </span></span><span class="seg"><span class="chord">A</span><span class="lyr">get the </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">mo-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ney</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Mom leans </span></span><span class="seg"><span class="chord">G</span><span class="lyr">down and says, &quot;</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">My senti</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ments e</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">xact</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ly,</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">  You </span></span><span class="seg"><span class="chord">F6</span><span class="lyr">son of a bi</span></span><span class="seg"><span class="chord">G</span><span class="lyr">tch.&quot;  I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">(I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I)  I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">(I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">A</span><span class="lyr">I am a </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">snake head </span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">eating the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">head on the </span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">opposite </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">side</span></span><span class="seg"><span class="chord">G/D</span><span class="lyr"></span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">          (snake                 head)               (snake    head)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Post-Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">See that </span></span><span class="seg"><span class="chord">G</span><span class="lyr">bulletproof </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">dress hanging </span></span><span class="seg"><span class="chord">A</span><span class="lyr">from the </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">clothes</span></span><span class="seg"><span class="chord">G</span><span class="lyr">line</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">See the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">medical </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">chart with the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">random </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">zig-</span></span><span class="seg"><span class="chord">G</span><span class="lyr">zag</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Now I&#x27;ll </span></span><span class="seg"><span class="chord">F6</span><span class="lyr">help it dec</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ide, I pa</span></span><span class="seg"><span class="chord">A</span><span class="lyr">lindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">(I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I)  I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">(I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">A</span><span class="lyr">I am a </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">snake head </span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">eating the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">head on the </span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">opposite </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">side</span></span><span class="seg"><span class="chord">G/D</span><span class="lyr"></span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">          (snake                 head)               (snake    head)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Post-Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Middle 8]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  &quot;Son I</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> am a</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">-ble,&quot; sh</span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr">e said,</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;thou</span></span><span class="seg"><span class="chord">D</span><span class="lyr">gh you sca</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">re me.&quot; &quot;Wat</span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">ch,&quot; said I</span></span><span class="seg"><span class="chord">G</span><span class="lyr">,</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> A Bm A /C#     D6 Em</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">&quot;Beloved,&quot; I said, &quot;watch me scare you though.&quot;</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Said </span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">she, &quot;Ab</span></span><span class="seg"><span class="chord">G</span><span class="lyr">le am I</span></span><span class="seg"><span class="chord">A</span><span class="lyr">, son.&quot;</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">See the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">spring of the gra</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ndfather </span></span><span class="seg"><span class="chord">A</span><span class="lyr">clock</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">un</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">wind</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ing</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">    (Egad, a base tone denotes a bad</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr">See the ha</span></span><span class="seg"><span class="chord">G</span><span class="lyr">nds of my of</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">fspring </span></span><span class="seg"><span class="chord">A</span><span class="lyr">making</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(age)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">wind</span></span><span class="seg"><span class="chord">G</span><span class="lyr">mills</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">  (Egad, a base tone denotes a bad age)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">  Dad </span></span><span class="seg"><span class="chord">F6</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">G</span><span class="lyr">dad. I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">(I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I)  I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">(I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">palindrome </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">A</span><span class="lyr">I am a </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">snake head </span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">eating the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">head on the </span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">opposite </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">side</span></span><span class="seg"><span class="chord">G/D</span><span class="lyr"></span></span><span class="seg"><span class="chord">A/C#</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">          (snake                 head)               (snake    head)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Post-Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G/B</span><span class="lyr">I palind</span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">rome I  (manonam)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">G6</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I palindrome </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">I  (mano</span></span><span class="seg"><span class="chord">D/A</span><span class="lyr">nam)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">G6</span><span class="chord">D</span></div></div>
     
     <div class="tab-section"><pre class="block line-group line-group-last">I palindrome I  (manonam)
 

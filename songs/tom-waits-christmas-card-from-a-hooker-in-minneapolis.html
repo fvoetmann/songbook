@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Christmas Card From A Hooker In Minneapolis – Tom Waits</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,113 +498,63 @@
     <h1>Christmas Card From A Hooker In Minneapolis <span class="artist-inline">– Tom Waits</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">Christmas Card from a Hooker in Minneapolis
-From Blue Valentines 1977
-Bb9:     x10111
-Bb/C:    x3x331
-Fadd9/A: x03213
-C11:     033333</pre>
-<pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">Gm</span> <span class="chord">Am7</span> <span class="chord">Bb</span> <span class="chord">Bb/C</span></pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-hey Charlie I&#x27;m pregnant</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-and living on the 9th street</pre>
-<pre class="block line-group">           <span class="chord">F</span>    <span class="chord">A7</span>
-right above a dirty bookstore</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-off Euclid Avenue</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-and I stopped takin&#x27; dope</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-and I quit drinkin&#x27; whiskey</pre>
-<pre class="block line-group">      <span class="chord">Gm7</span>         <span class="chord">F/A</span>
-and my old man plays the trombone</pre>
-<pre class="block line-group">       <span class="chord">Bb9</span>            <span class="chord">Bb/C</span>     <span class="chord">F</span>   <span class="chord">C11</span>  <span class="chord">F</span>
-and works out at the track</pre>
-<pre class="block line-group"> <span class="chord">F</span>    <span class="chord">A7</span>
-and he says that he loves me</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-even though it&#x27;s not his baby</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-and he says that he&#x27;ll raise him up</pre>
-<pre class="block line-group">  <span class="chord">Bb9</span>
-like he would his own son</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-and he gave me a ring</pre>
-<pre class="block line-group">   <span class="chord">Dm7</span>        <span class="chord">F/Eb</span>
-that was worn by his mother</pre>
-<pre class="block line-group">   <span class="chord">Bb9</span>                 <span class="chord">Bb/C</span>
-and he takes me out dancin&#x27;</pre>
-<pre class="block line-group">    <span class="chord">Bb9</span>   <span class="chord">C11</span>       <span class="chord">F</span>     <span class="chord">C11</span>   <span class="chord">F</span>  <span class="chord">C11</span>
-every Saturday night</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-and hey Charlie I think about you</pre>
-<pre class="block line-group">   <span class="chord">Bb9</span>
-every time I pass a fillin&#x27; station</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-on account of all the grease</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-you used to wear in your hair</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-and I still have that record</pre>
-<pre class="block line-group"><span class="chord">Dm7</span>      <span class="chord">F/Eb</span>
-of Little Anthony &amp; the Imperials</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-but someone stole my record player</pre>
-<pre class="block line-group">  <span class="chord">C11</span>                             <span class="chord">F</span>    <span class="chord">C11</span>       <span class="chord">F</span>  <span class="chord">A7</span>
-now how do you like that?</pre>
-<pre class="block line-group"><span class="chord">Dm7</span>   <span class="chord">F/C</span>
-hey Charlie I almost went crazy</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>     <span class="chord">Fadd9/A</span>
-after Mario got busted</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>        <span class="chord">Bb/C</span>       <span class="chord">C7</span>
-so I went back to Omaha to</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-live with my folks</pre>
-<pre class="block line-group"><span class="chord">Dm7</span>      <span class="chord">F/C</span>
-but everyone I used to know</pre>
-<pre class="block line-group">      <span class="chord">Bb9</span>
-was either dead or in prison</pre>
-<pre class="block line-group"><span class="chord">Gm7</span>        <span class="chord">Fadd9/A</span>
-so I came back to Minneapolis</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>         <span class="chord">Bb/C</span>   <span class="chord">C7</span>
-this time I think I&#x27;m gonna stay</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-hey Charlie I think I&#x27;m happy</pre>
-<pre class="block line-group">  <span class="chord">Bb9</span>
-for the first time since my accident</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-and I wish I had all the money</pre>
-<pre class="block line-group">     <span class="chord">Bb9</span>
-that we used to spend on dope</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-I&#x27;d buy me a used car lot</pre>
-<pre class="block line-group">  <span class="chord">Dm7</span>  <span class="chord">F/Eb</span>
-and I wouldn&#x27;t sell any of em</pre>
-<pre class="block line-group">      <span class="chord">Bb9</span>
-I&#x27;d just drive a different car</pre>
-<pre class="block line-group"><span class="chord">C11</span>         <span class="chord">Bb9</span>              <span class="chord">C11</span>
-every day, dependin&#x27; on how I feel</pre>
-<pre class="block line-group">   <span class="chord">F</span>    <span class="chord">C11</span>         <span class="chord">F</span>   <span class="chord">C11</span></pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-hey Charlie for chrissakes</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-do you want to know the truth of it?</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-I don&#x27;t have a husband</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-he don&#x27;t play the trombone</pre>
-<pre class="block line-group"><span class="chord">F</span>    <span class="chord">A7</span>
-and I need to borrow money</pre>
-<pre class="block line-group"><span class="chord">Dm7</span>
-to pay this lawyer</pre>
-<pre class="block line-group">  <span class="chord">F/Eb</span>
-Charlie, hey</pre>
-<pre class="block line-group"><span class="chord">Bb9</span>
-I&#x27;ll be eligible for parole</pre>
-<pre class="block line-group line-group-last">   <span class="chord">C11</span>     <span class="chord">F</span>
-come Valentine&#x27;s Day</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Christmas Card from a Hooker in Minneapolis</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">From Blue Valentines 1977</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Bb9:     x10111</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Bb/C:    x3x331</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Fadd9/A: x03213</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C11:     033333</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Gm</span><span class="chord">Am7</span><span class="chord">Bb</span><span class="chord">Bb/C</span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">hey C</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">harlie I&#x27;m pregnant</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">and living on the 9th street</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">right above</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> a di</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">rty bookstore</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">off Euclid Avenue</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">and I</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> stopped takin&#x27; dope</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">and I quit drinkin&#x27; whiskey</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and my</span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr"> old man pla</span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">ys the trombone</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and wor</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">ks out at the t</span></span><span class="seg"><span class="chord">Bb/C</span><span class="lyr">rack</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">C11</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">nd he</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> says that he loves me</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">even though it&#x27;s not his baby</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">and h</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">e says that he&#x27;ll raise him up</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">li</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">ke he would his own son</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">and h</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">e gave me a ring</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">tha</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">t was worn </span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr">by his mother</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr"> he takes me out dan</span></span><span class="seg"><span class="chord">Bb/C</span><span class="lyr">cin&#x27;</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">ever</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">y Satu</span></span><span class="seg"><span class="chord">C11</span><span class="lyr">rday night</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">C11</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">C11</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">and h</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">ey Charlie I think about you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">eve</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">ry time I pass a fillin&#x27; station</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">on ac</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">count of all the grease</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">you used to wear in your hair</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">and I</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> still have that record</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm7</span><span class="lyr">of Little</span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr"> Anthony &amp; the Imperials</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">but someone stole my record player</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">no</span></span><span class="seg"><span class="chord">C11</span><span class="lyr">w how do you like that?</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">C11</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">A7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm7</span><span class="lyr">hey Ch</span></span><span class="seg"><span class="chord">F/C</span><span class="lyr">arlie I almost went crazy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">after Ma</span></span><span class="seg"><span class="chord">Fadd9/A</span><span class="lyr">rio got busted</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">so I went b</span></span><span class="seg"><span class="chord">Bb/C</span><span class="lyr">ack to Omah</span></span><span class="seg"><span class="chord">C7</span><span class="lyr">a to</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">live </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">with my folks</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm7</span><span class="lyr">but every</span></span><span class="seg"><span class="chord">F/C</span><span class="lyr">one I used to know</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">was ei</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">ther dead or in prison</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm7</span><span class="lyr">so I came b</span></span><span class="seg"><span class="chord">Fadd9/A</span><span class="lyr">ack to Minneapolis</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">this time I </span></span><span class="seg"><span class="chord">Bb/C</span><span class="lyr">think I</span></span><span class="seg"><span class="chord">C7</span><span class="lyr">&#x27;m gonna stay</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">hey C</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">harlie I think I&#x27;m happy</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">fo</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">r the first time since my accident</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">and I</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> wish I had all the money</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">that </span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">we used to spend on dope</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I&#x27;d b</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">uy me a used car lot</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">an</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">d I w</span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr">ouldn&#x27;t sell any of em</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;d ju</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">st drive a different car</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C11</span><span class="lyr">every day, d</span></span><span class="seg"><span class="chord">Bb9</span><span class="lyr">ependin&#x27; on how I</span></span><span class="seg"><span class="chord">C11</span><span class="lyr"> feel</span></span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">F</span><span class="chord">C11</span><span class="chord">F</span><span class="chord">C11</span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">hey C</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">harlie for chrissakes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">do you want to know the truth of it?</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I don</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">&#x27;t have a husband</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">he don&#x27;t play the trombone</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">and I</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> need to borrow money</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm7</span><span class="lyr">to pay this lawyer</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Ch</span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr">arlie, hey</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb9</span><span class="lyr">I&#x27;ll be eligible for parole</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">com</span></span><span class="seg"><span class="chord">C11</span><span class="lyr">e Valent</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ine&#x27;s Day</span></span></div></div>
     </div>
     
   </div>

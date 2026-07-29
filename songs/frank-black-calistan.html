@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Calistan – Frank Black</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,88 +498,47 @@
     <h1>Calistan <span class="artist-inline">– Frank Black</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">Frank Black - Calistan
-----------------------</pre>
-<pre class="block line-group"><span class="section">[Intro]</span>
-<span class="chord">A</span> <span class="chord">F</span> <span class="chord">C</span> <span class="chord">A</span> <span class="chord">F</span> <span class="chord">C</span> <span class="chord">A</span> <span class="chord">F</span> <span class="chord">C</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span> <span class="chord">F</span> <span class="chord">A</span> <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">A</span>               <span class="chord">F</span>                         <span class="chord">C</span>
-I took three days to drive down one street</pre>
-<pre class="block line-group"><span class="chord">A</span>           <span class="chord">F</span>                      <span class="chord">C</span>
-The radio on, tuned to the big fleet</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">F</span>                                <span class="chord">C</span>
-Invisible planes are cracking the concrete</pre>
-<pre class="block line-group"><span class="chord">G</span>                       <span class="chord">F</span>
-That&#x27;s just what some people say</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">F</span>
-Hey hey</pre>
-<pre class="block line-group"><span class="chord">A</span>                   <span class="chord">F</span>                         <span class="chord">C</span>
-I put down my blanket on cigarette-butt beach</pre>
-<pre class="block line-group"><span class="chord">A</span>           <span class="chord">F</span>                      <span class="chord">C</span>
-I saw the old man, he was doing okay</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">F</span>
-He&#x27;s making his last stand</pre>
-<pre class="block line-group"><span class="chord">C</span>                            <span class="chord">A</span>
-On old bottles and cans</pre>
-<pre class="block line-group"><span class="chord">G</span>          <span class="chord">F</span>
-&#x27;Round there, Calistan way</pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>          <span class="chord">F</span>
-Hey hey</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>               <span class="chord">F</span>
-Used to be sixteen lanes</pre>
-<pre class="block line-group"><span class="chord">C</span>               <span class="chord">B</span>
-Used to be Nuevo Spain</pre>
-<pre class="block line-group"><span class="chord">Bb</span>            <span class="chord">G</span>
-Used to be Juan Wayne</pre>
-<pre class="block line-group"><span class="chord">E</span>               <span class="chord">F</span>
-Used to be Mexico</pre>
-<pre class="block line-group"><span class="chord">C</span>               <span class="chord">B</span>
-Used to be Navajo</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb</span>            <span class="chord">G</span>          <span class="chord">A</span>      <span class="chord">F</span>    <span class="chord">C</span>
-Used to be yippy-ay-I-don&#x27;t-know</pre>
-<pre class="block line-group line-group-last"><span class="section">[Solo]</span>
-<span class="chord">A</span> <span class="chord">F</span> <span class="chord">C</span> <span class="chord">A</span> <span class="chord">F</span> <span class="chord">C</span> <span class="chord">G</span> <span class="chord">F</span> <span class="chord">A</span> <span class="chord">F</span></pre>
-<pre class="block line-group"><span class="section">[Verse]</span>
-<span class="chord">A</span>               <span class="chord">F</span>                         <span class="chord">C</span>
-Went in from the weather when I got wheezy</pre>
-<pre class="block line-group"><span class="chord">A</span>           <span class="chord">F</span>                      <span class="chord">C</span>
-I play some Pachinko I play Pachisi</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">F</span>                             <span class="chord">C</span>
-And St. Anne is still making it breezy</pre>
-<pre class="block line-group"><span class="chord">G</span>                       <span class="chord">F</span>
-In the valley of tar that once was L.A.</pre>
-<pre class="block line-group"><span class="chord">A</span>          <span class="chord">F</span>
-Hey hey</pre>
-<pre class="block line-group"> <span class="chord">A</span>           <span class="chord">F</span>                            <span class="chord">C</span>
-And my best friend, he&#x27;s the king of Karaoke</pre>
-<pre class="block line-group"> <span class="chord">A</span>              <span class="chord">F</span>                     <span class="chord">C</span>
-He struck up a chord and he took it away</pre>
-<pre class="block line-group"> <span class="chord">A</span>          <span class="chord">F</span>
-Out of the pan</pre>
-<pre class="block line-group"> <span class="chord">C</span>          <span class="chord">A</span>
-And into Japan</pre>
-<pre class="block line-group"> <span class="chord">G</span>            <span class="chord">F</span>
-&#x27;Round there, Calistan way</pre>
-<pre class="block line-group line-group-last"> <span class="chord">A</span>    <span class="chord">F</span>
-Hey hey</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span>               <span class="chord">F</span>
-Used to be sixteen lanes</pre>
-<pre class="block line-group"><span class="chord">C</span>               <span class="chord">B</span>
-Used to be Juan Wayne</pre>
-<pre class="block line-group"><span class="chord">Bb</span>            <span class="chord">G</span>
-Used to Mexicain</pre>
-<pre class="block line-group"><span class="chord">E</span>               <span class="chord">F</span>
-Used to be Espano Nuevo</pre>
-<pre class="block line-group"><span class="chord">C</span>               <span class="chord">B</span>
-Used to be Navajo</pre>
-<pre class="block line-group line-group-last"><span class="chord">Bb</span>            <span class="chord">G</span>          <span class="chord">A</span>     <span class="chord">F</span>    <span class="chord">C</span>
-Used to be yippy-ay-I-don&#x27;t-know</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-<span class="chord">A</span> <span class="chord">F</span> <span class="chord">C</span> <span class="chord">A</span> <span class="chord">F</span> <span class="chord">C</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">G</span> <span class="chord">F</span> <span class="chord">G</span> <span class="chord">F</span> <span class="chord">F</span></pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Frank Black - Calistan</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">----------------------</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">F</span><span class="chord">C</span><span class="chord">A</span><span class="chord">F</span><span class="chord">C</span><span class="chord">A</span><span class="chord">F</span><span class="chord">C</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">G</span><span class="chord">F</span><span class="chord">A</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I took three day</span></span><span class="seg"><span class="chord">F</span><span class="lyr">s to drive down one street</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">The radio on</span></span><span class="seg"><span class="chord">F</span><span class="lyr">, tuned to the big flee</span></span><span class="seg"><span class="chord">C</span><span class="lyr">t</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Invisible p</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lanes are cracking the concrete</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">That&#x27;s just what some pe</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ople say</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Hey hey</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I put down my blanke</span></span><span class="seg"><span class="chord">F</span><span class="lyr">t on cigarette-butt beach</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I saw the ol</span></span><span class="seg"><span class="chord">F</span><span class="lyr">d man, he was doing oka</span></span><span class="seg"><span class="chord">C</span><span class="lyr">y</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">He&#x27;s making</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> his last stand</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">On old bottles and cans</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">&#x27;Round ther</span></span><span class="seg"><span class="chord">F</span><span class="lyr">e, Calistan way</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Hey hey</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Used to be sixte</span></span><span class="seg"><span class="chord">F</span><span class="lyr">en lanes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Used to be Nuevo</span></span><span class="seg"><span class="chord">B</span><span class="lyr"> Spain</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Used to be Jua</span></span><span class="seg"><span class="chord">G</span><span class="lyr">n Wayne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Used to be Mexic</span></span><span class="seg"><span class="chord">F</span><span class="lyr">o</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Used to be Navaj</span></span><span class="seg"><span class="chord">B</span><span class="lyr">o</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Used to be yip</span></span><span class="seg"><span class="chord">G</span><span class="lyr">py-ay-I-don</span></span><span class="seg"><span class="chord">A</span><span class="lyr">&#x27;t-know</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">F</span><span class="chord">C</span><span class="chord">A</span><span class="chord">F</span><span class="chord">C</span><span class="chord">G</span><span class="chord">F</span><span class="chord">A</span><span class="chord">F</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Went in from the</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> weather when I got wheezy</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I play some </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Pachinko I play Pachisi</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And St. Ann</span></span><span class="seg"><span class="chord">F</span><span class="lyr">e is still making it breezy</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">In the valley of tar tha</span></span><span class="seg"><span class="chord">F</span><span class="lyr">t once was L.A.</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Hey hey</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A</span></span><span class="seg"><span class="chord">A</span><span class="lyr">nd my best f</span></span><span class="seg"><span class="chord">F</span><span class="lyr">riend, he&#x27;s the king of Karao</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ke</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">H</span></span><span class="seg"><span class="chord">A</span><span class="lyr">e struck up a c</span></span><span class="seg"><span class="chord">F</span><span class="lyr">hord and he took it aw</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ay</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">O</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ut of the p</span></span><span class="seg"><span class="chord">F</span><span class="lyr">an</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nd into Jap</span></span><span class="seg"><span class="chord">A</span><span class="lyr">an</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;</span></span><span class="seg"><span class="chord">G</span><span class="lyr">Round there, </span></span><span class="seg"><span class="chord">F</span><span class="lyr">Calistan way</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">H</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ey he</span></span><span class="seg"><span class="chord">F</span><span class="lyr">y</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Used to be sixte</span></span><span class="seg"><span class="chord">F</span><span class="lyr">en lanes</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Used to be Juan </span></span><span class="seg"><span class="chord">B</span><span class="lyr">Wayne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Used to Mexica</span></span><span class="seg"><span class="chord">G</span><span class="lyr">in</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Used to be Espan</span></span><span class="seg"><span class="chord">F</span><span class="lyr">o Nuevo</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Used to be Navaj</span></span><span class="seg"><span class="chord">B</span><span class="lyr">o</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr">Used to be yip</span></span><span class="seg"><span class="chord">G</span><span class="lyr">py-ay-I-don</span></span><span class="seg"><span class="chord">A</span><span class="lyr">&#x27;t-kno</span></span><span class="seg"><span class="chord">F</span><span class="lyr">w</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">F</span><span class="chord">C</span><span class="chord">A</span><span class="chord">F</span><span class="chord">C</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">G</span><span class="chord">F</span><span class="chord">G</span><span class="chord">F</span><span class="chord">F</span></div></div>
     </div>
     
   </div>

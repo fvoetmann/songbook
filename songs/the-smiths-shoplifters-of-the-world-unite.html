@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Shoplifters Of The World Unite – The Smiths</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,17 +23,26 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -45,7 +54,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -236,18 +245,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -333,7 +332,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -478,7 +477,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -500,84 +498,46 @@
     <h1>Shoplifters Of The World Unite <span class="artist-inline">– The Smiths</span></h1>
     
     <div class="chords">
-    <pre class="block line-group line-group-last">https://www.youtube.com/watch?v=9j-FPwSuomM</pre>
-<pre class="block line-group"><span class="section">[Verse 1]</span>
-<span class="chord">G</span> <span class="chord">E</span>
-   Learn to love me, assemble the ways</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span>
-     Now, today, tomorrow and always</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span>
-     My only weakness is a listed crime</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span>
-     My only weakness is well, nevermind, nevermind</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>  <span class="chord">C</span>            <span class="chord">Am</span>
-     Unite and take over</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world</pre>
-<pre class="block line-group line-group-last"> <span class="chord">C</span>   <span class="chord">D</span>  <span class="chord">G</span>             <span class="chord">C</span>             <span class="chord">Am</span>
-Hand it over, hand it over, hand it over</pre>
-<pre class="block line-group"><span class="section">[Verse 2]</span>
-<span class="chord">G</span> <span class="chord">E</span>
-   Learn to love me and assemble the ways</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span>
-     Now, today, tomorrow and always</pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span>
-     My only weakness is a listed crime</pre>
-<pre class="block line-group line-group-last"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span>
-     But last night the plans for a future war was all I saw on Channel 4</pre>
-<pre class="block line-group"><span class="section">[Chorus]</span>
-<span class="chord">E</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>  <span class="chord">C</span>            <span class="chord">Am</span>
-     Unite and take over</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world</pre>
-<pre class="block line-group line-group-last"> <span class="chord">C</span>   <span class="chord">D</span>  <span class="chord">G</span>             <span class="chord">C</span>             <span class="chord">Am</span>
-Hand it over, hand it over, hand it over</pre>
-<pre class="block line-group"><span class="section">[Solo]</span>
-<span class="chord">G</span> <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="chord">D</span> <span class="chord">A</span> <span class="chord">E</span></pre>
-<pre class="block line-group"><span class="chord">E</span> <span class="chord">D</span> <span class="chord">G</span> <span class="chord">C</span> <span class="chord">Am</span></pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span> <span class="chord">C</span> <span class="chord">Am</span></pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span> <span class="chord">C</span> <span class="chord">Am</span></pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span> <span class="chord">C</span> <span class="chord">Am</span></pre>
-<pre class="block line-group"><span class="section">[Bridge]</span>
-<span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>             <span class="chord">C</span>              <span class="chord">Am</span>
-     A heartless hand on my shoulder</pre>
-<pre class="block line-group">                <span class="chord">C</span>  <span class="chord">D</span>
-A push and it&#x27;s over</pre>
-<pre class="block line-group"><span class="chord">G</span>    <span class="chord">C</span>                <span class="chord">Am</span>
- Alabaster crashes down</pre>
-<pre class="block line-group">              <span class="chord">C</span>   <span class="chord">D</span>
-Six months is a long time</pre>
-<pre class="block line-group"><span class="chord">G</span>       <span class="chord">C</span>                 <span class="chord">Am</span>
- Tried living in the real world</pre>
-<pre class="block line-group">    <span class="chord">C</span>     <span class="chord">D</span>       <span class="chord">G</span>      <span class="chord">C</span>         <span class="chord">Am</span>
-Instead of a shell but before I began</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span> <span class="chord">D</span>    <span class="chord">G</span>             <span class="chord">C</span>       <span class="chord">Am</span>
-I was bored before I even began</pre>
-<pre class="block line-group"><span class="section">[Outro]</span>
-<span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>  <span class="chord">C</span>            <span class="chord">Am</span>
-     Unite and take over</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>  <span class="chord">C</span>            <span class="chord">Am</span>
-     Unite and take over</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>  <span class="chord">C</span>            <span class="chord">Am</span>
-     Unite and take over</pre>
-<pre class="block line-group"><span class="chord">C</span> <span class="chord">D</span> <span class="chord">G</span>     <span class="chord">C</span>              <span class="chord">Am</span>
-     Shoplifters of the world ...</pre>
-<pre class="block line-group line-group-last"><span class="chord">C</span> <span class="chord">D</span>    <span class="chord">G</span>
-  Take over</pre>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">https://www.youtube.com/watch?v=9j-FPwSuomM</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Learn to love me, assemble the ways</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Now, today, tomorrow and always</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> My only weakness is a listed crime</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> My only weakness is well, nevermind, nevermind</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Un</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ite and take </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">H</span></span><span class="seg"><span class="chord">C</span><span class="lyr">and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">over, hand it </span></span><span class="seg"><span class="chord">C</span><span class="lyr">over, hand it </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Learn to love me and assemble the ways</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> Now, today, tomorrow and always</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> My only weakness is a listed crime</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A</span><span class="lyr"> </span></span><span class="seg"><span class="chord">E</span><span class="lyr"> But last night the plans for a future war was all I saw on Channel 4</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Un</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ite and take </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">H</span></span><span class="seg"><span class="chord">C</span><span class="lyr">and </span></span><span class="seg"><span class="chord">D</span><span class="lyr">it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">over, hand it </span></span><span class="seg"><span class="chord">C</span><span class="lyr">over, hand it </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">D</span><span class="chord">A</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">D</span><span class="chord">A</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">D</span><span class="chord">A</span><span class="chord">E</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">E</span><span class="chord">D</span><span class="chord">G</span><span class="chord">C</span><span class="chord">Am</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">D</span><span class="chord">G</span><span class="chord">C</span><span class="chord">Am</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">D</span><span class="chord">G</span><span class="chord">C</span><span class="chord">Am</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">D</span><span class="chord">G</span><span class="chord">C</span><span class="chord">Am</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> A heartless h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">and on my shoul</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">der</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A push and it&#x27;s </span></span><span class="seg"><span class="chord">C</span><span class="lyr">ove</span></span><span class="seg"><span class="chord">D</span><span class="lyr">r</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Alab</span></span><span class="seg"><span class="chord">C</span><span class="lyr">aster crashes dow</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">n</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Six months is </span></span><span class="seg"><span class="chord">C</span><span class="lyr">a lo</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ng time</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr"> Tried l</span></span><span class="seg"><span class="chord">C</span><span class="lyr">iving in the real </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">world</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Inst</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ead of</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> a shell</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> but be</span></span><span class="seg"><span class="chord">C</span><span class="lyr">fore I beg</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">an</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I </span></span><span class="seg"><span class="chord">D</span><span class="lyr">was b</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ored before I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">even beg</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">an</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Un</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ite and take </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Un</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ite and take </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Un</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ite and take </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">over</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Shopl</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ifters of the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld ...</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Take </span></span><span class="seg"><span class="chord">G</span><span class="lyr">over</span></span></div></div>
     </div>
     
   </div>

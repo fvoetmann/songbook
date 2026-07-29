@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>Styr Den Opp – Peps Blodsband</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: monospace; background: #ddd; padding: 24px; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
     .page {
       background: white;
       width: 210mm;
@@ -23,15 +23,24 @@
       border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
     }
     .meta a { color: #999; }
-    pre.block {
-      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-      font-size: 9pt; line-height: 1.45;
-      white-space: pre-wrap; word-break: break-word;
+    .block {
+      font-size: 9pt; line-height: 1.5;
       margin-bottom: 6px;
     }
-    pre.block.line-group { break-inside: avoid; margin-bottom: 0; }
-    pre.block.line-group-last { margin-bottom: 6px; }
-    body.font-small pre.block { font-size: 8pt; }
+    .block.line-group { break-inside: avoid; margin-bottom: 0; }
+    .block.line-group-last { margin-bottom: 6px; }
+    body.font-small .block { font-size: 8pt; }
+    pre.block {
+      font-family: ui-monospace, 'Courier New', Courier, monospace;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    div.block { font-family: 'Source Sans 3', sans-serif; }
+    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
+    .line.chords-only .chord { margin-right: 1.4em; }
+    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
+    .seg .lyr { white-space: pre; }
+    .seg .lyr:empty::before { content: "\00a0"; }
+    .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
     .section { color: #777; font-style: italic; font-weight: bold; }
@@ -43,7 +52,7 @@
       body { background: white; padding: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A4; margin: 12mm 14mm; }
-      pre.block { break-inside: avoid; }
+      .block { break-inside: avoid; }
       .tab-section { break-before: page; }
     }
   </style>
@@ -234,18 +243,8 @@
     function setTranspose(n) {
       transposeSemitones = n;
       document.querySelectorAll('.chord').forEach(function(el) {
-        var origName = el.dataset.orig;
-        var newName = transposeChordName(origName, n);
+        var newName = transposeChordName(el.dataset.orig, n);
         el.textContent = newName;
-        var gap = el.dataset.origGap;
-        if (gap !== undefined) {
-          var next = el.nextSibling;
-          var m = /^( +)/.exec(gap);
-          if (m && next && next.nodeType === 3) {
-            var newSpaces = Math.max(1, m[1].length - (newName.length - origName.length));
-            next.textContent = new Array(newSpaces + 1).join(' ') + gap.slice(m[1].length);
-          }
-        }
       });
       if (shown) shown = new WeakMap();
       hide();
@@ -331,7 +330,7 @@
       return vs;
     }
     function prevEl(el) {
-      var block = el.closest('pre.block');
+      var block = el.closest('.block');
       if (!block) return null;
       var all = Array.from(block.querySelectorAll('.chord'));
       var i = all.indexOf(el);
@@ -476,7 +475,6 @@
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
         el.dataset.orig = el.textContent;
-        if (el.nextSibling && el.nextSibling.nodeType === 3) el.dataset.origGap = el.nextSibling.textContent;
         el.addEventListener('mouseenter', function() { show(el, el.textContent.trim()); });
         el.addEventListener('mouseleave', hide);
         el.addEventListener('touchstart', function(e) {
@@ -498,35 +496,23 @@
     <h1>Styr Den Opp <span class="artist-inline">– Peps Blodsband</span></h1>
     
     
-    <pre class="block line-group">        <span class="chord">A</span>            <span class="chord">D</span>         <span class="chord">E</span>        <span class="chord">A</span>            <span class="chord">D</span> <span class="chord">E</span>
-Kom och styr den opp min lilla älskling styr den opp
-        <span class="chord">A</span>            <span class="chord">D</span>         <span class="chord">E</span>        <span class="chord">A</span>             <span class="chord">D</span> E...
-Kom och styr den opp min lilla älskling styr den opp</pre>
-<pre class="block line-group">         <span class="chord">A</span>            <span class="chord">D</span>               <span class="chord">E</span>
-Det e så längesen sen jag fick dej på hjärnan</pre>
-<pre class="block line-group">       <span class="chord">A</span>            <span class="chord">D</span>                 <span class="chord">E</span>
-men nu e du här jag säger: Så ska det va</pre>
-<pre class="block line-group">   <span class="chord">A</span>                  <span class="chord">D</span>    <span class="chord">E</span>
-Du hajar det hela va: Bara du o jag
-Så kom o styr...</pre>
-<pre class="block line-group"><span class="chord">A</span>                <span class="chord">D</span>        <span class="chord">E</span>
-Jag för in veden o öppnar spjället</pre>
-<pre class="block line-group"><span class="chord">A</span>                       <span class="chord">D</span>         <span class="chord">E</span>
-sätter tändstickan till det rätta stället</pre>
-<pre class="block line-group"><span class="chord">A</span>                                 <span class="chord">D</span>    <span class="chord">E</span>
-Sen ska jag raka o skaka i glöden hela tiden</pre>
-<pre class="block line-group"><span class="chord">A</span>                      <span class="chord">D</span>       <span class="chord">E</span>
-allt du behöver göra e o hålla liv i den
-Styr den opp...</pre>
-<pre class="block line-group"><span class="chord">A</span>            <span class="chord">D</span>       <span class="chord">E</span>
-Om du visste vad jag känner</pre>
-<pre class="block line-group"><span class="chord">A</span>                  <span class="chord">D</span>          <span class="chord">E</span>
-hur hjärtat slår o blodet det bränner</pre>
-<pre class="block line-group"><span class="chord">A</span>                                   <span class="chord">D</span>     <span class="chord">E</span>
-Kom rör ihop, rör ihop, rör ihop en liten pepparkaka</pre>
-<pre class="block line-group line-group-last"><span class="chord">A</span>                      <span class="chord">D</span>             <span class="chord">E</span>
-jag har en slickepinne som du kan få smaka
-Styr den opp...</pre>
+    <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Kom och </span></span><span class="seg"><span class="chord">A</span><span class="lyr">styr den opp </span></span><span class="seg"><span class="chord">D</span><span class="lyr">min lilla </span></span><span class="seg"><span class="chord">E</span><span class="lyr">älskling </span></span><span class="seg"><span class="chord">A</span><span class="lyr">styr den opp</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> A D E A D E...</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Kom och styr den opp min lilla älskling styr den opp</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Det e så </span></span><span class="seg"><span class="chord">A</span><span class="lyr">längesen sen </span></span><span class="seg"><span class="chord">D</span><span class="lyr">jag fick dej på </span></span><span class="seg"><span class="chord">E</span><span class="lyr">hjärnan</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">men nu </span></span><span class="seg"><span class="chord">A</span><span class="lyr">e du här jag </span></span><span class="seg"><span class="chord">D</span><span class="lyr">säger: Så ska det </span></span><span class="seg"><span class="chord">E</span><span class="lyr">va</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Du </span></span><span class="seg"><span class="chord">A</span><span class="lyr">hajar det hela va: </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Bara </span></span><span class="seg"><span class="chord">E</span><span class="lyr">du o jag</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Så kom o styr...</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Jag för in veden </span></span><span class="seg"><span class="chord">D</span><span class="lyr">o öppnar </span></span><span class="seg"><span class="chord">E</span><span class="lyr">spjället</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">sätter tändstickan till </span></span><span class="seg"><span class="chord">D</span><span class="lyr">det rätta </span></span><span class="seg"><span class="chord">E</span><span class="lyr">stället</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Sen ska jag raka o skaka i glöden </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hela </span></span><span class="seg"><span class="chord">E</span><span class="lyr">tiden</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">allt du behöver göra e </span></span><span class="seg"><span class="chord">D</span><span class="lyr">o hålla </span></span><span class="seg"><span class="chord">E</span><span class="lyr">liv i den</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Styr den opp...</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Om du visste </span></span><span class="seg"><span class="chord">D</span><span class="lyr">vad jag </span></span><span class="seg"><span class="chord">E</span><span class="lyr">känner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">hur hjärtat slår o </span></span><span class="seg"><span class="chord">D</span><span class="lyr">blodet det </span></span><span class="seg"><span class="chord">E</span><span class="lyr">bränner</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Kom rör ihop, rör ihop, rör ihop en </span></span><span class="seg"><span class="chord">D</span><span class="lyr">liten </span></span><span class="seg"><span class="chord">E</span><span class="lyr">pepparkaka</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">jag har en slickepinne </span></span><span class="seg"><span class="chord">D</span><span class="lyr">som du kan få </span></span><span class="seg"><span class="chord">E</span><span class="lyr">smaka</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Styr den opp...</span></span></div></div>
     
     
   </div>
