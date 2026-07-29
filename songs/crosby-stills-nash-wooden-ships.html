@@ -14,7 +14,7 @@
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
-      padding: 12mm 14mm;
+      padding: 12mm 14mm 56px;
     }
     h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
     h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
@@ -72,7 +72,9 @@
       padding: 4px 8px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
       font-family: sans-serif; font-size: 8pt;
       display: flex; gap: 2px; align-items: center;
+      opacity: 1; transition: opacity 0.4s ease;
     }
+    #inst-bar.auto-hide { opacity: 0; pointer-events: none; }
     #inst-bar span { color: #aaa; margin-right: 4px; }
     .inst-btn {
       border: none; background: none; cursor: pointer;
@@ -471,6 +473,26 @@
       transPlus.addEventListener('click', function() { changeTranspose(1); });
       bar.appendChild(transPlus);
       document.body.appendChild(bar);
+      // Auto-hide on inactivity
+      var hideTimer = null;
+      var AUTO_HIDE_DELAY = 4000;
+      function showBar() {
+        bar.classList.remove('auto-hide');
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(function() { bar.classList.add('auto-hide'); }, AUTO_HIDE_DELAY);
+      }
+      function initAutoHide() {
+        ['mousemove','touchstart','touchmove','click','keydown','wheel'].forEach(function(ev) {
+          document.addEventListener(ev, showBar, { passive: true });
+        });
+        bar.addEventListener('mouseenter', function() {
+          if (hideTimer) clearTimeout(hideTimer);
+          bar.classList.remove('auto-hide');
+        });
+        bar.addEventListener('mouseleave', showBar);
+      }
+      initAutoHide();
+      showBar();
       setInst('guitar');
       setFont(document.body.classList.contains('font-small') ? 'small' : 'normal');
       document.querySelectorAll('.chord').forEach(function(el) {
