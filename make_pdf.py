@@ -11,6 +11,9 @@ from pathlib import Path
 
 import pypdf
 
+sys.path.insert(0, str(Path(__file__).parent))
+from add_song import artist_sort_key
+
 SONGS_DIR = Path(__file__).parent / "songs"
 SONGS_JSON = Path(__file__).parent / "songs.json"
 OUTPUT_PDF = Path(__file__).parent / "songbook.pdf"
@@ -254,7 +257,7 @@ def main():
     with open(SONGS_JSON, encoding="utf-8") as f:
         songs = json.load(f)
 
-    songs = sorted(songs, key=lambda s: (s["artist"].lower(), s["title"].lower()))
+    songs = sorted(songs, key=lambda s: (artist_sort_key(s["artist"]), s["title"].lower()))
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
@@ -286,7 +289,7 @@ def main():
         toc_pages = 1
         for _ in range(2):
             entries = assign_pages(song_pdfs, toc_pages)
-            toc_entries = sorted(entries, key=lambda e: (e["artist"].lower(), e["title"].lower()))
+            toc_entries = sorted(entries, key=lambda e: (artist_sort_key(e["artist"]), e["title"].lower()))
             toc_html = make_toc_html_standalone(toc_entries)
             toc_html_path = tmp / "toc.html"
             toc_pdf_path = tmp / "toc.pdf"
@@ -303,7 +306,7 @@ def main():
 
         # Re-assign page numbers with optimised order; keep TOC alphabetical
         entries = assign_pages(song_pdfs, toc_pages)
-        toc_entries = sorted(entries, key=lambda e: (e["artist"].lower(), e["title"].lower()))
+        toc_entries = sorted(entries, key=lambda e: (artist_sort_key(e["artist"]), e["title"].lower()))
 
         # Render combined document (TOC + all songs) in one pass for page numbers
         song_bodies = [s["body"] for s in song_pdfs]

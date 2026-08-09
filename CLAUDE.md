@@ -81,7 +81,7 @@ python3 rebuild_songs.py
 - `.nojekyll` — forhindrer GitHub Pages i at køre Jekyll
 - `songs/` — genererede HTML-sange
 - `songs.json` — intern liste over sange (title, artist, file, source, hash)
-- `index.html` — oversigtsside grupperet efter artist med live-søgefelt (filtrerer på titel og artist)
+- `index.html` — oversigtsside grupperet efter artist med live-søgefelt (filtrerer på titel og artist); sortering ignorerer et indledende "The " (fx "The Beatles" sorteres under B), men viser navnet uændret
 - `downloads/` — gemte UG-sider (kilde-input)
 
 `songs.json`-felter:

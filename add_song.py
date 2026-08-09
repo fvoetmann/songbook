@@ -1149,6 +1149,11 @@ def make_song_html(
     return page.replace("</head>", diagram_html + "\n</head>", 1), layout
 
 
+def artist_sort_key(artist: str) -> str:
+    """Sort key that ignores a leading 'The ' so e.g. 'The Beatles' sorts under B."""
+    return re.sub(r"^the\s+", "", artist, flags=re.IGNORECASE).lower()
+
+
 def slugify(text: str) -> str:
     text = text.lower()
     text = re.sub(r"[æ]", "ae", text)
@@ -1175,7 +1180,7 @@ def processed_sources() -> set:
 def rebuild_index(songs: list) -> None:
     from itertools import groupby
 
-    sorted_songs = sorted(songs, key=lambda s: (s["artist"].lower(), s["title"].lower()))
+    sorted_songs = sorted(songs, key=lambda s: (artist_sort_key(s["artist"]), s["title"].lower()))
 
     groups_html = []
     for artist, group in groupby(sorted_songs, key=lambda s: s["artist"]):
