@@ -9,12 +9,17 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
+    .pages-wrap { display: flex; flex-direction: column; align-items: center; }
     .page {
       background: white;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
       padding: 12mm 14mm 56px;
+    }
+    @media screen and (min-width: 460mm) {
+      .pages-wrap { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10mm; }
+      .page { margin: 0; box-shadow: 0 2px 10px rgba(0, 0, 0, .18); }
     }
     h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
     h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
@@ -52,7 +57,9 @@
     }
     @media print {
       body { background: white; padding: 0; }
+      .pages-wrap { display: block; gap: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
+      .page + .page { break-before: page; }
       @page { size: A4; margin: 12mm 14mm; }
       .block { break-inside: avoid; }
       .tab-section { break-before: page; }
@@ -89,7 +96,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]]},"ukulele":{"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]]},"mandolin":{"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]]},"banjo":{"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]]}};
+    var DBS = {"guitar":{"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]]},"ukulele":{"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]]},"mandolin":{"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]]},"banjo":{"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -516,7 +523,8 @@
   </script>
 </head>
 <body class="font-small">
-  <div class="page">
+  <div class="pages-wrap">
+    <div class="page">
     <h1>I Saw The Light <span class="artist-inline">– Hank Williams</span></h1>
     <div class="meta">Toneart: G</div>
     <div class="chords">
@@ -526,8 +534,8 @@
 <div class="line"><span class="seg"><span class="lyr">Tabbed by: Dave S.</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Email: prime-prine@hotmail.com</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Tuning: Standard</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  |</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">D</span>  | <span class="chord">G</span>  | <span class="chord">G</span></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="lyr">| G  | G  | G  | G  |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| G  | G  | D  | G  | G</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">wandered so aimless, life filled with sin</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I wouldn&#x27;t let my dear savior </span></span><span class="seg"><span class="chord">G</span><span class="lyr">in</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Then Jesus came like a stranger in the night</span></span></div></div>
@@ -536,7 +544,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">No more darkness, no more </span></span><span class="seg"><span class="chord">G</span><span class="lyr">night</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Now I&#x27;m so happy, no sorrow in sight</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Praise the Lord, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I saw the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">light</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Interlude]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">D</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  |</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Interlude]</span></div><div class="line"><span class="seg"><span class="lyr">| G  | G  | D  | G  | G  |</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Just like a blind man I wandered along</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Worries and fears I claimed for my </span></span><span class="seg"><span class="chord">G</span><span class="lyr">own</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Then like the blind man that God gave back his sight</span></span></div></div>
@@ -545,10 +553,10 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">No more darkness, no more </span></span><span class="seg"><span class="chord">G</span><span class="lyr">night</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Now I&#x27;m so happy, no sorrow in sight</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Praise the Lord, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I saw the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">light</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Break]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  |</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">| <span class="chord">C</span>  | <span class="chord">C</span>  | <span class="chord">C</span>  | <span class="chord">G</span>  |</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  |</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">D</span>  | <span class="chord">G</span>  | <span class="chord">G</span>  |</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Break]</span></div><div class="line"><span class="seg"><span class="lyr">| G  | G  | G  | G  |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| C  | C  | C  | G  |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| G  | G  | G  | G  |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| G  | G  | D  | G  | G  |</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I was a fool to wander and stray</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For </span></span><span class="seg"><span class="chord">C</span><span class="lyr">straight is the gate and narrow the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">way</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Now I have traded the wrong for the right</span></span></div></div>
@@ -557,9 +565,10 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">No more darkness, no more </span></span><span class="seg"><span class="chord">G</span><span class="lyr">night</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Now I&#x27;m so happy, no sorrow in sight</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Praise the Lord, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I saw the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">light</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Ending]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span>  | <span class="chord">G</span>  | <span class="chord">D</span>  | <span class="chord">G</span>  | <span class="chord">G</span></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Ending]</span></div><div class="line"><span class="seg"><span class="lyr">| G  | G  | D  | G  | G</span></span></div></div>
     </div>
     
+  </div>
   </div>
 </body>
 </html>

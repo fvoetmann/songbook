@@ -851,13 +851,42 @@ def count_lines(sections: list) -> tuple:
     return total, max_chord_width, max_text_width
 
 
+LINES_PER_PAGE = 54
+
+
 def decide_layout(total_lines: int, max_width: int) -> str:
-    if total_lines <= 54:
+    if total_lines <= LINES_PER_PAGE:
         return "single"
     elif total_lines <= 130 and max_width <= 65:
         return "double"
     else:
         return "multi"
+
+
+def section_line_count(header: str, body: str) -> int:
+    """Non-blank line count for one section, matching count_lines()'s per-section logic."""
+    total = 1 if header else 0
+    for line in body.split("\n"):
+        if line.strip():
+            total += 1
+    return total
+
+
+def paginate_sections(sections: list, lines_per_page: int = LINES_PER_PAGE) -> list:
+    """Greedily pack whole sections into page buckets of ~lines_per_page lines each.
+    A single section longer than the budget gets its own (overflowing) page rather
+    than being split mid-section."""
+    pages, current, current_lines = [], [], 0
+    for h, b in sections:
+        n = section_line_count(h, b)
+        if current and current_lines + n > lines_per_page:
+            pages.append(current)
+            current, current_lines = [], 0
+        current.append((h, b))
+        current_lines += n
+    if current:
+        pages.append(current)
+    return pages or [[]]
 
 
 def is_chord_only_line(line: str) -> bool:
@@ -986,16 +1015,23 @@ def content_to_html(content: str) -> tuple:
     layout = decide_layout(total_lines, max_chord_width)
     auto_small_font = layout == "double" and max_text_width > 60
 
-    chord_blocks = "\n".join(render_section(h, b, remove_blank_lines=True) for h, b in chord_sections)
+    if layout == "multi":
+        page_buckets = paginate_sections(chord_sections)
+    else:
+        page_buckets = [chord_sections]
+    pages = [
+        "\n".join(render_section(h, b, remove_blank_lines=True) for h, b in bucket)
+        for bucket in page_buckets
+    ]
     tab_blocks = "\n".join(render_section(h, b, remove_blank_lines=False, is_tab=True) for h, b in tab_sections)
 
-    return chord_blocks, tab_blocks, layout, auto_small_font
+    return pages, tab_blocks, layout, auto_small_font
 
 
 def make_song_html(
     title: str, artist: str, key: str, capo: str, content: str, url: str
 ) -> tuple:
-    chord_blocks, tab_blocks, layout, auto_small_font = content_to_html(content)
+    pages, tab_blocks, layout, auto_small_font = content_to_html(content)
     diagram_html = make_chord_diagram_html(extract_chord_names(content))
 
     meta_parts = []
@@ -1025,6 +1061,19 @@ def make_song_html(
     if tab_blocks.strip():
         tab_html = f'<div class="tab-section">{tab_blocks}</div>'
 
+    page_divs = []
+    for i, page_content in enumerate(pages):
+        is_first, is_last = i == 0, i == len(pages) - 1
+        header_html = (
+            f'<h1>{html.escape(title)} <span class="artist-inline">– {html.escape(artist)}</span></h1>\n    {meta_div}'
+            if is_first else ""
+        )
+        page_divs.append(
+            f'<div class="page">\n    {header_html}\n    {wrap_open}\n    {page_content}\n    {wrap_close}'
+            f'\n    {tab_html if is_last else ""}\n  </div>'
+        )
+    pages_html = "\n".join(page_divs)
+
     page = f"""<!DOCTYPE html>
 <html lang="da">
 <head>
@@ -1036,12 +1085,17 @@ def make_song_html(
   <style>
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }}
+    .pages-wrap {{ display: flex; flex-direction: column; align-items: center; }}
     .page {{
       background: white;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
       padding: 12mm 14mm 56px;
+    }}
+    @media screen and (min-width: 460mm) {{
+      .pages-wrap {{ flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10mm; }}
+      .page {{ margin: 0; box-shadow: 0 2px 10px rgba(0, 0, 0, .18); }}
     }}
     h1 {{ font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }}
     h1 .artist-inline {{ font-size: 10pt; font-weight: normal; color: #555; }}
@@ -1077,7 +1131,9 @@ def make_song_html(
     }}
     @media print {{
       body {{ background: white; padding: 0; }}
+      .pages-wrap {{ display: block; gap: 0; }}
       .page {{ width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }}
+      .page + .page {{ break-before: page; }}
       @page {{ size: A4; margin: 12mm 14mm; }}
       .block {{ break-inside: avoid; }}
       .tab-section {{ break-before: page; }}
@@ -1085,13 +1141,8 @@ def make_song_html(
   </style>
 </head>
 <body{' class="font-small"' if auto_small_font else ''}>
-  <div class="page">
-    <h1>{html.escape(title)} <span class="artist-inline">– {html.escape(artist)}</span></h1>
-    {meta_div}
-    {wrap_open}
-    {chord_blocks}
-    {wrap_close}
-    {tab_html}
+  <div class="pages-wrap">
+    {pages_html}
   </div>
 </body>
 </html>"""

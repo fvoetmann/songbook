@@ -9,12 +9,17 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
+    .pages-wrap { display: flex; flex-direction: column; align-items: center; }
     .page {
       background: white;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
       padding: 12mm 14mm 56px;
+    }
+    @media screen and (min-width: 460mm) {
+      .pages-wrap { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10mm; }
+      .page { margin: 0; box-shadow: 0 2px 10px rgba(0, 0, 0, .18); }
     }
     h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
     h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
@@ -50,7 +55,9 @@
     }
     @media print {
       body { background: white; padding: 0; }
+      .pages-wrap { display: block; gap: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
+      .page + .page { break-before: page; }
       @page { size: A4; margin: 12mm 14mm; }
       .block { break-inside: avoid; }
       .tab-section { break-before: page; }
@@ -514,7 +521,8 @@
   </script>
 </head>
 <body>
-  <div class="page">
+  <div class="pages-wrap">
+    <div class="page">
     <h1>Jokerman <span class="artist-inline">– Bob Dylan</span></h1>
     
     
@@ -538,7 +546,13 @@
 <div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ightingale tune</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly h</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">igh by the l</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ight of the m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oon</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, oh</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">, oh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman.</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">You&#x27;re a </span></span><span class="seg"><span class="chord">A</span><span class="lyr">man of the mountain, you can wa</span></span><span class="seg"><span class="chord">Ammaj7</span><span class="lyr">lk on the clouds</span></span></div></div>
+    
+    
+  </div>
+<div class="page">
+    
+    
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">You&#x27;re a </span></span><span class="seg"><span class="chord">A</span><span class="lyr">man of the mountain, you can wa</span></span><span class="seg"><span class="chord">Ammaj7</span><span class="lyr">lk on the clouds</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Manipu</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">lator of crowds, you&#x27;re a </span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">dream twister</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">D/A</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You&#x27;re going to S</span></span><span class="seg"><span class="chord">A</span><span class="lyr">odom and Gomorrah</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But w</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">hat do you care ? Ain&#x27;t no</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr">body there would w</span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">ant marry your</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> sister</span></span></div></div>
@@ -562,7 +576,13 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Molotow</span></span><span class="seg"><span class="chord">Bm/A</span><span class="lyr"> cocktails and </span></span><span class="seg"><span class="chord">E/A</span><span class="lyr">rocks behind every cu</span></span><span class="seg"><span class="chord">A</span><span class="lyr">rtain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">False-hearted judges d</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ying in the webs that they </span></span><span class="seg"><span class="chord">A</span><span class="lyr">spin</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Only a </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">matter of time &#x27;t</span></span><span class="seg"><span class="chord">E</span><span class="lyr">il the night comes stepping i</span></span><span class="seg"><span class="chord">A</span><span class="lyr">n.</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ightingale tune</span></span></div></div>
+    
+    
+  </div>
+<div class="page">
+    
+    
+    <div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Jokerman dance to the n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ightingale tune</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Bird fly hi</span></span><span class="seg"><span class="chord">E/G#</span><span class="lyr">gh by the li</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ght of the m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">oon</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C#m7</span><span class="lyr">Oh, oh</span></span><span class="seg"><span class="chord">D6</span><span class="lyr">, oh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, Jo</span></span><span class="seg"><span class="chord">A</span><span class="lyr">kerman.</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="lyr">It&#x27;s a s</span></span><span class="seg"><span class="chord">A</span><span class="lyr">hadowy world, skies are sl</span></span><span class="seg"><span class="chord">Amaj7</span><span class="lyr">ippery gray</span></span></div></div>
@@ -582,6 +602,7 @@
 <div class="line"><span class="seg"><span class="lyr">| E   | D       | A E/G# | F#m</span></span></div></div>
     
     
+  </div>
   </div>
 </body>
 </html>

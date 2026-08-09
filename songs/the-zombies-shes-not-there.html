@@ -9,12 +9,17 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
+    .pages-wrap { display: flex; flex-direction: column; align-items: center; }
     .page {
       background: white;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
       padding: 12mm 14mm 56px;
+    }
+    @media screen and (min-width: 460mm) {
+      .pages-wrap { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10mm; }
+      .page { margin: 0; box-shadow: 0 2px 10px rgba(0, 0, 0, .18); }
     }
     h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
     h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
@@ -52,7 +57,9 @@
     }
     @media print {
       body { background: white; padding: 0; }
+      .pages-wrap { display: block; gap: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
+      .page + .page { break-before: page; }
       @page { size: A4; margin: 12mm 14mm; }
       .block { break-inside: avoid; }
       .tab-section { break-before: page; }
@@ -89,7 +96,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"Am7":[[-1,0,2,0,1,0],[-1,0,2,0,1,3],[-1,0,2,2,1,3],[-1,0,2,0,1,-1],[5,3,5,0,5,0],[5,3,5,0,5,3]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"E7":[[0,2,0,1,0,0],[0,2,0,1,3,0],[0,2,2,1,3,0],[0,2,0,1,0,-1],[0,2,0,1,3,-1],[0,2,2,1,3,-1]],"Gm":[[3,1,0,0,3,3],[3,1,0,3,3,3],[3,1,0,0,3,-1],[3,1,0,3,3,-1],[3,1,0,0,-1,-1],[3,1,0,3,-1,-1]],"Gm7":[[3,1,0,0,3,1],[3,1,0,3,3,1],[3,1,3,0,3,1],[3,1,3,0,3,3],[3,1,3,3,3,1],[3,1,3,3,3,3]],"Eb":[[-1,6,5,0,4,6],[-1,6,8,0,8,6],[-1,6,8,8,8,6],[-1,6,8,0,8,-1],[-1,6,8,8,8,-1],[3,1,1,0,-1,-1]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"Cm":[[-1,3,1,0,1,3],[-1,3,1,0,1,-1],[-1,3,5,0,4,3],[-1,3,5,5,4,3],[-1,3,5,0,4,-1],[-1,3,5,5,4,-1]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"D7":[[-1,-1,0,2,1,2],[-1,5,4,5,3,5],[-1,5,0,5,7,5],[-1,5,7,5,7,5],[-1,-1,0,5,7,5],[-1,5,7,5,7,-1]],"Em7":[[0,2,0,0,0,0],[0,2,0,0,0,3],[0,2,0,0,3,0],[0,2,2,0,3,0],[0,2,0,0,3,3],[0,2,0,4,0,3]],"B7":[[-1,2,1,2,0,2],[-1,2,4,2,4,2],[-1,2,4,2,4,-1],[7,6,7,8,7,7],[7,6,7,8,7,-1],[7,9,7,8,0,7]],"B":[[-1,2,4,4,4,2],[-1,2,4,4,4,-1],[7,9,9,8,0,7],[7,9,9,8,7,7],[7,9,9,8,0,-1],[7,9,9,8,7,-1]],"Dm7":[[-1,-1,0,2,1,1],[-1,5,3,5,3,5],[-1,5,0,5,6,5],[-1,5,7,5,6,5],[-1,-1,0,5,6,5],[-1,5,7,5,6,-1]],"A7":[[-1,0,2,0,2,0],[-1,0,2,0,2,3],[-1,0,2,2,2,3],[-1,0,2,0,2,-1],[5,4,5,0,5,3],[5,4,5,0,5,0]]},"ukulele":{"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"Am7":[[0,0,0,0],[2,4,3,3],[0,4,5,3],[5,4,3,0],[0,0,5,7],[5,7,0,0]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"E7":[[1,2,0,2],[4,4,4,5],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"Gm":[[0,2,3,1],[3,2,3,1],[3,2,3,5],[0,7,6,5],[7,7,6,5]],"Gm7":[[0,2,1,1],[3,5,3,5],[0,5,6,5],[0,2,3,1],[3,2,3,1],[3,2,3,5]],"Eb":[[0,3,3,1],[3,3,3,1],[0,3,6,6],[3,3,3,6],[0,7,6,6],[0,3,3,6]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"Cm":[[0,0,3,6],[0,3,3,3],[5,0,3,6],[5,3,3,3],[5,3,3,6]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"D7":[[2,0,2,5],[2,2,2,3],[5,2,2,0],[5,6,5,5],[2,2,2,0],[2,2,2,5]],"Em7":[[0,2,0,2],[4,4,3,5],[0,4,7,5],[4,7,0,5],[7,7,7,7],[0,4,0,2]],"B7":[[2,3,2,2],[4,3,2,0],[4,6,5,6],[4,3,2,2],[2,3,5,2],[4,3,5,2]],"B":[[4,3,2,2],[4,6,7,6]],"Dm7":[[2,2,1,3],[5,5,5,5],[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"A7":[[0,1,0,0],[2,4,3,4],[6,4,3,0],[0,4,5,4],[6,7,5,7],[6,7,0,0]]},"mandolin":{"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"Am7":[[2,2,3,3],[2,5,3,0],[0,2,3,5],[5,2,0,3],[5,5,0,0],[5,5,7,5]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"E7":[[1,0,2,0],[4,2,5,4],[4,0,7,4],[4,6,5,0],[7,6,7,7],[-1,2,2,4]],"Gm":[[0,0,1,3],[0,0,1,-1],[0,0,5,6],[0,5,5,6],[-1,5,5,6],[3,0,1,3]],"Gm7":[[0,0,1,1],[0,3,5,6],[3,3,5,3],[0,0,1,3],[0,3,1,1],[0,3,1,3]],"Eb":[[-1,1,1,3],[0,1,1,3],[3,1,1,3],[0,1,1,-1],[3,5,6,3],[3,5,6,6]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"Cm":[[5,5,6,3],[5,5,6,-1],[0,1,3,3],[0,1,3,-1],[-1,1,3,3],[5,-1,6,3]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"D7":[[2,0,3,2],[5,0,0,2],[5,4,5,5],[-1,0,0,2],[-1,0,3,2],[7,4,0,5]],"Em7":[[0,0,2,0],[4,2,5,3],[4,5,5,0],[7,5,7,7],[0,0,7,7],[-1,2,2,3]],"B7":[[4,1,0,2],[4,4,6,5],[2,1,2,2],[4,1,2,2],[4,1,0,-1],[4,4,6,7]],"B":[[4,1,2,2],[4,4,6,7],[4,4,6,-1],[-1,1,2,2],[-1,4,6,7],[4,1,-1,2]],"Dm7":[[2,0,3,1],[5,3,5,5],[-1,0,0,1],[-1,0,3,1],[2,0,0,1],[2,3,5,5]],"A7":[[2,2,4,3],[2,5,4,0],[0,2,4,5],[0,7,4,0],[6,5,0,0],[6,5,7,5]]},"banjo":{"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"Am7":[[2,2,1,2,0],[-1,2,1,2,0],[5,5,5,7,0],[7,5,5,5,0],[7,5,5,7,0],[-1,5,5,7,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Dm":[[0,2,3,3,0],[3,2,3,0,0],[3,2,3,3,0],[-1,2,3,3,0],[0,7,6,7,0],[7,7,6,0,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"E7":[[0,1,0,2,0],[2,1,0,0,0],[0,4,5,6,0],[6,4,5,0,0],[2,1,0,2,0],[0,1,3,2,0]],"Gm":[[0,3,3,0,0],[0,3,3,5,0],[5,3,3,0,0],[5,3,3,5,0],[-1,3,3,0,0],[-1,3,3,5,0]],"Gm7":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"Eb":[[1,3,4,1,0],[-1,3,4,1,0],[5,3,4,5,0],[-1,3,4,5,0],[1,3,-1,1,0],[1,3,4,-1,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"Cm":[[1,0,1,1,0],[-1,0,1,1,0],[-1,-1,1,1,0],[5,5,4,5,0],[-1,5,4,5,0],[1,0,1,-1,0]],"Bb":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"D7":[[0,2,1,4,0],[4,2,1,0,0],[0,5,7,7,0],[7,5,7,0,0],[0,2,3,4,0],[4,2,3,0,0]],"Em7":[[0,0,0,2,0],[2,0,0,0,0],[0,4,0,2,0],[2,4,0,0,0],[0,4,3,2,0],[2,4,3,0,0]],"B7":[[1,2,0,4,0],[4,2,0,1,0],[4,4,4,7,0],[7,4,4,4,0],[1,2,0,1,0],[1,4,0,4,0]],"B":[[1,4,0,4,0],[4,4,0,1,0],[1,4,4,4,0],[4,4,4,1,0],[4,4,4,4,0],[-1,4,4,4,0]],"Dm7":[[0,2,1,3,0],[3,2,1,0,0],[0,5,6,7,0],[7,5,6,0,0],[0,2,3,3,0],[3,2,3,0,0]],"A7":[[2,2,2,2,0],[2,2,2,5,0],[5,2,2,2,0],[-1,2,2,2,0],[5,6,5,7,0],[7,6,5,5,0]]}};
+    var DBS = {"guitar":{"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"Am7":[[-1,0,2,0,1,0],[-1,0,2,0,1,3],[-1,0,2,2,1,3],[-1,0,2,0,1,-1],[5,3,5,0,5,0],[5,3,5,0,5,3]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Dm":[[-1,-1,0,2,3,1],[-1,5,0,7,6,5],[-1,5,7,7,6,5],[-1,-1,0,7,6,5],[-1,5,7,7,6,-1],[1,0,0,2,3,1]],"Em":[[0,2,2,0,0,0],[0,2,2,0,0,3],[0,2,2,4,0,3],[0,2,2,0,0,-1],[-1,-1,2,0,0,0],[0,2,2,0,-1,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"E7":[[0,2,0,1,0,0],[0,2,0,1,3,0],[0,2,2,1,3,0],[0,2,0,1,0,-1],[0,2,0,1,3,-1],[0,2,2,1,3,-1]]},"ukulele":{"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"Am7":[[0,0,0,0],[2,4,3,3],[0,4,5,3],[5,4,3,0],[0,0,5,7],[5,7,0,0]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Dm":[[2,2,1,0],[2,5,5,5],[7,5,5,0],[7,5,5,5]],"Em":[[0,4,0,2],[0,4,3,2],[4,4,3,2],[0,4,7,7],[4,7,0,7],[4,7,7,7]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"E7":[[1,2,0,2],[4,4,4,5],[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]]},"mandolin":{"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"Am7":[[2,2,3,3],[2,5,3,0],[0,2,3,5],[5,2,0,3],[5,5,0,0],[5,5,7,5]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Dm":[[-1,0,0,1],[2,0,0,1],[2,3,5,5],[2,3,5,-1],[-1,3,5,5],[2,0,-1,1]],"Em":[[-1,2,2,3],[0,2,2,0],[0,2,2,3],[0,5,2,0],[4,2,2,3],[4,5,2,0]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"E7":[[1,0,2,0],[4,2,5,4],[4,0,7,4],[4,6,5,0],[7,6,7,7],[-1,2,2,4]]},"banjo":{"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"Am7":[[2,2,1,2,0],[-1,2,1,2,0],[5,5,5,7,0],[7,5,5,5,0],[7,5,5,7,0],[-1,5,5,7,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Dm":[[0,2,3,3,0],[3,2,3,0,0],[3,2,3,3,0],[-1,2,3,3,0],[0,7,6,7,0],[7,7,6,0,0]],"Em":[[2,0,0,2,0],[2,0,0,5,0],[5,0,0,2,0],[2,4,0,2,0],[2,4,0,5,0],[5,4,0,2,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"E7":[[0,1,0,2,0],[2,1,0,0,0],[0,4,5,6,0],[6,4,5,0,0],[2,1,0,2,0],[0,1,3,2,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -516,14 +523,15 @@
   </script>
 </head>
 <body>
-  <div class="page">
+  <div class="pages-wrap">
+    <div class="page">
     <h1>Shes Not There <span class="artist-inline">– The Zombies</span></h1>
     <div class="meta">Toneart: Am</div>
     <div class="chords">
     <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">She&#x27;s Not There chords</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">The Zombies  1964 (Begin Here &quot;UK&quot; and The Zombies &quot;US&quot;)* </span></span></div>
 <div class="line"><span class="seg"><span class="lyr">https://en.wikipedia.org/wiki/She%27s_Not_There</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Am</span> <span class="chord">D</span>  <span class="chord">Am</span> <span class="chord">D</span> 2x</span></span></div></div>
+<div class="line"><span class="seg"><span class="lyr">Am D Am D 2x</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr"> Well, no one </span></span><span class="seg"><span class="chord">D</span><span class="lyr">told me a</span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">bout </span></span><span class="seg"><span class="chord">D</span><span class="lyr">her,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">  the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">way she </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">lied</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr"> Well, no one </span></span><span class="seg"><span class="chord">D</span><span class="lyr">told me a</span></span><span class="seg"><span class="chord">Am7</span><span class="lyr">bout </span></span><span class="seg"><span class="chord">D</span><span class="lyr">her,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">  how many </span></span><span class="seg"><span class="chord">F</span><span class="lyr">people </span></span><span class="seg"><span class="chord">A</span><span class="lyr">cried</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But it&#x27;s too </span></span><span class="seg"><span class="chord">D</span><span class="lyr">late to </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">say you&#x27;re </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">sorry</span></span></div></div>
@@ -558,38 +566,39 @@
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But she&#x27;s not </span></span><span class="seg"><span class="chord">A</span><span class="lyr">there</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">* Alternates:</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Capo II</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Am</span>  = <span class="chord">Gm</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">D</span>   = <span class="chord">C</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Am7</span> = <span class="chord">Gm7</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">F</span>   = <span class="chord">Eb</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">A</span>   = <span class="chord">G</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Dm</span>  = <span class="chord">Cm</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">C</span>   = <span class="chord">Bb</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">E7</span>  = <span class="chord">D7</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">E</span>   = <span class="chord">D</span></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am  = Gm</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D   = C</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am7 = Gm7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F   = Eb</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A   = G</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Dm  = Cm</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C   = Bb</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E7  = D7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E   = D</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Capo V</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Am</span>  = <span class="chord">Em</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">D</span>   = <span class="chord">A</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Am7</span> = <span class="chord">Em7</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">F</span>   = <span class="chord">C</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">A</span>   = <span class="chord">E</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Dm</span>  = <span class="chord">Am</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">C</span>   = <span class="chord">G</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">E7</span>  = <span class="chord">B7</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">E</span>   = <span class="chord">B</span></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am  = Em</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D   = A</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am7 = Em7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F   = C</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A   = E</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Dm  = Am</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C   = G</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E7  = B7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E   = B</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Open (These chords are not in the original key)</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Am</span>  = <span class="chord">Dm</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">D</span>   = <span class="chord">G</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Am7</span> = <span class="chord">Dm7</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">F</span>   = <span class="chord">Bb</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">A</span>   = <span class="chord">D</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">Dm</span>  = <span class="chord">Gm</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">C</span>   = <span class="chord">F</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">E7</span>  = <span class="chord">A7</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">E</span>   = <span class="chord">A</span></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am  = Dm</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">D   = G</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Am7 = Dm7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">F   = Bb</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">A   = D</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Dm  = Gm</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">C   = F</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E7  = A7</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">E   = A</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Set8</span></span></div></div>
     </div>
     
+  </div>
   </div>
 </body>
 </html>

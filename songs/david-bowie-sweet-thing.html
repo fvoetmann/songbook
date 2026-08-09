@@ -9,12 +9,17 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
+    .pages-wrap { display: flex; flex-direction: column; align-items: center; }
     .page {
       background: white;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
       padding: 12mm 14mm 56px;
+    }
+    @media screen and (min-width: 460mm) {
+      .pages-wrap { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10mm; }
+      .page { margin: 0; box-shadow: 0 2px 10px rgba(0, 0, 0, .18); }
     }
     h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
     h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
@@ -50,7 +55,9 @@
     }
     @media print {
       body { background: white; padding: 0; }
+      .pages-wrap { display: block; gap: 0; }
       .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
+      .page + .page { break-before: page; }
       @page { size: A4; margin: 12mm 14mm; }
       .block { break-inside: avoid; }
       .tab-section { break-before: page; }
@@ -514,7 +521,8 @@
   </script>
 </head>
 <body>
-  <div class="page">
+  <div class="pages-wrap">
+    <div class="page">
     <h1>Sweet Thing <span class="artist-inline">– David Bowie</span></h1>
     
     
@@ -545,7 +553,13 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Boys, </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">boys, it&#x27;s a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sweet thing, sweet thing</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">If you </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">want it, bo</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">ys, get it </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">here, thing</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hope, boys,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> is a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">cheap thing, cheap thin</span></span><span class="seg"><span class="chord">G</span><span class="lyr">g</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">D</span><span class="chord">F#m</span><span class="chord">Bm</span><span class="chord">Bb</span></div></div>
+    
+    
+  </div>
+<div class="page">
+    
+    
+    <div class="block line-group"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line chords-only"><span class="chord">D</span><span class="chord">F#m</span><span class="chord">Bm</span><span class="chord">Bb</span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">D</span><span class="chord">Gm/D</span><span class="chord">D</span><span class="chord">Gm/D</span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">D</span><span class="chord">F#m</span><span class="chord">Bm</span><span class="chord">Bb</span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">2. Song: Ca</span></span><span class="seg"><span class="chord">Gm/D</span><span class="lyr">ndidate</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">Gm/D</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
@@ -554,7 +568,13 @@
 <div class="block line-group"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">Am</span><span class="chord">G</span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">Am</span><span class="chord">G</span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">Am</span><span class="chord">G</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">I&#x27;ll make you a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">deal, like any </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">other candidate</span></span></div></div>
+    
+    
+  </div>
+<div class="page">
+    
+    
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">I&#x27;ll make you a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">deal, like any </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">other candidate</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We&#x27;ll pre</span></span><span class="seg"><span class="chord">G</span><span class="lyr">tend we&#x27;re walking home &#x27;cause your future&#x27;s at stake</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">My </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">set is amazing, it even </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">smells like a street</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">There&#x27;s a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">bar at the end where I can meet you and your friend</span></span></div></div>
@@ -588,7 +608,13 @@
 <div class="line"><span class="seg"><span class="lyr">(Sax solo)</span></span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">Am</span><span class="chord">G</span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">Am</span><span class="chord">G</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">If you </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">want it, bo</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">ys, get it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">here, thing</span></span></div></div>
+    
+    
+  </div>
+<div class="page">
+    
+    
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">If you </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">want it, bo</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">ys, get it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">here, thing</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hope, boys,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> is a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">cheap thing, cheap thin</span></span><span class="seg"><span class="chord">G</span><span class="lyr">g</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Is it nice in your </span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">snow storm,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> freezing your </span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">brain?</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Do you think that your </span></span><span class="seg"><span class="chord">D</span><span class="lyr">face looks the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">same?</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
@@ -598,6 +624,7 @@
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">A/G</span><span class="chord">G</span><span class="chord">A</span></div></div>
     
     
+  </div>
   </div>
 </body>
 </html>

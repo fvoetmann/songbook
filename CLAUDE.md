@@ -134,6 +134,13 @@ Guitar tab-notation (linjer med `e|`, `B|` osv.) behandles separat:
 - Akkord+tekst-sektioner vises i hoved-layoutet (evt. 2 kolonner)
 - Tab-sektioner placeres altid til sidst, på ny side ved print, i enkeltkolonne
 
+Ved "Flere sider" splittes indholdet i separate `.page`-ark (hele sektioner pakkes
+sammen, op til ~54 linjer pr. ark; en enkelt sektion splittes aldrig midt over).
+På almindelige skærme stables arkene som i dag; på brede/zoomede-ud skærme
+(≥ 460mm effektiv bredde) vises de i stedet side om side i et grid, hver med
+skygge, som et opslag. Print/PDF følger de samme arkgrænser (`break-before: page`
+mellem hvert `.page`).
+
 ## Formatering
 
 - Blanke linjer fjernes i akkord-sektioner
