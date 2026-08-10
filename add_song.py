@@ -16,6 +16,7 @@ import json
 import re
 import html
 import hashlib
+import tempfile
 from pathlib import Path
 
 import requests
@@ -729,8 +730,18 @@ def fetch_page(url: str) -> str:
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
                       "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
-    r = requests.get(url, headers=headers, timeout=15)
-    r.raise_for_status()
+    try:
+        r = requests.get(url, headers=headers, timeout=15)
+        r.raise_for_status()
+    except requests.RequestException as e:
+        sys.exit(
+            f"Kunne ikke hente siden ({e}).\n"
+            "Ultimate Guitar blokerer ofte automatiske downloads. Gem siden manuelt:\n"
+            "  1. Åbn sangen på ultimate-guitar.com\n"
+            "  2. Tryk Ctrl+U (vis kildekode)\n"
+            "  3. Tryk Ctrl+A → Ctrl+S og gem filen lokalt\n"
+            "  4. Kør scriptet med den gemte fil"
+        )
     return r.text
 
 
@@ -1041,7 +1052,7 @@ def make_song_html(
         meta_parts.append(f"Capo: {capo}")
     if url:
         meta_parts.append(
-            f'Kilde: <a href="{url}">{html.escape(url[:70])}{"..." if len(url) > 70 else ""}</a>'
+            f'Kilde: <a href="{html.escape(url, quote=True)}">{html.escape(url[:70])}{"..." if len(url) > 70 else ""}</a>'
         )
     meta_html = " &nbsp;·&nbsp; ".join(meta_parts)
     meta_div = f'<div class="meta">{meta_html}</div>' if meta_html else ""
@@ -1165,7 +1176,7 @@ def slugify(text: str) -> str:
 
 def load_songs() -> list:
     if SONGS_DATA.exists():
-        return json.loads(SONGS_DATA.read_text())
+        return json.loads(SONGS_DATA.read_text(encoding="utf-8"))
     return []
 
 
@@ -1276,6 +1287,9 @@ def process_file(ug_path: Path, url: str = "") -> None:
             new_path.write_text(song_html, encoding="utf-8")
             print(f"  ADVARSEL: {filepath} er redigeret manuelt siden sidst.")
             print(f"  Den nye version er gemt som {new_path} i stedet for at overskrive.")
+            print(f"  Filen indgår IKKE i songs.json/index.html og kan ikke redigeres via edit_song.py.")
+            print(f"  For at bruge den nye version: slet {filepath.name}, omdøb {new_path.name} til {filepath.name}, og kør scriptet igen.")
+            print(f"  Ellers kan {new_path.name} bare slettes for at beholde den manuelt redigerede version.")
             print(f"  Layout:  {layout_msg[layout]}")
             return
 
@@ -1305,7 +1319,10 @@ def main():
         print(f"Fandt {len(new_files)} ny(e) sang(e) i downloads/:")
         for f in new_files:
             print(f"\n→ {f.name}")
-            process_file(f)
+            try:
+                process_file(f)
+            except (ValueError, json.JSONDecodeError) as e:
+                print(f"  FEJL: {e} — springer over.")
         print(f"\nIndeks opdateret: {INDEX_FILE}")
 
     elif len(sys.argv) == 2:
@@ -1318,10 +1335,15 @@ def main():
             url = arg
             print(f"Henter {url} ...")
             page_html = fetch_page(url)
-            tmp = Path("_tmp_ug.html")
-            tmp.write_text(page_html, encoding="utf-8")
-            process_file(tmp)
-            tmp.unlink()
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".html", encoding="utf-8", delete=False
+            ) as tmp_f:
+                tmp_f.write(page_html)
+                tmp = Path(tmp_f.name)
+            try:
+                process_file(tmp)
+            finally:
+                tmp.unlink()
             print(f"Indeks opdateret: {INDEX_FILE}")
 
     elif len(sys.argv) == 3:

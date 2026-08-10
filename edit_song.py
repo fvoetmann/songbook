@@ -45,7 +45,15 @@ def find_song(query: str):
         print("Flere matches – vælg:")
         for i, s in enumerate(matches, 1):
             print(f"  {i}. {s['artist']} – {s['title']}")
-        idx = int(input("Nummer: ")) - 1
+        while True:
+            choice = input("Nummer: ")
+            try:
+                idx = int(choice) - 1
+                if 0 <= idx < len(matches):
+                    break
+            except ValueError:
+                pass
+            print(f"  Ugyldigt valg — indtast et tal mellem 1 og {len(matches)}.")
         return matches[idx], SONGS_DIR / matches[idx]["file"]
     return matches[0], SONGS_DIR / matches[0]["file"]
 
