@@ -17,6 +17,10 @@ SAMPLE_UG_FILES = [
     "the-cure_just-like-heaven-chords-39230.html",
     "view-source_https___tabs.ultimate-guitar.com_tab_683498.html",
     "JULIA CHORDS (ver 2) by The Beatles @ Ultimate-Guitar.Com.html",
+    # Has chord-progression annotation lines (e.g. "Em Em(+F#)") and a "D2"
+    # chord with no following lyric — the exact pattern that used to get
+    # scrambled or dropped by edit_song.py's editor round-trip.
+    "view-source_https___tabs.ultimate-guitar.com_tab_frank-black_st-francis-dam-disaster-chords-1462307.html",
 ]
 
 

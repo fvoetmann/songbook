@@ -66,6 +66,7 @@ CHORD_TYPES = sorted([
     ('6',       [0, 4, 7, 9]),
     ('9',       [0, 2, 4, 7, 10]),
     ('5',       [0, 7]),
+    ('2',       [0, 2, 7]),
     ('',        [0, 4, 7]),
 ], key=lambda x: -len(x[0]))
 
@@ -270,7 +271,7 @@ CHORD_DIAGRAM_JS = """  <script>
       '7sus4': [0,5,7,10], 'dim7': [0,3,6,9], 'sus2': [0,2,7], 'sus4': [0,5,7],
       'add9': [0,2,4,7], 'aug': [0,4,8], 'dim': [0,3,6], 'm7': [0,3,7,10], 'm6': [0,3,7,9],
       'm9': [0,2,3,7,10], 'maj': [0,4,7], 'm': [0,3,7], '7': [0,4,7,10], '6': [0,4,7,9],
-      '9': [0,2,4,7,10], '5': [0,7], '': [0,4,7]
+      '9': [0,2,4,7,10], '5': [0,7], '2': [0,2,7], '': [0,4,7]
     };
     function parseChordName(name) {
       var bassSemi = null;
@@ -818,16 +819,21 @@ def parse_sections(content: str) -> list:
     return sections
 
 
+TAB_STRING_LINE = re.compile(r"^[eEaAdDgGbB]\|", re.MULTILINE)
+
+
 def is_tab_section(body: str) -> bool:
-    """True if body contains guitar string notation (e|, B|, etc.)."""
-    return bool(re.search(r"^[eBGDAE]\|", body, re.MULTILINE))
+    """True if body contains guitar string notation (e|, B|, etc.). Matches
+    string letters case-insensitively since sources vary (e.g. "EADGBe" vs
+    all-lowercase "eadgbe")."""
+    return bool(TAB_STRING_LINE.search(body))
 
 
 def split_mixed(header: str, body: str) -> list:
     """Split a section that mixes chord+lyric and guitar tab into two parts."""
     lines = body.split("\n")
     tab_start = next(
-        (i for i, l in enumerate(lines) if re.match(r"^[eBGDAE]\|", l)), None
+        (i for i, l in enumerate(lines) if TAB_STRING_LINE.match(l)), None
     )
     if tab_start is None:
         return [(header, body)]

@@ -36,6 +36,10 @@ python3 edit_song.py --new        # opret ny sang fra bunden
 Åbner sangen i `$EDITOR` (standard: nano) med et tekstformat:
 - Header-linjer starter med `#` (Titel, Artist, Toneart, Capo, Transponer) — kan redigeres
 - Akkorder skrives inline i teksten: `[Am]Her er teksten` → splittes automatisk til akkordlinje + tekstlinje
+- `{Am}` (krøllede parenteser) markerer en akkord der IKKE er bundet til et bestemt ord — bruges
+  automatisk til akkord-oversigter/-progressioner uden sangtekst under (fx `{Em}  {Em}(+F#)`).
+  Sådanne akkorder gemmes altid præcis som de står, uden at blive flyttet eller splittet op —
+  lad dem stå uændret medmindre du bevidst vil ændre selve akkorden
 - Chord-only linjer (allerede justerede) genkendes og konverteres korrekt
 - `Transponer: +N` eller `-N` i headeren transponerer alle akkorder (og Toneart) N halvtoner ved gem; `0` (standard) gør intet
 - Tom fil ved gem annullerer ændringerne

@@ -240,7 +240,15 @@ def merge_chord_line(chord_line: str, lyric_line: str) -> str:
 def ug_to_edit(content: str) -> str:
     """Convert stored UG content into the friendly inline edit format
     (fx '[Am]Her er teksten') so chord placement is visible directly next to
-    the word it belongs to, instead of a separately-aligned chord line."""
+    the word it belongs to, instead of a separately-aligned chord line.
+
+    Lines that aren't a genuine chord-line/lyric-line pair (a standalone
+    chord reference line, or a line mixing chords with other text like
+    'intro:  [ch]Amaj7[/ch]  [ch]B7[/ch]') use {chord} instead of [chord].
+    This isn't just cosmetic: split_inline_chords can't tell, from the edit
+    text alone, whether a bracketed chord was meant to be repositioned
+    against a following lyric line or left exactly where it is — {} makes
+    that unambiguous and is what keeps such lines round-trip safe."""
     lines = content.split("\n")
     out = []
     i = 0
@@ -251,7 +259,7 @@ def ug_to_edit(content: str) -> str:
             out.append(merge_chord_line(line, nxt))
             i += 2
             continue
-        out.append(re.sub(r"\[ch\](.*?)\[/ch\]", r"[\1]", line))
+        out.append(re.sub(r"\[ch\](.*?)\[/ch\]", r"{\1}", line))
         i += 1
     return "\n".join(out)
 
@@ -259,7 +267,15 @@ def ug_to_edit(content: str) -> str:
 def split_inline_chords(line: str) -> list:
     """Convert a line with inline [chord]ord markers into separate chord+lyric
     lines, with chords positioned above the column they precede. Lines that
-    contain only chord markers (already-aligned chord lines) are left as-is."""
+    contain only chord markers (already-aligned chord lines) are left as-is.
+
+    {chord} markers (as opposed to [chord]) are never repositioned or split
+    out — they're converted to [ch]chord[/ch] exactly where they stand, no
+    validity check. This is the inverse of ug_to_edit's {} fallback and is
+    what makes chord-progression/reference lines round-trip losslessly."""
+    if "{" in line:
+        return [re.sub(r"\{([^}]*)\}", r"[ch]\1[/ch]", line)]
+
     plain = []
     chord_positions = []
     i = 0
@@ -345,6 +361,8 @@ def create_new_song():
         build_header(title, artist, key, capo)
         + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
         + f"# Skriv akkorder direkte i teksten, fx: [Am]Her er linjen\n"
+        + f"# {{Am}} (krøllede parenteser) = akkord der IKKE er bundet til et bestemt ord,\n"
+        + f"# fx en akkord-oversigt eller -progression uden sangtekst under.\n"
         + f"# Gem og luk editoren for at gemme. Tom fil annullerer.\n"
         + f"#\n"
         + f"[Verse 1]\n"
@@ -408,6 +426,8 @@ def main():
     edit_text = (
         build_header(title, artist, key, capo)
         + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
+        + f"# {{Am}} (krøllede parenteser) = akkord der IKKE er bundet til et bestemt ord —\n"
+        + f"# lad den stå uændret for at bevare den præcis som den er.\n"
         + f"# Transponer sættes ovenfor i header-feltet, fx +2 eller -1\n"
         + f"# Gem og luk editoren for at gemme. Slet ALT indhold for at annullere.\n"
         + f"#\n"
