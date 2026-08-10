@@ -35,6 +35,8 @@
     .block.line-group { break-inside: avoid; margin-bottom: 0; }
     .block.line-group-last { margin-bottom: 6px; }
     body.font-small .block { font-size: 8pt; }
+    .chords { column-count: 2; column-gap: 8mm; }
+    @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
     pre.block {
       font-family: ui-monospace, 'Courier New', Courier, monospace;
       white-space: pre-wrap; word-break: break-word;
@@ -113,7 +115,7 @@
       '7sus4': [0,5,7,10], 'dim7': [0,3,6,9], 'sus2': [0,2,7], 'sus4': [0,5,7],
       'add9': [0,2,4,7], 'aug': [0,4,8], 'dim': [0,3,6], 'm7': [0,3,7,10], 'm6': [0,3,7,9],
       'm9': [0,2,3,7,10], 'maj': [0,4,7], 'm': [0,3,7], '7': [0,4,7,10], '6': [0,4,7,9],
-      '9': [0,2,4,7,10], '5': [0,7], '': [0,4,7]
+      '9': [0,2,4,7,10], '5': [0,7], '2': [0,2,7], '': [0,4,7]
     };
     function parseChordName(name) {
       var bassSemi = null;
@@ -520,12 +522,12 @@
   })();
   </script>
 </head>
-<body>
+<body class="font-small">
   <div class="pages-wrap">
     <div class="page">
     <h1>Counting Out Time <span class="artist-inline">– Genesis</span></h1>
     <div class="meta">Toneart: Ab</div>
-    
+    <div class="chords">
     <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">---------------------------------------------------------------------------</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">           Counting Out Time – Genesis</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">---------------------------------------------------------------------------</span></span></div>
@@ -556,21 +558,15 @@
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Every </span></span><span class="seg"><span class="chord">D</span><span class="lyr">word the experts </span></span><span class="seg"><span class="chord">G</span><span class="lyr">say</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Erogenous </span></span><span class="seg"><span class="chord">F</span><span class="lyr">zones I </span></span><span class="seg"><span class="chord">C/E</span><span class="lyr">love </span></span><span class="seg"><span class="chord">G/D</span><span class="lyr">you</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">With</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">out you, what would a </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">poor boy do? </span></span></div></div>
-    
-    
-  </div>
-<div class="page">
-    
-    
-    <div class="block line-group"><div class="line section-line"><span class="section">[Middle 8]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> |</span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Middle 8]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> (instrumental)</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> Found a girl I wanted to date</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> Thought I&#x27;d better get it straight</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> Went to buy a book before it&#x27;s too late.</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>                             | <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> Don&#x27;t leave nothing to fate</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">tudied every </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">line, every </span></span><span class="seg"><span class="chord">C</span><span class="lyr">page in the book</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Db</span><span class="lyr">Now, I&#x27;ve got the </span></span><span class="seg"><span class="chord">Db/B</span><span class="lyr">real thing here, I&#x27;m </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gonna take a look, take a look</span></span></div></div>
@@ -584,26 +580,20 @@
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And I&#x27;ll </span></span><span class="seg"><span class="chord">D</span><span class="lyr">get you turned on just </span></span><span class="seg"><span class="chord">G</span><span class="lyr">fine.&quot; </span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Erogenous </span></span><span class="seg"><span class="chord">F</span><span class="lyr">zones I </span></span><span class="seg"><span class="chord">C/E</span><span class="lyr">love </span></span><span class="seg"><span class="chord">G/D</span><span class="lyr">you</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">With</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">out you, what would a </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">poor boy do? </span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Middle 8]</span></div><div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Middle 8]</span></div><div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">(instrumental)</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">                        <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Touch and go with 1-6</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">                             <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Bit of trouble in zone No. 7</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">                                <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> | <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Gotta remember all of my tricks </span></span></div>
-<div class="line"><span class="seg"><span class="lyr">                                <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> <span class="chord">Gsus4</span>  <span class="chord">G</span> |</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> <span class="chord">Gsus4</span> <span class="chord">G</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">There&#x27;s heaven ahead in No. 11</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Getting </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">crucial res</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ponses, di</span></span><span class="seg"><span class="chord">C</span><span class="lyr">lation of the pupils</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&quot;</span></span><span class="seg"><span class="chord">Db</span><span class="lyr">Honey get </span></span><span class="seg"><span class="chord">Db/B</span><span class="lyr">hip! It&#x27;s </span></span><span class="seg"><span class="chord">A</span><span class="lyr">time to unzip</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To un</span></span><span class="seg"><span class="chord">A</span><span class="lyr">zip, zip, zip-a-zip-a-zip. Whopee!&quot; </span></span></div></div>
-    
-    
-  </div>
-<div class="page">
-    
-    
-    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span> <span class="chord">G/F#</span> | <span class="chord">Em7</span> <span class="chord">G/D</span> |</span></span></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Solo]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span> <span class="chord">G/F#</span> | <span class="chord">Em7</span> <span class="chord">G/D</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">| <span class="chord">C</span> <span class="chord">G/B</span> | <span class="chord">A</span> <span class="chord">D</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">| <span class="chord">G</span> <span class="chord">G/F#</span> | <span class="chord">Em7</span> <span class="chord">G/D</span> |</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">| <span class="chord">C</span> <span class="chord">G/B</span> | <span class="chord">A</span> <span class="chord">D</span> |</span></span></div></div>
@@ -620,7 +610,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">With</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">out you, what would a </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">poor boy </span></span><span class="seg"><span class="chord">G</span><span class="lyr">do? </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">With</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">out you, what would a </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">poor boy </span></span><span class="seg"><span class="chord">G</span><span class="lyr">do?</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">With</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">out you, mankind </span></span><span class="seg"><span class="chord">F/A</span><span class="lyr">handkinds thru&#x27; the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">blues</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
-    
+    </div>
     
   </div>
   </div>

@@ -35,6 +35,8 @@
     .block.line-group { break-inside: avoid; margin-bottom: 0; }
     .block.line-group-last { margin-bottom: 6px; }
     body.font-small .block { font-size: 8pt; }
+    .chords { column-count: 2; column-gap: 8mm; }
+    @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
     pre.block {
       font-family: ui-monospace, 'Courier New', Courier, monospace;
       white-space: pre-wrap; word-break: break-word;
@@ -113,7 +115,7 @@
       '7sus4': [0,5,7,10], 'dim7': [0,3,6,9], 'sus2': [0,2,7], 'sus4': [0,5,7],
       'add9': [0,2,4,7], 'aug': [0,4,8], 'dim': [0,3,6], 'm7': [0,3,7,10], 'm6': [0,3,7,9],
       'm9': [0,2,3,7,10], 'maj': [0,4,7], 'm': [0,3,7], '7': [0,4,7,10], '6': [0,4,7,9],
-      '9': [0,2,4,7,10], '5': [0,7], '': [0,4,7]
+      '9': [0,2,4,7,10], '5': [0,7], '2': [0,2,7], '': [0,4,7]
     };
     function parseChordName(name) {
       var bassSemi = null;
@@ -520,21 +522,19 @@
   })();
   </script>
 </head>
-<body>
+<body class="font-small">
   <div class="pages-wrap">
     <div class="page">
     <h1>Gods Comic <span class="artist-inline">– Elvis Costello</span></h1>
     
-    
+    <div class="chords">
     <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">#----------------------------------PLEASE NOTE---------------------------------#</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">#This file is the author&#x27;s own work and represents their interpretation of the #</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">#song. You may only use this file for private study, scholarship, or research. #</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">#------------------------------------------------------------------------------##</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">From HISCAP@LUSTA.LATROBE.EDU.AU (PERRETT,Andrew)</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Date: Sat, 13 Nov 1993 15:18:27 GMT</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Gods Comic Elvis Costello (D.MacManus)</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">If this song is about a known comedian please drop me a line</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">with if possible any reference.. (a wager is afoot U C)</span></span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">A7</span><span class="chord">Dm</span><span class="chord">A7</span><span class="chord">Dm</span><span class="chord">F</span><span class="chord">Gm</span><span class="chord">G#</span><span class="chord">A</span></div></div>
@@ -546,14 +546,12 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">joke for the flock and a </span></span><span class="seg"><span class="chord">A#</span><span class="lyr">hand up you f</span></span><span class="seg"><span class="chord">C</span><span class="lyr">leece</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Drooling the </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">drink and the lip</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">stick and </span></span><span class="seg"><span class="chord">C</span><span class="lyr">grease paint</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> Down the cardboard front</span></span><span class="seg"><span class="chord">A#</span><span class="lyr"> of my d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">irty dog c</span></span><span class="seg"><span class="chord">A#</span><span class="lyr">ollar</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> chorus:</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">F</span><span class="lyr">  </span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> now im dead </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">now im dead </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">now im dead </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">now im dead</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">F</span><span class="lyr"> </span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> now im dead </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">now im dead </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">now im dead </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">now im dead</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> And im </span></span><span class="seg"><span class="chord">F</span><span class="lyr">going on to meet</span></span><span class="seg"><span class="chord">A#</span><span class="lyr"> my reward</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> I was scared</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> I was scared</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"> I was scared</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">  I was scared</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> <span class="chord">F</span>            <span class="chord">A#</span>   <span class="chord">C</span>          <span class="chord">A#</span>          <span class="chord">F</span> <span class="chord">A7</span>  (*2nd time bridge*)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"> <span class="chord">F</span> <span class="chord">A#</span> <span class="chord">C</span> <span class="chord">A#</span> <span class="chord">F</span> <span class="chord">A7</span>  (*2nd time bridge*)</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">   He might never heard Gods Comic</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> So there he was on a water bed</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> drinking a cola of a mystery brand</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> reading an airport novellette</span></span></div>
@@ -568,7 +566,6 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">the say that travel braodens the mind</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">till you cant get you </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">head out of doors</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">*</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">  Im sitting here on the top of the world</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">  I hang around in the longest night</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">  Until each beast has gone to bead</span></span></div>
@@ -579,7 +576,7 @@
 <div class="line"><span class="seg"><span class="lyr">  its the big white beard i suppose</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">  im going up to the pole where you folks die of cold</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">  i might be gone for a while if you need me</span></span></div></div>
-    
+    </div>
     
   </div>
   </div>
