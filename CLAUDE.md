@@ -53,6 +53,22 @@ Genererer `songbook.pdf` med alle sange sorteret alfabetisk efter artist/titel:
 - Sidenumre i bunden af hver side
 - Outputfil: `songbook.pdf` i projektmappen
 
+## Tests
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
+.venv/bin/pytest
+```
+
+Dækker akkordteori (`parse_chord_name`, `generate_voicings`), transponering, layout/pagineringsgrænser,
+UG-parsing af rigtige gemte sider fra `downloads/`, round-trip mellem renderet HTML og UG-format
+(`edit_song.py`'s reverse-parsing — den mest skrøbelige kontrakt i projektet), samt en golden-file-test
+for `make_song_html`'s HTML/CSS/JS-skabelon. Ændres skabelonen bevidst, regenerér golden-filen med:
+
+```bash
+UPDATE_GOLDEN=1 .venv/bin/pytest tests/test_render_golden.py
+```
+
 ## GitHub Pages / mobil
 
 Sangbogen kan hostes som en statisk hjemmeside via GitHub Pages:

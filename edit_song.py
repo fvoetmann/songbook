@@ -91,6 +91,22 @@ def pre_to_ug(pre) -> str:
     return "".join(parts).strip("\n")
 
 
+def lyr_children_to_ug(lyr_span) -> str:
+    """Inverse of the render_chord_lines 'else' branch: reconstruct inline
+    [ch]...[/ch] markup from a <span class="lyr"> whose chord spans are
+    nested inside it rather than alongside it (a single physical line that
+    mixes chords with other text, e.g. '[ch]A[/ch] [ch]E[/ch]  x4')."""
+    parts = []
+    for child in lyr_span.children:
+        if isinstance(child, NavigableString):
+            parts.append(str(child))
+        elif child.name == "span" and "chord" in child.get("class", []):
+            parts.append(f"[ch]{child.get_text()}[/ch]")
+        else:
+            parts.append(child.get_text())
+    return "".join(parts)
+
+
 def line_div_to_ug(line_div) -> str:
     """Inverse of add_song.py's render_chord_lyric_line/render_chord_lines:
     reconstruct the raw chord-only-line(+lyric-line) text from a rendered
@@ -103,13 +119,20 @@ def line_div_to_ug(line_div) -> str:
         chords = [c.get_text() for c in line_div.find_all("span", class_="chord")]
         return "  ".join(f"[ch]{c}[/ch]" for c in chords)
 
+    segs = line_div.find_all("span", class_="seg", recursive=False)
+    if len(segs) == 1:
+        lyr_span = segs[0].find("span", class_="lyr", recursive=False)
+        chord_span = segs[0].find("span", class_="chord", recursive=False)
+        if lyr_span and not chord_span and lyr_span.find("span", class_="chord"):
+            return lyr_children_to_ug(lyr_span)
+
     # Chord+lyric pair (or plain lyric line): walk .seg children, tracking
     # position with a separate integer counter (not len() of the string
     # being built, which would double-count the [ch]...[/ch] markup itself).
     chord_positions = []
     lyric_parts = []
     col = 0
-    for seg in line_div.find_all("span", class_="seg", recursive=False):
+    for seg in segs:
         chord_span = seg.find("span", class_="chord", recursive=False)
         lyr_span = seg.find("span", class_="lyr", recursive=False)
         lyr_text = lyr_span.get_text() if lyr_span else ""
