@@ -246,6 +246,11 @@ CHORD_DIAGRAM_STYLE = """  <style>
       border-radius: 3px; color: #555;
     }
     .inst-btn.active { font-weight: bold; color: #b00020; }
+    #metro-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: #ddd; margin: 0 3px; transition: background 0.05s ease;
+    }
+    #metro-dot.flash { background: #b00020; }
     @media (max-width: 640px) { #inst-bar { flex-wrap: wrap; max-width: calc(100vw - 32px); bottom: 8px; right: 8px; } }
     @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
   </style>"""
@@ -575,7 +580,61 @@ CHORD_DIAGRAM_JS = """  <script>
         scrollTimer = setInterval(scrollTick, 210 - scrollSpeed * 20);
       }
     }
+    // Metronom: en lookahead-scheduler (ikke bare setInterval per klik) så
+    // tempoet ikke driver af sted pga. setInterval's unøjagtighed.
+    var audioCtx = null, tempoBPM = 120;
+    var metroTimer = null, nextNoteTime = 0, beatCount = 0;
+    var METRO_LOOKAHEAD = 25, METRO_SCHEDULE_AHEAD = 0.1;
+    function ensureAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+    function flashMetroDot() {
+      var dot = document.getElementById('metro-dot');
+      if (!dot) return;
+      dot.classList.add('flash');
+      setTimeout(function() { dot.classList.remove('flash'); }, 80);
+    }
+    function scheduleClick(time, accent) {
+      var ctx = ensureAudioCtx();
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.frequency.value = accent ? 1000 : 800;
+      gain.gain.setValueAtTime(0.5, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.05);
+      setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
+    }
+    function metroScheduler() {
+      var ctx = ensureAudioCtx();
+      while (nextNoteTime < ctx.currentTime + METRO_SCHEDULE_AHEAD) {
+        scheduleClick(nextNoteTime, beatCount % 4 === 0);
+        nextNoteTime += 60 / tempoBPM;
+        beatCount++;
+      }
+    }
+    function toggleMetronome() {
+      var b = document.getElementById('metro-toggle');
+      if (metroTimer) {
+        clearInterval(metroTimer); metroTimer = null;
+        b.textContent = '▶'; b.classList.remove('active');
+        return;
+      }
+      var ctx = ensureAudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      beatCount = 0;
+      nextNoteTime = ctx.currentTime + 0.05;
+      metroScheduler();
+      metroTimer = setInterval(metroScheduler, METRO_LOOKAHEAD);
+      b.textContent = '⏸'; b.classList.add('active');
+    }
+    function changeTempo(delta) {
+      tempoBPM = Math.max(30, Math.min(300, tempoBPM + delta));
+      document.getElementById('tempo-value').textContent = tempoBPM;
+    }
     document.addEventListener('DOMContentLoaded', function() {
+      var tempoMeta = document.querySelector('meta[name="tempo"]');
+      tempoBPM = (tempoMeta && parseInt(tempoMeta.content, 10)) || 120;
       var bar = document.createElement('div');
       bar.id = 'inst-bar';
       var lbl = document.createElement('span');
@@ -637,6 +696,32 @@ CHORD_DIAGRAM_JS = """  <script>
       transPlus.textContent = '+'; transPlus.className = 'inst-btn'; transPlus.title = 'Transponer op';
       transPlus.addEventListener('click', function() { changeTranspose(1); });
       bar.appendChild(transPlus);
+      var sep4 = document.createElement('span');
+      sep4.textContent = '·'; sep4.style.cssText = 'color:#ccc;margin:0 6px';
+      bar.appendChild(sep4);
+      var metroLbl = document.createElement('span');
+      metroLbl.textContent = 'Metronom:';
+      bar.appendChild(metroLbl);
+      var metroBtn = document.createElement('button');
+      metroBtn.id = 'metro-toggle'; metroBtn.textContent = '▶';
+      metroBtn.className = 'inst-btn'; metroBtn.title = 'Metronom';
+      metroBtn.addEventListener('click', toggleMetronome);
+      bar.appendChild(metroBtn);
+      var metroDot = document.createElement('span');
+      metroDot.id = 'metro-dot';
+      bar.appendChild(metroDot);
+      var tempoMinus = document.createElement('button');
+      tempoMinus.textContent = '−'; tempoMinus.className = 'inst-btn'; tempoMinus.title = 'Langsommere tempo';
+      tempoMinus.addEventListener('click', function() { changeTempo(-1); });
+      bar.appendChild(tempoMinus);
+      var tempoValue = document.createElement('span');
+      tempoValue.id = 'tempo-value'; tempoValue.textContent = tempoBPM;
+      tempoValue.style.cssText = 'min-width:2em;text-align:center;display:inline-block;color:#555';
+      bar.appendChild(tempoValue);
+      var tempoPlus = document.createElement('button');
+      tempoPlus.textContent = '+'; tempoPlus.className = 'inst-btn'; tempoPlus.title = 'Hurtigere tempo';
+      tempoPlus.addEventListener('click', function() { changeTempo(1); });
+      bar.appendChild(tempoPlus);
       document.body.appendChild(bar);
       // Auto-hide on inactivity
       var hideTimer = null;
@@ -1055,8 +1140,9 @@ def content_to_html(content: str) -> tuple:
 
 
 def make_song_html(
-    title: str, artist: str, key: str, capo: str, content: str, url: str
+    title: str, artist: str, key: str, capo: str, content: str, url: str, tempo: str = "120"
 ) -> tuple:
+    tempo = (tempo or "").strip() or "120"
     pages, tab_blocks, layout, auto_small_font = content_to_html(content)
     diagram_html = make_chord_diagram_html(extract_chord_names(content))
 
@@ -1105,6 +1191,7 @@ def make_song_html(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="tempo" content="{tempo}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <title>{html.escape(title)} – {html.escape(artist)}</title>

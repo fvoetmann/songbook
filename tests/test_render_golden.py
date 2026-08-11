@@ -23,7 +23,7 @@ def test_make_song_html_matches_golden_file():
         UPDATE_GOLDEN=1 pytest tests/test_render_golden.py
     """
     rendered, layout = make_song_html(
-        "Golden Testsang", "Golden Artist", "Am", "2", SAMPLE_CONTENT, "https://example.com/song"
+        "Golden Testsang", "Golden Artist", "Am", "2", SAMPLE_CONTENT, "https://example.com/song", "140"
     )
     golden_path = GOLDEN_DIR / "sample_song.html"
 

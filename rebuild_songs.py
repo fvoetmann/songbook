@@ -26,8 +26,8 @@ def main():
             print(f"  Missing: {filepath}")
             continue
 
-        title, artist, key, capo, url, content = html_to_content(filepath)
-        new_html, layout = make_song_html(title, artist, key, capo, content, url)
+        title, artist, key, capo, url, tempo, content = html_to_content(filepath)
+        new_html, layout = make_song_html(title, artist, key, capo, content, url, tempo)
 
         filepath.write_text(new_html, encoding="utf-8")
         new_hash = hashlib.sha256(new_html.encode("utf-8")).hexdigest()

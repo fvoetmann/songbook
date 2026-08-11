@@ -61,19 +61,20 @@ def find_song(query: str):
 def extract_meta(soup):
     meta = soup.find(class_="meta")
     key, capo, url = "", "", ""
-    if not meta:
-        return key, capo, url
-    text = meta.get_text()
-    m = re.search(r"Toneart:\s*(\S+)", text)
-    if m:
-        key = m.group(1).strip("·\xa0").strip()
-    m = re.search(r"Capo:\s*(\S+)", text)
-    if m:
-        capo = m.group(1).strip("·\xa0").strip()
-    a = meta.find("a")
-    if a:
-        url = a.get("href", "")
-    return key, capo, url
+    if meta:
+        text = meta.get_text()
+        m = re.search(r"Toneart:\s*(\S+)", text)
+        if m:
+            key = m.group(1).strip("·\xa0").strip()
+        m = re.search(r"Capo:\s*(\S+)", text)
+        if m:
+            capo = m.group(1).strip("·\xa0").strip()
+        a = meta.find("a")
+        if a:
+            url = a.get("href", "")
+    tempo_tag = soup.find("meta", attrs={"name": "tempo"})
+    tempo = (tempo_tag.get("content", "").strip() if tempo_tag else "") or "120"
+    return key, capo, url, tempo
 
 
 def pre_to_ug(pre) -> str:
@@ -183,28 +184,31 @@ def extract_title_artist(soup) -> tuple:
 def html_to_content(html_path: Path):
     soup = BeautifulSoup(html_path.read_text(encoding="utf-8"), "html.parser")
     title, artist = extract_title_artist(soup)
-    key, capo, url = extract_meta(soup)
+    key, capo, url, tempo = extract_meta(soup)
     blocks = [block_to_ug(b) for b in soup.find_all(["pre", "div"], class_="block")]
     content = "\n\n".join(b for b in blocks if b.strip())
-    return title, artist, key, capo, url, content
+    return title, artist, key, capo, url, tempo, content
 
 
-def build_header(title: str, artist: str, key: str, capo: str, transpose: str = "0") -> str:
+def build_header(
+    title: str, artist: str, key: str, capo: str, tempo: str = "120", transpose: str = "0"
+) -> str:
     return (
         f"# Titel: {title}\n"
         f"# Artist: {artist}\n"
         f"# Toneart: {key}\n"
         f"# Capo: {capo}\n"
+        f"# Tempo: {tempo}\n"
         f"# Transponer: {transpose}\n"
         f"#\n"
     )
 
 
 def parse_header(text: str) -> dict:
-    """Extract Titel/Artist/Toneart/Capo/Transponer from '# Felt: værdi' lines."""
+    """Extract Titel/Artist/Toneart/Capo/Tempo/Transponer from '# Felt: værdi' lines."""
     fields = {}
     for line in text.splitlines():
-        m = re.match(r"#\s*(Titel|Artist|Toneart|Capo|Transponer)\s*:\s*(.*)", line, re.IGNORECASE)
+        m = re.match(r"#\s*(Titel|Artist|Toneart|Capo|Tempo|Transponer)\s*:\s*(.*)", line, re.IGNORECASE)
         if m:
             fields[m.group(1).lower()] = m.group(2).strip()
     return fields
@@ -351,6 +355,7 @@ def create_new_song():
         sys.exit("Titel og artist skal udfyldes.")
     key = input("Toneart (kan være tom): ").strip()
     capo = input("Capo (kan være tom): ").strip()
+    tempo = input("Tempo i BPM (standard 120): ").strip() or "120"
 
     filename = f"{slugify(artist)}-{slugify(title)}.html"
     filepath = SONGS_DIR / filename
@@ -358,7 +363,7 @@ def create_new_song():
         sys.exit(f"Filen findes allerede: {filepath} — brug 'edit_song.py <søgeord>' til at redigere den.")
 
     template = (
-        build_header(title, artist, key, capo)
+        build_header(title, artist, key, capo, tempo)
         + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
         + f"# Skriv akkorder direkte i teksten, fx: [Am]Her er linjen\n"
         + f"# {{Am}} (krøllede parenteser) = akkord der IKKE er bundet til et bestemt ord,\n"
@@ -374,6 +379,7 @@ def create_new_song():
     artist = header.get("artist", artist) or artist
     key = header.get("toneart", key)
     capo = header.get("capo", capo)
+    tempo = header.get("tempo", tempo) or "120"
 
     content_lines = [l for l in edited.splitlines() if not l.startswith("#")]
     new_content = "\n".join(content_lines).strip()
@@ -388,7 +394,7 @@ def create_new_song():
         sys.exit(f"Filen findes allerede: {filepath} — brug 'edit_song.py <søgeord>' til at redigere den.")
 
     new_ug = edit_to_ug(new_content)
-    new_html, layout = make_song_html(title, artist, key, capo, new_ug, "")
+    new_html, layout = make_song_html(title, artist, key, capo, new_ug, "", tempo)
 
     SONGS_DIR.mkdir(exist_ok=True)
     filepath.write_text(new_html, encoding="utf-8")
@@ -420,11 +426,11 @@ def main():
 
     print(f"Redigerer: {song['artist']} – {song['title']}")
 
-    title, artist, key, capo, url, ug_content = html_to_content(html_path)
+    title, artist, key, capo, url, tempo, ug_content = html_to_content(html_path)
     original_edit = ug_to_edit(ug_content)
 
     edit_text = (
-        build_header(title, artist, key, capo)
+        build_header(title, artist, key, capo, tempo)
         + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
         + f"# {{Am}} (krøllede parenteser) = akkord der IKKE er bundet til et bestemt ord —\n"
         + f"# lad den stå uændret for at bevare den præcis som den er.\n"
@@ -441,6 +447,7 @@ def main():
     new_artist = header.get("artist", artist) or artist
     new_key = header.get("toneart", key)
     new_capo = header.get("capo", capo)
+    new_tempo = header.get("tempo", tempo) or "120"
 
     transpose_str = header.get("transponer", "0").strip()
     try:
@@ -455,7 +462,7 @@ def main():
         print("Tom fil – ingen ændringer gemt.")
         return
 
-    meta_changed = (new_title, new_artist, new_key, new_capo) != (title, artist, key, capo)
+    meta_changed = (new_title, new_artist, new_key, new_capo, new_tempo) != (title, artist, key, capo, tempo)
     if new_content == original_edit.strip() and not meta_changed and semitones == 0:
         print("Ingen ændringer.")
         return
@@ -466,7 +473,7 @@ def main():
         if new_key:
             new_key = transpose_chord(new_key, semitones)
 
-    new_html, layout = make_song_html(new_title, new_artist, new_key, new_capo, new_ug, url)
+    new_html, layout = make_song_html(new_title, new_artist, new_key, new_capo, new_ug, url, new_tempo)
 
     new_filename = f"{slugify(new_artist)}-{slugify(new_title)}.html"
     new_path = SONGS_DIR / new_filename
