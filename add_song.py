@@ -837,8 +837,17 @@ def split_mixed(header: str, body: str) -> list:
     )
     if tab_start is None:
         return [(header, body)]
-    # Include any preceding blank/label lines with the tab block
-    while tab_start > 0 and not re.search(r"\[ch\]", lines[tab_start - 1]):
+    # Include any preceding label line(s) with the tab block, but never cross
+    # a blank line: a caption sits directly above its tab with no gap, while
+    # unrelated lyric content earlier in the section is separated by one (this
+    # matters most after a round-trip through edit_song.py's html_to_content,
+    # which can otherwise glue a relocated tab block onto a much earlier
+    # section's trailing lyric line).
+    while (
+        tab_start > 0
+        and lines[tab_start - 1].strip()
+        and not re.search(r"\[ch\]", lines[tab_start - 1])
+    ):
         tab_start -= 1
     chord_part = "\n".join(lines[:tab_start]).strip()
     tab_part = "\n".join(lines[tab_start:]).strip()
