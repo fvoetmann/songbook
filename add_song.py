@@ -915,32 +915,47 @@ def is_tab_section(body: str) -> bool:
 
 
 def split_mixed(header: str, body: str) -> list:
-    """Split a section that mixes chord+lyric and guitar tab into two parts."""
+    """Split a section that mixes chord+lyric and guitar tab into alternating
+    parts. A section can contain more than one tab run (e.g. an intro riff
+    followed by ordinary verse lines that just happen to share the section
+    with it), so this walks the whole body rather than assuming the tab
+    block is a single run at the end."""
     lines = body.split("\n")
-    tab_start = next(
-        (i for i, l in enumerate(lines) if TAB_STRING_LINE.match(l)), None
-    )
-    if tab_start is None:
-        return [(header, body)]
-    # Include any preceding label line(s) with the tab block, but never cross
-    # a blank line: a caption sits directly above its tab with no gap, while
-    # unrelated lyric content earlier in the section is separated by one (this
-    # matters most after a round-trip through edit_song.py's html_to_content,
-    # which can otherwise glue a relocated tab block onto a much earlier
-    # section's trailing lyric line).
-    while (
-        tab_start > 0
-        and lines[tab_start - 1].strip()
-        and not re.search(r"\[ch\]", lines[tab_start - 1])
-    ):
-        tab_start -= 1
-    chord_part = "\n".join(lines[:tab_start]).strip()
-    tab_part = "\n".join(lines[tab_start:]).strip()
+    segments = []  # [(is_tab, [line, ...]), ...]
+    for line in lines:
+        is_tab_line = bool(TAB_STRING_LINE.match(line))
+        if segments and segments[-1][0] == is_tab_line:
+            segments[-1][1].append(line)
+        else:
+            segments.append([is_tab_line, [line]])
+
+    # Pull a trailing caption line from a chord segment into the tab segment
+    # that immediately follows it, but never cross a blank line: a caption
+    # sits directly above its tab with no gap, while unrelated lyric content
+    # earlier in the section is separated by one (this matters most after a
+    # round-trip through edit_song.py's html_to_content, which can otherwise
+    # glue a relocated tab block onto a much earlier section's trailing
+    # lyric line).
+    for i in range(len(segments) - 1):
+        is_tab, seg_lines = segments[i]
+        next_is_tab, next_lines = segments[i + 1]
+        if is_tab or not next_is_tab:
+            continue
+        while (
+            seg_lines
+            and seg_lines[-1].strip()
+            and not re.search(r"\[ch\]", seg_lines[-1])
+        ):
+            next_lines.insert(0, seg_lines.pop())
+
     result = []
-    if chord_part:
-        result.append((header, chord_part))
-    if tab_part:
-        result.append(("", tab_part))
+    current_header = header
+    for _, seg_lines in segments:
+        text = "\n".join(seg_lines).strip()
+        if not text:
+            continue
+        result.append((current_header, text))
+        current_header = ""
     return result
 
 

@@ -30,3 +30,22 @@ def test_split_mixed_detects_lowercase_tab_lines():
     assert result[0] == (header, "[ch]Am[/ch] some lyrics")
     assert result[1][0] == ""
     assert "e|--0--2--" in result[1][1]
+
+
+def test_split_mixed_handles_tab_followed_by_more_lyrics():
+    # A section with an intro riff followed by ordinary verse lines (no
+    # further [Verse]-style header separating them) must not swallow the
+    # verse into the tab part - regression test for a real bug where an
+    # entire song rendered as monospace tab because of this.
+    header = ""
+    body = (
+        "e|-----|\n"
+        "B|-----|\n"
+        "[ch]G[/ch] some opening lyrics\n"
+        "more lyrics on their own line\n"
+    )
+    result = split_mixed(header, body)
+    assert len(result) == 2
+    assert "e|-----|" in result[0][1]
+    assert "B|-----|" in result[0][1]
+    assert result[1] == ("", "[ch]G[/ch] some opening lyrics\nmore lyrics on their own line")

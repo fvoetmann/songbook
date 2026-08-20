@@ -36,6 +36,8 @@
     .block.line-group { break-inside: avoid; margin-bottom: 0; }
     .block.line-group-last { margin-bottom: 6px; }
     body.font-small .block { font-size: 8pt; }
+    .chords { column-count: 2; column-gap: 8mm; }
+    @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
     pre.block {
       font-family: ui-monospace, 'Courier New', Courier, monospace;
       white-space: pre-wrap; word-break: break-word;
@@ -100,7 +102,7 @@
   </style>
   <script>
   (function() {
-    var DBS = {"guitar":{"F#":[[2,4,4,3,2,2],[2,4,4,3,2,-1],[-1,-1,4,3,2,2],[2,4,4,3,-1,-1],[-1,4,4,3,2,2],[-1,4,4,3,2,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"Bm7":[[-1,2,0,2,0,2],[-1,2,0,2,3,2],[-1,2,4,2,3,2],[-1,2,4,2,3,-1],[7,5,0,7,7,5],[7,5,7,7,7,5]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"A#dim":[[-1,1,2,3,2,0],[-1,1,2,3,2,-1],[6,7,8,6,-1,-1],[0,1,2,3,2,0],[0,1,2,3,2,-1],[0,4,2,3,2,0]]},"ukulele":{"F#":[[3,1,2,1],[3,1,2,4],[3,6,6,4],[6,6,6,4]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"Bm7":[[2,2,2,2],[4,2,2,0],[4,6,5,5],[7,6,7,0],[4,2,2,2],[2,2,5,2]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"A#dim":[[3,1,0,1],[3,1,0,4],[3,4,0,4],[3,4,6,4],[6,4,6,4],[6,4,6,7]]},"mandolin":{"F#":[[-1,4,4,6],[3,4,4,2],[3,4,4,6],[3,4,4,-1],[6,4,4,6],[3,-1,4,2]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"Bm7":[[4,0,0,2],[4,4,5,5],[2,0,2,2],[7,4,0,7],[4,0,2,2],[4,0,2,5]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"A#dim":[[3,2,4,0],[3,2,4,-1],[3,-1,4,0],[6,-1,7,6],[3,-1,4,6],[6,-1,4,6]]},"banjo":{"F#":[[4,3,2,4,0],[-1,3,2,4,0],[4,3,2,-1,0],[4,3,-1,4,0],[-1,3,-1,4,0],[4,3,-1,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"Bm7":[[0,2,0,4,0],[4,2,0,0,0],[0,4,7,7,0],[4,7,0,7,0],[7,4,7,0,0],[7,7,0,4,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"A#dim":[[2,3,2,2,0],[-1,3,2,2,0],[2,3,2,-1,0],[-1,3,2,-1,0]]}};
+    var DBS = {"guitar":{"A#dim":[[-1,1,2,3,2,0],[-1,1,2,3,2,-1],[6,7,8,6,-1,-1],[0,1,2,3,2,0],[0,1,2,3,2,-1],[0,4,2,3,2,0]],"F#":[[2,4,4,3,2,2],[2,4,4,3,2,-1],[-1,-1,4,3,2,2],[2,4,4,3,-1,-1],[-1,4,4,3,2,2],[-1,4,4,3,2,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"D":[[-1,-1,0,2,3,2],[-1,5,0,7,7,5],[-1,5,7,7,7,5],[-1,-1,0,7,7,5],[-1,5,7,7,7,-1],[2,0,0,2,3,2]],"Bm":[[-1,2,0,4,0,2],[-1,2,0,4,3,2],[-1,2,4,4,3,2],[-1,2,4,4,3,-1],[7,5,0,7,7,7],[7,5,0,7,7,-1]],"Bm7":[[-1,2,0,2,0,2],[-1,2,0,2,3,2],[-1,2,4,2,3,2],[-1,2,4,2,3,-1],[7,5,0,7,7,5],[7,5,7,7,7,5]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]]},"ukulele":{"A#dim":[[3,1,0,1],[3,1,0,4],[3,4,0,4],[3,4,6,4],[6,4,6,4],[6,4,6,7]],"F#":[[3,1,2,1],[3,1,2,4],[3,6,6,4],[6,6,6,4]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"D":[[2,2,2,0],[2,2,2,5],[7,6,5,0],[7,6,5,5]],"Bm":[[4,2,2,2],[4,2,2,5],[4,6,7,5],[7,6,7,5]],"Bm7":[[2,2,2,2],[4,2,2,0],[4,6,5,5],[7,6,7,0],[4,2,2,2],[2,2,5,2]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]]},"mandolin":{"A#dim":[[3,2,4,0],[3,2,4,-1],[3,-1,4,0],[6,-1,7,6],[3,-1,4,6],[6,-1,4,6]],"F#":[[-1,4,4,6],[3,4,4,2],[3,4,4,6],[3,4,4,-1],[6,4,4,6],[3,-1,4,2]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"D":[[-1,0,0,2],[7,4,0,5],[7,4,5,5],[7,4,0,-1],[2,0,0,2],[2,0,5,2]],"Bm":[[4,0,2,2],[4,0,5,2],[4,4,5,2],[4,4,5,7],[4,4,5,-1],[-1,0,2,2]],"Bm7":[[4,0,0,2],[4,4,5,5],[2,0,2,2],[7,4,0,7],[4,0,2,2],[4,0,2,5]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]]},"banjo":{"A#dim":[[2,3,2,2,0],[-1,3,2,2,0],[2,3,2,-1,0],[-1,3,2,-1,0]],"F#":[[4,3,2,4,0],[-1,3,2,4,0],[4,3,2,-1,0],[4,3,-1,4,0],[-1,3,-1,4,0],[4,3,-1,-1,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"D":[[0,2,3,4,0],[4,2,3,0,0],[4,2,3,4,0],[-1,2,3,4,0],[4,7,7,7,0],[7,7,7,4,0]],"Bm":[[0,4,3,4,0],[4,4,3,0,0],[4,4,3,4,0],[-1,4,3,4,0],[0,4,0,4,0],[4,4,0,0,0]],"Bm7":[[0,2,0,4,0],[4,2,0,0,0],[0,4,7,7,0],[4,7,0,7,0],[7,4,7,0,0],[7,7,0,4,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]]}};
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -606,136 +608,95 @@
   })();
   </script>
 </head>
-<body>
+<body class="font-small">
   <div class="pages-wrap">
     <div class="page">
     <h1>Golden Years <span class="artist-inline">– David Bowie</span></h1>
     
-    
+    <div class="chords">
     <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Golden Years</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">David Bowie</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">A#dim = 6x565x</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">A#dim</span> = 6x565x</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">E7#9 = &quot;the hendrix chord&quot; 07678x or xx2133</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[MAIN RIFF]</span></div><div class="line"><span class="seg"><span class="lyr">(played whenever there is an F#-E progression)</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">F#</span><span class="chord">E</span><span class="chord">F#</span><span class="chord">E</span></div></div>
-    
-    <div class="tab-section"><pre class="block line-group">e|-----------------------------------------------2------------------|
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">(w/MAIN RIFF):</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Golden </span></span><span class="seg"><span class="chord">E</span><span class="lyr">years, </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">gold</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, whop whop wh</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">op</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Golden years, gold, whop whop whop</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Golden years, gold, whop whop whop</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Don&#x27;t let me </span></span><span class="seg"><span class="chord">E</span><span class="lyr">hear you say life&#x27;s </span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Taking you n</span></span><span class="seg"><span class="chord">E</span><span class="lyr">owhere, </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">angel</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">(Come get up my</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> baby)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Look at that sky, </span></span><span class="seg"><span class="chord">E</span><span class="lyr">life&#x27;s begun</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Nights are warm and the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">days are </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">young</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">(Come get up my</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">There&#x27;s my baby, </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">lost that&#x27;s all</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Once I&#x27;m begging you, </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">save her little</span></span><span class="seg"><span class="chord">F#</span><span class="lyr"> soul</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Golden </span></span><span class="seg"><span class="chord">E</span><span class="lyr">years, </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">gold</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, whop whop wh</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">op</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">(Come get up</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> my baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Last night they loved you </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Opening doors and pulling some strings, angel</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Come get up my baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">In walked luck and you looked in time</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Never look back, walk tall, act fine</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Come get up my baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;ll </span></span><span class="seg"><span class="chord">D</span><span class="lyr">stick with you </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">baby for a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">thousand y</span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">ears</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>               <span class="chord">C</span>                 <span class="chord">A</span>       <span class="chord">A#dim</span>    <span class="chord">Bm7</span>  Em7#9</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Nothing&#x27;s gonna touch you in these golden years....     gold</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">Golden </span></span><span class="seg"><span class="chord">E</span><span class="lyr">years, </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">gold</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, whop whop wh</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">op</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#</span><span class="lyr">(Come get up</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> my baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">One of these days, and it won&#x27;t be long</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Gonna drive back down where you once belonged</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">In the back of a dream car, twenty foot long</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Don&#x27;t cry my sweet, don&#x27;t break my heart</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Doing all right, but you gotta get smart</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Wish upon, wish upon, day upon day,</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">I believe oh lord, I believe all the way (Come get up my baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Run for the shadows, run for the shadows</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Run for the shadows in these golden years</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Th</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ere&#x27;s my baby, </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">lost that&#x27;s all</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">On</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ce I&#x27;m begging you, s</span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">ave her little </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">soul</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Golden years, gold, whop whop whop</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Come get up my baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Don&#x27;t let me hear you say life&#x27;s </span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Taking you nowhere, angel</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">(Come get up my baby)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Run for the shadows, run for the shadows</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Run for the shadows in these golden years</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I&#x27;ll </span></span><span class="seg"><span class="chord">D</span><span class="lyr">stick with you </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">baby for a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">thousand y</span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">ears</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span>               <span class="chord">C</span>                 <span class="chord">A</span>       <span class="chord">A#dim</span>    <span class="chord">Bm7</span>  Em7#9</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Nothing&#x27;s gonna touch you in these golden years, gold</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Golden years, gold, whop whop whop</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Golden years, gold, whop whop whop</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">Golden years, gold, whop whop whop......</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">************************************</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| (n)  Ghost note</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">| h    Hammer-on</span></span></div>
+<div class="line"><span class="seg"><span class="lyr">************************************</span></span></div></div>
+    </div>
+    <div class="tab-section"><pre class="block line-group line-group-last">e|-----------------------------------------------2------------------|
 B|-----------------------------------------------2------------------|
 G|-----------------------------------------------3------------------|
 D|---------------------------(0)-0---------------4--------4------2--|
 A|--4---(4)(4)(4)---2----0h2----------4---(4)(4)------4h6----2h4----|
-E|--0h2--2--2--2----0-----------------0h2--2--2---------------------|
-
-                            
-
-
-(w/MAIN RIFF):
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>     <span class="chord">E</span>      <span class="chord">F#</span>  <span class="chord">E</span>             <span class="chord">F#</span>   <span class="chord">E</span>
-Golden years, gold, whop whop whop
-Golden years, gold, whop whop whop
-Golden years, gold, whop whop whop
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>           <span class="chord">E</span>             
-Don&#x27;t let me hear you say life&#x27;s 
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>          <span class="chord">E</span>       <span class="chord">F#</span>   <span class="chord">E</span> 
-Taking you nowhere, angel
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>             <span class="chord">E</span>
-(Come get up my baby)
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>                <span class="chord">E</span>
-Look at that sky, life&#x27;s begun
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>                      <span class="chord">E</span>        <span class="chord">F#</span>   <span class="chord">E</span>
-Nights are warm and the days are young
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>             <span class="chord">E</span>
-(Come get up my baby)
-</pre>
-<pre class="block line-group"><span class="chord">D</span>                <span class="chord">Bm</span>
-There&#x27;s my baby, lost that&#x27;s all
-</pre>
-<pre class="block line-group"><span class="chord">D</span>                     <span class="chord">Bm</span>             <span class="chord">F#</span>   <span class="chord">E</span>
-Once I&#x27;m begging you, save her little soul
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>     <span class="chord">E</span>      <span class="chord">F#</span>  <span class="chord">E</span>             <span class="chord">F#</span>   <span class="chord">E</span>
-Golden years, gold, whop whop whop
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>          <span class="chord">E</span>
-(Come get up my baby)
-
-
-Last night they loved you 
-Opening doors and pulling some strings, angel
-(Come get up my baby)
-In walked luck and you looked in time
-Never look back, walk tall, act fine
-(Come get up my baby)
-</pre>
-<pre class="block line-group">     <span class="chord">D</span>              <span class="chord">Bm7</span>        <span class="chord">D</span>         <span class="chord">Bm7</span>
-I&#x27;ll stick with you baby for a thousand years
-<span class="chord">G</span>               <span class="chord">C</span>                 <span class="chord">A</span>       <span class="chord">A#dim</span>    <span class="chord">Bm7</span>  Em7#9
-Nothing&#x27;s gonna touch you in these golden years....     gold
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>     <span class="chord">E</span>      <span class="chord">F#</span>  <span class="chord">E</span>             <span class="chord">F#</span>   <span class="chord">E</span>
-Golden years, gold, whop whop whop
-</pre>
-<pre class="block line-group"><span class="chord">F#</span>          <span class="chord">E</span>
-(Come get up my baby)
-
-
-One of these days, and it won&#x27;t be long
-Gonna drive back down where you once belonged
-In the back of a dream car, twenty foot long
-Don&#x27;t cry my sweet, don&#x27;t break my heart
-Doing all right, but you gotta get smart
-Wish upon, wish upon, day upon day,
-I believe oh lord, I believe all the way (Come get up my baby)
-Run for the shadows, run for the shadows
-Run for the shadows in these golden years
-</pre>
-<pre class="block line-group">  <span class="chord">D</span>              <span class="chord">Bm7</span>
-There&#x27;s my baby, lost that&#x27;s all
-</pre>
-<pre class="block line-group">  <span class="chord">D</span>                    <span class="chord">Bm7</span>            <span class="chord">F#</span>    <span class="chord">E</span>
-Once I&#x27;m begging you, save her little soul
-Golden years, gold, whop whop whop
-(Come get up my baby)
-
-
-Don&#x27;t let me hear you say life&#x27;s 
-Taking you nowhere, angel
-(Come get up my baby)
-Run for the shadows, run for the shadows
-Run for the shadows in these golden years
-</pre>
-<pre class="block line-group line-group-last">     <span class="chord">D</span>              <span class="chord">Bm7</span>        <span class="chord">D</span>         <span class="chord">Bm7</span>
-I&#x27;ll stick with you baby for a thousand years
-<span class="chord">G</span>               <span class="chord">C</span>                 <span class="chord">A</span>       <span class="chord">A#dim</span>    <span class="chord">Bm7</span>  Em7#9
-Nothing&#x27;s gonna touch you in these golden years, gold
-
-
-Golden years, gold, whop whop whop
-Golden years, gold, whop whop whop
-Golden years, gold, whop whop whop......
-
+E|--0h2--2--2--2----0-----------------0h2--2--2---------------------|</pre>
+<pre class="block line-group line-group-last"><span class="section">[Fill]</span>
 e|---------------------|
 B|--12---11---9--------|  This fill is played mostly during
 G|--11---11---9--------|  the outro chorus (but at a few other
 D|---------------------|  places too) with some minor variations
 A|---------------------|  and ad-libs each time.
-E|---------------------|
-
-
-
-************************************
-
-| (n)  Ghost note
-| h    Hammer-on
- 
-************************************</pre></div>
+E|---------------------|</pre></div>
   </div>
   </div>
 </body>
