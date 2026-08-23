@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -617,59 +641,59 @@
     <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Bennys Badekar - Sørøversangen</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Povl Dissing og Per Goldschmidt3</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">F</span><span class="chord">G</span><span class="chord">F</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Jeg er s</span></span><span class="seg"><span class="chord">G</span><span class="lyr">øn af Sorte Anna</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Jeg er søn af Sorte Anna</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun var Verdenshavets </span></span><span class="seg"><span class="chord">D</span><span class="lyr">skræk</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Blodsofie var min m</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ama</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hun var endnu mere f</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ræk</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Blodso</span></span><span class="seg"><span class="chord">C</span><span class="lyr">fie var hans </span></span><span class="seg"><span class="chord">G</span><span class="lyr">mama</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hun var </span></span><span class="seg"><span class="chord">D</span><span class="lyr">endnu mere </span></span><span class="seg"><span class="chord">G</span><span class="lyr">fræk</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">F</span><span class="chord">G</span><span class="chord">F</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Hun stod </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ud med tyve skibe</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Hun stod ud med tyve skibe</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">sejled’ hele jorden </span></span><span class="seg"><span class="chord">D</span><span class="lyr">rundt</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Min sænked’ dem på </span></span><span class="seg"><span class="chord">D</span><span class="lyr">stribe</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og grinte så hun fik </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ondt</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hans </span></span><span class="seg"><span class="chord">C</span><span class="lyr">sænked’ dem på </span></span><span class="seg"><span class="chord">G</span><span class="lyr">stribe</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">og </span></span><span class="seg"><span class="chord">D</span><span class="lyr">grinte så hun fik et </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ondt</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Min </span></span><span class="seg"><span class="chord">G</span><span class="lyr">mor var en mægtig skrap én</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Min mor var en mægtig skrap én</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">med en kæmpe klap for </span></span><span class="seg"><span class="chord">D</span><span class="lyr">øjet</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Min havde et rigtigt </span></span><span class="seg"><span class="chord">D</span><span class="lyr">træben</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og en gammel pape</span></span><span class="seg"><span class="chord">G</span><span class="lyr">gøje</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hans </span></span><span class="seg"><span class="chord">C</span><span class="lyr">havde et rigtigt </span></span><span class="seg"><span class="chord">G</span><span class="lyr">træben</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">og en </span></span><span class="seg"><span class="chord">D</span><span class="lyr">gammel pape</span></span><span class="seg"><span class="chord">G</span><span class="lyr">gøje</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">La la </span></span><span class="seg"><span class="chord">C</span><span class="lyr">li la la lå</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">La la li la la lå</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">La la </span></span><span class="seg"><span class="chord">G</span><span class="lyr">li la la lej</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">La la </span></span><span class="seg"><span class="chord">D</span><span class="lyr">li la la lå la la </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lej</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">Tusind </span></span><span class="seg"><span class="chord">G</span><span class="lyr">dolke og kanoner</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Tusind dolke og kanoner</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">var der på min moders </span></span><span class="seg"><span class="chord">D</span><span class="lyr">skib</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hundrede trilliarder </span></span><span class="seg"><span class="chord">D</span><span class="lyr">kroner</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hugged’ min sit hele </span></span><span class="seg"><span class="chord">G</span><span class="lyr">liv</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hundrede </span></span><span class="seg"><span class="chord">C</span><span class="lyr">trilliarder </span></span><span class="seg"><span class="chord">G</span><span class="lyr">kroner</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">hugged’ </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hans sit hele </span></span><span class="seg"><span class="chord">G</span><span class="lyr">liv</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="lyr">Min </span></span><span class="seg"><span class="chord">G</span><span class="lyr">mor var piraters dronning</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Min mor var piraters dronning</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hun var styg som bare </span></span><span class="seg"><span class="chord">D</span><span class="lyr">syv</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun var sød og mild som </span></span><span class="seg"><span class="chord">D</span><span class="lyr">honning</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">min var streng - lad vær’ og </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lyv!</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">(Hehe) Hun var </span></span><span class="seg"><span class="chord">C</span><span class="lyr">sød og mild som </span></span><span class="seg"><span class="chord">G</span><span class="lyr">honning</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">(haha) hans var </span></span><span class="seg"><span class="chord">D</span><span class="lyr">streng - lad vær’ og </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lyv!</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="lyr">En</span></span><span class="seg"><span class="chord">G</span><span class="lyr">gang på Skatteøen</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Engang på Skatteøen</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">slog hun tusind mand </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ihjel</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Når min mor stod ud på </span></span><span class="seg"><span class="chord">D</span><span class="lyr">søen</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">døde der fler’ en man ku’ t</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ælle</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Når hans </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mor stod ud på </span></span><span class="seg"><span class="chord">G</span><span class="lyr">søen</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">døde der f</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ler’ en man ku’ t</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ælle</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 7]</span></div><div class="line"><span class="seg"><span class="lyr">Min </span></span><span class="seg"><span class="chord">G</span><span class="lyr">mor drak rom og røg cigarer</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 7]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Min mor drak rom og røg cigarer</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun kunne spytte tyve </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fod</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Når min kom løb folk som </span></span><span class="seg"><span class="chord">D</span><span class="lyr">harer</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun skreg af fryd når hun så </span></span><span class="seg"><span class="chord">G</span><span class="lyr">blod</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Når hans </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mor kom løb folk som </span></span><span class="seg"><span class="chord">G</span><span class="lyr">harer</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Hun skreg af </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fryd når hun så </span></span><span class="seg"><span class="chord">G</span><span class="lyr">blod</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 8]</span></div><div class="line"><span class="seg"><span class="lyr">Jeg’ den </span></span><span class="seg"><span class="chord">G</span><span class="lyr">skrappeste pirast af os</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 8]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Jeg’ den skrappeste pirast af os</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">for jeg har aldrig gået i </span></span><span class="seg"><span class="chord">D</span><span class="lyr">skole</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Næ, for du turd’ aldrig </span></span><span class="seg"><span class="chord">D</span><span class="lyr">slås</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og få revet din fine </span></span><span class="seg"><span class="chord">G</span><span class="lyr">kjole</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Nej, for </span></span><span class="seg"><span class="chord">C</span><span class="lyr">jeg turd’ aldrig </span></span><span class="seg"><span class="chord">G</span><span class="lyr">slås</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">og få </span></span><span class="seg"><span class="chord">D</span><span class="lyr">revet min fine </span></span><span class="seg"><span class="chord">G</span><span class="lyr">kjole</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 9]</span></div><div class="line"><span class="seg"><span class="lyr">Jeg’ den </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ledeste pirat på havet</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 9]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Jeg’ den ledeste pirat på havet</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Jeg stjæler guld som ingen </span></span><span class="seg"><span class="chord">D</span><span class="lyr">før</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">De sørøvertogter du har </span></span><span class="seg"><span class="chord">D</span><span class="lyr">lavet</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">har gjort dig modig og hård som </span></span><span class="seg"><span class="chord">G</span><span class="lyr">smør</span></span></div></div>

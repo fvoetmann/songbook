@@ -438,14 +438,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -617,7 +641,7 @@
 <div class="line"><span class="seg"><span class="lyr">Tabbed af: Christian Wille Koch</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">3. feb 2022</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Fm7</span><span class="chord">Bb7</span><span class="chord">Eb7</span><span class="chord">C7</span><span class="chord">Fm7</span><span class="chord">Bb7</span><span class="chord">Eb7</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Vers 1]</span></div><div class="line"><span class="seg"><span class="lyr">Synes du </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">ikke vi er k</span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">ønne? M</span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">mmmm  mmmm </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">mmm mmmmm mmm mmm</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Vers 1]</span></div><div class="line"><span class="seg"><span class="chord">Fm7</span><span class="lyr">Synes du ikk</span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">e vi er</span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr"> kønne? Mmm</span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">mm  mmmm mmm mmmmm mmm mmm</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Fm7</span><span class="lyr">Jo i er billed</span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">skønne alle </span></span><span class="seg"><span class="chord">Eb7</span><span class="lyr">tre</span></span><span class="seg"><span class="chord">C7</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Er vi </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">flotte vær nu </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">ærlig</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Fm7</span><span class="lyr">I er noget </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">særligt m</span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">mmh mmmh mmmh </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">mmmh mmmh mmmh </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">mmmh</span></span></div></div>
@@ -635,7 +659,7 @@
 <div class="block line-group"><div class="line chords-only"><span class="chord">Fm7</span><span class="chord">Bb7</span><span class="chord">Fm7</span><span class="chord">Bb7</span><span class="chord">Eb</span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">Gm7</span><span class="chord">C7</span><span class="chord">F</span><span class="chord">Gm7</span><span class="chord">C7</span><span class="chord">F</span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Fm7</span><span class="chord">Bb7</span><span class="chord">Eb7</span><span class="chord">C7</span><span class="chord">Fm7</span><span class="chord">Bb7</span><span class="chord">Eb7</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">I er </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">slanke, i er </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">skønne, </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">flotte, smarte, </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">kønne Mmmmm  mmmm mmm mmmmm mmm mmm</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="chord">Fm7</span><span class="lyr">I er slanke, </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">i er skø</span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">nne, flotte, sma</span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">rte, kønne Mmmmm  mmmm mmm mmmmm mmm mmm</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Åh hv</span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">or er vi altså </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">lækre. </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">Fine, labre, </span></span><span class="seg"><span class="chord">Bb7</span><span class="lyr">smækre Mmmmm  mmmm mmm mmmmm mmm mmm</span></span></div></div>
     
     

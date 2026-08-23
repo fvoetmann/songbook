@@ -595,14 +595,38 @@ CHORD_DIAGRAM_JS = """  <script>
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -951,7 +975,16 @@ def split_mixed(header: str, body: str) -> list:
     result = []
     current_header = header
     for _, seg_lines in segments:
-        text = "\n".join(seg_lines).strip()
+        # Drop leading/trailing blank lines, but never strip() the joined
+        # text: a chord line's leading spaces position its first chord and
+        # must survive when that line opens the segment (e.g. a passing
+        # chord placed mid-lyric rather than under the first word).
+        lines = list(seg_lines)
+        while lines and not lines[0].strip():
+            lines.pop(0)
+        while lines and not lines[-1].strip():
+            lines.pop()
+        text = "\n".join(lines)
         if not text:
             continue
         result.append((current_header, text))
@@ -1021,6 +1054,44 @@ def is_chord_only_line(line: str) -> bool:
     return "[ch]" in line and not stripped.strip()
 
 
+def is_chord_annotation_line(line: str) -> bool:
+    """True if line is a chord row (at least two [ch] tags) carrying only a
+    short non-lyric annotation alongside its chords - a bar divider ("|"),
+    a repeat marker ("x2", "repeat"), a "(+F#)" passing-chord note, etc.
+    Distinguishes an annotated chord row from a real lyric line that merely
+    contains an embedded chord, so it can still be paired with the lyric
+    line it precedes (see render_chord_lines)."""
+    if line.count("[ch]") < 2:
+        return False
+    leftover = re.sub(r"\[ch\](.*?)\[/ch\]", "", line).strip()
+    return bool(leftover) and len(leftover.split()) <= 3 and len(leftover) <= 24
+
+
+def chord_positions_align(chord_line: str, lyric_line: str) -> bool:
+    """True if chord_line's chords land on real word boundaries in
+    lyric_line (position 0, or preceded by whitespace), with no more than
+    two trailing chords past the end of the (shorter) lyric line. A
+    chord-annotation line's character columns only mean anything relative
+    to a lyric line when the two were actually written to align
+    (per-syllable UG charts); a bar-measure/strumming-pattern chart ("| G
+    Gsus4 G Gsus4 |") paired with an unrelated short lyric line either
+    lands mid-word or - since parse_chord_positions's columns only ever
+    increase - runs almost entirely past the end of that line, which is
+    the signal used here to reject a bogus pairing (a chord or two
+    trailing past the last word, as in an optional passing chord, is
+    normal and allowed)."""
+    overflow = 0
+    for pos, _ in parse_chord_positions(chord_line):
+        if pos == 0:
+            continue
+        if pos > len(lyric_line):
+            overflow += 1
+            continue
+        if not lyric_line[pos - 1].isspace():
+            return False
+    return overflow <= 2
+
+
 def group_lines(lines: list) -> list:
     """Group lines so a chord-only line stays together with the lyric lines
     that follow it, until the next chord-only line. This keeps each group
@@ -1079,16 +1150,26 @@ def render_chord_lyric_line(chord_line: str, lyric_line: str) -> str:
 
 
 def render_chord_lines(lines: list) -> str:
-    """Render a group's lines: pair each chord-only line with the plain
-    lyric line directly below it (position-anchored), render standalone
-    chord-only lines (no lyric to align to) as a simple chord row, and
-    plain lines as-is."""
+    """Render a group's lines: pair each chord-only (or chord+annotation)
+    line with the plain lyric line directly below it (position-anchored),
+    render standalone chord-only lines (no lyric to align to) as a simple
+    chord row, and plain lines as-is."""
     out = []
     i = 0
     while i < len(lines):
         line = lines[i]
         nxt = lines[i + 1] if i + 1 < len(lines) else ""
         if is_chord_only_line(line) and nxt.strip() and not is_chord_only_line(nxt) and "[ch]" not in nxt:
+            out.append(render_chord_lyric_line(line, nxt))
+            i += 2
+            continue
+        if (
+            is_chord_annotation_line(line)
+            and nxt.strip()
+            and "[ch]" not in nxt
+            and len(nxt.split()) >= 2
+            and chord_positions_align(line, nxt)
+        ):
             out.append(render_chord_lyric_line(line, nxt))
             i += 2
             continue

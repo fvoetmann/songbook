@@ -438,14 +438,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -614,21 +638,21 @@
     
     <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Am</span><span class="chord">Am</span><span class="chord">Am</span><span class="chord">Dm</span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">Am</span><span class="chord">E</span><span class="chord">Am</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Well </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">I don&#x27;t go to church on</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> Sunday, d</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">on&#x27;t get on my knees to</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> pray.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Well I don&#x27;t go to chur</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ch on Sund</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay, don&#x27;t get on my kne</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">es to pray.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Don&#x27;t </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">memorize the books of the</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> Bible, I </span></span><span class="seg"><span class="chord">E</span><span class="lyr">got my own special </span></span><span class="seg"><span class="chord">E</span><span class="lyr">way.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> know Jesus </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">loves me, ma</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ybe just a little bi</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">t more.</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I fa</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ll to my knees ever</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">y Sunday at </span></span><span class="seg"><span class="chord">E</span><span class="lyr">Zerelda Lee&#x27;s cand</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">y store.</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Well </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">it&#x27;s got to be a Chocolate </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Jesus, ma</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">kes me feel good </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">inside.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Well it&#x27;s got to be a Choco</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">late Jesu</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">s, makes me feel </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">good inside.</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Got to be a Chocolate</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> Jesus, to</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> keep me sa</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tisfied.</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Well </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">I don&#x27;t want no Abba</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> Zabba, don</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">&#x27;t want no Almond </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">Joy.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Well I don&#x27;t want no</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> Abba Zabba</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">, don&#x27;t want no Al</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">mond Joy.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">There</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> ain&#x27;t nothing</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> better s</span></span><span class="seg"><span class="chord">E</span><span class="lyr">uitable for this</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> boy.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Well</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> it&#x27;s the only thing</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> that can pick me up, </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">better than a Cup-o-</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">Gold.</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Se</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">e, only a Chocolate</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> Jesus can </span></span><span class="seg"><span class="chord">E</span><span class="lyr">satisfy my </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">soul.</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">When </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">the weather gets rough and it&#x27;s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> whiskey in the shade.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">When the weather gets rough and</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> it&#x27;s whiskey in the shade.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"> best to wrap your savior up in</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> cellophane.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">He </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">flows like the big muddy </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">but that&#x27;s ok,</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">pour</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> him over ice-cream for </span></span><span class="seg"><span class="chord">E</span><span class="lyr">a nice parfait.</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Well</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> it&#x27;s got to be a Chocolate</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> Jesus, g</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ood enough for </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">me.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Well it&#x27;s got to be a Choco</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">late Jesu</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">s, good enough </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">for me.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Got to be a Chocolate </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Jesus, go</span></span><span class="seg"><span class="chord">E</span><span class="lyr">od enough for</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> me.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Well </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">it&#x27;s got to be a Chocolate </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Jesus, mak</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">es me feel good </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">inside.</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Got to be a Chocolate </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Jesus, to</span></span><span class="seg"><span class="chord">E</span><span class="lyr"> keep me sa</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tisfied.</span></span></div></div>

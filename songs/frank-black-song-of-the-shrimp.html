@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -615,37 +639,37 @@
     <div class="meta">Toneart: Dm</div>
     <div class="chords">
     <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Am</span><span class="chord">Am</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">I saw three shrimps in the </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">water</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">E7</span><span class="lyr">I saw three shrimps in the water</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And two were old and </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">grey</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">So I swam a little c</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">loser</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And I </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">heard the third one </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">say</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">&quot;Goodbye mommy </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">shrimp</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">&quot;Goodb</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ye mommy shrimp</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And Papa shake my </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">hand</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Here comes the s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hrimp boat for</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">take me to Louisi</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ane&quot;</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">He showed his mama and his </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">papa papa papa papa papa papa papa</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">E7</span><span class="lyr">He showed his mama and his papa papa papa papa papa papa papa</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The shrimp newspaper he </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">read</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And there the advert</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">isement</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">all the young shrimps </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">said</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">&quot;Free ride New Or</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">leans</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">&quot;Free</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> ride New Orleans</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To stay in Grand Ho</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">tel</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Meet </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">Creole girl</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">help you out of your </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">shell&quot;</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Interlude]</span></div><div class="line chords-only"><span class="chord">Am</span><span class="chord">E7</span><span class="chord">Am</span><span class="chord">Am</span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Dm</span><span class="chord">E7</span><span class="chord">Am</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Goodbye mommy s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hrimp</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Goodb</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ye mommy shrimp</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And Papa shake my </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">hand</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Here comes the s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hrimp boat for</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">take me to Louis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">iane</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">His poor mama and his poor </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">papa papa papa papa papa papa papa</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">E7</span><span class="lyr">His poor mama and his poor papa papa papa papa papa papa papa</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They haven&#x27;t heard from him </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">yet</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Last time they&#x27;ve seen his </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">smiling face</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Is when he </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">jumped into the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">net</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Goodbye mommy s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hrimp</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Goodb</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ye mommy shrimp</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And Papa shake my </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">hand</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Here comes the s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hrimp boat for</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">take me to Louis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">iane</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">Here comes the s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hrimp boat for</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Here comes the shrimp boat for</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">take me to Louis</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">iane</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Here comes the s</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hrimp boat for</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">take me ah take me</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>

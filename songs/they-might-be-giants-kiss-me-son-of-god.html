@@ -438,14 +438,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -617,20 +641,19 @@
 <div class="line"><span class="seg"><span class="lyr">Album: Lincoln</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Capo 2nd Fret</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">A(b9)  x02320</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">I bu</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ilt a little </span></span><span class="seg"><span class="chord">D+</span><span class="lyr">empire out of</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> some crazy g</span></span><span class="seg"><span class="chord">Ddim7</span><span class="lyr">arbage</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">I built a lit</span></span><span class="seg"><span class="chord">D+</span><span class="lyr">tle empire ou</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">t of some cra</span></span><span class="seg"><span class="chord">Ddim7</span><span class="lyr">zy garbage</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">called the bl</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ood of the expl</span></span><span class="seg"><span class="chord">G</span><span class="lyr">oited working cl</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ass</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">but they&#x27;ve </span></span><span class="seg"><span class="chord">G</span><span class="lyr">overcome their shyness.  now they&#x27;re c</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">alling me &#x27;your Highness&#x27;</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">and a wo</span></span><span class="seg"><span class="chord">D</span><span class="lyr">rld scr</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">eams: Ki</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ss me, S</span></span><span class="seg"><span class="chord">A</span><span class="lyr">on of G</span></span><span class="seg"><span class="chord">D</span><span class="lyr">od</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I de</span></span><span class="seg"><span class="chord">D</span><span class="lyr">stroyed the bond of </span></span><span class="seg"><span class="chord">D+</span><span class="lyr">friendship and res</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">pect</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">I destroyed the bond</span></span><span class="seg"><span class="chord">D+</span><span class="lyr"> of friendship and</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> respect</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">between the </span></span><span class="seg"><span class="chord">Ddim7</span><span class="lyr">only people </span></span><span class="seg"><span class="chord">D</span><span class="lyr">left who&#x27;d even </span></span><span class="seg"><span class="chord">G</span><span class="lyr">look me in the </span></span><span class="seg"><span class="chord">A</span><span class="lyr">eye</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">now I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">laugh and make a fortune off the </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">same ones that I tortured</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">and a world s</span></span><span class="seg"><span class="chord">D</span><span class="lyr">cre</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">ams: </span></span><span class="seg"><span class="chord">G</span><span class="lyr">Kiss me,</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> Son</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> of </span></span><span class="seg"><span class="chord">A</span><span class="lyr">God</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">I look like </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Jesus</span></span><span class="seg"><span class="chord">A(b9)</span><span class="lyr">, so they s</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ay</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">I loo</span></span><span class="seg"><span class="chord">A(b9)</span><span class="lyr">k like Jesu</span></span><span class="seg"><span class="chord">D</span><span class="lyr">s, so they say</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">but Mr </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Jesus is</span></span><span class="seg"><span class="chord">A(b9)</span><span class="lyr"> very far aw</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ay</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">now you&#x27;re the </span></span><span class="seg"><span class="chord">F#</span><span class="lyr">only one here who can t</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">ell me if it&#x27;s true</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">that y</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ou love me and I love </span></span><span class="seg"><span class="chord">A</span><span class="lyr">me</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">I bu</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ilt a little </span></span><span class="seg"><span class="chord">D+</span><span class="lyr">empire out of</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> some crazy g</span></span><span class="seg"><span class="chord">Ddim7</span><span class="lyr">arbage</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">I built a lit</span></span><span class="seg"><span class="chord">D+</span><span class="lyr">tle empire ou</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">t of some cra</span></span><span class="seg"><span class="chord">Ddim7</span><span class="lyr">zy garbage</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">called the bl</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ood of the expl</span></span><span class="seg"><span class="chord">G</span><span class="lyr">oited working cl</span></span><span class="seg"><span class="chord">A</span><span class="lyr">ass</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">but they&#x27;ve </span></span><span class="seg"><span class="chord">G</span><span class="lyr">overcome their shyness.  now they&#x27;re c</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">alling me &#x27;your Highness&#x27;</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">and a wo</span></span><span class="seg"><span class="chord">D</span><span class="lyr">rld scr</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">eams: Ki</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ss me, S</span></span><span class="seg"><span class="chord">A</span><span class="lyr">on of G</span></span><span class="seg"><span class="chord">D</span><span class="lyr">od</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr"></span></span></div></div>

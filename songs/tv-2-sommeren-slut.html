@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -620,7 +644,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  Elske </span></span><span class="seg"><span class="chord">E</span><span class="lyr">højt hvert langt mi</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">nut</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Lyset </span></span><span class="seg"><span class="chord">D</span><span class="lyr">væk</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  Gade</span></span><span class="seg"><span class="chord">E</span><span class="lyr">lygte, cykel</span></span><span class="seg"><span class="chord">A</span><span class="lyr">dæk</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">og </span></span><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">is i hinandens </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">blik</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">og is i hinande</span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">ns blik</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">ekko af tid der </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gik</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">dråber af stivnet </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">smil</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">hænger bag lukkede </span></span><span class="seg"><span class="chord">G</span><span class="lyr">døre</span></span></div></div>
@@ -628,7 +652,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  huske at </span></span><span class="seg"><span class="chord">E</span><span class="lyr">glemme, uaf</span></span><span class="seg"><span class="chord">F#</span><span class="lyr">brudt</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Lyset </span></span><span class="seg"><span class="chord">D</span><span class="lyr">væk</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bm</span><span class="lyr">  cykel</span></span><span class="seg"><span class="chord">E</span><span class="lyr">lygte, ansigts</span></span><span class="seg"><span class="chord">A</span><span class="lyr">træk</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">viskes </span></span><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">ud i en andens </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">blik</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">viskes ud i en </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">andens blik</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">lyden af skridt der </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gik</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">dråber af savner </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">dig</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">skjules bag smilende </span></span><span class="seg"><span class="chord">G</span><span class="lyr">øjne</span></span></div></div>
@@ -636,7 +660,7 @@
 <div class="block line-group"><div class="line chords-only"><span class="chord">A</span><span class="chord">Dmaj7</span><span class="chord">Bm7</span><span class="chord">E6</span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">A</span><span class="chord">Dmaj7</span><span class="chord">Bm7</span><span class="chord">E6</span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">A</span><span class="chord">Dmaj7</span><span class="chord">Bm7</span><span class="chord">E6</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Ansigts</span></span><span class="seg"><span class="chord">A</span><span class="lyr">træk</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Ansigtstræk</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">viskes </span></span><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">ud i en andens </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">blik</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E6</span><span class="lyr">lyden af skridt der </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gik</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dmaj7</span><span class="lyr">dråber af savner </span></span><span class="seg"><span class="chord">Bm7</span><span class="lyr">dig</span></span></div></div>

@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -614,7 +638,7 @@
     <h1>Fru Orlofski <span class="artist-inline">– Troels Trier</span></h1>
     
     <div class="chords">
-    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Når dagen er for</span></span><span class="seg"><span class="chord">F</span><span class="lyr">bi og </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">natten falder </span></span><span class="seg"><span class="chord">F</span><span class="lyr">på</span></span></div></div>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Når da</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">gen er forbi o</span></span><span class="seg"><span class="chord">F</span><span class="lyr">g natten falder på</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">så </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">høres fru Or</span></span><span class="seg"><span class="chord">E</span><span class="lyr">lofsky i gården </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">gå</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">plasticposer </span></span><span class="seg"><span class="chord">F</span><span class="lyr">røde, </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">gule, grønne, </span></span><span class="seg"><span class="chord">F</span><span class="lyr">blå</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">går </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hun for</span></span><span class="seg"><span class="chord">E</span><span class="lyr">bi og letter skraldespandens </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">låg</span></span></div></div>
@@ -622,7 +646,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Hvor skal hun hen - hvor skal hun </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hen</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Gårdens sorte dame går </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">igen</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">fru Orlofsky søger sig en </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ven</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">I gadelygtens </span></span><span class="seg"><span class="chord">F</span><span class="lyr">lys </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">går hun af</span></span><span class="seg"><span class="chord">F</span><span class="lyr">sted</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I ga</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">delygtens </span></span><span class="seg"><span class="chord">F</span><span class="lyr">lys går hun afsted</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">hvor skal hun hen - jeg følger </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">med</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Den gamle slidte </span></span><span class="seg"><span class="chord">F</span><span class="lyr">frakke og det </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">grå og tjavsede </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hår</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">bevæger sig i vinden mens hun </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">går</span></span></div></div>
@@ -630,7 +654,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Fru Orlofsky er en fremmed fugl på </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">træk</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">I skæret af lygten som lyser </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hvid</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">går hun over broen mod en anden </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tid</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Hun standser over </span></span><span class="seg"><span class="chord">F</span><span class="lyr">trappen ved </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">søens </span></span><span class="seg"><span class="chord">F</span><span class="lyr">bred</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Hun standser</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> over </span></span><span class="seg"><span class="chord">F</span><span class="lyr">trappen ved søens bred</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">og åbner for poserne som hun har </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">med</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Og hendes </span></span><span class="seg"><span class="chord">F</span><span class="lyr">silhouet mod </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">nathimlens skær</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">forandres pludselig mens jeg ser hende </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">der</span></span></div></div>
@@ -638,7 +662,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">søens bred forvandles til et oplyst </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hus</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">På trappen kommer gæster som </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bukker dybt</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">for fru Orlofski som i hvide mink er </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">svøbt</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">Men fru Orlofski </span></span><span class="seg"><span class="chord">F</span><span class="lyr">vandrer </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hvileføst om</span></span><span class="seg"><span class="chord">F</span><span class="lyr">kring</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Men fru </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Orlofski van</span></span><span class="seg"><span class="chord">F</span><span class="lyr">drer hvileføst omkring</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">de andre taler, men hun siger ingen</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ting</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Hun lytter kun til </span></span><span class="seg"><span class="chord">F</span><span class="lyr">natten og den </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tavse </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sne</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">og jeg kan se, hun venter på at noget skal </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ske</span></span></div></div>
@@ -646,7 +670,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Fru Orlofski smiler og hun vågner </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">brat </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Hun løber ned ad trappen, mens en </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">kane svinger ind</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Fyrst Igors kappe fyldes af den kolde </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">vind</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="lyr">Fyrst Igors </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hænder løsner </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">køreposens </span></span><span class="seg"><span class="chord">F</span><span class="lyr">bånd</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Fyrst Igors hæ</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">nder løsner</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> køreposens bånd</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">fru Orlofski skælver mens han kysser hendes </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hånd</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hun skælver og hun </span></span><span class="seg"><span class="chord">F</span><span class="lyr">rødmer, da han </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tager hendes </span></span><span class="seg"><span class="chord">F</span><span class="lyr">arm</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">hun ler forlegent, da de strejfer dørens </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">karm</span></span></div></div>
@@ -654,7 +678,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">de to de åbner aftenens </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bal</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Sneens hvide måne synger </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">deres melodi</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">nu vil de danse indtil natten er for</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">bi</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="lyr">Ja, klasser </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hersker og </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">klasser skylles </span></span><span class="seg"><span class="chord">F</span><span class="lyr">væk </span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 6]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Ja, klasser</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> hersker og klas</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ser skylles væk </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Fru Orlofski er en fremmed fugl på </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">træk</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Det sted, hvor fru Or</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lofski </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">drømmer sig </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hen</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">det vil hun aldrig, aldrig mere se </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">igen</span></span></div></div>

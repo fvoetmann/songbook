@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -625,19 +649,19 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Comes a</span></span><span class="seg"><span class="chord">C</span><span class="lyr">round mo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">re than </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I do</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But you&#x27;re </span></span><span class="seg"><span class="chord">C</span><span class="lyr">all it takes for</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"> me to break a</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> promi</span></span><span class="seg"><span class="chord">A</span><span class="lyr">se</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Silly me to </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">fall in love with </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">haven&#x27;t slept since Sunday</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I haven&#x27;t slept since Sunday</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mid</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">night for me is 3A</span></span><span class="seg"><span class="chord">C</span><span class="lyr">M for </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">u</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But my </span></span><span class="seg"><span class="chord">G</span><span class="lyr">sleepless nights are better</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">With </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">you than nights could ever be</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> alone, ooh, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ooh-ooh, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ooh</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> good at feeling </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">nothin&#x27;, now I&#x27;m </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hopeless</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">What a drag to </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">love you like</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> I do, ooh-ooh, </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">ooh, ooh, ooh, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ooh</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ooh-</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ooh-ooh, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ooh, ooh-ooh, ooh-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ooh</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">I&#x27;ve been </span></span><span class="seg"><span class="chord">C</span><span class="lyr">loved before, but </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">right now in this </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">moment</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I&#x27;ve been loved be</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">fore, but right no</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">w in t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">his moment</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I feel </span></span><span class="seg"><span class="chord">C</span><span class="lyr">more and more likе </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">I was made for </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">   For </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Instrumental Break]</span></div><div class="line chords-only"><span class="chord">Gm</span><span class="chord">C</span><span class="chord">F</span><span class="chord">Dm</span></div></div>
 <div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Gm</span><span class="chord">C</span><span class="chord">F</span><span class="chord">Dm</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="lyr">I&#x27;m </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">sitting</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> in my brother&#x27;s </span></span><span class="seg"><span class="chord">F</span><span class="lyr">room</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">I&#x27;m sit</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ting in my brothe</span></span><span class="seg"><span class="chord">F</span><span class="lyr">r&#x27;s </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">room</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">  Haven&#x27;t slеpt in a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">week, or </span></span><span class="seg"><span class="chord">F</span><span class="lyr">two, or </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">two</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">think I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">might have fallen in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">love</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">What am </span></span><span class="seg"><span class="chord">C</span><span class="lyr">I to </span></span><span class="seg"><span class="chord">Fmaj7</span><span class="lyr">do?</span></span></div></div>

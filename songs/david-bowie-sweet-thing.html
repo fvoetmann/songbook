@@ -438,14 +438,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -617,7 +641,7 @@
 <div class="line"><span class="seg"><span class="lyr">C6/9           play C</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">D(add9)        play D</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">D/C</span><span class="chord">C</span><span class="chord">D/C</span><span class="chord">C</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">It&#x27;s safe in the </span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">city,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> to love in a </span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">doorway</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">D/C</span><span class="lyr">It&#x27;s </span></span><span class="seg"><span class="chord">C</span><span class="lyr">safe in the ci</span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">ty, to </span></span><span class="seg"><span class="chord">C</span><span class="lyr">love in a doorway</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To wrangle some</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> screens from the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">door</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And isn&#x27;t it </span></span><span class="seg"><span class="chord">C</span><span class="lyr">me,</span></span><span class="seg"><span class="chord">D/C</span><span class="lyr"> putting pain</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> in a stranger?</span></span><span class="seg"><span class="chord">D/C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Like a portrait in </span></span><span class="seg"><span class="chord">C</span><span class="lyr">flesh, who </span></span><span class="seg"><span class="chord">D</span><span class="lyr">trails on a </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">leash</span></span></div></div>
@@ -629,7 +653,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Boys, </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">boys, it&#x27;s a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sweet thing, sweet thing</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">If you </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">want it, bo</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">ys, get it </span></span><span class="seg"><span class="chord">G/B</span><span class="lyr">here, thing</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hope, boys,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> is a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">cheap thing, cheap thin</span></span><span class="seg"><span class="chord">G</span><span class="lyr">g</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">I&#x27;m glad that you&#x27;re </span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">older than me</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">D/C</span><span class="lyr">I&#x27;m glad that</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> you&#x27;re older than me</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Makes me feel im</span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">portant and free</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Does that make you </span></span><span class="seg"><span class="chord">D</span><span class="lyr">smile, isn&#x27;t that</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> me?</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m in your </span></span><span class="seg"><span class="chord">C</span><span class="lyr">way,</span></span><span class="seg"><span class="chord">D/C</span><span class="lyr"> and I&#x27;ll steal</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> every moment</span></span><span class="seg"><span class="chord">D/C</span><span class="lyr"></span></span></div></div>
@@ -660,7 +684,7 @@
 <div class="page">
     
     
-    <div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">I&#x27;ll make you a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">deal, like any </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">other candidate</span></span></div></div>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">I&#x27;ll make you a</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> deal, like any other candidate</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We&#x27;ll pre</span></span><span class="seg"><span class="chord">G</span><span class="lyr">tend we&#x27;re walking home &#x27;cause your future&#x27;s at stake</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">My </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">set is amazing, it even </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">smells like a street</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">There&#x27;s a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">bar at the end where I can meet you and your friend</span></span></div></div>
@@ -700,7 +724,7 @@
 <div class="page">
     
     
-    <div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">If you </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">want it, bo</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr">ys, get it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">here, thing</span></span></div></div>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">If you want</span></span><span class="seg"><span class="chord">Am/C</span><span class="lyr"> it, boys, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">get it here, thing</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hope, boys,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> is a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">cheap thing, cheap thin</span></span><span class="seg"><span class="chord">G</span><span class="lyr">g</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Is it nice in your </span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">snow storm,</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> freezing your </span></span><span class="seg"><span class="chord">D/C</span><span class="lyr">brain?</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Do you think that your </span></span><span class="seg"><span class="chord">D</span><span class="lyr">face looks the </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">same?</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>

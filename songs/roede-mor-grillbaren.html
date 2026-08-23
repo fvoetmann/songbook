@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -614,7 +638,7 @@
     <h1>Grillbaren <span class="artist-inline">– Røde Mor</span></h1>
     
     <div class="chords">
-    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Grillbaren </span></span><span class="seg"><span class="chord">A</span><span class="lyr">lukker nu </span></span></div></div>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Grillbaren lukker nu </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og neonlyserne går </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ud</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">bag disken </span></span><span class="seg"><span class="chord">A</span><span class="lyr">standser hun</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og tørrer med sin </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">klud</span></span></div></div>
@@ -622,7 +646,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hun lægger </span></span><span class="seg"><span class="chord">F</span><span class="lyr">mønt på mønt</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og tier på tier</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">-- Grillbar</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">en lukker nu</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Hun samler </span></span><span class="seg"><span class="chord">A</span><span class="lyr">glas og krus</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Hun samler glas og krus</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og jeg kan se at hun er </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">træt</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Nu er det slut med pølser, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">chips og mos</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">slut med dagens </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ret</span></span></div></div>
@@ -630,7 +654,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">jeg </span></span><span class="seg"><span class="chord">F</span><span class="lyr">tror hun drømmer at min lastbil </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">tar hende </span></span><span class="seg"><span class="chord">A</span><span class="lyr">med</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">-- Grillbaren </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lukker nu</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Ja - hun føler </span></span><span class="seg"><span class="chord">A</span><span class="lyr">vibrationerne</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Ja - hun føler vibrationerne</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">af læder, lak og </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">krom</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Måske hun mærker </span></span><span class="seg"><span class="chord">A</span><span class="lyr">eksplosionerne</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">- Nu gløder hvert </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">atom</span></span></div></div>
@@ -638,14 +662,14 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Se - himlen fyldes </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">af benzin og </span></span><span class="seg"><span class="chord">A</span><span class="lyr">gas</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">- Grillbaren </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lukker nu</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">Ja her ved </span></span><span class="seg"><span class="chord">A</span><span class="lyr">bredden af </span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Ja her ved bredden af </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">kulturens blanke </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">strøm</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Her blir man tit </span></span><span class="seg"><span class="chord">A</span><span class="lyr">bedøvet af </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">en hed og mærklig </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">drøm</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">Man drømmer man lever, man drømmer man ler</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">drømmer at man elsker drømmer at man </span></span><span class="seg"><span class="chord">A</span><span class="lyr">ser</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">- Grillbaren </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">lukker nu</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">Her sidder jeg og </span></span><span class="seg"><span class="chord">A</span><span class="lyr">der står hun</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Her sidder jeg og der står hun</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">og se, mit bord det råber: </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">kom</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">kom ryd mig, </span></span><span class="seg"><span class="chord">A</span><span class="lyr">rør mig nu</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Men nej - hendes blik er </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">tomt</span></span></div></div>

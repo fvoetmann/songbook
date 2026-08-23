@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -623,7 +647,7 @@
 <div class="line"><span class="seg"><span class="lyr">Em6      0 4 2 0 2 0</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">D#dim7   x x 1 2 1 2</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">E</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr"><span class="chord">A</span>*        <span class="chord">C#</span> <span class="chord">F#m</span> <span class="chord">F#m7/E</span> <span class="chord">D</span> <span class="chord">Dsus2</span></span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr"><span class="chord">A</span>*        <span class="chord">C#</span>           <span class="chord">F#m</span>    <span class="chord">F#m7/E</span>  <span class="chord">D</span>   <span class="chord">Dsus2</span></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">  People stared at the makeup on his face</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Laughed at his l</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ong black hair</span></span><span class="seg"><span class="chord">E</span><span class="lyr">, his animal g</span></span><span class="seg"><span class="chord">C#</span><span class="lyr">race</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">    The boy in the br</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ight blue jeans</span></span></div></div>
@@ -635,7 +659,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Yes, he was </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">awful ni</span></span><span class="seg"><span class="chord">Emmaj7</span><span class="lyr">ce</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em7</span><span class="lyr">Really quite out of </span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">sight</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And he sang </span></span><span class="seg"><span class="chord">A</span><span class="lyr">all </span></span><span class="seg"><span class="chord">E</span><span class="lyr">night l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ong</span></span><span class="seg"><span class="chord">Eadd9</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr"><span class="chord">A</span>*             <span class="chord">C#</span> <span class="chord">F#m</span></span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr"><span class="chord">A</span>*             <span class="chord">C#</span>                <span class="chord">F#m</span></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">  The femme fatales emerged from shadows</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To </span></span><span class="seg"><span class="chord">F#m7/E</span><span class="lyr">watch this crea</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ture fair</span></span><span class="seg"><span class="chord">Dsus2</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">  Boys stood u</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">pon their chairs to </span></span><span class="seg"><span class="chord">E</span><span class="lyr">make their point of v</span></span><span class="seg"><span class="chord">C#</span><span class="lyr">iew</span></span></div></div>
@@ -661,9 +685,8 @@ B|---4----4--5--7-4--5----5----------------------------|
 G|---6----6--6--6-6--6----6----9----9--9----9----9--9--|
 D|---7----7--7--7-7--7----7----8----8--9----8----8--9--|  x2
 A|-0----0---------------0------7----7--7----7----7--7--|
-E|---------------------------0----0-------0----0-------|
-
-e|-----------------------------------------------------|
+E|---------------------------0----0-------0----0-------|</pre>
+<pre class="block line-group line-group-last">e|-----------------------------------------------------|
 B|---4----4--5--7-4--5----5----------------------------|
 G|---6----6--6--6-6--6----6----9----9--9----9----9--9--|
 D|---7----7--7--7-7--7----7----8----8--9----8----8--9--|  x2

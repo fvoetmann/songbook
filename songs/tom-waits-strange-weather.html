@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -615,7 +639,7 @@
     
     <div class="chords">
     <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Am</span><span class="chord">E</span><span class="chord">Am</span><span class="chord">E</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Will you </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">take me ac</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ross the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">channel</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Will you t</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ake me ac</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ross the channel</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">London </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">Bridge is </span></span><span class="seg"><span class="chord">G</span><span class="lyr">falling </span></span><span class="seg"><span class="chord">E</span><span class="lyr">down</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Strange a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">woman </span></span><span class="seg"><span class="chord">E</span><span class="lyr">tries to </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">save</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">More than a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">man will </span></span><span class="seg"><span class="chord">G</span><span class="lyr">try to dr</span></span><span class="seg"><span class="chord">E</span><span class="lyr">own</span></span></div></div>
@@ -623,12 +647,12 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">forecast every </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">time</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The rose has </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">died because </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you picked </span></span><span class="seg"><span class="chord">C</span><span class="lyr">it</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I be</span></span><span class="seg"><span class="chord">B</span><span class="lyr">lieve that brandy&#x27;s </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">mine</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And all </span></span><span class="seg"><span class="chord">A</span><span class="lyr">over the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">world</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And all o</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ver the world</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Strangers talk </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">only about the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">weather</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">All </span></span><span class="seg"><span class="chord">F</span><span class="lyr">over the </span></span><span class="seg"><span class="chord">Dm6/F</span><span class="lyr">world</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">same</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E7</span><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">same</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">And the w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">orld is ge</span></span><span class="seg"><span class="chord">E</span><span class="lyr">tting f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">latter</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">And the wo</span></span><span class="seg"><span class="chord">E</span><span class="lyr">rld is </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">getting flatter</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">sky is </span></span><span class="seg"><span class="chord">G</span><span class="lyr">falling all </span></span><span class="seg"><span class="chord">E</span><span class="lyr">around</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh and n</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">othing </span></span><span class="seg"><span class="chord">E</span><span class="lyr">is the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">matter</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For I&#x27;ll </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">never c</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ry in t</span></span><span class="seg"><span class="chord">E</span><span class="lyr">own</span></span></div></div>
@@ -636,16 +660,16 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Is best m</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">easured when it&#x27;s </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">down</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I n</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">ever buy </span></span><span class="seg"><span class="chord">G</span><span class="lyr">umbrell</span></span><span class="seg"><span class="chord">C</span><span class="lyr">as</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Cause </span></span><span class="seg"><span class="chord">B</span><span class="lyr">there&#x27;s always one a</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">round</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And all </span></span><span class="seg"><span class="chord">A</span><span class="lyr">over the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">world</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And all o</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ver the world</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Strangers talk </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">only about the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">weather</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">All </span></span><span class="seg"><span class="chord">F</span><span class="lyr">over the </span></span><span class="seg"><span class="chord">Dm6/F</span><span class="lyr">world</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">same</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E7</span><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">same</span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">And you </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">know that it&#x27;s </span></span><span class="seg"><span class="chord">G</span><span class="lyr">begin</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ning</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">And you know th</span></span><span class="seg"><span class="chord">G</span><span class="lyr">at it</span></span><span class="seg"><span class="chord">C</span><span class="lyr">&#x27;s beginning</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And you </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">know that it&#x27;s the end</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Once a</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">gain we </span></span><span class="seg"><span class="chord">G7</span><span class="lyr">are </span></span><span class="seg"><span class="chord">C</span><span class="lyr">strangers</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">As the </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">fog goes rolling in</span></span><span class="seg"><span class="chord">E7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And all </span></span><span class="seg"><span class="chord">A</span><span class="lyr">over the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">world</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">And all o</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ver the world</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Strangers talk </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">only about the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">weather</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">All </span></span><span class="seg"><span class="chord">F</span><span class="lyr">over the </span></span><span class="seg"><span class="chord">Dm6/F</span><span class="lyr">world</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s the </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">same</span></span></div></div>

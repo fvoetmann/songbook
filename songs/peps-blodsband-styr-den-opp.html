@@ -438,14 +438,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -613,8 +637,8 @@
     
     
     <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Kom och </span></span><span class="seg"><span class="chord">A</span><span class="lyr">styr den opp </span></span><span class="seg"><span class="chord">D</span><span class="lyr">min lilla </span></span><span class="seg"><span class="chord">E</span><span class="lyr">älskling </span></span><span class="seg"><span class="chord">A</span><span class="lyr">styr den opp</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span><span class="seg"><span class="chord">E</span><span class="lyr"></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> A D E A D E...</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">Kom och styr den opp min lilla älskling styr den opp</span></span></div></div>
+<div class="line"><span class="seg"><span class="lyr">Kom och </span></span><span class="seg"><span class="chord">A</span><span class="lyr">styr den opp </span></span><span class="seg"><span class="chord">D</span><span class="lyr">min lilla </span></span><span class="seg"><span class="chord">E</span><span class="lyr">älskling </span></span><span class="seg"><span class="chord">A</span><span class="lyr">styr den opp</span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Det e så </span></span><span class="seg"><span class="chord">A</span><span class="lyr">längesen sen </span></span><span class="seg"><span class="chord">D</span><span class="lyr">jag fick dej på </span></span><span class="seg"><span class="chord">E</span><span class="lyr">hjärnan</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">men nu </span></span><span class="seg"><span class="chord">A</span><span class="lyr">e du här jag </span></span><span class="seg"><span class="chord">D</span><span class="lyr">säger: Så ska det </span></span><span class="seg"><span class="chord">E</span><span class="lyr">va</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Du </span></span><span class="seg"><span class="chord">A</span><span class="lyr">hajar det hela va: </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Bara </span></span><span class="seg"><span class="chord">E</span><span class="lyr">du o jag</span></span></div>
@@ -623,6 +647,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">sätter tändstickan till </span></span><span class="seg"><span class="chord">D</span><span class="lyr">det rätta </span></span><span class="seg"><span class="chord">E</span><span class="lyr">stället</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Sen ska jag raka o skaka i glöden </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hela </span></span><span class="seg"><span class="chord">E</span><span class="lyr">tiden</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">allt du behöver göra e </span></span><span class="seg"><span class="chord">D</span><span class="lyr">o hålla </span></span><span class="seg"><span class="chord">E</span><span class="lyr">liv i den</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Styr den opp...</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">Om du visste </span></span><span class="seg"><span class="chord">D</span><span class="lyr">vad jag </span></span><span class="seg"><span class="chord">E</span><span class="lyr">känner</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">hur hjärtat slår o </span></span><span class="seg"><span class="chord">D</span><span class="lyr">blodet det </span></span><span class="seg"><span class="chord">E</span><span class="lyr">bränner</span></span></div></div>

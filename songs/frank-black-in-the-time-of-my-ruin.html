@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -615,12 +639,13 @@
     
     <div class="chords">
     <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">[intro chords]</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">F Dm Bb  (x4)</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"><span class="chord">F</span>  <span class="chord">Dm</span>  <span class="chord">Bb</span>  (x4)</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">[verse]</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> In the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">time of my </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">ruin</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> At the museum I met a curator</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> She was so </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">nice, I thought I would </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">date her</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> I was a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">hawk and I just </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">flew in</span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">[verse 2] - same F-Dm-Bb chord progression</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">e-------------------------------------|</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">B-------------------------------------|</span></span></div>
@@ -636,8 +661,8 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> Sometimes its good to be </span></span><span class="seg"><span class="chord">F</span><span class="lyr">bli</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nd</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> Some </span></span><span class="seg"><span class="chord">C</span><span class="lyr">pain feels </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">good</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Ab</span><span class="lyr"> That’s the pain that’s just the right kind</span></span><span class="seg"><span class="chord">G</span><span class="lyr"></span></span></div></div>
-<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[BREAK]</span></div><div class="line"><span class="seg"><span class="lyr"> F Dm Bb (x4)</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[VERSE]</span></div><div class="line"><span class="seg"><span class="lyr"> -  F-Dm-Bb</span></span></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[BREAK]</span></div><div class="line"><span class="seg"><span class="lyr"> <span class="chord">F</span>  <span class="chord">Dm</span>  <span class="chord">Bb</span> (x4)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[VERSE]</span></div><div class="line"><span class="seg"><span class="lyr"> -  <span class="chord">F</span>-<span class="chord">Dm</span>-<span class="chord">Bb</span></span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> You didn’t know I was a shoe-in</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> And you didn’t know it was my hour</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> And you didn’t know that I had the power</span></span></div></div>
@@ -650,6 +675,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr"> It is </span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">falling all a</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">round</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Db</span><span class="lyr"> The </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">floor is going, </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">too</span></span><span class="seg"><span class="chord">Bbm</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> Soon I will be </span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">falling on down</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div>
+<div class="line"><span class="seg"><span class="lyr"></span></span></div>
 <div class="line"><span class="seg"><span class="lyr"> (repeat OUTRO several times)</span></span></div></div>
     </div>
     

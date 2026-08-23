@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -620,7 +644,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">for </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">andres tanke</span></span><span class="seg"><span class="chord">G#</span><span class="lyr">spind</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Speku</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">lanterne </span></span><span class="seg"><span class="chord">D#</span><span class="lyr">bor der ikke </span></span><span class="seg"><span class="chord">Fm/d</span><span class="lyr">selv</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">der lader </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">andre om at kede sig </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">ihjel</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Hvor </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">klokke</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">blomser laved </span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">bjælde</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">klang</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Fm7</span><span class="lyr">Hvor k</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lokkeblomser l</span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">aved b</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">jældeklang</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">hvor </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">man ku&#x27; </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">høre bier </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">summe</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Fm</span><span class="lyr">rejste </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">sig en </span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">by af be</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">ton</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">så na</span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">turen </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">måtte for</span></span><span class="seg"><span class="chord">D#</span><span class="lyr">stum</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">me</span></span></div></div>
@@ -628,7 +652,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G#</span><span class="lyr">neonskilte er den </span></span><span class="seg"><span class="chord">D#</span><span class="lyr">eneste </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">pynt</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Fm</span><span class="lyr">vinden er kold be</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">tonen er </span></span><span class="seg"><span class="chord">Cm7</span><span class="lyr">grå</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">og </span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">aftenen er </span></span><span class="seg"><span class="chord">Fm7</span><span class="lyr">først </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">lige be</span></span><span class="seg"><span class="chord">Cm7</span><span class="lyr">gyndt</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 2]</span></div><div class="line"><span class="seg"><span class="lyr">I den </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hjerteløse by </span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 2]</span></div><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">I den hjerteløse by </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">blir </span></span><span class="seg"><span class="chord">G#</span><span class="lyr">alting </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">stille </span></span><span class="seg"><span class="chord">Cm7</span><span class="lyr">kvalt</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Offi</span></span><span class="seg"><span class="chord">F</span><span class="lyr">cielt er det løgn </span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">at </span></span><span class="seg"><span class="chord">G#</span><span class="lyr">der er </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">noget </span></span><span class="seg"><span class="chord">Cm7</span><span class="lyr">galt</span></span></div></div>

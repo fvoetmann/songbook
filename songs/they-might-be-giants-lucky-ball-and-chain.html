@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -629,8 +653,7 @@
 <div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Confi</span></span><span class="seg"><span class="chord">C</span><span class="lyr">dentially, she never called me </span></span><span class="seg"><span class="chord">G</span><span class="lyr">baby-doll</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Confi</span></span><span class="seg"><span class="chord">C</span><span class="lyr">dentially, I never had much </span></span><span class="seg"><span class="chord">G</span><span class="lyr">pride</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">C</span><span class="lyr">now I rock a bar stool and I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">drink for two</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> D C D    N.C.</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">Just pondering this time bomb in my mind</span></span></div></div>
+<div class="line"><span class="seg"><span class="lyr">Just </span></span><span class="seg"><span class="chord">D</span><span class="lyr">pondering this </span></span><span class="seg"><span class="chord">C</span><span class="lyr">time bomb in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">mind</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lost my lucky </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ball &amp; chain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">C</span><span class="lyr">now she&#x27;s four years </span></span><span class="seg"><span class="chord">D</span><span class="lyr">gone</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Just </span></span><span class="seg"><span class="chord">G</span><span class="lyr">five feet tall and </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">sick of me</span></span></div></div>
@@ -653,8 +676,7 @@
 <div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Confi</span></span><span class="seg"><span class="chord">C</span><span class="lyr">dentially, I never told you </span></span><span class="seg"><span class="chord">G</span><span class="lyr">of her charms</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Confi</span></span><span class="seg"><span class="chord">C</span><span class="lyr">dentially, we never had a </span></span><span class="seg"><span class="chord">G</span><span class="lyr">home</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">C</span><span class="lyr">this railroad apartment was the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">perfect place</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">D C D    N.C.</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">When she&#x27;d sit and hold me in her arms</span></span></div></div>
+<div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">When she&#x27;d sit and </span></span><span class="seg"><span class="chord">C</span><span class="lyr">hold me in her </span></span><span class="seg"><span class="chord">D</span><span class="lyr">arms</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lost my lucky </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ball &amp; chain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">C</span><span class="lyr">now she&#x27;s four years </span></span><span class="seg"><span class="chord">D</span><span class="lyr">gone</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Just </span></span><span class="seg"><span class="chord">G</span><span class="lyr">five feet tall and </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">sick of me</span></span></div></div>

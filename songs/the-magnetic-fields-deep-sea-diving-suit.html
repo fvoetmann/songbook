@@ -438,14 +438,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -613,21 +637,21 @@
     <div class="meta">Toneart: A</div>
     
     <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">Asus4</span><span class="chord">A</span><span class="chord">Asus2</span><span class="chord">A</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">You </span></span><span class="seg"><span class="chord">A</span><span class="lyr">didn&#x27;t have to </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">say   </span></span><span class="seg"><span class="chord">A</span><span class="lyr">that </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">I&#x27;m   </span></span><span class="seg"><span class="chord">A</span><span class="lyr">no </span></span><span class="seg"><span class="chord">D</span><span class="lyr">good, cause I know.</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">You didn&#x27;t have</span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr"> to sa</span></span><span class="seg"><span class="chord">A</span><span class="lyr">y   t</span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">hat I&#x27;</span></span><span class="seg"><span class="chord">A</span><span class="lyr">m  </span></span><span class="seg"><span class="chord">D</span><span class="lyr"> no good, cause I know.</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">There&#x27;s </span></span><span class="seg"><span class="chord">A</span><span class="lyr">no point pointing </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">pis - </span></span><span class="seg"><span class="chord">A</span><span class="lyr">tols </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">at    </span></span><span class="seg"><span class="chord">A</span><span class="lyr">me n</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ow. I&#x27;ll just go.</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">never should have </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">asked </span></span><span class="seg"><span class="chord">A</span><span class="lyr">you </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">to    </span></span><span class="seg"><span class="chord">A</span><span class="lyr">be k</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ind. But I&#x27;m slow.</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And I&#x27;m </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">sorry, but how </span></span><span class="seg"><span class="chord">D</span><span class="lyr">can I get to you</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">And I&#x27;m sorry, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">but how can I get to you</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Stuck in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fifty-pound lead boots</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Stuck in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">deep sea diving </span></span><span class="seg"><span class="chord">A</span><span class="lyr">suit</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">A</span><span class="chord">Asus4</span><span class="chord">A</span><span class="chord">Asus2</span><span class="chord">A</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">A</span><span class="lyr">never thought you&#x27;d </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">turn  </span></span><span class="seg"><span class="chord">A</span><span class="lyr">on </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">me    </span></span><span class="seg"><span class="chord">A</span><span class="lyr">cause </span></span><span class="seg"><span class="chord">D</span><span class="lyr">you&#x27;re my best friend</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">I never thought you&#x27;</span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">d turn</span></span><span class="seg"><span class="chord">A</span><span class="lyr">  o</span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">n me  </span></span><span class="seg"><span class="chord">A</span><span class="lyr">  caus</span></span><span class="seg"><span class="chord">D</span><span class="lyr">e you&#x27;re my best friend</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You </span></span><span class="seg"><span class="chord">A</span><span class="lyr">say I never </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">off - </span></span><span class="seg"><span class="chord">A</span><span class="lyr">fered </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">you   </span></span><span class="seg"><span class="chord">A</span><span class="lyr">a t</span></span><span class="seg"><span class="chord">D</span><span class="lyr">hing in the end</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">A</span><span class="lyr">now you wouldn&#x27;t </span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr">trust </span></span><span class="seg"><span class="chord">A</span><span class="lyr">me </span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr">with  </span></span><span class="seg"><span class="chord">A</span><span class="lyr">a  </span></span><span class="seg"><span class="chord">D</span><span class="lyr">grain of sand</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And I&#x27;m </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">sorry, but how </span></span><span class="seg"><span class="chord">D</span><span class="lyr">can I get to you</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">And I&#x27;m sorry, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">but how can I get to you</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Stuck in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fifty-pound lead boots</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Stuck in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">deep sea diving </span></span><span class="seg"><span class="chord">A</span><span class="lyr">suit</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="chord">A</span><span class="lyr">(x4)</span></span><span class="seg"><span class="chord">Asus4</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">Asus2</span><span class="lyr"></span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">And I&#x27;m </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">sorry, but how </span></span><span class="seg"><span class="chord">D</span><span class="lyr">can I get to you</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">F#m</span><span class="lyr">And I&#x27;m sorry, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">but how can I get to you</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Stuck in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fifty-pound lead boots</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Stuck in my </span></span><span class="seg"><span class="chord">D</span><span class="lyr">deep sea diving </span></span><span class="seg"><span class="chord">A</span><span class="lyr">suit</span></span></div></div>
     

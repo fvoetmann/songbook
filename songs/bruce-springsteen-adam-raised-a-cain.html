@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -615,47 +639,47 @@
     
     <div class="chords">
     <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Am</span><span class="chord">Em</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">In the s</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ummer that</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> I was </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">baptize</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">d,</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">In the sum</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mer tha</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">t I was</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> baptized,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">my father h</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">eld me </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">to his si</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">de.</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">as they </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">put me </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">to the wa</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ter,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">he said how </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">on that </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">day I cr</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ied</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">We were </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">prisoners of love,</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">We were prisoners of love,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">love in chains,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">He was </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">standing in the door,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was </span></span><span class="seg"><span class="chord">C</span><span class="lyr">standing in the rain,</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">with the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">same hot blood burning in</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"> our veins,</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Adam raised a Cain</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">All of t</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">he old fac</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">es,</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">All of the</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> ol</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">d f</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">aces,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">ask you why yo</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">u&#x27;re back.</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span><span class="seg"><span class="chord">Em</span><span class="lyr"></span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">they fit</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> you with </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">positio</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">n,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">and the keys to</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> your dadd</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">y&#x27;s Cad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">illac</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">in the d</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">arkness of your room</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">in the darkness of your room</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">your</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> mother calls you by your true name,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">you reme</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mber the faces,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">the</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> places the names,</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">you know </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">it&#x27;s never over, it&#x27;s relentless</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"> as the rain,</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Adam raised a Cain</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">in the b</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ible Cain </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">slew Ab</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">el,</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">in the bib</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">le Cain</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> sl</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ew Abel,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And east of </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">Eden Momma</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> he was</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> cast</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">you&#x27;re b</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">orn into t</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">his life </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">paying</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">,</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">for the si</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ns of some</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">one else&#x27;s</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> pas</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">t</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Daddy wo</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rked his whole life,</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Daddy worked his whole life,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">for</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> nothing but the pain,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">now he w</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">alks these empty rooms,</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">loo</span></span><span class="seg"><span class="chord">C</span><span class="lyr">king for something to blame,</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">you inher</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">it the sins, you inherit </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">the pain</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Adam raised a Cain</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Lo</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">st but not forgotten from the d</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ark heart of a dream</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Adam r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">aised a Cain</span></span></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Adam raised a Cain</span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Adam raised a Cain</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">D</span><span class="lyr">Ad</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">am raised a Cain</span></span></div>

@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -624,7 +648,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">When </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">answering the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">phone,</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">What </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">country shall I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">say is calling</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">From across the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">world?</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">C</span><span class="lyr">she&#x27;s not a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">fraid to die</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But she&#x27;s n</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ot afraid to die</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The </span></span><span class="seg"><span class="chord">C</span><span class="lyr">people all call </span></span><span class="seg"><span class="chord">F</span><span class="lyr">her Alaska</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Between worlds, so the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">people ask her</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause </span></span><span class="seg"><span class="chord">C</span><span class="lyr">it&#x27;s all </span></span><span class="seg"><span class="chord">F</span><span class="lyr">in </span></span><span class="seg"><span class="chord">C</span><span class="lyr">her </span></span><span class="seg"><span class="chord">G</span><span class="lyr">mind</span></span></div></div>
@@ -639,7 +663,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But doesn&#x27;t </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hang up the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">phone</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">What </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">sea shell </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">she is calling</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">From across the </span></span><span class="seg"><span class="chord">G</span><span class="lyr">world</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">C</span><span class="lyr">she&#x27;s not a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">fraid to die</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">But she&#x27;s n</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ot afraid to die</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">The </span></span><span class="seg"><span class="chord">C</span><span class="lyr">people all call </span></span><span class="seg"><span class="chord">F</span><span class="lyr">her Alaska</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Between worlds, so the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">people ask her</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause </span></span><span class="seg"><span class="chord">C</span><span class="lyr">it&#x27;s all </span></span><span class="seg"><span class="chord">F</span><span class="lyr">in </span></span><span class="seg"><span class="chord">C</span><span class="lyr">her </span></span><span class="seg"><span class="chord">G</span><span class="lyr">mind</span></span></div></div>

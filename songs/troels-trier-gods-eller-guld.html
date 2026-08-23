@@ -438,14 +438,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -613,7 +637,7 @@
     
     
     <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">Am</span><span class="chord">D</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Cm</span><span class="chord">D</span><span class="chord">D</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Fra </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">barndommen husker jeg dr</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">engen Per, han s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ad ved landsbyens </span></span><span class="seg"><span class="chord">G</span><span class="lyr">gadekær</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Fra barndommen husker je</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">g drengen Per, h</span></span><span class="seg"><span class="chord">C</span><span class="lyr">an sad ved landsby</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ens gadekær</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Hans </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">tøj var snavset, hans </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hår fuld af lus, han </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">kom kommunens </span></span><span class="seg"><span class="chord">D</span><span class="lyr">fattighus</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Han </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">længtes tit mod den </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">anden bred, mod Br</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ugsens Lis så hans</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> kærlighed</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Hendes </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hår var gyldent og k</span></span><span class="seg"><span class="chord">D</span><span class="lyr">jolen var smuk, hu</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">n ænsede ikke drenge</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ns suk åhåhåhåh</span></span></div></div>
@@ -632,7 +656,7 @@
 <div class="line"><span class="seg"><span class="lyr"> <span class="chord">Em</span> <span class="chord">Am</span> <span class="chord">Am</span>*      <span class="chord">Cm</span>*   <span class="chord">D</span> <span class="chord">D</span></span></span></div>
 <div class="line"><span class="seg"><span class="lyr">Så hvis lykken hverken er gods eller guld, så følges de oftest ad</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Instrumental]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">Am</span><span class="chord">D</span><span class="chord">Em</span><span class="chord">Am</span><span class="chord">Cm</span><span class="chord">D</span><span class="chord">D</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Sn</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">art bygged’ Per som blev </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">millionær, en </span></span><span class="seg"><span class="chord">C</span><span class="lyr">villa ved landsbyens</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> gadekær</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Snart bygged’ Per som ble</span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">v millionær, e</span></span><span class="seg"><span class="chord">C</span><span class="lyr">n villa ved landsbye</span></span><span class="seg"><span class="chord">G</span><span class="lyr">ns gadekær</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Med </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">udsigt til den </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">anden bred, hvor B</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">rugsen den er reve</span></span><span class="seg"><span class="chord">D</span><span class="lyr">t ned</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr">Der kan man se en </span></span><span class="seg"><span class="chord">Bm</span><span class="lyr">gravsten stå, over </span></span><span class="seg"><span class="chord">C</span><span class="lyr">Lis som døde </span></span><span class="seg"><span class="chord">G</span><span class="lyr">fattig og grå</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">jorden ligger hendes</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> lig, men</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">s Per er lykkelig </span></span><span class="seg"><span class="chord">D</span><span class="lyr">og rig åhåhåh</span></span></div></div>

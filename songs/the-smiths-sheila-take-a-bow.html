@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -616,26 +640,26 @@
     <div class="chords">
     <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">https://www.youtube.com/watch?v=L5M0HQHWhR0</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">B</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Is it wr</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ong to want to l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ive on your ow</span></span><span class="seg"><span class="chord">A</span><span class="lyr">n?</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Is it wrong to w</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ant to live on</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> your own?</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">No, it&#x27;s not</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> wrong - but I</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr"> must know</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">How can </span></span><span class="seg"><span class="chord">E</span><span class="lyr">someone</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> so young</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Sing </span></span><span class="seg"><span class="chord">A</span><span class="lyr">words so sad?</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Sh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">eila take a, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Sheila take a </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">bow</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Sheila take a</span></span><span class="seg"><span class="chord">D</span><span class="lyr">, Sheila take </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">a bow</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Boot the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">grime of this worl</span></span><span class="seg"><span class="chord">D</span><span class="lyr">d in the cr</span></span><span class="seg"><span class="chord">E</span><span class="lyr">otch, dear</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">E</span><span class="lyr">don&#x27;t go ho</span></span><span class="seg"><span class="chord">D</span><span class="lyr">me tonigh</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">t</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Come out and find the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">one that you l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ove and who l</span></span><span class="seg"><span class="chord">E</span><span class="lyr">oves you</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  The one that you l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ove and who l</span></span><span class="seg"><span class="chord">E</span><span class="lyr">oves you, oh</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">Is it wr</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ong not to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">always be glad</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Is it wrong</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> not to always</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> be glad</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">No, it&#x27;s not</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> wrong - but I</span></span><span class="seg"><span class="chord">C#m</span><span class="lyr"> must add</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">How can </span></span><span class="seg"><span class="chord">E</span><span class="lyr">someone</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> so young</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Sing </span></span><span class="seg"><span class="chord">A</span><span class="lyr">words so sad?</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Sh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">eila take a, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Sheila take a </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">bow</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Sheila take a</span></span><span class="seg"><span class="chord">D</span><span class="lyr">, Sheila take </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">a bow</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Boot the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">grime of this worl</span></span><span class="seg"><span class="chord">D</span><span class="lyr">d in the cr</span></span><span class="seg"><span class="chord">E</span><span class="lyr">otch, dear</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And </span></span><span class="seg"><span class="chord">E</span><span class="lyr">don&#x27;t go ho</span></span><span class="seg"><span class="chord">D</span><span class="lyr">me tonigh</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">t</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Come out and find the </span></span><span class="seg"><span class="chord">C</span><span class="lyr">one that you l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ove and who l</span></span><span class="seg"><span class="chord">E</span><span class="lyr">oves you</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  The one that you l</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ove and who l</span></span><span class="seg"><span class="chord">E</span><span class="lyr">oves you, oh</span></span><span class="seg"><span class="chord">B</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Interlude]</span></div><div class="line chords-only"><span class="chord">B</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">Take my h</span></span><span class="seg"><span class="chord">E</span><span class="lyr">and and o</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ff we str</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ide</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Take my h</span></span><span class="seg"><span class="chord">D</span><span class="lyr">and and o</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">ff we stride</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh </span></span><span class="seg"><span class="chord">C</span><span class="lyr">la la </span></span><span class="seg"><span class="chord">D</span><span class="lyr">la la la </span></span><span class="seg"><span class="chord">E</span><span class="lyr">la la la</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You&#x27;re a g</span></span><span class="seg"><span class="chord">E</span><span class="lyr">irl and I</span></span><span class="seg"><span class="chord">D</span><span class="lyr">&#x27;m a bo</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">y</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">La la </span></span><span class="seg"><span class="chord">D</span><span class="lyr">la la la </span></span><span class="seg"><span class="chord">E</span><span class="lyr">la la l</span></span><span class="seg"><span class="chord">C</span><span class="lyr">a</span></span></div></div>
@@ -645,7 +669,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m a g</span></span><span class="seg"><span class="chord">E</span><span class="lyr">irl and y</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ou&#x27;re a bo</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">y</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">La la </span></span><span class="seg"><span class="chord">D</span><span class="lyr">la la la l</span></span><span class="seg"><span class="chord">E</span><span class="lyr">a</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">La la </span></span><span class="seg"><span class="chord">D</span><span class="lyr">la la la l</span></span><span class="seg"><span class="chord">E</span><span class="lyr">a</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">Sh</span></span><span class="seg"><span class="chord">E</span><span class="lyr">eila take a, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">Sheila take </span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">bow</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">E</span><span class="lyr">Sheila take a</span></span><span class="seg"><span class="chord">D</span><span class="lyr">, Sheila tak</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr">e bow</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">La la </span></span><span class="seg"><span class="chord">D</span><span class="lyr">la la la </span></span><span class="seg"><span class="chord">E</span><span class="lyr">la la la</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Throw your h</span></span><span class="seg"><span class="chord">E</span><span class="lyr">omework </span></span><span class="seg"><span class="chord">D</span><span class="lyr">onto the fire</span></span><span class="seg"><span class="chord">F#m</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Come </span></span><span class="seg"><span class="chord">C</span><span class="lyr">out and find the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">one that you l</span></span><span class="seg"><span class="chord">E</span><span class="lyr">ove</span></span></div></div>

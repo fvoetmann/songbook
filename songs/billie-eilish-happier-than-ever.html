@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -614,8 +638,7 @@
     <h1>Happier Than Ever <span class="artist-inline">– Billie Eilish</span></h1>
     <div class="meta">Toneart: C</div>
     <div class="chords">
-    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">***Please Note: If you find Cadd9 difficult to play, feel free to use a regular C (X32010).***</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
+    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">***Please Note: If you find Cadd9 difficult to play, feel free to use a regular C (X32010).***</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro - Rhythm Guitar]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">G6</span><span class="chord">G7</span></div></div>
 <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Verse 1 - Full Picking Pattern (With Optional Slash Chords)]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">C/G</span><span class="chord">C</span><span class="chord">C/G</span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">N.C.     <span class="chord">Cadd9</span></span></span></div>
@@ -626,8 +649,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Give me a</span></span><span class="seg"><span class="chord">Cadd9</span><span class="lyr"> day or two</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To think of something c</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">lever</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To write myself a</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> letter</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To tell me what to</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr"> do, </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> mm-mm</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">To tell me what to</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr"> do, </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> mm-mm</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Do you read my interviews?</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Or </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">do you skip my avenue?</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">When </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">you said you were passin&#x27; through</span></span></div></div>
@@ -638,16 +660,12 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I&#x27;d</span></span><span class="seg"><span class="chord">Dm7b5</span><span class="lyr"> end up more afraid</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Don&#x27;t say it is</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">n&#x27;t fair</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You clearly weren&#x27;t aware that you </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">made me </span></span><span class="seg"><span class="chord">Am/G</span><span class="lyr">miserab</span></span><span class="seg"><span class="chord">D/F#</span><span class="lyr">le, ooh</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">So if you r</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">eally wanna k</span></span><span class="seg"><span class="chord">G7</span><span class="lyr">now</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">When I&#x27;m </span></span><span class="seg"><span class="chord">Cadd9</span><span class="lyr">away from you (When I&#x27;m away from you)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">So if you r</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">eally wanna k</span></span><span class="seg"><span class="chord">G7</span><span class="lyr">now</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Cadd9</span><span class="lyr">When I&#x27;m away from you (When I&#x27;m away from you)</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I&#x27;m happier than e</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">ver (I&#x27;m happier than ever)</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Wish I could explain it b</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">etter (Wish I could explain it better)</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I wish it wasn&#x27;t </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">true, m</span></span><span class="seg"><span class="chord">G</span><span class="lyr">mm</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental Break]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
-<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">E7</span><span class="chord">Am</span><span class="chord">F</span><span class="chord">Fm</span></div>
-<div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I wish it wasn&#x27;t </span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr">true, m</span></span><span class="seg"><span class="chord">G</span><span class="lyr">mm</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Instrumental Break]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">E7</span><span class="chord">Am</span><span class="chord">F</span><span class="chord">Fm</span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">You called me a</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">gain, drunk in your B</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">enz</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Drivin&#x27; home un</span></span><span class="seg"><span class="chord">F</span><span class="lyr">der the inf</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">luence</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">You scared me to d</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">eath but I&#x27;m wastin&#x27; my b</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">reath</span></span></div></div>
@@ -655,9 +673,8 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I don&#x27;t relate to you</span></span><span class="seg"><span class="chord">E7</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">I don&#x27;t relate to you, </span></span><span class="seg"><span class="chord">F</span><span class="lyr">no</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause I&#x27;d never t</span></span><span class="seg"><span class="chord">C</span><span class="lyr">reat me this shi</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">tty</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">You made me </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hate this city</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">And I don&#x27;t talk s</span></span><span class="seg"><span class="chord">C</span><span class="lyr">hit about you on the in</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">ternet</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">You made me </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">hate this city</span></span><span class="seg"><span class="chord">F</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">And I don&#x27;t talk shit a</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">bout you on the internet</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Never told a</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">nyone anything b</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ad</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">&#x27;Cause that shit&#x27;s em</span></span><span class="seg"><span class="chord">C</span><span class="lyr">barrassing, you were my e</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">verything</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And all that you </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">did was make me fuckin&#x27; s</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ad</span></span></div></div>
@@ -666,47 +683,42 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I could talk about e</span></span><span class="seg"><span class="chord">C</span><span class="lyr">very time that you showed </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">up on time</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But I&#x27;d have an e</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">mpty line &#x27;cause you never d</span></span><span class="seg"><span class="chord">F</span><span class="lyr">id</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Never paid any </span></span><span class="seg"><span class="chord">C</span><span class="lyr">mind to my mother or f</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">riends, so I</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Shut them all </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">out for you &#x27;cause I was a k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">id</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Shut them all </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">out for you &#x27;cause I was a k</span></span><span class="seg"><span class="chord">F</span><span class="lyr">id</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">You ruined everything g</span></span><span class="seg"><span class="chord">E7</span><span class="lyr">ood</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Always s</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">aid you were misunderst</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ood</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Made all my moments your </span></span><span class="seg"><span class="chord">E7</span><span class="lyr">own</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Am</span><span class="lyr">Just fuckin&#x27; leave me a</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lone</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"><span class="chord">C</span> <span class="chord">E7</span> <span class="chord">Am</span> <span class="chord">F</span>  X3</span></span></div>
 <div class="line"><span class="seg"><span class="lyr"><span class="chord">C</span> <span class="chord">E7</span> <span class="chord">Am</span> <span class="chord">F</span> <span class="chord">Fm</span> <span class="chord">C</span>  X1</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">E7</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Am</span><span class="chord">Am/E</span><span class="chord">Am</span><span class="chord">Am/E</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Dm7b5</span></div></div>
     </div>
-    <div class="tab-section"><pre class="block line-group">e|-------3---3----3---3---0----|---1-------------|
+    <div class="tab-section"><pre class="block line-group line-group-last">e|-------3---3----3---3---0----|---1-------------|
 B|-------0---0----0---0---0----|---0-------------|
 G|-------0---0----0---0---0----|---0-------------|
 D|-----------------------------|---0-------------|
 A|-----------------------------|-----------------|
-E|---3-------------------------|-----------------|
-
-e|-------0--0-------0--0---|-------0--0--------0--0---|
+E|---3-------------------------|-----------------|</pre>
+<pre class="block line-group line-group-last">e|-------0--0-------0--0---|-------0--0--------0--0---|
 B|-------1--1-------1--1---|-------1--1--------1--1---|
 G|-------0--0-------0--0---|-------0--0--------0--0---|
 D|-------2--2-------2--2---|-------2--2--------2--2---|
 A|---3---------------------|---3----------------------|
-E|---------------3---------|---------------3----------|
-</pre>
-<pre class="block line-group">    <span class="chord">E7</span>
-e|-------0--0-------0--0---|-------0--0--------0--0---|
+E|---------------3---------|---------------3----------|</pre>
+<pre class="block line-group line-group-last">e|-------0--0-------0--0---|-------0--0--------0--0---|
 B|-------0--0-------0--0---|-------0--0--------0--0---|
 G|-------1--1-------1--1---|-------1--1--------1--1---|
 D|-------0--0-------0--0---|-------0--0--------0--0---|
 A|---2---------------------|---2----------------------|
-E|---------------0---------|---------------0----------|
-</pre>
-<pre class="block line-group">    <span class="chord">Am</span>         <span class="chord">Am/E</span>           <span class="chord">Am</span>         <span class="chord">Am/E</span>
-e|-------0--0-------0--0---|-------0--0--------0--0---|
+E|---------------0---------|---------------0----------|</pre>
+<pre class="block line-group line-group-last">e|-------0--0-------0--0---|-------0--0--------0--0---|
 B|-------1--1-------1--1---|-------1--1--------1--1---|
 G|-------2--2-------2--2---|-------2--2--------2--2---|
 D|-------2--2-------2--2---|-------2--2--------2--2---|
 A|---0---------------------|---0----------------------|
-E|---------------0---------|---------------0----------|
-</pre>
-<pre class="block line-group line-group-last">    <span class="chord">Dm7b5</span>
-e|-------1--1-------1--1---|-------1--1--------1--1---|
+E|---------------0---------|---------------0----------|</pre>
+<pre class="block line-group line-group-last">e|-------1--1-------1--1---|-------1--1--------1--1---|
 B|-------1--1-------1--1---|-------1--1--------1--1---|
 G|-------1--1-------1--1---|-------1--1--------1--1---|
 D|---0-----------0---------|---0-----------0----------|

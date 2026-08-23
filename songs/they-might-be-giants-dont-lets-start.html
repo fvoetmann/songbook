@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -628,7 +652,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr"> Could be</span></span><span class="seg"><span class="chord">Emmaj7</span><span class="lyr">lieve for</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr"> all the world that y</span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">ou&#x27;re my precious </span></span><span class="seg"><span class="chord">Dsus</span><span class="lyr">little girl, but</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Don&#x27;t, don&#x27;t, do</span></span><span class="seg"><span class="chord">C</span><span class="lyr">n&#x27;t let&#x27;s start </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">    I&#x27;ve got a w</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">eak heart, and</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I don&#x27;t get arou</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nd      how you </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">get around</span></span><span class="seg"><span class="chord">Dsus</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="lyr">Wh</span></span><span class="seg"><span class="chord">G</span><span class="lyr">en you are a</span></span><span class="seg"><span class="chord">C</span><span class="lyr">lone, you are the ca</span></span><span class="seg"><span class="chord">Fadd9</span><span class="lyr">t, you are the </span></span><span class="seg"><span class="chord">D</span><span class="lyr">phone</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">When you are</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> alone, you are the </span></span><span class="seg"><span class="chord">Fadd9</span><span class="lyr">cat, you are th</span></span><span class="seg"><span class="chord">D</span><span class="lyr">e phone</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Yo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">u are an ani</span></span><span class="seg"><span class="chord">C</span><span class="lyr">mal</span></span><span class="seg"><span class="chord">Fadd9</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Th</span></span><span class="seg"><span class="chord">G</span><span class="lyr">e words I&#x27;m </span></span><span class="seg"><span class="chord">C</span><span class="lyr">singing now mean not</span></span><span class="seg"><span class="chord">Fadd9</span><span class="lyr">hing more than </span></span><span class="seg"><span class="chord">D</span><span class="lyr">&quot;meow&quot;</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">To</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> an animal</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span><span class="seg"><span class="chord">Fadd9</span><span class="lyr"></span></span><span class="seg"><span class="chord">D</span><span class="lyr"></span></span></div></div>
@@ -652,7 +676,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr"> Could be</span></span><span class="seg"><span class="chord">Emmaj7</span><span class="lyr">lieve for</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr"> all the world that y</span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">ou&#x27;re my precious </span></span><span class="seg"><span class="chord">Dsus</span><span class="lyr">little girl, but</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Don&#x27;t, don&#x27;t, do</span></span><span class="seg"><span class="chord">C</span><span class="lyr">n&#x27;t let&#x27;s start </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">    I&#x27;ve got a w</span></span><span class="seg"><span class="chord">A7</span><span class="lyr">eak heart, and</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I don&#x27;t get arou</span></span><span class="seg"><span class="chord">C</span><span class="lyr">nd      how you </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">get around</span></span><span class="seg"><span class="chord">Dsus</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="lyr">I don&#x27;t want to l</span></span><span class="seg"><span class="chord">Dsus</span><span class="lyr">ive in this world anymore</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Bridge]</span></div><div class="line"><span class="seg"><span class="chord">Dsus</span><span class="lyr">I don&#x27;t want to live in this world anymore</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I don&#x27;t want to l</span></span><span class="seg"><span class="chord">Dsus</span><span class="lyr">ive in this woooorld</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Don&#x27;t, don&#x27;t, do</span></span><span class="seg"><span class="chord">C</span><span class="lyr">n&#x27;t let&#x27;s start </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">    This is the </span></span><span class="seg"><span class="chord">A7</span><span class="lyr">worst part</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Em</span><span class="lyr"> Could be</span></span><span class="seg"><span class="chord">Emmaj7</span><span class="lyr">lieve for</span></span><span class="seg"><span class="chord">Em7</span><span class="lyr"> all the world </span></span><span class="seg"><span class="chord">Em6</span><span class="lyr">that you&#x27;re my pre</span></span><span class="seg"><span class="chord">Dsus</span><span class="lyr">cious little girl, but</span></span></div></div>

@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -620,11 +644,11 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">Wondered if you saw</span></span><span class="seg"><span class="chord">D</span><span class="lyr"> things my </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">way</span></span><span class="seg"><span class="chord">Bb/D</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">People will </span></span><span class="seg"><span class="chord">D7/F#</span><span class="lyr">hold us to </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">blame</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">It </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">hit me tod</span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">ay, it </span></span><span class="seg"><span class="chord">C7/E</span><span class="lyr">hit me </span></span><span class="seg"><span class="chord">F</span><span class="lyr">today</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">We&#x27;re </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">taking it </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">hard all the t</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ime</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">We&#x27;re taki</span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">ng it hard all</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> the time</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Why don&#x27;t we pass it </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">by, just </span></span><span class="seg"><span class="chord">D</span><span class="lyr">reply you&#x27;ve </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">changed your mind</span></span><span class="seg"><span class="chord">Bb/D</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">We&#x27;re </span></span><span class="seg"><span class="chord">F</span><span class="lyr">fighting with the </span></span><span class="seg"><span class="chord">D7/F#</span><span class="lyr">eyes of the </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">blind</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb/F</span><span class="lyr">Taking it </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">hard, </span></span><span class="seg"><span class="chord">C7/E</span><span class="lyr">taking it </span></span><span class="seg"><span class="chord">F</span><span class="lyr">hard, yet </span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr">now</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">We </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">feel that we are </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">paper, c</span></span><span class="seg"><span class="chord">F</span><span class="lyr">hoking on you nightl</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">y</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Ab</span><span class="lyr">We feel that we a</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">re paper</span></span><span class="seg"><span class="chord">F</span><span class="lyr">, choking on you nig</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">htly</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">They </span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">tell me son, we w</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">ant you, be el</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">usive, but don&#x27;t wa</span></span><span class="seg"><span class="chord">F</span><span class="lyr">lk far</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For we&#x27;re </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">breaking in the </span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">new boys, </span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">deceive your next of </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">kin</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">For you&#x27;re </span></span><span class="seg"><span class="chord">F</span><span class="lyr">dancing where the </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">dogs decay, d</span></span><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">efecating ec</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">stasy</span></span></div></div>
@@ -642,7 +666,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Living on the </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">breath of a </span></span><span class="seg"><span class="chord">D</span><span class="lyr">hope to be </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">shared</span></span><span class="seg"><span class="chord">Bb/D</span><span class="lyr"></span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr">Trusting on the </span></span><span class="seg"><span class="chord">D7/F#</span><span class="lyr">sons of our l</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">ove</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">That </span></span><span class="seg"><span class="chord">Bb/F</span><span class="lyr">someone will </span></span><span class="seg"><span class="chord">Eb</span><span class="lyr">care, </span></span><span class="seg"><span class="chord">C7/E</span><span class="lyr">someone will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">care, but </span></span><span class="seg"><span class="chord">F/Eb</span><span class="lyr">now</span></span><span class="seg"><span class="chord">Dm7</span><span class="lyr"></span></span><span class="seg"><span class="chord">Bb</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">We&#x27;re to</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">day&#x27;s scrambled </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">creatures, l</span></span><span class="seg"><span class="chord">F</span><span class="lyr">ocked in tomorrow&#x27;s double </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">feature</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">Ab</span><span class="lyr">We&#x27;re today&#x27;s sc</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">rambled crea</span></span><span class="seg"><span class="chord">F</span><span class="lyr">tures, locked in tomorrow&#x27;s</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr"> double feature</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="chord">Eb/Bb</span><span class="lyr">Heaven&#x27;s on the pi</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">llow, its si</span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">lence competes wit</span></span><span class="seg"><span class="chord">F</span><span class="lyr">h hell</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It&#x27;s a </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">twenty four hour </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">service, guaran</span></span><span class="seg"><span class="chord">Ab</span><span class="lyr">teed to make you </span></span><span class="seg"><span class="chord">Gb6</span><span class="lyr">tell</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">streets are full of </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">press men</span></span></div></div>

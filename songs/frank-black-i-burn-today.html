@@ -440,14 +440,38 @@
       dot.classList.add('flash');
       setTimeout(function() { dot.classList.remove('flash'); }, 80);
     }
+    var metroNoiseBuffer = null;
+    function getMetroNoiseBuffer(ctx) {
+      if (metroNoiseBuffer) return metroNoiseBuffer;
+      var len = Math.round(ctx.sampleRate * 0.1);
+      metroNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      var data = metroNoiseBuffer.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return metroNoiseBuffer;
+    }
     function scheduleClick(time, accent) {
       var ctx = ensureAudioCtx();
-      var osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = accent ? 1000 : 800;
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(time); osc.stop(time + 0.05);
+      // Støj-transient: den "knæk"-lyd en trommestik giver ved anslag.
+      var noise = ctx.createBufferSource();
+      noise.buffer = getMetroNoiseBuffer(ctx);
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = accent ? 2200 : 3800;
+      noiseFilter.Q.value = 0.7;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(accent ? 0.9 : 0.5, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.start(time); noise.stop(time + 0.05);
+      // Tonal krop: trommeskindets dybe "resonans" med hurtigt faldende tonehøjde.
+      var osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 220 : 180, time);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 60 : 90, time + 0.08);
+      oscGain.gain.setValueAtTime(accent ? 0.6 : 0.3, time);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
     function metroScheduler() {
@@ -614,8 +638,7 @@
     <h1>I Burn Today <span class="artist-inline">– Frank Black</span></h1>
     <div class="meta">Toneart: C</div>
     <div class="chords">
-    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span></div></div>
-<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">G</span></div></div>
+    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">G</span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I knew a g</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">irl </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> with sad blue </span></span><span class="seg"><span class="chord">C</span><span class="lyr">eyes</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  But at the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">feast I </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">lost my psychic </span></span><span class="seg"><span class="chord">C</span><span class="lyr">prize</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  I did for</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">get what the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">tarot maid did</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> say</span></span></div></div>
@@ -624,7 +647,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  She said to </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">me I can </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">understand their </span></span><span class="seg"><span class="chord">C</span><span class="lyr">words</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  The land will </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">shake</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> so run a</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">way</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn to</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">day</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">,  I burn to</span></span><span class="seg"><span class="chord">C</span><span class="lyr">day</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Yes today I will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">burn</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  Yes today I will</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> burn</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> For the times I</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> did not learn</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Break]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
@@ -638,7 +661,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  She lay her </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">cards just to </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">see what she would </span></span><span class="seg"><span class="chord">C</span><span class="lyr">see</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  Down by the wa</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ter you will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">find your happys d</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ays</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn tod</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">I burn to</span></span><span class="seg"><span class="chord">C</span><span class="lyr">day</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Yes today I will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">burn</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  Yes today I will</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> burn</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> For the times I</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> did not learn</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Break]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
 <div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">Am</span><span class="chord">Em</span><span class="chord">C</span></div></div>
@@ -652,7 +675,7 @@
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  I feel her arm</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">s and her le</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">gs are all aroun</span></span><span class="seg"><span class="chord">C</span><span class="lyr">d</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  And we make lo</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ve be</span></span><span class="seg"><span class="chord">F</span><span class="lyr">side the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">waterway</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  I burn tod</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">ay I </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">burn toda</span></span><span class="seg"><span class="chord">C</span><span class="lyr">y</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">G</span><span class="lyr"> Yes today I will </span></span><span class="seg"><span class="chord">F</span><span class="lyr">burn</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  Yes today I will</span></span><span class="seg"><span class="chord">F</span><span class="lyr"> burn</span></span></div></div>
 <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr"> </span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> For the times I</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> did not learn</span></span></div></div>
 <div class="block line-group"><div class="line section-line"><span class="section">[Verse 7]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">  Behold the ro</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">se </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">of Jerich</span></span><span class="seg"><span class="chord">C</span><span class="lyr">o</span></span></div></div>
 <div class="block line-group"><div class="line"><span class="seg"><span class="lyr">  How many lives</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> I r</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">eally do no k</span></span><span class="seg"><span class="chord">C</span><span class="lyr">now</span></span></div></div>
