@@ -20,8 +20,7 @@ import subprocess
 from pathlib import Path
 from bs4 import BeautifulSoup, NavigableString
 
-sys.path.insert(0, str(Path(__file__).parent))
-from add_song import (
+from songlib import (
     make_song_html, parse_chord_name, load_songs, save_songs,
     rebuild_index, slugify, transpose_content, transpose_chord,
     is_chord_only_line,

@@ -95,10 +95,11 @@ python3 rebuild_songs.py
 ## Filer
 
 - `songbook.py` — interaktiv menu der samler add_song/edit_song/make_pdf og åbning af sangbogen
-- `add_song.py` — hovedscript (tilføj sang fra UG)
+- `add_song.py` — hovedscript (tilføj sang fra UG); tynd wrapper om `songlib`-pakken
 - `edit_song.py` — rediger eller opret sang manuelt
 - `make_pdf.py` — generer samlet PDF med indholdsfortegnelse
 - `rebuild_songs.py` — regenerer alle sang-HTML-filer med aktuelt template
+- `songlib/` — logik-pakke bag scripts (akkordteori, templates, UG-parsing, layout, rendering, store, CLI)
 - `.nojekyll` — forhindrer GitHub Pages i at køre Jekyll
 - `songs/` — genererede HTML-sange
 - `songs.json` — intern liste over sange (title, artist, file, source, hash)
@@ -189,21 +190,22 @@ Indholdet bruger UG-markup:
 
 ## Kendte forbedringspunkter
 
-Fra en kodevurdering 2026-08-10 (`code-assessment.md`), efter at tests og en række konkrete
-bugfixes allerede er lavet. Prioriteret rækkefølge for næste skridt:
+Fra en kodevurdering 2026-08-10 (`code-assessment.md`), efter at tests, en række konkrete bugfixes,
+modulopdelingen af `add_song.py` → `songlib/` og requirements-fix allerede er lavet. Prioriteret
+rækkefølge for næste skridt:
 
 1. **Én kilde til akkordteori (Python → JS)** — `CHORD_TYPES`/`INSTRUMENTS`/`NOTE_SEMI`/`ACCIDENTAL`/
-   `SHARPS`/`FLATS` er duplikeret i Python og i den indlejrede JS og holdes manuelt i sync (senest ved
-   tilføjelse af "2"-akkordtypen). Injicér i stedet som JSON ved generation — samme mønster som
-   `__DBS_JSON__` allerede bruger til akkordgreb.
-2. **`requirements.txt` mangler `pypdf`** — `make_pdf.py` kræver den, men `pip install -r requirements.txt`
-   giver den ikke, så PDF-generering fejler efter en frisk installation.
-3. **`rebuild_songs.py` skriver alle sang-filer hver gang**, også uændrede — ændrer mtime og udløser
-   unødvendig GitHub Pages-republish. Skriv kun filen hvis den nye hash afviger fra den gamle.
+   `SHARPS`/`FLATS` er duplikeret i `songlib/chords.py` og i den indlejrede JS
+   (`songlib/templates.py`) og holdes manuelt i sync (senest ved tilføjelse af "2"-akkordtypen).
+   Injicér i stedet som JSON ved generation — samme mønster som `__DBS_JSON__` allerede bruger til
+   akkordgreb.
+2. ~~**`requirements.txt` mangler `pypdf`**~~ — ✅ Lavet (pypdf tilføjet).
+3. ~~**`rebuild_songs.py` skriver alle sang-filer hver gang**~~ — ✅ Lavet: filen skrives kun når
+   den nye hash afviger fra den gamle, så mtime/Pages-republish undgås for uændrede sange.
 4. **Dokumentér round-trip-kontrakten** (HTML ↔ UG-format, `edit_song.py`'s `html_to_content`/
    `ug_to_edit`/`edit_to_ug`) — det er den mest skrøbelige del af kodebasen, og værd at skrive ned nu.
 
 Lavere prioritet, ingen konkret smerte observeret endnu (se `code-assessment.md` for detaljer):
-modulopdeling af `add_song.py`, udflytning af HTML/CSS/JS-skabeloner til separate filer, caching af
+udflytning af HTML/CSS/JS-skabeloner fra `songlib/templates.py` til separate filer, caching af
 `generate_voicings`, og øvrig oprydning (magic numbers, duplikeret `SHARPS`/`FLATS`/`layout_msg`,
 `make_pdf.py`'s O(n²) `optimize_song_order`).

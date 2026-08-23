@@ -11,8 +11,7 @@ from pathlib import Path
 
 import pypdf
 
-sys.path.insert(0, str(Path(__file__).parent))
-from add_song import artist_sort_key
+from songlib import artist_sort_key
 
 SONGS_DIR = Path(__file__).parent / "songs"
 SONGS_JSON = Path(__file__).parent / "songs.json"

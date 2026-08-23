@@ -1,72 +1,11 @@
-<!DOCTYPE html>
-<html lang="da">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="tempo" content="103">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
-  <title>Rock N Roll Suicide – David Bowie</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Source Sans 3', sans-serif; background: #ddd; padding: 24px; }
-    .pages-wrap { display: flex; flex-direction: column; align-items: center; }
-    .page {
-      background: white;
-      width: 210mm;
-      min-height: 297mm;
-      margin: 0 auto;
-      padding: 12mm 14mm 56px;
-    }
-    @media screen and (min-width: 460mm) {
-      .pages-wrap { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10mm; }
-      .page { margin: 0; box-shadow: 0 2px 10px rgba(0, 0, 0, .18); }
-    }
-    h1 { font-size: 15pt; font-family: sans-serif; margin-bottom: 6px; }
-    h1 .artist-inline { font-size: 10pt; font-weight: normal; color: #555; }
-    .meta {
-      font-size: 7.5pt; font-family: sans-serif; color: #999;
-      border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px;
-    }
-    .meta a { color: #999; }
-    .block {
-      font-size: 9pt; line-height: 1.5;
-      margin-bottom: 6px;
-    }
-    .block.line-group { break-inside: avoid; margin-bottom: 0; }
-    .block.line-group-last { margin-bottom: 6px; }
-    body.font-small .block { font-size: 8pt; }
-    .chords { column-count: 2; column-gap: 8mm; }
-    @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
-    pre.block {
-      font-family: ui-monospace, 'Courier New', Courier, monospace;
-      white-space: pre-wrap; word-break: break-word;
-    }
-    div.block { font-family: 'Source Sans 3', sans-serif; }
-    .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
-    .line.chords-only .chord { margin-right: 1.4em; }
-    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
-    .seg .lyr { white-space: pre; }
-    .seg .lyr:empty::before { content: "\00a0"; }
-    .seg .chord { font-size: 0.85em; line-height: 1.3; }
-    .tab-section { margin-top: 8mm; }
-    .chord { color: #b00020; font-weight: bold; cursor: help; }
-    .section { color: #777; font-style: italic; font-weight: bold; }
-    @media (max-width: 640px) {
-      body { background: white; padding: 0; }
-      .page { width: 100%; min-height: auto; padding: 12px 14px; }
-    }
-    @media print {
-      body { background: white; padding: 0; }
-      .pages-wrap { display: block; gap: 0; }
-      .page { width: auto; min-height: auto; padding: 0; margin: 0; box-shadow: none; }
-      .page + .page { break-before: page; }
-      @page { size: A4; margin: 12mm 14mm; }
-      .block { break-inside: avoid; }
-      .tab-section { break-before: page; }
-    }
-  </style>
-  <style>
+"""HTML/CSS/JS-skabeloner til akkorddiagrammer, indlejret i hvert sang-HTML."""
+
+import json
+
+from .chords import build_all_voicings_dbs
+
+# ── Akkord-diagram HTML/JS (injiceres i hvert sang-HTML) ────────────────────
+CHORD_DIAGRAM_STYLE = """  <style>
     #chord-tip {
       position: fixed; z-index: 9999;
       background: white; border: 1px solid #ccc;
@@ -99,10 +38,11 @@
     #metro-dot.flash { background: #b00020; }
     @media (max-width: 640px) { #inst-bar { flex-wrap: wrap; max-width: calc(100vw - 32px); bottom: 8px; right: 8px; } }
     @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
-  </style>
-  <script>
+  </style>"""
+
+CHORD_DIAGRAM_JS = """  <script>
   (function() {
-    var DBS = {"guitar":{"C":[[-1,3,2,0,1,0],[-1,3,2,0,1,3],[-1,3,2,0,1,-1],[-1,3,5,0,5,0],[-1,3,5,0,5,3],[-1,3,5,5,5,0]],"G":[[3,2,0,0,0,3],[3,2,0,0,3,3],[3,2,0,4,0,3],[3,2,0,4,3,3],[3,2,0,0,0,-1],[3,2,0,0,3,-1]],"E":[[0,2,2,1,0,0],[0,2,2,1,0,-1],[-1,-1,2,1,0,0],[0,2,2,1,-1,-1],[0,2,2,4,0,4],[-1,-1,2,4,0,4]],"F":[[1,0,3,2,1,1],[1,3,3,2,1,1],[1,0,3,2,1,-1],[1,3,3,2,1,-1],[-1,-1,3,2,1,1],[1,3,3,2,-1,-1]],"Am":[[-1,0,2,2,1,0],[-1,0,2,2,1,-1],[5,0,7,5,5,0],[5,0,7,5,5,5],[5,7,7,5,5,0],[5,7,7,5,5,5]],"D9":[[-1,5,4,5,5,5],[-1,5,7,5,7,0],[-1,7,0,5,7,5],[0,0,0,2,1,2],[2,0,0,2,1,0],[0,3,0,2,1,2]],"G7":[[3,2,0,0,0,1],[3,2,0,0,3,1],[3,2,3,0,3,1],[3,2,3,0,3,3],[3,2,3,4,3,3],[3,2,3,0,3,-1]],"A":[[-1,0,2,2,2,0],[-1,0,2,2,2,-1],[5,0,7,6,5,0],[5,0,7,6,5,5],[5,7,7,6,5,0],[5,7,7,6,5,5]],"Dbm":[[-1,4,6,6,5,0],[-1,4,6,6,5,4],[-1,4,6,6,5,-1],[-1,-1,2,1,2,0],[0,4,6,6,5,0],[0,4,6,6,5,4]],"Abm":[[4,6,6,4,0,4],[4,6,6,4,4,4],[4,6,6,4,0,-1],[4,6,6,4,4,-1],[-1,-1,6,4,4,4],[4,6,6,4,-1,-1]],"B":[[-1,2,4,4,4,2],[-1,2,4,4,4,-1],[7,9,9,8,0,7],[7,9,9,8,7,7],[7,9,9,8,0,-1],[7,9,9,8,7,-1]],"Ebm":[[-1,6,8,8,7,6],[-1,6,8,8,7,-1],[2,1,1,3,-1,-1],[-1,-1,4,3,4,2],[6,6,8,8,7,6],[6,6,8,8,7,-1]],"Bbm":[[-1,1,3,3,2,1],[-1,1,3,3,2,-1],[6,8,8,6,6,6],[6,8,8,6,6,-1],[-1,-1,8,6,6,6],[6,8,8,6,-1,-1]],"Db":[[-1,4,6,6,6,4],[-1,4,6,6,6,-1],[-1,-1,3,1,2,1],[4,4,6,6,6,4],[4,4,6,6,6,-1],[-1,-1,6,6,6,4]],"Bb":[[-1,1,0,3,3,1],[-1,1,3,3,3,1],[-1,1,3,3,3,-1],[6,5,0,7,6,6],[6,5,0,7,6,-1],[6,8,0,7,6,6]],"Fm":[[1,3,3,1,1,1],[1,3,3,1,1,-1],[-1,-1,3,1,1,1],[1,3,3,1,-1,-1],[-1,3,3,1,1,1],[-1,3,3,1,1,-1]],"Cm":[[-1,3,1,0,1,3],[-1,3,1,0,1,-1],[-1,3,5,0,4,3],[-1,3,5,5,4,3],[-1,3,5,0,4,-1],[-1,3,5,5,4,-1]],"Gb":[[2,4,4,3,2,2],[2,4,4,3,2,-1],[-1,-1,4,3,2,2],[2,4,4,3,-1,-1],[-1,4,4,3,2,2],[-1,4,4,3,2,-1]]},"ukulele":{"C":[[0,0,0,3],[0,4,0,3],[0,4,3,3],[5,4,3,3],[5,7,0,7],[0,0,0,7]],"G":[[0,2,3,2],[4,2,3,2],[4,2,3,5],[4,7,7,5],[0,7,7,5],[7,7,7,5]],"E":[[1,4,0,2],[1,4,4,2],[4,4,4,2],[4,4,4,7]],"F":[[2,0,1,0],[2,0,1,3],[2,5,5,3],[5,5,5,3],[5,5,5,0],[2,5,5,0]],"Am":[[2,0,0,0],[2,0,0,3],[2,4,0,3],[2,4,5,3],[5,4,5,3],[5,4,0,0]],"D9":[[2,0,0,5],[2,2,0,3],[5,2,0,0],[2,4,2,5],[5,4,2,5],[5,4,5,5]],"G7":[[0,2,1,2],[4,5,3,5],[0,5,7,5],[0,2,3,2],[0,5,3,2],[4,2,3,2]],"A":[[2,1,0,0],[2,1,0,4],[2,4,0,4],[2,4,5,4],[6,4,0,0],[6,4,5,0]],"Dbm":[[1,1,0,4],[1,4,0,4],[1,4,4,4],[6,4,4,4],[6,4,4,7],[6,4,0,4]],"Abm":[[1,3,4,2],[4,3,4,2],[4,3,4,6]],"B":[[4,3,2,2],[4,6,7,6]],"Ebm":[[3,3,2,1],[3,6,6,6]],"Bbm":[[3,1,1,1],[3,1,1,4],[3,5,6,4],[6,5,6,4]],"Db":[[1,1,1,4],[6,5,4,4]],"Bb":[[3,2,1,1],[3,5,6,5],[7,5,6,5]],"Fm":[[1,0,1,3],[5,5,4,3]],"Cm":[[0,0,3,6],[0,3,3,3],[5,0,3,6],[5,3,3,3],[5,3,3,6]],"Gb":[[3,1,2,1],[3,1,2,4],[3,6,6,4],[6,6,6,4]]},"mandolin":{"C":[[5,2,3,3],[5,5,3,0],[5,5,7,0],[5,5,7,-1],[0,2,3,0],[0,2,3,3]],"G":[[0,0,2,3],[0,0,2,-1],[0,0,5,7],[0,5,5,7],[-1,5,5,7],[4,0,2,3]],"E":[[-1,2,2,4],[1,2,2,0],[1,2,2,4],[1,2,2,-1],[4,2,2,4],[4,6,7,0]],"F":[[-1,3,3,5],[2,3,3,1],[2,3,3,5],[2,3,3,-1],[5,3,0,5],[5,3,3,5]],"Am":[[2,2,3,0],[2,2,3,5],[2,2,3,-1],[5,2,0,0],[5,2,0,5],[5,2,3,5]],"D9":[[7,4,0,0],[7,4,7,5],[2,0,3,0],[2,2,5,2],[2,4,5,0],[5,2,5,2]],"G7":[[0,0,2,1],[4,3,5,3],[0,3,2,1],[0,0,2,3],[0,3,2,3],[0,0,2,-1]],"A":[[2,2,4,0],[2,2,4,5],[2,2,4,-1],[-1,7,4,0],[-1,2,4,5],[6,7,4,0]],"Dbm":[[6,6,4,0],[6,6,7,4],[6,6,7,0],[6,6,7,-1],[1,2,4,0],[1,2,4,4]],"Abm":[[1,1,2,4],[1,1,2,-1],[-1,6,6,7],[4,1,2,4],[-1,1,2,4],[4,6,6,4]],"B":[[4,1,2,2],[4,4,6,7],[4,4,6,-1],[-1,1,2,2],[-1,4,6,7],[4,1,-1,2]],"Ebm":[[-1,1,1,2],[3,1,1,2],[3,4,6,6],[3,4,6,-1],[-1,4,6,6],[3,1,-1,2]],"Bbm":[[3,3,4,1],[3,3,4,6],[3,3,4,-1],[6,3,4,6],[-1,3,4,6],[3,-1,4,1]],"Db":[[6,3,4,4],[1,3,4,1],[1,3,4,4],[1,3,4,-1],[-1,3,4,4],[6,3,-1,4]],"Bb":[[3,0,1,1],[3,3,5,6],[3,3,5,-1],[-1,0,1,1],[-1,3,5,6],[3,0,-1,1]],"Fm":[[-1,3,3,4],[1,3,3,1],[1,3,3,4],[1,3,3,-1],[5,3,3,4],[1,-1,3,1]],"Cm":[[5,5,6,3],[5,5,6,-1],[0,1,3,3],[0,1,3,-1],[-1,1,3,3],[5,-1,6,3]],"Gb":[[-1,4,4,6],[3,4,4,2],[3,4,4,6],[3,4,4,-1],[6,4,4,6],[3,-1,4,2]]},"banjo":{"C":[[2,0,1,2,0],[-1,0,1,2,0],[-1,-1,1,2,0],[2,5,5,2,0],[2,5,5,5,0],[5,5,5,2,0]],"G":[[0,0,0,0,0],[-1,0,0,0,0],[-1,-1,0,0,0],[0,4,3,0,0],[0,4,3,5,0],[5,4,3,0,0]],"E":[[2,1,0,2,0],[-1,1,0,2,0],[6,4,5,6,0],[-1,4,5,6,0],[2,1,0,-1,0],[6,4,5,-1,0]],"F":[[3,2,1,3,0],[-1,2,1,3,0],[7,5,6,7,0],[-1,5,6,7,0],[3,2,1,-1,0],[7,5,6,-1,0]],"Am":[[2,2,1,2,0],[-1,2,1,2,0],[7,5,5,7,0],[-1,5,5,7,0],[2,2,1,-1,0],[7,5,5,-1,0]],"D9":[[0,2,1,2,0],[2,2,1,0,0],[0,2,5,4,0],[2,2,3,4,0],[4,2,3,2,0],[4,2,5,0,0]],"G7":[[0,0,0,3,0],[3,0,0,0,0],[0,4,0,3,0],[3,4,0,0,0],[0,4,3,3,0],[3,4,3,0,0]],"A":[[2,2,2,2,0],[-1,2,2,2,0],[7,6,5,7,0],[-1,6,5,7,0],[2,2,2,-1,0],[7,6,5,-1,0]],"Dbm":[[2,1,2,2,0],[-1,1,2,2,0],[6,6,5,6,0],[-1,6,5,6,0],[2,1,2,-1,0],[6,6,5,-1,0]],"Abm":[[1,1,0,1,0],[-1,1,0,1,0],[6,4,4,6,0],[-1,4,4,6,0],[1,1,0,-1,0],[6,4,4,-1,0]],"B":[[1,4,0,4,0],[4,4,0,1,0],[1,4,4,4,0],[4,4,4,1,0],[4,4,4,4,0],[-1,4,4,4,0]],"Ebm":[[1,3,4,4,0],[4,3,4,1,0],[4,3,4,4,0],[-1,3,4,4,0],[1,3,-1,4,0],[4,3,-1,1,0]],"Bbm":[[3,3,2,3,0],[-1,3,2,3,0],[3,3,2,-1,0],[-1,3,2,-1,0]],"Db":[[3,1,2,3,0],[-1,1,2,3,0],[3,6,6,6,0],[6,6,6,3,0],[6,6,6,6,0],[-1,6,6,6,0]],"Bb":[[0,3,3,3,0],[0,3,6,0,0],[3,3,3,0,0],[0,3,6,3,0],[3,3,3,3,0],[3,3,6,0,0]],"Fm":[[3,1,1,3,0],[-1,1,1,3,0],[3,5,6,6,0],[6,5,6,3,0],[6,5,6,6,0],[-1,5,6,6,0]],"Cm":[[1,0,1,1,0],[-1,0,1,1,0],[-1,-1,1,1,0],[5,5,4,5,0],[-1,5,4,5,0],[1,0,1,-1,0]],"Gb":[[4,3,2,4,0],[-1,3,2,4,0],[4,3,2,-1,0],[4,3,-1,4,0],[-1,3,-1,4,0],[4,3,-1,-1,0]]}};
+    var DBS = __DBS_JSON__;
     var inst = 'guitar';
     var shown = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
     // Instrument-stemninger og akkord-teori, brugt til at generere greb on-the-fly
@@ -251,7 +191,7 @@
       return scale[((idx + n) % 12 + 12) % 12];
     }
     function transposeChordName(name, n) {
-      var m = /^([A-G][#b]?)(.*?)(\/([A-G][#b]?))?$/.exec(name);
+      var m = /^([A-G][#b]?)(.*?)(\\/([A-G][#b]?))?$/.exec(name);
       if (!m) return name;
       var result = shiftNote(m[1], n) + (m[2] || '');
       if (m[4]) result += '/' + shiftNote(m[4], n);
@@ -630,50 +570,10 @@
       window.addEventListener('scroll', hide, { passive: true });
     });
   })();
-  </script>
-</head>
-<body class="font-small">
-  <div class="pages-wrap">
-    <div class="page">
-    <h1>Rock N Roll Suicide <span class="artist-inline">– David Bowie</span></h1>
-    <div class="meta">Toneart: C</div>
-    <div class="chords">
-    <div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">C</span><span class="chord">G</span><span class="chord">C</span><span class="chord">G</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="lyr">Time takes a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">cigarette, puts it in your m</span></span><span class="seg"><span class="chord">E</span><span class="lyr">outh</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You pull on your f</span></span><span class="seg"><span class="chord">F</span><span class="lyr">inger, then another f</span></span><span class="seg"><span class="chord">G</span><span class="lyr">inger, then your c</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">igarette</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  The wall to wall is </span></span><span class="seg"><span class="chord">F</span><span class="lyr">calling, it </span></span><span class="seg"><span class="chord">G</span><span class="lyr">lingers, then you for</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">get</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span> <span class="chord">F</span>   N.C.                         | <span class="chord">C</span> <span class="chord">G</span> |</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">Oh-oh-oh-oh, you&#x27;re a rock&#x27;n roll suicide</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="lyr">You&#x27;re too old to </span></span><span class="seg"><span class="chord">C</span><span class="lyr">lose it, too young to </span></span><span class="seg"><span class="chord">E</span><span class="lyr">choose it</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">clock waits so </span></span><span class="seg"><span class="chord">G</span><span class="lyr">patiently on your </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">song</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  You walk past a </span></span><span class="seg"><span class="chord">F</span><span class="lyr">cafe but you don&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">eat when you&#x27;ve lived too </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">long</span></span></div>
-<div class="line"><span class="seg"><span class="lyr"><span class="chord">G</span> <span class="chord">F</span>   N.C.                         | <span class="chord">C</span> <span class="chord">G</span> |</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">Oh no no no, you&#x27;re a rock&#x27;n roll suicide</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Chev brakes are </span></span><span class="seg"><span class="chord">C</span><span class="lyr">snarling as you stumble a</span></span><span class="seg"><span class="chord">E</span><span class="lyr">cross the road</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">day breaks ins</span></span><span class="seg"><span class="chord">G</span><span class="lyr">tead so you hurry </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">home</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">  Don&#x27;t let the </span></span><span class="seg"><span class="chord">F</span><span class="lyr">sun blast your sha</span></span><span class="seg"><span class="chord">G</span><span class="lyr">dow</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Don&#x27;t let the </span></span><span class="seg"><span class="chord">E</span><span class="lyr">milk float ride your</span></span><span class="seg"><span class="chord">Am</span><span class="lyr"> mind</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">They&#x27;re so </span></span><span class="seg"><span class="chord">F</span><span class="lyr">natural, re</span></span><span class="seg"><span class="chord">D9</span><span class="lyr">ligiously unki</span></span><span class="seg"><span class="chord">G7</span><span class="lyr">nd</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">N.C.                    <span class="chord">C</span></span></span></div>
-<div class="line"><span class="seg"><span class="lyr">Oh no love, you&#x27;re not alone</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You&#x27;re watching yourself</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> but you&#x27;re too unfair</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">You got your</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> head all tangled up but if I could only</span></span><span class="seg"><span class="chord">A</span><span class="lyr"> make you care</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Oh </span></span><span class="seg"><span class="chord">Dbm</span><span class="lyr">no love, you&#x27;re not a</span></span><span class="seg"><span class="chord">Abm</span><span class="lyr">lone</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">No matter</span></span><span class="seg"><span class="chord">B</span><span class="lyr"> what or who you&#x27;ve b</span></span><span class="seg"><span class="chord">Ebm</span><span class="lyr">een</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">No matter </span></span><span class="seg"><span class="chord">Bbm</span><span class="lyr">when or where you&#x27;ve s</span></span><span class="seg"><span class="chord">Db</span><span class="lyr">een</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">All the k</span></span><span class="seg"><span class="chord">B</span><span class="lyr">nives seem to lacerate your </span></span><span class="seg"><span class="chord">Ebm</span><span class="lyr">brain</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">I&#x27;ve had my </span></span><span class="seg"><span class="chord">Bbm</span><span class="lyr">share, I&#x27;ll help you with the </span></span><span class="seg"><span class="chord">Db</span><span class="lyr">pain</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">N.C.</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">You&#x27;re not alone</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line chords-only"><span class="chord">Bb</span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> Ju</span></span><span class="seg"><span class="chord">B</span><span class="lyr">st</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> t</span></span><span class="seg"><span class="chord">Db</span><span class="lyr">urn on with me and you&#x27;re</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">  not alone</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> Le</span></span><span class="seg"><span class="chord">B</span><span class="lyr">t&#x27;</span></span><span class="seg"><span class="chord">C</span><span class="lyr">s </span></span><span class="seg"><span class="chord">Db</span><span class="lyr">turn on and be ... </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">not alone (wonderful)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> Gi</span></span><span class="seg"><span class="chord">B</span><span class="lyr">mm</span></span><span class="seg"><span class="chord">C</span><span class="lyr">e </span></span><span class="seg"><span class="chord">Db</span><span class="lyr">your hands ... cause you&#x27;re w</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">onderful (wonderful)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> Gi</span></span><span class="seg"><span class="chord">B</span><span class="lyr">mm</span></span><span class="seg"><span class="chord">C</span><span class="lyr">e </span></span><span class="seg"><span class="chord">Db</span><span class="lyr">your hands ... cause you&#x27;re wo</span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">nderful (wonderful)</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Bb</span><span class="lyr"> Oh</span></span><span class="seg"><span class="chord">B</span><span class="lyr">, </span></span><span class="seg"><span class="chord">C</span><span class="lyr">gi</span></span><span class="seg"><span class="chord">Db</span><span class="lyr">mme your h</span></span><span class="seg"><span class="chord">Fm</span><span class="lyr">ands</span></span><span class="seg"><span class="chord">Cm</span><span class="lyr"></span></span><span class="seg"><span class="chord">Gb</span><span class="lyr"></span></span><span class="seg"><span class="chord">Db</span><span class="lyr"></span></span></div></div>
-    </div>
-    
-  </div>
-  </div>
-</body>
-</html>
+  </script>"""
+
+
+def make_chord_diagram_html(chord_names: list) -> str:
+    all_dbs = build_all_voicings_dbs(chord_names)
+    dbs_json = json.dumps(all_dbs, separators=(',', ':'))
+    return CHORD_DIAGRAM_STYLE + "\n" + CHORD_DIAGRAM_JS.replace('__DBS_JSON__', dbs_json)

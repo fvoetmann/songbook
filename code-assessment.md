@@ -3,7 +3,7 @@
 Dato: 2026-08-10
 Omfang: `add_song.py`, `edit_song.py`, `make_pdf.py`, `rebuild_songs.py`, `songbook.py`, `songs.json`, `requirements.txt`, `index.html` (genereret).
 
-**Status (opdateret 2026-08-11):** ✅ = lavet, 🟡 = delvist lavet, ⬜ = ikke lavet.
+**Status (opdateret 2026-08-23):** ✅ = lavet, 🟡 = delvist lavet, ⬜ = ikke lavet.
 Se også [Efterfølgende opdagede fejl](#efterfølgende-opdagede-fejl-ikke-i-oprindelig-vurdering) nederst —
 arbejdet med punkt 1 og 5 afslørede yderligere reelle bugs der ikke stod i den oprindelige vurdering.
 
@@ -11,13 +11,13 @@ arbejdet med punkt 1 og 5 afslørede yderligere reelle bugs der ikke stod i den 
 
 ## Samlet vurdering
 
-Projektet er en velfungerende, personlig pipeline: UG-side → internt akkord-format → interaktiv sang-HTML → samlet PDF + indeks. Koden er generelt læsbar, velnavngivet og med gode docstrings for det sværeste (akkordteori, voice leading, round-trip mellem rendered HTML og UG-format). De største svagheder er ikke funktionalitet, men **vedligehold**: en 1338-linjers monolit, dobbelt-kodificeret akkordlogik i Python *og* indlejret JavaScript, nul tests, og en række robusheds-/edge-case-huller.
+Projektet er en velfungerende, personlig pipeline: UG-side → internt akkord-format → interaktiv sang-HTML → samlet PDF + indeks. Koden er generelt læsbar, velnavngivet og med gode docstrings for det sværeste (akkordteori, voice leading, round-trip mellem rendered HTML og UG-format). Siden vurderingen er de to største svagheder — monoliten og manglende tests — adresseret: `add_song.py` (1560 linjer) er delt op i `songlib/`-pakken, og der er nu 268 tests. De største tilbageværende svagheder er **dobbelt-kodificeret akkordlogik i Python *og* indlejret JavaScript** samt en række robusheds-/edge-case-huller.
 
 ---
 
 ## Styrker
 
-- **Ren akkordteori.** `parse_chord_name` (add_song.py:72) og `generate_voicings` (add_song.py:99) er velafgrænsede, kommenterede og håndterer re-entrant stemninger + `fixed_open` (banjo) korrekt.
+- **Ren akkordteori.** `parse_chord_name` og `generate_voicings` (`songlib/chords.py`) er velafgrænsede, kommenterede og håndterer re-entrant stemninger + `fixed_open` (banjo) korrekt.
 - **Gennemtænkt round-trip design.** `edit_song.py` rekonstruerer rå UG-tekst fra rendered HTML (`line_div_to_ug`, `block_to_ug`, `merge_chord_line`), og `split_inline_chords`/`merge_chord_line` er nøjagtigt reversible — vigtigt, da `rebuild_songs.py` er afhængig af dette.
 - **Konsekvent HTML-escapes** af navne/tekst (`html.escape`) — god XSS-hygiejne i det mest kritiske sted.
 - **Lille, fokuseret CLI-entry** (`songbook.py`) der samler værktøjerne.
@@ -40,86 +40,59 @@ Der er ingen test i projektet. Det er det mest risikable hul, fordi der er meget
   - ✅ `decide_layout` og `paginate_sections` grænseværdier (54/130/65). — `tests/test_layout.py`
 - ✅ Golden-file test for `make_song_html`: hvis template ændres utilsigtet, fejler testen i stedet for at alle 152 sange bliver gen-genereret uovervåget af `rebuild_songs.py`. — `tests/test_render_golden.py`
 
-267 tests i alt (`pytest.ini`, `requirements-dev.txt`, kørsel dokumenteret i CLAUDE.md). Bonus ud over den oprindelige liste:
+268 tests i alt (`pytest.ini`, `requirements-dev.txt`, kørsel dokumenteret i CLAUDE.md). Bonus ud over den oprindelige liste:
 `tests/test_edit_format.py` (inline edit-format ↔ UG-format), `tests/test_tab_detection.py` (tab-genkendelse),
 og en `tests/test_process_file_integration.py` mod monkeypatchede stier (rører aldrig det rigtige repo).
 
-### 2. Bryd `add_song.py` op — ⬜ Ikke lavet
+### 2. Bryd `add_song.py` op — ✅ Lavet
 
-1338 linjer blander fem ansvarsområder:
-
-| Linje-interval | Indhold |
-|---|---|
-| 27–218 | Akkordteori + voicing-generator |
-| 220–683 | HTML/CSS/JS-skabeloner (store string-konstanter) |
-| 687–723 | Transponering (Python) |
-| 727–863 | UG-parsing, layout/pagination |
-| 866–1149 | HTML-rendering af sange |
-| 1152–1292 | songs.json, indeks, filbehandling |
-| 1295–1338 | CLI `main()` |
-
-Foreslået struktur (helst et almindeligt pakkemodul i stedet for `sys.path`-tricks):
-
-```
-songbook/
-  core/
-    chords.py          # NOTE_SEMI, CHORD_TYPES, parse, generate_voicings
-    transpose.py       # shift_note, transpose_chord, transpose_content
-    ugparse.py         # extract_ug_data, get_song_info, unwrap_view_source
-    layout.py          # count_lines, decide_layout, paginate_sections
-    render.py          # make_song_html (+ evt. skabelonfiler)
-  app/
-    store.py           # songs.json load/save, hashing
-    index.py           # rebuild_index
-    add_song_cli.py
-    edit_song_cli.py
-    make_pdf_cli.py
-    rebuild_cli.py
-```
-
-De øvrige scripts bruger i dag `sys.path.insert(0, ...)` og importerer fra `add_song.py` (edit_song.py:23–28, make_pdf.py:14–15, rebuild_songs.py:15–17) — det skaber en skjult afhængighed, hvor f.eks. `make_pdf.py` trækker hele UG/requests-stakken ind bare for at få `artist_sort_key`.
+`add_song.py` er nu en tynd wrapper om `songlib/`-pakken (`songlib/chords.py`,
+`templates.py`, `ug.py`, `layout.py`, `render.py`, `store.py`, `cli.py`).
+`sys.path.insert`-tricksene i edit_song.py/make_pdf.py/rebuild_songs.py er væk
+(importerer nu direkte fra `songlib`), og `add_song.py` re-eksporterer API'et så
+tests og scripts kan blive ved med at importere herfra uændret.
 
 ### 3. Én kilde til sandheden for akkordteori (Python ↔ JavaScript) — ⬜ Ikke lavet
 
 (Bemærk: da "2"-akkordsuffikset blev tilføjet under punkt 5-arbejdet, blev det manuelt holdt i sync begge
 steder — hvilket er præcis den slags dobbelt-vedligehold denne opgave ville fjerne.)
 
-Den samme teori er kodificeret **to steder**, og kommentaren siger det selv: *"Skal holdes i sync"* (add_song.py:258, 390).
+Den samme teori er kodificeret **to steder**, og kommentaren siger det selv: *"Skal holdes i sync"* (songlib/chords.py + songlib/templates.py).
 
-- Python: `INSTRUMENTS`, `NOTE_SEMI`, `ACCIDENTAL`, `CHORD_TYPES`, `transpose_chord` (add_song.py:36–69, 688–709).
-- JS: `INSTRUMENTS`, `NOTE_SEMI`, `ACCIDENTAL`, `CHORD_TYPES`, `parseChordName`, `generateVoicings`, `transposeChordName` (add_song.py:259–407).
+- Python: `INSTRUMENTS`, `NOTE_SEMI`, `ACCIDENTAL`, `CHORD_TYPES`, `transpose_chord` (songlib/chords.py).
+- JS: `INSTRUMENTS`, `NOTE_SEMI`, `ACCIDENTAL`, `CHORD_TYPES`, `parseChordName`, `generateVoicings`, `transposeChordName` (songlib/templates.py).
 
-Ved ændring af f.eks. en akkordtype eller en tuning kan browser-versionen og server-versionen drive fra hinanden uden nogen fejl opdages. Løsning: serialiser Python-datastrukturerne (INSTRUMENTS, CHORD_TYPES, SHARPS, FLATS) til JSON og injicér dem i JavaScript på generate-tidspunkt — præcis som `make_chord_diagram_html` allerede gør med `__DBS_JSON__` (add_song.py:683). Da skal kun Python-siden vedligeholdes.
+Ved ændring af f.eks. en akkordtype eller en tuning kan browser-versionen og server-versionen drive fra hinanden uden nogen fejl opdages. Løsning: serialiser Python-datastrukturerne (INSTRUMENTS, CHORD_TYPES, SHARPS, FLATS) til JSON og injicér dem i JavaScript på generate-tidspunkt — præcis som `make_chord_diagram_html` allerede gør med `__DBS_JSON__` (songlib/templates.py). Da skal kun Python-siden vedligeholdes.
 
 ### 4. Forskyd HTML/JS-skabelonerne ud af koden — ⬜ Ikke lavet
 
-`CHORD_DIAGRAM_STYLE` + `CHORD_DIAGRAM_JS` er ~460 linjer string-konstanter indlejret i Python. `rebuild_songs.py` gør en runtime-re-generation mulig, så skabelonerne kan ligge som rigtige filer (`assets/chord-diagram.css`, `assets/chord-diagram.js`) og indlæses og injiceres ved generation. Det giver normal diffing, syntax-highlighting og linter-support, og korter Python-filen betydeligt. Den store `make_song_html`-f-string (add_song.py:1077–1149) kunne tilsvarende flyttes til en skabelonfil eller bygges stykkevist.
+`CHORD_DIAGRAM_STYLE` + `CHORD_DIAGRAM_JS` er ~460 linjer string-konstanter indlejret i `songlib/templates.py`. `rebuild_songs.py` gør en runtime-re-generation mulig, så skabelonerne kan ligge som rigtige filer (`assets/chord-diagram.css`, `assets/chord-diagram.js`) og indlæses og injiceres ved generation. Det giver normal diffing, syntax-highlighting og linter-support. Den store `make_song_html`-f-string (songlib/render.py) kunne tilsvarende flyttes til en skabelonfil eller bygges stykkevist.
 
 ### 5. Ret konkrete fejl/edge-cases — ✅ Lavet (alle 6 punkter)
 
-- ✅ **Forældreløs `_UGversion.html`** (add_song.py:1272–1280): når en manuelt redigeret sang detekteres, skrives den nye UG-version til filen, men `songs.json` og `index.html` opdateres **ikke** — den new fil er usynlig i indekset og kan ikke redigeres via `edit_song.py`. Enten tilføj et entry, eller tilføj en note/advarsel om hvordan man indarbejder den manuelt. — *Løst med tydelig advarsel + konkrete trin i konsol-outputtet.*
-- ✅ **`href` uden attribute-escape** (add_song.py:1044): `f'<a href="{url}">'` — en URL (fx ved kald med direkte URL i `main()`, add_song.py:1318–1325) der indeholder `"` eller `<` bryder HTML / kan indsætte HTML. Brug `html.escape(url, quote=True)`. Bemærk: aldersteksten ellers er konsistent escaped. — *Løst, verificeret med XSS-forsøg.*
-- ✅ **Intet exceptions-håndtering i auto-scan** (add_song.py:1306–1307): ét fejlbehæftet `downloads/`-fil kaster fuld traceback og afbryder hele batchen. Fange `ValueError`/`json.JSONDecodeError` per fil, log, og fortsæt. — *Løst.*
+- ✅ **Forældreløs `_UGversion.html`** (songlib/store.py, `process_file`): når en manuelt redigeret sang detekteres, skrives den nye UG-version til filen, men `songs.json` og `index.html` opdateres **ikke** — den new fil er usynlig i indekset og kan ikke redigeres via `edit_song.py`. Enten tilføj et entry, eller tilføj en note/advarsel om hvordan man indarbejder den manuelt. — *Løst med tydelig advarsel + konkrete trin i konsol-outputtet.*
+- ✅ **`href` uden attribute-escape** (songlib/render.py): `f'<a href="{url}">'` — en URL (fx ved kald med direkte URL i `main()`, songlib/cli.py) der indeholder `"` eller `<` bryder HTML / kan indsætte HTML. Brug `html.escape(url, quote=True)`. Bemærk: aldersteksten ellers er konsistent escaped. — *Løst, verificeret med XSS-forsøg.*
+- ✅ **Intet exceptions-håndtering i auto-scan** (songlib/cli.py): ét fejlbehæftet `downloads/`-fil kaster fuld traceback og afbryder hele batchen. Fange `ValueError`/`json.JSONDecodeError` per fil, log, og fortsæt. — *Løst.*
 - ✅ **Uvalideret input i `find_song`** (edit_song.py:48): `int(input("Nummer: "))` kaster rå `ValueError` ved ikke-numerisk input, og et for stort tal giver `IndexError`. Fange og bede om nyt valg. — *Løst med retry-løkke.*
-- ✅ **Tilfældig temp-fil i cwd** (add_song.py:1321): URL-hentning skriver `_tmp_ug.html` i projektmappen — kan kollidere med en rigtig fil i `downloads/`. Brug `tempfile.NamedTemporaryFile`. — *Løst.*
-- ✅ **Inkonsistent encoding-behandling af `songs.json`**: `load_songs` læser uden `encoding=` (add_song.py:1168), mens `save_songs` skriver med utf-8; `make_pdf.py` læser med utf-8. På platforme med afvigende locale kan det give mismatch — angiv eksplicit i alle tre. — *Løst.*
+- ✅ **Tilfældig temp-fil i cwd** (songlib/cli.py): URL-hentning skriver `_tmp_ug.html` i projektmappen — kan kollidere med en rigtig fil i `downloads/`. Brug `tempfile.NamedTemporaryFile`. — *Løst.*
+- ✅ **Inkonsistent encoding-behandling af `songs.json`**: `load_songs` læser uden `encoding=` (songlib/store.py), mens `save_songs` skriver med utf-8; `make_pdf.py` læser med utf-8. På platforme med afvigende locale kan det give mismatch — angiv eksplicit i alle tre. — *Løst.*
 - ✅ **`requests`-urbi** huntering: `fetch_page` har ingen fejlmeddelelse; en 403 (UG blokerer) viser bare timeout/HTTPError traceback. Fange og give den venlige besked som allerede står i CLAUDE.md (gem siden manuelt). — *Løst.*
 
 ### 6. Performance-sikring af voicings — ⬜ Ikke lavet
 
-`generate_voicings` (add_song.py:99) laver `itertools.product` over alle fret-muligheder pr. streng (værste fald ~10^6 kombinationer for 6 strenge) og kaldes per akkord per instrument via `build_voicings_db` (add_song.py:202) — uden caching. For sange med mange akkorder og `rebuild_songs.py` over 152 sange akkumuleres det.
+`generate_voicings` (songlib/chords.py) laver `itertools.product` over alle fret-muligheder pr. streng (værste fald ~10^6 kombinationer for 6 strenge) og kaldes per akkord per instrument via `build_voicings_db` (songlib/chords.py) — uden caching. For sange med mange akkorder og `rebuild_songs.py` over 152 sange akkumuleres det.
 
 - Tilføj `functools.lru_cache` på `generate_voicings` (nøgle: root, tuple(ivs), bass, instrument) eller en eksplicit cache i `build_voicings_db`.
 - Betragt prunings: kræv root i streng 1–2 tidligt, og drop `-1`-optioner aggressivt når `min_play` allerede er opfyldt.
 
-### 7. Småting / ryd op — ⬜ Ikke lavet
+### 7. Småting / ryd op — 🟡 Delvist lavet
 
-- **Dubletter**: `SHARPS`/`FLATS` og `layout_msg`-ordbogen defineres flere steder (add_song.py:688–689 + JS; layout_msg i add_song.py:1267, edit_song.py:352, rebuild_songs.py:36). Saml i én konstant.
-- **Magiske tal**: `LINES_PER_PAGE = 54`, `130`, `65`, `60` (add_song.py:854, 860, 1016). Flyt layout-tærsklerne til navngivne konstanter (eller i et config-modul) med kommentarer.
-- **`requirements.txt` mangler nødvendige pakker**: `make_pdf.py` importerer `pypdf` (og kræver weasyprint), men requirements.txt har kun `requests` og `beautifulsoup4`. Tilføj i det mindste `pypdf`, og overvej versionspin.
+- **Dubletter**: `SHARPS`/`FLATS` og `layout_msg`-ordbogen defineres flere steder (songlib/chords.py + indlejret JS; layout_msg i songlib/store.py, edit_song.py, rebuild_songs.py). Saml i én konstant.
+- **Magiske tal**: `LINES_PER_PAGE = 54`, `130`, `65`, `60` (songlib/layout.py). Flyt layout-tærsklerne til navngivne konstanter (eller i et config-modul) med kommentarer.
+- ✅ **`requirements.txt` mangler nødvendige pakker**: `make_pdf.py` importerer `pypdf` (og kræver weasyprint), men requirements.txt havde kun `requests` og `beautifulsoup4`. — *Løst: `pypdf` tilføjet.*
 - **`optimize_song_order` er O(n²)** (make_pdf.py:209–213): `song_pdfs[:song_pdfs.index(s)]` inde i et sum over listen giver kvadratisk adfærd, og `song_pdfs.index(s)` bruger liste-lighed — skrøbeligt over for dublet-entries. Beregn løbende sidetal i ét gennemløb i stedet.
 - **`extract_first_style` (make_pdf.py:56)** antager at det *første* `<style>`-blok er sangens fælles CSS (diagram-CSS indsættes senere i `<head>` via `replace`). Det holder i dag, men er en skjult invariant — dokumentér eller gør det robust ved at markere skabelon-CSS med en kommentar/id.
-- **`rebuild_songs.py` skriver alle sange hver gang** (rebuild_songs.py:32): selv identiske filer bliver genskrevet (ændrer mtime → trigger re-publish på GitHub Pages). Skriv kun, hvis den nye hash afviger fra den gamle.
+- ✅ **`rebuild_songs.py` skriver alle sange hver gang** (rebuild_songs.py:32): selv identiske filer blev genskrevet (ændrer mtime → trigger re-publish på GitHub Pages). — *Løst: filen skrives kun hvis den nye hash afviger fra den gamle.*
 - **Login-fri netadgang antaget**: `fetch_page` sender en static Chrome UA; UG blokerer med 403 — funktionen virker reelt sjældent og dokumenteres allerede som manuel download. Overvej at udfase `requests`-stien helt og kræve gemte filer.
 
 ### 8. Dokumentation — 🟡 Delvist lavet
@@ -134,15 +107,18 @@ Ved ændring af f.eks. en akkordtype eller en tuning kan browser-versionen og se
 | # | Forslag | Indsats | Gevinst | Status |
 |---|---|---|---|---|
 | 1 | Tests (pytest med fixtures fra `downloads/`) | Medium | Kritisk — fanger regressions i round-trip, transponering og voicings | ✅ Lavet |
-| 2 | Opdel `add_song.py` i moduler | Medium | Forudsætning for alt andet vedligehold | ⬜ Ikke lavet |
+| 2 | Opdel `add_song.py` i moduler (`songlib/`) | Medium | Forudsætning for alt andet vedligehold | ✅ Lavet |
 | 3 | Én kilde til akkordteori (Python ↔ JS) | Lille–medium | Fjerner den største driftrisiko | ⬜ Ikke lavet |
 | 4 | Forskyd HTML/CSS/JS-skabeloner ud af koden | Lille | Bedre redigering og diffs | ⬜ Ikke lavet |
 | 5 | Ret edge-case-fejl (liste ovenfor) | Lille | 3 reelle bugs rettet | ✅ Lavet |
 | 6 | Cache voicings-generator | Lille | Hurtigere `rebuild_songs`/`add_song` | ⬜ Ikke lavet |
-| 7 | Ryd op i duplikater, magic numbers, requirements | Lille | Lavere vedligehold | ⬜ Ikke lavet |
+| 7 | Ryd op i duplikater, magic numbers, requirements | Lille | Lavere vedligehold | 🟡 Delvist (pypdf + rebuild-hash lavet) |
 | 8 | `make_pdf.py`-optimering | Lille | Marginalt, kun ved mange sange | ⬜ Ikke lavet |
 
-Samlet: solidt skrevet projekt med en god core-design, men det mangler det beskyttelsesnet (tests) og den struktur (modulopdeling + single source of truth) som de store round-trip- og duplikationsrisici ellers gør nødvendige. Af reelle fejl er den forældreløse `_UGversion.html` (add_song.py:1272–1280) og den uescapede `href` (add_song.py:1044) værd at rette først.
+Samlet: solidt skrevet projekt med en god core-design. Det oprindelige beskyttelsesnet (tests) og strukturen
+(modulopdeling + single source of truth) er nu på plads; den største tilbageværende risiko er dobbelt-kodificeret
+akkordlogik i Python og indlejret JavaScript (punkt 3). Af reelle fejl er den forældreløse `_UGversion.html` og den
+uescapede `href` rettet.
 
 ---
 
