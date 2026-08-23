@@ -1220,10 +1220,12 @@ def content_to_html(content: str) -> tuple:
 
     total_lines, max_chord_width, max_text_width = count_lines(chord_sections)
     layout = decide_layout(total_lines, max_chord_width)
-    auto_small_font = layout == "double" and max_text_width > 60
+    use_columns = layout == "double" or (layout == "multi" and max_chord_width <= 65)
+    auto_small_font = use_columns and max_text_width > 60
 
     if layout == "multi":
-        page_buckets = paginate_sections(chord_sections)
+        lines_per_page = LINES_PER_PAGE * 2 if use_columns else LINES_PER_PAGE
+        page_buckets = paginate_sections(chord_sections, lines_per_page=lines_per_page)
     else:
         page_buckets = [chord_sections]
     pages = [
@@ -1232,14 +1234,14 @@ def content_to_html(content: str) -> tuple:
     ]
     tab_blocks = "\n".join(render_section(h, b, remove_blank_lines=False, is_tab=True) for h, b in tab_sections)
 
-    return pages, tab_blocks, layout, auto_small_font
+    return pages, tab_blocks, layout, auto_small_font, use_columns
 
 
 def make_song_html(
     title: str, artist: str, key: str, capo: str, content: str, url: str, tempo: str = "120"
 ) -> tuple:
     tempo = (tempo or "").strip() or "120"
-    pages, tab_blocks, layout, auto_small_font = content_to_html(content)
+    pages, tab_blocks, layout, auto_small_font, use_columns = content_to_html(content)
     diagram_html = make_chord_diagram_html(extract_chord_names(content))
 
     meta_parts = []
@@ -1256,7 +1258,7 @@ def make_song_html(
 
     double_css = ""
     wrap_open, wrap_close = "", ""
-    if layout == "double":
+    if use_columns:
         double_css = (
             "\n    .chords { column-count: 2; column-gap: 8mm; }"
             "\n    @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) {"
