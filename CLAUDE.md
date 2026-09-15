@@ -46,6 +46,82 @@ python3 edit_song.py --new        # opret ny sang fra bunden
 - Tom fil ved gem annullerer ændringerne
 - Ændres titel eller artist, omdøbes HTML-filen og indekset opdateres
 
+## Takt-notation (afspilning)
+
+Sange kan gradvist gøres "spilbare" (forberedelse til en senere afspilningsmotor, fx en
+basgang) ved at tilføje en `[Bars]`-sektion, der beskriver hvor mange takter hver akkord
+holder. Det er et **valgfrit** tillæg — sange uden `[Bars]` er fuldstændig upåvirkede.
+
+```
+[Bars]
+Intro: |D A|G|Em7|Am7|
+Vers: |Em7|Am7 Fmaj7|
+```
+
+- Én linje pr. sektionstype: `Label: <taktsekvens>`. `Label` matcher en `[Sektion]`-header
+  i sangen, case-insensitivt — først eksakt, ellers som prefix (`Vers` matcher `[Vers 1]`,
+  `[Vers 2]`)
+- `<taktsekvens>`: `|`-adskilte takter (kant-`|` er valgfri/kosmetisk). Hver takt er:
+  - én eller flere mellemrums-adskilte akkorder, der deler takten ligeligt (`D A` = 2
+    akkorder i én takt, fx 2 slag hver i 4/4)
+  - `%` = gentag forrige takt (samme akkord(er), holder videre)
+  - `.` = paustakt (ingen akkord)
+- Fast 4/4 for alle takter (matcher metronomens antagelse om accent hvert 4. slag)
+- **Matchning:** de "rigtige" akkorder i taktsekvensen (uden `%`/`.`) skal, i rækkefølge,
+  svare 1:1 til `[ch]`-akkorderne der allerede står i den tilhørende sektion i sangteksten.
+  Stemmer det, tegnes taktstreger ind i den eksisterende visning (også i PDF, da PDF'en
+  genbruger samme HTML). Stemmer det ikke, springes visuel taktstregs-visning over for den
+  sektion, og der printes en advarsel ved gem/tilføjelse — resten af sangen er upåvirket
+- **Visning:** taktstregen holder sig på akkordlinjen (over sangteksten) og går ikke ned i
+  selve teksten. En `%`/`.`-markør (gentagelse/pause) vises umiddelbart efter den akkord i
+  sangteksten den hører til, på samme linje som akkorden — ikke efter hele tekstlinjen
+- Man skal allerede have skrevet akkorderne et sted i sangen (`[Am]`/`{Am}`) — `[Bars]`
+  tilføjer kun taktinddeling oven på eksisterende akkorder, den genererer ikke nye
+- `songs.json`-feltet `bars: true` sættes automatisk når mindst én sektion matcher
+
+Kom hurtigt i gang med et udgangspunkt ("1 akkord = 1 takt", ingen gentagelser/pauser):
+
+```bash
+python3 add_default_bars.py <søgeord>
+```
+
+Scriptet indsætter en foreslået `[Bars]`-sektion og åbner sangen i `$EDITOR`, så
+gentagelser (`%`), pauser (`.`) og akkorder der holder i flere takter kan rettes manuelt
+før gem.
+
+### `[Bars draft]` — inaktivt forslag for hele biblioteket
+
+```bash
+python3 add_draft_bars.py
+```
+
+Går igennem alle sange der endnu ikke har en `[Bars]`- eller `[Bars draft]`-sektion og
+indsætter samme naive "1 akkord = 1 takt"-gæt som `add_default_bars.py`, men under headeren
+`[Bars draft]` i stedet for `[Bars]` — ikke-interaktivt, uden at åbne `$EDITOR`, for hele
+biblioteket i én kørsel.
+
+`[Bars draft]` opfører sig som en kommentar: sektionen gemmes i sang-HTML'en (skjult, ligesom
+`[Bars]`), men er bevidst **inaktiv** — den indgår ikke i taktstregs-matchning, sætter ikke
+`bars: true`, og ændrer intet ved sangens visning. For at aktivere en sangs forslag:
+
+```bash
+python3 edit_song.py <søgeord>
+```
+
+ret evt. takterne til (gentagelser, pauser, akkorder der deler en takt) og omdøb sektionens
+header fra `[Bars draft]` til `[Bars]` — gem, og den almindelige matchning/visning tager over.
+
+`[Bars]`-strukturen beregnes og gemmes som JSON (`<script id="bar-data">` i sang-HTML'en) og
+bruges nu til en simpel basgang: når `[Bars]` er aktiveret for sangen, spiller metronomen (▶)
+automatisk grundtonen af den aktive akkord på 1. slag af hver (del-)takt, i den rækkefølge
+sektionerne optræder i sangen (loop'er når metronomen kører videre efter sidste takt). Kun
+grundtonen indtil videre — ingen gangfigur endnu.
+
+Samtidig fremhæves den aktuelt spillende akkord i sangteksten (gul baggrund), og en lille
+"Takt N/M"-tæller ved siden af metronom-knappen viser hvor i sangen basgangen er, så man kan
+følge med selv når den spillende akkord er scrollet uden for skærmen. Begge dele følger
+metronomens ▶/⏸ og nulstilles til sangens begyndelse hver gang den startes.
+
 ## PDF-generering
 
 ```bash
@@ -99,10 +175,12 @@ python3 rebuild_songs.py
 - `edit_song.py` — rediger eller opret sang manuelt
 - `make_pdf.py` — generer samlet PDF med indholdsfortegnelse
 - `rebuild_songs.py` — regenerer alle sang-HTML-filer med aktuelt template
-- `songlib/` — logik-pakke bag scripts (akkordteori, templates, UG-parsing, layout, rendering, store, CLI)
+- `add_default_bars.py` — foreslår en `[Bars]`-taktinddeling for en sang (se "Takt-notation" ovenfor)
+- `add_draft_bars.py` — indsætter en inaktiv `[Bars draft]`-taktinddeling for alle sange i biblioteket der endnu ikke har en (se "Takt-notation" ovenfor)
+- `songlib/` — logik-pakke bag scripts (akkordteori, templates, UG-parsing, layout, rendering, store, CLI, `bars.py` for takt-notation)
 - `.nojekyll` — forhindrer GitHub Pages i at køre Jekyll
 - `songs/` — genererede HTML-sange
-- `songs.json` — intern liste over sange (title, artist, file, source, hash)
+- `songs.json` — intern liste over sange (title, artist, file, source, hash, evt. bars)
 - `index.html` — oversigtsside grupperet efter artist med live-søgefelt (filtrerer på titel og artist); sortering ignorerer et indledende "The " (fx "The Beatles" sorteres under B), men viser navnet uændret
 - `downloads/` — gemte UG-sider (kilde-input)
 
@@ -110,6 +188,7 @@ python3 rebuild_songs.py
 - `title`, `artist`, `file` — metadata og filnavn
 - `source` — kildefilnavn fra `downloads/` (eller `"manuel"` for manuelt oprettede)
 - `hash` — SHA-256 af kildefilens indhold; bruges til at springe uændrede filer over ved genscanning
+- `bars` — `true` hvis sangen har mindst én gyldigt matchet `[Bars]`-sektion; udeladt ellers
 
 ## Browser-funktioner (sang-visning)
 

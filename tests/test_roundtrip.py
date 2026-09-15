@@ -14,7 +14,7 @@ def test_render_then_reconstruct_preserves_chords_and_title(ug_sample_path, tmp_
     data = extract_ug_data(html_text)
     title, artist, key, capo, content = get_song_info(data)
 
-    rendered, _layout = make_song_html(title, artist, key, capo, content, "")
+    rendered, _layout, _has_bars = make_song_html(title, artist, key, capo, content, "")
     out_path = tmp_path / "song.html"
     out_path.write_text(rendered, encoding="utf-8")
 
@@ -34,12 +34,12 @@ def test_reconstruct_is_stable_under_a_second_round_trip(ug_sample_path, tmp_pat
     data = extract_ug_data(html_text)
     title, artist, key, capo, content = get_song_info(data)
 
-    rendered1, _ = make_song_html(title, artist, key, capo, content, "")
+    rendered1, _, _ = make_song_html(title, artist, key, capo, content, "")
     p1 = tmp_path / "a.html"
     p1.write_text(rendered1, encoding="utf-8")
     _, _, _, _, _, _, content2 = html_to_content(p1)
 
-    rendered2, _ = make_song_html(title, artist, key, capo, content2, "")
+    rendered2, _, _ = make_song_html(title, artist, key, capo, content2, "")
     p2 = tmp_path / "b.html"
     p2.write_text(rendered2, encoding="utf-8")
     _, _, _, _, _, _, content3 = html_to_content(p2)
@@ -61,7 +61,7 @@ def test_edit_song_editor_cycle_preserves_all_chords(ug_sample_path, tmp_path):
 
     current = content
     for i in range(3):
-        rendered, _ = make_song_html(title, artist, key, capo, current, "")
+        rendered, _, _ = make_song_html(title, artist, key, capo, current, "")
         path = tmp_path / f"round{i}.html"
         path.write_text(rendered, encoding="utf-8")
         _, _, _, _, _, _, extracted = html_to_content(path)

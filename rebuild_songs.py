@@ -26,7 +26,7 @@ def main():
             continue
 
         title, artist, key, capo, url, tempo, content = html_to_content(filepath)
-        new_html, layout = make_song_html(title, artist, key, capo, content, url, tempo)
+        new_html, layout, has_bars = make_song_html(title, artist, key, capo, content, url, tempo)
 
         new_hash = hashlib.sha256(new_html.encode("utf-8")).hexdigest()
         current_hash = hashlib.sha256(filepath.read_bytes()).hexdigest()
@@ -35,6 +35,9 @@ def main():
             updated += 1
 
         song["hash"] = new_hash
+        song.pop("bars", None)
+        if has_bars:
+            song["bars"] = True
 
         layout_msg = {"single": "1 kolonne", "double": "2 kolonner", "multi": "flere sider"}
         print(f"  {artist} – {title}  ({layout_msg.get(layout, layout)})")

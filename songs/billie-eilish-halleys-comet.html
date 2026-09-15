@@ -38,6 +38,9 @@
     body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    .barline { display: inline-block; align-self: flex-start; width: 1px; height: 1.1em; background: #ccc; margin: 0 5px; vertical-align: baseline; }
+    .barmark { color: #b00020; font-weight: bold; opacity: .6; font-size: 0.85em; line-height: 1.3; }
+    .barmark.rest { font-style: italic; }
     pre.block {
       font-family: ui-monospace, 'Courier New', Courier, monospace;
       white-space: pre-wrap; word-break: break-word;
@@ -45,12 +48,14 @@
     div.block { font-family: 'Source Sans 3', sans-serif; }
     .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
     .line.chords-only .chord { margin-right: 1.4em; }
-    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
-    .seg .lyr { white-space: pre; }
+    .seg { display: inline-block; }
+    .seg .lyr { display: block; white-space: pre; }
     .seg .lyr:empty::before { content: "\00a0"; }
     .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
+    .chord.now-playing { background: #ffe98a; border-radius: 3px; box-shadow: 0 0 0 2px #ffe98a; }
+    .chord.start-marker { border-radius: 3px; box-shadow: 0 0 0 2px #1a73e8; }
     .section { color: #777; font-style: italic; font-weight: bold; }
     @media (max-width: 640px) {
       body { background: white; padding: 0; }
@@ -64,6 +69,8 @@
       @page { size: A4; margin: 12mm 14mm; }
       .block { break-inside: avoid; }
       .tab-section { break-before: page; }
+      .chord.now-playing { background: none; box-shadow: none; }
+      .chord.start-marker { box-shadow: none; }
     }
   </style>
   <style>
@@ -430,6 +437,67 @@
     var audioCtx = null, tempoBPM = 120;
     var metroTimer = null, nextNoteTime = 0, beatCount = 0;
     var METRO_LOOKAHEAD = 25, METRO_SCHEDULE_AHEAD = 0.1;
+    // Basgang: afledt af [Bars]-taktdata (#bar-data), grundtonen i den
+    // aktive akkord spilles på 1. slag af hver (del-)takt. Kun grundtonen,
+    // ingen gang-figur endnu - se CLAUDE.md's afsnit om Takt-notation.
+    // Hvert element i bassBeats er enten:
+    //   null                                     - ingen ny hændelse (hold)
+    //   { type:'note', root, beats, idx }         - ny akkord-anslag; idx peger
+    //                                                på det tilsvarende .chord[data-idx]
+    //   { type:'rest' }                           - paustakt, ryd fremhævning
+    // idx følger samme globale, dokument-rækkefølge-tælling som data-idx-
+    // attributterne sat i render.py (kun rigtige akkorder, sektion for
+    // sektion, i den rækkefølge sektionerne optræder i sangen).
+    // bassBarFirstIdx[barNum] = data-idx for den akkord der klinger i starten
+    // af den bar (eller null for en paustakt); bassIdxToBar[idx] er det
+    // omvendte opslag. Begge bruges til at sætte/vise hvor basgangen skal
+    // starte fra (se changeBassStart/setBassStartFromIdx).
+    var bassBeats = [], bassBpb = 4, bassBarFirstIdx = [], bassIdxToBar = {}, bassStartBar = 0;
+    function buildBassBeats(timeline) {
+      if (!timeline || !timeline.sections) return { beats: [], bpb: 4, barFirstIdx: [], idxToBar: {} };
+      var bpb = timeline.beats_per_bar || 4;
+      var beats = [];
+      var barFirstIdx = [];
+      var idxToBar = {};
+      var lastNotes = null;
+      var chordCounter = 0;
+      timeline.sections.forEach(function(sec) {
+        (sec.bars || []).forEach(function(bar) {
+          var notes;
+          if (bar.rest) {
+            beats.push({ type: 'rest' });
+            for (var i = 1; i < bpb; i++) beats.push(null);
+            barFirstIdx.push(null);
+            return;
+          } else if (bar.repeat) {
+            notes = lastNotes || [];
+          } else {
+            var n = (bar.chords || []).length || 1;
+            notes = bar.chords.map(function(ch, i) {
+              var start = Math.round(bpb * i / n);
+              var end = Math.round(bpb * (i + 1) / n);
+              var parsed = parseChordName(ch);
+              var note = {
+                type: 'note',
+                root: parsed ? parsed.root : null,
+                beats: Math.max(1, end - start),
+                idx: chordCounter
+              };
+              idxToBar[chordCounter] = barFirstIdx.length;
+              chordCounter++;
+              return note;
+            });
+            lastNotes = notes;
+          }
+          barFirstIdx.push(notes.length ? notes[0].idx : null);
+          notes.forEach(function(note) {
+            beats.push(note);
+            for (var k = 1; k < note.beats; k++) beats.push(null);
+          });
+        });
+      });
+      return { beats: beats, bpb: bpb, barFirstIdx: barFirstIdx, idxToBar: idxToBar };
+    }
     function ensureAudioCtx() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       return audioCtx;
@@ -474,10 +542,94 @@
       osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
+    function scheduleBassNote(time, root, beats, secPerBeat) {
+      var ctx = ensureAudioCtx();
+      // grundtone i bas-register (C2..B2), følger den aktuelle live-transponering
+      // (transposeSemitones), samme knap der transponerer akkord-teksten
+      var midi = 36 + root + transposeSemitones;
+      var freq = 440 * Math.pow(2, (midi - 69) / 12);
+      var noteLen = Math.min(beats * secPerBeat * 0.9, 1.2);
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      var filter = ctx.createBiquadFilter();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, time);
+      filter.type = 'lowpass'; filter.frequency.value = 900;
+      gain.gain.setValueAtTime(0.0001, time);
+      gain.gain.exponentialRampToValueAtTime(0.5, time + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + noteLen);
+      osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + noteLen + 0.05);
+    }
+    // Fremhævning af den aktuelt spillende akkord + en "Takt N/M"-tæller,
+    // synkroniseret med bas-anslagene (samme lookahead-tidsstyring som
+    // klikket/bas-tonen, via setTimeout frem til den planlagte AudioContext-tid).
+    var chordEls = null, activeChordEl = null, bassCounterEl = null;
+    function ensureChordEls() {
+      if (chordEls) return chordEls;
+      chordEls = {};
+      document.querySelectorAll('.chord[data-idx]').forEach(function(el) {
+        chordEls[el.dataset.idx] = el;
+      });
+      return chordEls;
+    }
+    function clearHighlight() {
+      if (activeChordEl) { activeChordEl.classList.remove('now-playing'); activeChordEl = null; }
+    }
+    // Markør for hvor basgangen starter fra, når metronomen (gen)startes.
+    // Vises som en blå ramme om akkorden, kun mens metronomen står stille
+    // (now-playing-fremhævningen overtager mens den kører).
+    var startValueEl = null, markerChordEl = null;
+    function totalBassBars() { return bassBarFirstIdx.length; }
+    function clearStartMarker() {
+      if (markerChordEl) { markerChordEl.classList.remove('start-marker'); markerChordEl = null; }
+    }
+    function updateStartMarker() {
+      clearStartMarker();
+      if (metroTimer) return;
+      var idx = bassBarFirstIdx[bassStartBar];
+      if (idx === null || idx === undefined) return;
+      markerChordEl = ensureChordEls()[idx] || null;
+      if (markerChordEl) markerChordEl.classList.add('start-marker');
+    }
+    function updateBassStartUI() {
+      if (startValueEl) startValueEl.textContent = 'Takt ' + (bassStartBar + 1) + '/' + totalBassBars();
+      updateStartMarker();
+    }
+    function changeBassStart(delta) {
+      bassStartBar = Math.max(0, Math.min(totalBassBars() - 1, bassStartBar + delta));
+      updateBassStartUI();
+    }
+    function setBassStartFromIdx(idx) {
+      if (!bassIdxToBar.hasOwnProperty(idx)) return;
+      bassStartBar = bassIdxToBar[idx];
+      updateBassStartUI();
+    }
+    function scheduleBeatUI(time, note, barNum, totalBars) {
+      var ctx = ensureAudioCtx();
+      var delay = Math.max(0, (time - ctx.currentTime) * 1000);
+      setTimeout(function() {
+        clearHighlight();
+        if (note && note.type === 'note') {
+          activeChordEl = ensureChordEls()[note.idx] || null;
+          if (activeChordEl) activeChordEl.classList.add('now-playing');
+        }
+        if (bassCounterEl) bassCounterEl.textContent = 'Takt ' + barNum + '/' + totalBars;
+      }, delay);
+    }
     function metroScheduler() {
       var ctx = ensureAudioCtx();
       while (nextNoteTime < ctx.currentTime + METRO_SCHEDULE_AHEAD) {
         scheduleClick(nextNoteTime, beatCount % 4 === 0);
+        if (bassBeats.length) {
+          var pos = beatCount % bassBeats.length;
+          var note = bassBeats[pos];
+          if (note && note.type === 'note' && note.root !== null) {
+            scheduleBassNote(nextNoteTime, note.root, note.beats, 60 / tempoBPM);
+          }
+          var barNum = Math.floor(pos / bassBpb) + 1;
+          var totalBars = bassBeats.length / bassBpb;
+          scheduleBeatUI(nextNoteTime, note, barNum, totalBars);
+        }
         nextNoteTime += 60 / tempoBPM;
         beatCount++;
       }
@@ -487,11 +639,15 @@
       if (metroTimer) {
         clearInterval(metroTimer); metroTimer = null;
         b.textContent = '▶'; b.classList.remove('active');
+        clearHighlight();
+        if (bassCounterEl) bassCounterEl.textContent = '';
+        updateStartMarker();
         return;
       }
       var ctx = ensureAudioCtx();
       if (ctx.state === 'suspended') ctx.resume();
-      beatCount = 0;
+      beatCount = bassBeats.length ? bassStartBar * bassBpb : 0;
+      clearStartMarker();
       nextNoteTime = ctx.currentTime + 0.05;
       metroScheduler();
       metroTimer = setInterval(metroScheduler, METRO_LOOKAHEAD);
@@ -504,6 +660,14 @@
     document.addEventListener('DOMContentLoaded', function() {
       var tempoMeta = document.querySelector('meta[name="tempo"]');
       tempoBPM = (tempoMeta && parseInt(tempoMeta.content, 10)) || 120;
+      var barDataEl = document.getElementById('bar-data');
+      if (barDataEl) {
+        try {
+          var built = buildBassBeats(JSON.parse(barDataEl.textContent));
+          bassBeats = built.beats; bassBpb = built.bpb;
+          bassBarFirstIdx = built.barFirstIdx; bassIdxToBar = built.idxToBar;
+        } catch (e) { bassBeats = []; }
+      }
       var bar = document.createElement('div');
       bar.id = 'inst-bar';
       var lbl = document.createElement('span');
@@ -569,8 +733,14 @@
       sep4.textContent = '·'; sep4.style.cssText = 'color:#ccc;margin:0 6px';
       bar.appendChild(sep4);
       var metroLbl = document.createElement('span');
-      metroLbl.textContent = 'Metronom:';
+      metroLbl.textContent = bassBeats.length ? 'Metronom (+bas):' : 'Metronom:';
       bar.appendChild(metroLbl);
+      if (bassBeats.length) {
+        bassCounterEl = document.createElement('span');
+        bassCounterEl.id = 'bass-counter';
+        bassCounterEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#b00020;font-weight:bold;margin-right:2px;';
+        bar.appendChild(bassCounterEl);
+      }
       var metroBtn = document.createElement('button');
       metroBtn.id = 'metro-toggle'; metroBtn.textContent = '▶';
       metroBtn.className = 'inst-btn'; metroBtn.title = 'Metronom';
@@ -591,6 +761,27 @@
       tempoPlus.textContent = '+'; tempoPlus.className = 'inst-btn'; tempoPlus.title = 'Hurtigere tempo';
       tempoPlus.addEventListener('click', function() { changeTempo(1); });
       bar.appendChild(tempoPlus);
+      if (bassBeats.length) {
+        var sep5 = document.createElement('span');
+        sep5.textContent = '·'; sep5.style.cssText = 'color:#ccc;margin:0 6px';
+        bar.appendChild(sep5);
+        var startLbl = document.createElement('span');
+        startLbl.textContent = 'Basstart:';
+        bar.appendChild(startLbl);
+        var startMinus = document.createElement('button');
+        startMinus.textContent = '−'; startMinus.className = 'inst-btn'; startMinus.title = 'Basstart en takt tidligere';
+        startMinus.addEventListener('click', function() { changeBassStart(-1); });
+        bar.appendChild(startMinus);
+        startValueEl = document.createElement('span');
+        startValueEl.id = 'bass-start-value';
+        startValueEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#555';
+        bar.appendChild(startValueEl);
+        var startPlus = document.createElement('button');
+        startPlus.textContent = '+'; startPlus.className = 'inst-btn'; startPlus.title = 'Basstart en takt senere';
+        startPlus.addEventListener('click', function() { changeBassStart(1); });
+        bar.appendChild(startPlus);
+        updateBassStartUI();
+      }
       document.body.appendChild(bar);
       // Auto-hide on inactivity
       var hideTimer = null;
@@ -625,6 +816,9 @@
           show(el, name);
           if (tip) tip._el = el;
         });
+        if (el.dataset.idx !== undefined) {
+          el.addEventListener('click', function() { setBassStartFromIdx(el.dataset.idx); });
+        }
       });
       document.addEventListener('touchstart', function() { hide(); }, { passive: true });
       window.addEventListener('scroll', hide, { passive: true });
@@ -638,36 +832,45 @@
     <h1>Halleys Comet <span class="artist-inline">– Billie Eilish</span></h1>
     <div class="meta">Toneart: Bb</div>
     <div class="chords">
-    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="chord">G</span><span class="chord">B7</span><span class="chord">Em</span><span class="chord">C</span><span class="chord">G</span><span class="chord">D</span></div></div>
-<div class="block line-group"><div class="line chords-only"><span class="chord">C</span><span class="chord">B7</span><span class="chord">Em</span><span class="chord">A</span></div></div>
-<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">C</span><span class="chord">Cm</span><span class="chord">G</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">don&#x27;</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">t want it</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> don&#x27;t </span></span><span class="seg"><span class="chord">G</span><span class="lyr">want to </span></span><span class="seg"><span class="chord">D</span><span class="lyr">want you</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="seg"><span class="chord">C</span><span class="lyr">in my dreams, I </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">seem to be mor</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">e honest</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And I</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> must admit you&#x27;ve </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">been in quite a</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> few</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">Hal</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">ley&#x27;s</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> Comet</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Comes a</span></span><span class="seg"><span class="chord">C</span><span class="lyr">round mo</span></span><span class="seg"><span class="chord">G</span><span class="lyr">re than </span></span><span class="seg"><span class="chord">D</span><span class="lyr">I do</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But you&#x27;re </span></span><span class="seg"><span class="chord">C</span><span class="lyr">all it takes for</span></span><span class="seg"><span class="chord">B7</span><span class="lyr"> me to break a</span></span><span class="seg"><span class="chord">Em</span><span class="lyr"> promi</span></span><span class="seg"><span class="chord">A</span><span class="lyr">se</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">Silly me to </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">fall in love with </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="chord">G</span><span class="lyr">I haven&#x27;t slept since Sunday</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mid</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">night for me is 3A</span></span><span class="seg"><span class="chord">C</span><span class="lyr">M for </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">u</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But my </span></span><span class="seg"><span class="chord">G</span><span class="lyr">sleepless nights are better</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">With </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">you than nights could ever be</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> alone, ooh, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ooh-ooh, </span></span><span class="seg"><span class="chord">D</span><span class="lyr">ooh</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was</span></span><span class="seg"><span class="chord">C</span><span class="lyr"> good at feeling </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">nothin&#x27;, now I&#x27;m </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">hopeless</span></span><span class="seg"><span class="chord">A</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">What a drag to </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">love you like</span></span><span class="seg"><span class="chord">G</span><span class="lyr"> I do, ooh-ooh, </span></span><span class="seg"><span class="chord">B7</span><span class="lyr">ooh, ooh, ooh, </span></span><span class="seg"><span class="chord">Em</span><span class="lyr">ooh</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ooh-</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ooh-ooh, </span></span><span class="seg"><span class="chord">G</span><span class="lyr">ooh, ooh-ooh, ooh-</span></span><span class="seg"><span class="chord">D</span><span class="lyr">ooh</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr">I&#x27;ve been loved be</span></span><span class="seg"><span class="chord">B7</span><span class="lyr">fore, but right no</span></span><span class="seg"><span class="chord">Em</span><span class="lyr">w in t</span></span><span class="seg"><span class="chord">A</span><span class="lyr">his moment</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I feel </span></span><span class="seg"><span class="chord">C</span><span class="lyr">more and more likе </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">I was made for </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord">Cm</span><span class="lyr">   For </span></span><span class="seg"><span class="chord">G</span><span class="lyr">you</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental Break]</span></div><div class="line chords-only"><span class="chord">Gm</span><span class="chord">C</span><span class="chord">F</span><span class="chord">Dm</span></div></div>
-<div class="block line-group line-group-last"><div class="line chords-only"><span class="chord">Gm</span><span class="chord">C</span><span class="chord">F</span><span class="chord">Dm</span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">I&#x27;m sit</span></span><span class="seg"><span class="chord">C</span><span class="lyr">ting in my brothe</span></span><span class="seg"><span class="chord">F</span><span class="lyr">r&#x27;s </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">room</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">  Haven&#x27;t slеpt in a </span></span><span class="seg"><span class="chord">C</span><span class="lyr">week, or </span></span><span class="seg"><span class="chord">F</span><span class="lyr">two, or </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">two</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">think I </span></span><span class="seg"><span class="chord">C</span><span class="lyr">might have fallen in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">love</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr"></span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Gm</span><span class="lyr">What am </span></span><span class="seg"><span class="chord">C</span><span class="lyr">I to </span></span><span class="seg"><span class="chord">Fmaj7</span><span class="lyr">do?</span></span></div></div>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Intro]</span></div><div class="line chords-only"><span class="barline" data-derived="bars"></span><span class="chord" data-idx="0">G</span><span class="chord" data-idx="1">B7</span><span class="barline" data-derived="bars"></span><span class="chord" data-idx="2">Em</span><span class="barline" data-derived="bars"></span><span class="chord" data-idx="3">C</span><span class="chord" data-idx="4">G</span><span class="barline" data-derived="bars"></span><span class="chord" data-idx="5">D</span></div></div>
+<div class="block line-group"><div class="line chords-only"><span class="barline" data-derived="bars"></span><span class="chord" data-idx="6">C</span><span class="chord" data-idx="7">B7</span><span class="barline" data-derived="bars"></span><span class="chord" data-idx="8">Em</span><span class="chord" data-idx="9">A</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="barline" data-derived="bars"></span><span class="chord" data-idx="10">C</span><span class="chord" data-idx="11">Cm</span><span class="barline" data-derived="bars"></span><span class="chord" data-idx="12">G</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="13">G</span><span class="lyr">I </span></span><span class="seg"><span class="chord" data-idx="14">B7</span><span class="lyr">don&#x27;</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="15">Em</span><span class="lyr">t want it</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">And I</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="16">C</span><span class="lyr"> don&#x27;t </span></span><span class="seg"><span class="chord" data-idx="17">G</span><span class="lyr">want to </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="18">D</span><span class="lyr">want you</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="19">C</span><span class="lyr">in my dreams, I </span></span><span class="seg"><span class="chord" data-idx="20">B7</span><span class="lyr">seem to be mor</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="21">Em</span><span class="lyr">e honest</span></span><span class="seg"><span class="chord" data-idx="22">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">And I</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="23">C</span><span class="lyr"> must admit you&#x27;ve </span></span><span class="seg"><span class="chord" data-idx="24">Cm</span><span class="lyr">been in quite a</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="25">G</span><span class="lyr"> few</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="26">G</span><span class="lyr">Hal</span></span><span class="seg"><span class="chord" data-idx="27">B7</span><span class="lyr">ley&#x27;s</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="28">Em</span><span class="lyr"> Comet</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Comes a</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="29">C</span><span class="lyr">round mo</span></span><span class="seg"><span class="chord" data-idx="30">G</span><span class="lyr">re than </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="31">D</span><span class="lyr">I do</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But you&#x27;re </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="32">C</span><span class="lyr">all it takes for</span></span><span class="seg"><span class="chord" data-idx="33">B7</span><span class="lyr"> me to break a</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="34">Em</span><span class="lyr"> promi</span></span><span class="seg"><span class="chord" data-idx="35">A</span><span class="lyr">se</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="36">C</span><span class="lyr">Silly me to </span></span><span class="seg"><span class="chord" data-idx="37">Cm</span><span class="lyr">fall in love with </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="38">G</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="39">G</span><span class="lyr">I haven&#x27;t slept since Sunday</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">Mid</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="40">B7</span><span class="lyr">night for me is 3A</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="41">C</span><span class="lyr">M for </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="42">G</span><span class="lyr">you-</span></span><span class="seg"><span class="chord" data-idx="43">D</span><span class="lyr">u</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">But my </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="44">G</span><span class="lyr">sleepless nights are better</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">With </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="45">B7</span><span class="lyr">you than nights could ever be</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="46">C</span><span class="lyr"> alone, ooh, </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="47">G</span><span class="lyr">ooh-ooh, </span></span><span class="seg"><span class="chord" data-idx="48">D</span><span class="lyr">ooh</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I was</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="49">C</span><span class="lyr"> good at feeling </span></span><span class="seg"><span class="chord" data-idx="50">B7</span><span class="lyr">nothin&#x27;, now I&#x27;m </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="51">Em</span><span class="lyr">hopeless</span></span><span class="seg"><span class="chord" data-idx="52">A</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="53">C</span><span class="lyr">What a drag to </span></span><span class="seg"><span class="chord" data-idx="54">Cm</span><span class="lyr">love you like</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="55">G</span><span class="lyr"> I do, ooh-ooh, </span></span><span class="seg"><span class="chord" data-idx="56">B7</span><span class="lyr">ooh, ooh, ooh, </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="57">Em</span><span class="lyr">ooh</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Ooh-</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="58">C</span><span class="lyr">ooh-ooh, </span></span><span class="seg"><span class="chord" data-idx="59">G</span><span class="lyr">ooh, ooh-ooh, ooh-</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="60">D</span><span class="lyr">ooh</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 4]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="61">C</span><span class="lyr">I&#x27;ve been loved be</span></span><span class="seg"><span class="chord" data-idx="62">B7</span><span class="lyr">fore, but right no</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="63">Em</span><span class="lyr">w in t</span></span><span class="seg"><span class="chord" data-idx="64">A</span><span class="lyr">his moment</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I feel </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="65">C</span><span class="lyr">more and more likе </span></span><span class="seg"><span class="chord" data-idx="66">Cm</span><span class="lyr">I was made for </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="67">G</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="68">C</span><span class="lyr"> </span></span><span class="seg"><span class="chord" data-idx="69">Cm</span><span class="lyr">   For </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="70">G</span><span class="lyr">you</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Instrumental Break]</span></div><div class="line chords-only"><span class="barline" data-derived="bars"></span><span class="chord" data-idx="71">Gm</span><span class="chord" data-idx="72">C</span><span class="barline" data-derived="bars"></span><span class="chord" data-idx="73">F</span><span class="chord" data-idx="74">Dm</span></div></div>
+<div class="block line-group line-group-last"><div class="line chords-only"><span class="barline" data-derived="bars"></span><span class="chord" data-idx="75">Gm</span><span class="chord" data-idx="76">C</span><span class="barline" data-derived="bars"></span><span class="chord" data-idx="77">F</span><span class="chord" data-idx="78">Dm</span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 5]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="79">Gm</span><span class="lyr">I&#x27;m sit</span></span><span class="seg"><span class="chord" data-idx="80">C</span><span class="lyr">ting in my brothe</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="81">F</span><span class="lyr">r&#x27;s </span></span><span class="seg"><span class="chord" data-idx="82">Dm</span><span class="lyr">room</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="83">Gm</span><span class="lyr">  Haven&#x27;t slеpt in a </span></span><span class="seg"><span class="chord" data-idx="84">C</span><span class="lyr">week, or </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="85">F</span><span class="lyr">two, or </span></span><span class="seg"><span class="chord" data-idx="86">Dm</span><span class="lyr">two</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">I </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="87">Gm</span><span class="lyr">think I </span></span><span class="seg"><span class="chord" data-idx="88">C</span><span class="lyr">might have fallen in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="89">F</span><span class="lyr">love</span></span><span class="seg"><span class="chord" data-idx="90">Dm</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="91">Gm</span><span class="lyr">What am </span></span><span class="seg"><span class="chord" data-idx="92">C</span><span class="lyr">I to </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="93">Fmaj7</span><span class="lyr">do?</span></span></div></div>
     </div>
     
   </div>
+    <pre class="block bars-source" hidden><span class="section">[Bars]</span>
+Intro:   |G B7|Em|C G|D|C B7|Em A|C Cm|G|
+Verse 1: |G B7|Em|C G|D|C B7|Em A|C Cm|G|
+Verse 2: |G B7|Em|C G|D|C B7|Em A|C Cm|G|
+Verse 3: |G|B7|C|G D|G|B7|C|G D|C B7|Em A|C Cm|G B7|Em|C G|D|
+Verse 4: |C B7|Em A|C Cm|G|C Cm|G|
+Instrumental Break: |Gm C|F Dm|Gm C|F Dm|
+Verse 5: |Gm C|F Dm|Gm C|F Dm|Gm C|F Dm|Gm C|Fmaj7|</pre>
+    <script type="application/json" id="bar-data">{"beats_per_bar": 4, "sections": [{"section": "Intro", "bars": [{"chords": ["G", "B7"], "repeat": false, "rest": false}, {"chords": ["Em"], "repeat": false, "rest": false}, {"chords": ["C", "G"], "repeat": false, "rest": false}, {"chords": ["D"], "repeat": false, "rest": false}, {"chords": ["C", "B7"], "repeat": false, "rest": false}, {"chords": ["Em", "A"], "repeat": false, "rest": false}, {"chords": ["C", "Cm"], "repeat": false, "rest": false}, {"chords": ["G"], "repeat": false, "rest": false}]}, {"section": "Verse 1", "bars": [{"chords": ["G", "B7"], "repeat": false, "rest": false}, {"chords": ["Em"], "repeat": false, "rest": false}, {"chords": ["C", "G"], "repeat": false, "rest": false}, {"chords": ["D"], "repeat": false, "rest": false}, {"chords": ["C", "B7"], "repeat": false, "rest": false}, {"chords": ["Em", "A"], "repeat": false, "rest": false}, {"chords": ["C", "Cm"], "repeat": false, "rest": false}, {"chords": ["G"], "repeat": false, "rest": false}]}, {"section": "Verse 2", "bars": [{"chords": ["G", "B7"], "repeat": false, "rest": false}, {"chords": ["Em"], "repeat": false, "rest": false}, {"chords": ["C", "G"], "repeat": false, "rest": false}, {"chords": ["D"], "repeat": false, "rest": false}, {"chords": ["C", "B7"], "repeat": false, "rest": false}, {"chords": ["Em", "A"], "repeat": false, "rest": false}, {"chords": ["C", "Cm"], "repeat": false, "rest": false}, {"chords": ["G"], "repeat": false, "rest": false}]}, {"section": "Verse 3", "bars": [{"chords": ["G"], "repeat": false, "rest": false}, {"chords": ["B7"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["G", "D"], "repeat": false, "rest": false}, {"chords": ["G"], "repeat": false, "rest": false}, {"chords": ["B7"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["G", "D"], "repeat": false, "rest": false}, {"chords": ["C", "B7"], "repeat": false, "rest": false}, {"chords": ["Em", "A"], "repeat": false, "rest": false}, {"chords": ["C", "Cm"], "repeat": false, "rest": false}, {"chords": ["G", "B7"], "repeat": false, "rest": false}, {"chords": ["Em"], "repeat": false, "rest": false}, {"chords": ["C", "G"], "repeat": false, "rest": false}, {"chords": ["D"], "repeat": false, "rest": false}]}, {"section": "Verse 4", "bars": [{"chords": ["C", "B7"], "repeat": false, "rest": false}, {"chords": ["Em", "A"], "repeat": false, "rest": false}, {"chords": ["C", "Cm"], "repeat": false, "rest": false}, {"chords": ["G"], "repeat": false, "rest": false}, {"chords": ["C", "Cm"], "repeat": false, "rest": false}, {"chords": ["G"], "repeat": false, "rest": false}]}, {"section": "Instrumental Break", "bars": [{"chords": ["Gm", "C"], "repeat": false, "rest": false}, {"chords": ["F", "Dm"], "repeat": false, "rest": false}, {"chords": ["Gm", "C"], "repeat": false, "rest": false}, {"chords": ["F", "Dm"], "repeat": false, "rest": false}]}, {"section": "Verse 5", "bars": [{"chords": ["Gm", "C"], "repeat": false, "rest": false}, {"chords": ["F", "Dm"], "repeat": false, "rest": false}, {"chords": ["Gm", "C"], "repeat": false, "rest": false}, {"chords": ["F", "Dm"], "repeat": false, "rest": false}, {"chords": ["Gm", "C"], "repeat": false, "rest": false}, {"chords": ["F", "Dm"], "repeat": false, "rest": false}, {"chords": ["Gm", "C"], "repeat": false, "rest": false}, {"chords": ["Fmaj7"], "repeat": false, "rest": false}]}]}</script>
   </div>
 </body>
 </html>

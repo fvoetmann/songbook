@@ -20,6 +20,7 @@ import sys
 
 from songlib import (  # noqa: E402
     ACCIDENTAL,
+    Bar,
     CHORD_DIAGRAM_JS,
     CHORD_DIAGRAM_STYLE,
     CHORD_TYPES,
@@ -36,17 +37,22 @@ from songlib import (  # noqa: E402
     STRING_OPEN,
     artist_sort_key,
     build_all_voicings_dbs,
+    build_bar_timeline_json,
     build_voicings_db,
     chord_positions_align,
     content_to_html,
     count_lines,
     decide_layout,
     extract_chord_names,
+    extract_chord_sequence,
     extract_ug_data,
     fetch_page,
+    find_label_for_header,
+    generate_default_bars,
     generate_voicings,
     get_song_info,
     group_lines,
+    is_bars_section,
     is_chord_annotation_line,
     is_chord_only_line,
     is_tab_section,
@@ -54,7 +60,9 @@ from songlib import (  # noqa: E402
     make_chord_diagram_html,
     make_song_html,
     main,
+    match_section,
     paginate_sections,
+    parse_bars_meta,
     parse_chord_name,
     parse_chord_positions,
     parse_sections,
@@ -73,6 +81,7 @@ from songlib import (  # noqa: E402
     transpose_chord,
     transpose_content,
     unwrap_view_source,
+    validate_bars,
 )
 
 if __name__ == "__main__":

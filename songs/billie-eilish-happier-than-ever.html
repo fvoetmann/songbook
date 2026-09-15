@@ -45,12 +45,14 @@
     div.block { font-family: 'Source Sans 3', sans-serif; }
     .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
     .line.chords-only .chord { margin-right: 1.4em; }
-    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
-    .seg .lyr { white-space: pre; }
+    .seg { display: inline-block; }
+    .seg .lyr { display: block; white-space: pre; }
     .seg .lyr:empty::before { content: "\00a0"; }
     .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
+    .chord.now-playing { background: #ffe98a; border-radius: 3px; box-shadow: 0 0 0 2px #ffe98a; }
+    .chord.start-marker { border-radius: 3px; box-shadow: 0 0 0 2px #1a73e8; }
     .section { color: #777; font-style: italic; font-weight: bold; }
     @media (max-width: 640px) {
       body { background: white; padding: 0; }
@@ -64,6 +66,8 @@
       @page { size: A4; margin: 12mm 14mm; }
       .block { break-inside: avoid; }
       .tab-section { break-before: page; }
+      .chord.now-playing { background: none; box-shadow: none; }
+      .chord.start-marker { box-shadow: none; }
     }
   </style>
   <style>
@@ -430,6 +434,67 @@
     var audioCtx = null, tempoBPM = 120;
     var metroTimer = null, nextNoteTime = 0, beatCount = 0;
     var METRO_LOOKAHEAD = 25, METRO_SCHEDULE_AHEAD = 0.1;
+    // Basgang: afledt af [Bars]-taktdata (#bar-data), grundtonen i den
+    // aktive akkord spilles på 1. slag af hver (del-)takt. Kun grundtonen,
+    // ingen gang-figur endnu - se CLAUDE.md's afsnit om Takt-notation.
+    // Hvert element i bassBeats er enten:
+    //   null                                     - ingen ny hændelse (hold)
+    //   { type:'note', root, beats, idx }         - ny akkord-anslag; idx peger
+    //                                                på det tilsvarende .chord[data-idx]
+    //   { type:'rest' }                           - paustakt, ryd fremhævning
+    // idx følger samme globale, dokument-rækkefølge-tælling som data-idx-
+    // attributterne sat i render.py (kun rigtige akkorder, sektion for
+    // sektion, i den rækkefølge sektionerne optræder i sangen).
+    // bassBarFirstIdx[barNum] = data-idx for den akkord der klinger i starten
+    // af den bar (eller null for en paustakt); bassIdxToBar[idx] er det
+    // omvendte opslag. Begge bruges til at sætte/vise hvor basgangen skal
+    // starte fra (se changeBassStart/setBassStartFromIdx).
+    var bassBeats = [], bassBpb = 4, bassBarFirstIdx = [], bassIdxToBar = {}, bassStartBar = 0;
+    function buildBassBeats(timeline) {
+      if (!timeline || !timeline.sections) return { beats: [], bpb: 4, barFirstIdx: [], idxToBar: {} };
+      var bpb = timeline.beats_per_bar || 4;
+      var beats = [];
+      var barFirstIdx = [];
+      var idxToBar = {};
+      var lastNotes = null;
+      var chordCounter = 0;
+      timeline.sections.forEach(function(sec) {
+        (sec.bars || []).forEach(function(bar) {
+          var notes;
+          if (bar.rest) {
+            beats.push({ type: 'rest' });
+            for (var i = 1; i < bpb; i++) beats.push(null);
+            barFirstIdx.push(null);
+            return;
+          } else if (bar.repeat) {
+            notes = lastNotes || [];
+          } else {
+            var n = (bar.chords || []).length || 1;
+            notes = bar.chords.map(function(ch, i) {
+              var start = Math.round(bpb * i / n);
+              var end = Math.round(bpb * (i + 1) / n);
+              var parsed = parseChordName(ch);
+              var note = {
+                type: 'note',
+                root: parsed ? parsed.root : null,
+                beats: Math.max(1, end - start),
+                idx: chordCounter
+              };
+              idxToBar[chordCounter] = barFirstIdx.length;
+              chordCounter++;
+              return note;
+            });
+            lastNotes = notes;
+          }
+          barFirstIdx.push(notes.length ? notes[0].idx : null);
+          notes.forEach(function(note) {
+            beats.push(note);
+            for (var k = 1; k < note.beats; k++) beats.push(null);
+          });
+        });
+      });
+      return { beats: beats, bpb: bpb, barFirstIdx: barFirstIdx, idxToBar: idxToBar };
+    }
     function ensureAudioCtx() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       return audioCtx;
@@ -474,10 +539,94 @@
       osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
+    function scheduleBassNote(time, root, beats, secPerBeat) {
+      var ctx = ensureAudioCtx();
+      // grundtone i bas-register (C2..B2), følger den aktuelle live-transponering
+      // (transposeSemitones), samme knap der transponerer akkord-teksten
+      var midi = 36 + root + transposeSemitones;
+      var freq = 440 * Math.pow(2, (midi - 69) / 12);
+      var noteLen = Math.min(beats * secPerBeat * 0.9, 1.2);
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      var filter = ctx.createBiquadFilter();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, time);
+      filter.type = 'lowpass'; filter.frequency.value = 900;
+      gain.gain.setValueAtTime(0.0001, time);
+      gain.gain.exponentialRampToValueAtTime(0.5, time + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + noteLen);
+      osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + noteLen + 0.05);
+    }
+    // Fremhævning af den aktuelt spillende akkord + en "Takt N/M"-tæller,
+    // synkroniseret med bas-anslagene (samme lookahead-tidsstyring som
+    // klikket/bas-tonen, via setTimeout frem til den planlagte AudioContext-tid).
+    var chordEls = null, activeChordEl = null, bassCounterEl = null;
+    function ensureChordEls() {
+      if (chordEls) return chordEls;
+      chordEls = {};
+      document.querySelectorAll('.chord[data-idx]').forEach(function(el) {
+        chordEls[el.dataset.idx] = el;
+      });
+      return chordEls;
+    }
+    function clearHighlight() {
+      if (activeChordEl) { activeChordEl.classList.remove('now-playing'); activeChordEl = null; }
+    }
+    // Markør for hvor basgangen starter fra, når metronomen (gen)startes.
+    // Vises som en blå ramme om akkorden, kun mens metronomen står stille
+    // (now-playing-fremhævningen overtager mens den kører).
+    var startValueEl = null, markerChordEl = null;
+    function totalBassBars() { return bassBarFirstIdx.length; }
+    function clearStartMarker() {
+      if (markerChordEl) { markerChordEl.classList.remove('start-marker'); markerChordEl = null; }
+    }
+    function updateStartMarker() {
+      clearStartMarker();
+      if (metroTimer) return;
+      var idx = bassBarFirstIdx[bassStartBar];
+      if (idx === null || idx === undefined) return;
+      markerChordEl = ensureChordEls()[idx] || null;
+      if (markerChordEl) markerChordEl.classList.add('start-marker');
+    }
+    function updateBassStartUI() {
+      if (startValueEl) startValueEl.textContent = 'Takt ' + (bassStartBar + 1) + '/' + totalBassBars();
+      updateStartMarker();
+    }
+    function changeBassStart(delta) {
+      bassStartBar = Math.max(0, Math.min(totalBassBars() - 1, bassStartBar + delta));
+      updateBassStartUI();
+    }
+    function setBassStartFromIdx(idx) {
+      if (!bassIdxToBar.hasOwnProperty(idx)) return;
+      bassStartBar = bassIdxToBar[idx];
+      updateBassStartUI();
+    }
+    function scheduleBeatUI(time, note, barNum, totalBars) {
+      var ctx = ensureAudioCtx();
+      var delay = Math.max(0, (time - ctx.currentTime) * 1000);
+      setTimeout(function() {
+        clearHighlight();
+        if (note && note.type === 'note') {
+          activeChordEl = ensureChordEls()[note.idx] || null;
+          if (activeChordEl) activeChordEl.classList.add('now-playing');
+        }
+        if (bassCounterEl) bassCounterEl.textContent = 'Takt ' + barNum + '/' + totalBars;
+      }, delay);
+    }
     function metroScheduler() {
       var ctx = ensureAudioCtx();
       while (nextNoteTime < ctx.currentTime + METRO_SCHEDULE_AHEAD) {
         scheduleClick(nextNoteTime, beatCount % 4 === 0);
+        if (bassBeats.length) {
+          var pos = beatCount % bassBeats.length;
+          var note = bassBeats[pos];
+          if (note && note.type === 'note' && note.root !== null) {
+            scheduleBassNote(nextNoteTime, note.root, note.beats, 60 / tempoBPM);
+          }
+          var barNum = Math.floor(pos / bassBpb) + 1;
+          var totalBars = bassBeats.length / bassBpb;
+          scheduleBeatUI(nextNoteTime, note, barNum, totalBars);
+        }
         nextNoteTime += 60 / tempoBPM;
         beatCount++;
       }
@@ -487,11 +636,15 @@
       if (metroTimer) {
         clearInterval(metroTimer); metroTimer = null;
         b.textContent = '▶'; b.classList.remove('active');
+        clearHighlight();
+        if (bassCounterEl) bassCounterEl.textContent = '';
+        updateStartMarker();
         return;
       }
       var ctx = ensureAudioCtx();
       if (ctx.state === 'suspended') ctx.resume();
-      beatCount = 0;
+      beatCount = bassBeats.length ? bassStartBar * bassBpb : 0;
+      clearStartMarker();
       nextNoteTime = ctx.currentTime + 0.05;
       metroScheduler();
       metroTimer = setInterval(metroScheduler, METRO_LOOKAHEAD);
@@ -504,6 +657,14 @@
     document.addEventListener('DOMContentLoaded', function() {
       var tempoMeta = document.querySelector('meta[name="tempo"]');
       tempoBPM = (tempoMeta && parseInt(tempoMeta.content, 10)) || 120;
+      var barDataEl = document.getElementById('bar-data');
+      if (barDataEl) {
+        try {
+          var built = buildBassBeats(JSON.parse(barDataEl.textContent));
+          bassBeats = built.beats; bassBpb = built.bpb;
+          bassBarFirstIdx = built.barFirstIdx; bassIdxToBar = built.idxToBar;
+        } catch (e) { bassBeats = []; }
+      }
       var bar = document.createElement('div');
       bar.id = 'inst-bar';
       var lbl = document.createElement('span');
@@ -569,8 +730,14 @@
       sep4.textContent = '·'; sep4.style.cssText = 'color:#ccc;margin:0 6px';
       bar.appendChild(sep4);
       var metroLbl = document.createElement('span');
-      metroLbl.textContent = 'Metronom:';
+      metroLbl.textContent = bassBeats.length ? 'Metronom (+bas):' : 'Metronom:';
       bar.appendChild(metroLbl);
+      if (bassBeats.length) {
+        bassCounterEl = document.createElement('span');
+        bassCounterEl.id = 'bass-counter';
+        bassCounterEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#b00020;font-weight:bold;margin-right:2px;';
+        bar.appendChild(bassCounterEl);
+      }
       var metroBtn = document.createElement('button');
       metroBtn.id = 'metro-toggle'; metroBtn.textContent = '▶';
       metroBtn.className = 'inst-btn'; metroBtn.title = 'Metronom';
@@ -591,6 +758,27 @@
       tempoPlus.textContent = '+'; tempoPlus.className = 'inst-btn'; tempoPlus.title = 'Hurtigere tempo';
       tempoPlus.addEventListener('click', function() { changeTempo(1); });
       bar.appendChild(tempoPlus);
+      if (bassBeats.length) {
+        var sep5 = document.createElement('span');
+        sep5.textContent = '·'; sep5.style.cssText = 'color:#ccc;margin:0 6px';
+        bar.appendChild(sep5);
+        var startLbl = document.createElement('span');
+        startLbl.textContent = 'Basstart:';
+        bar.appendChild(startLbl);
+        var startMinus = document.createElement('button');
+        startMinus.textContent = '−'; startMinus.className = 'inst-btn'; startMinus.title = 'Basstart en takt tidligere';
+        startMinus.addEventListener('click', function() { changeBassStart(-1); });
+        bar.appendChild(startMinus);
+        startValueEl = document.createElement('span');
+        startValueEl.id = 'bass-start-value';
+        startValueEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#555';
+        bar.appendChild(startValueEl);
+        var startPlus = document.createElement('button');
+        startPlus.textContent = '+'; startPlus.className = 'inst-btn'; startPlus.title = 'Basstart en takt senere';
+        startPlus.addEventListener('click', function() { changeBassStart(1); });
+        bar.appendChild(startPlus);
+        updateBassStartUI();
+      }
       document.body.appendChild(bar);
       // Auto-hide on inactivity
       var hideTimer = null;
@@ -625,6 +813,9 @@
           show(el, name);
           if (tip) tip._el = el;
         });
+        if (el.dataset.idx !== undefined) {
+          el.addEventListener('click', function() { setBassStartFromIdx(el.dataset.idx); });
+        }
       });
       document.addEventListener('touchstart', function() { hide(); }, { passive: true });
       window.addEventListener('scroll', hide, { passive: true });
@@ -725,6 +916,14 @@ D|---0-----------0---------|---0-----------0----------|
 A|-------------------------|--------------------------|
 E|-------------------------|--------------------------|</pre></div>
   </div>
+    <pre class="block bars-source" hidden><span class="section">[Bars draft]</span>
+Intro - Rhythm Guitar: |G|G6|G7|
+Verse 1 - Full Picking Pattern (With Optional Slash Chords): |C|C/G|C|C/G|
+Chorus: |Cadd9|E7|Am|Dm7|G|Cadd9|E7|Am|Dm7|G|
+Verse 1: |C|E7|Am|Dm7b5|C|E7|Am|Dm7b5|E7|Am|Am/G|D/F#|Dm7|G7|
+Instrumental Break: |C|E7|Am|F|Fm|
+Verse 2: |C|E7|Am|F|Fm|C|E7|Am|F|Fm|C|E7|Am|F|C|E7|Am|F|
+Bridge: |C|E7|Am|F|C|E7|Am|F|C|E7|Am|F|C|E7|Am|F|C|E7|Am|F|</pre>
   </div>
 </body>
 </html>
