@@ -4,6 +4,19 @@ Eksporterer det offentlige API som tidligere levede i add_song.py, så
 add_song.py og øvrige scripts kan importere herfra uændret.
 """
 
+from .bars import (
+    Bar,
+    BARS_DRAFT_HEADER,
+    build_bar_timeline_json,
+    extract_chord_sequence,
+    find_label_for_header,
+    generate_default_bars,
+    is_bars_draft_section,
+    is_bars_section,
+    match_section,
+    parse_bars_meta,
+    validate_bars,
+)
 from .chords import (
     ACCIDENTAL,
     CHORD_TYPES,
@@ -68,6 +81,8 @@ from .ug import extract_ug_data, fetch_page, get_song_info, unwrap_view_source
 
 __all__ = [
     "ACCIDENTAL",
+    "Bar",
+    "BARS_DRAFT_HEADER",
     "CHORD_DIAGRAM_JS",
     "CHORD_DIAGRAM_STYLE",
     "CHORD_TYPES",
@@ -84,17 +99,23 @@ __all__ = [
     "STRING_OPEN",
     "artist_sort_key",
     "build_all_voicings_dbs",
+    "build_bar_timeline_json",
     "build_voicings_db",
     "chord_positions_align",
     "content_to_html",
     "count_lines",
     "decide_layout",
     "extract_chord_names",
+    "extract_chord_sequence",
     "extract_ug_data",
     "fetch_page",
+    "find_label_for_header",
+    "generate_default_bars",
     "generate_voicings",
     "get_song_info",
     "group_lines",
+    "is_bars_draft_section",
+    "is_bars_section",
     "is_chord_annotation_line",
     "is_chord_only_line",
     "is_tab_section",
@@ -102,7 +123,9 @@ __all__ = [
     "make_chord_diagram_html",
     "make_song_html",
     "main",
+    "match_section",
     "paginate_sections",
+    "parse_bars_meta",
     "parse_chord_name",
     "parse_chord_positions",
     "parse_sections",
@@ -121,4 +144,5 @@ __all__ = [
     "transpose_chord",
     "transpose_content",
     "unwrap_view_source",
+    "validate_bars",
 ]

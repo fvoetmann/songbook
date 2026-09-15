@@ -23,7 +23,7 @@ from bs4 import BeautifulSoup, NavigableString
 from songlib import (
     make_song_html, parse_chord_name, load_songs, save_songs,
     rebuild_index, slugify, transpose_content, transpose_chord,
-    is_chord_only_line,
+    is_chord_only_line, validate_bars,
 )
 
 SONGS_DIR = Path("songs")
@@ -367,6 +367,9 @@ def create_new_song():
         + f"# Skriv akkorder direkte i teksten, fx: [Am]Her er linjen\n"
         + f"# {{Am}} (krøllede parenteser) = akkord der IKKE er bundet til et bestemt ord,\n"
         + f"# fx en akkord-oversigt eller -progression uden sangtekst under.\n"
+        + f"# [Bars]-sektion (valgfri) = taktinddeling til afspilning, fx:\n"
+        + f"#   [Bars]\n"
+        + f"#   Vers: |Am|G|F|C|\n"
         + f"# Gem og luk editoren for at gemme. Tom fil annullerer.\n"
         + f"#\n"
         + f"[Verse 1]\n"
@@ -393,13 +396,18 @@ def create_new_song():
         sys.exit(f"Filen findes allerede: {filepath} — brug 'edit_song.py <søgeord>' til at redigere den.")
 
     new_ug = edit_to_ug(new_content)
-    new_html, layout = make_song_html(title, artist, key, capo, new_ug, "", tempo)
+    new_html, layout, has_bars = make_song_html(title, artist, key, capo, new_ug, "", tempo)
+    for warning in validate_bars(new_ug):
+        print(f"ADVARSEL: {warning}")
 
     SONGS_DIR.mkdir(exist_ok=True)
     filepath.write_text(new_html, encoding="utf-8")
 
     songs = load_songs()
-    songs.append({"title": title, "artist": artist, "file": filename, "source": "manuel"})
+    entry = {"title": title, "artist": artist, "file": filename, "source": "manuel"}
+    if has_bars:
+        entry["bars"] = True
+    songs.append(entry)
     save_songs(songs)
     rebuild_index(songs)
 
@@ -433,6 +441,9 @@ def main():
         + f"# Sektioner: [Verse 1], [Chorus]  ·  Akkorder: [Am], [G/B]\n"
         + f"# {{Am}} (krøllede parenteser) = akkord der IKKE er bundet til et bestemt ord —\n"
         + f"# lad den stå uændret for at bevare den præcis som den er.\n"
+        + f"# [Bars]-sektion (valgfri) = taktinddeling til afspilning, fx:\n"
+        + f"#   [Bars]\n"
+        + f"#   Vers: |Am|G|F|C|\n"
         + f"# Transponer sættes ovenfor i header-feltet, fx +2 eller -1\n"
         + f"# Gem og luk editoren for at gemme. Slet ALT indhold for at annullere.\n"
         + f"#\n"
@@ -472,7 +483,9 @@ def main():
         if new_key:
             new_key = transpose_chord(new_key, semitones)
 
-    new_html, layout = make_song_html(new_title, new_artist, new_key, new_capo, new_ug, url, new_tempo)
+    new_html, layout, has_bars = make_song_html(new_title, new_artist, new_key, new_capo, new_ug, url, new_tempo)
+    for warning in validate_bars(new_ug):
+        print(f"ADVARSEL: {warning}")
 
     new_filename = f"{slugify(new_artist)}-{slugify(new_title)}.html"
     new_path = SONGS_DIR / new_filename
@@ -485,13 +498,16 @@ def main():
 
     html_path.write_text(new_html, encoding="utf-8")
 
-    if (new_title, new_artist, new_filename) != (title, artist, song["file"]):
+    if (new_title, new_artist, new_filename) != (title, artist, song["file"]) or has_bars != song.get("bars", False):
         songs = load_songs()
         for s in songs:
             if s["file"] == song["file"]:
                 s["title"] = new_title
                 s["artist"] = new_artist
                 s["file"] = new_filename
+                s.pop("bars", None)
+                if has_bars:
+                    s["bars"] = True
                 break
         save_songs(songs)
         rebuild_index(songs)

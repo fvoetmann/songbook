@@ -10,6 +10,7 @@ import json
 import re
 from pathlib import Path
 
+from .bars import validate_bars
 from .chords import parse_transpose, transpose_content
 from .render import make_song_html
 from .ug import extract_ug_data, get_song_info
@@ -133,9 +134,11 @@ def process_file(ug_path: Path, url: str = "") -> None:
     filename = f"{slugify(artist)}-{slugify(title)}.html"
     filepath = SONGS_DIR / filename
 
-    song_html, layout = make_song_html(title, artist, key, capo, content, url)
+    song_html, layout, has_bars = make_song_html(title, artist, key, capo, content, url)
     new_hash = hashlib.sha256(song_html.encode("utf-8")).hexdigest()
     layout_msg = {"single": "1 kolonne", "double": "2 kolonner", "multi": "flere sider"}
+    for warning in validate_bars(content):
+        print(f"  ADVARSEL: {warning}")
 
     songs = load_songs()
     existing = next((s for s in songs if s["file"] == filename), None)
@@ -159,8 +162,13 @@ def process_file(ug_path: Path, url: str = "") -> None:
 
     entry = {"title": title, "artist": artist, "file": filename, "source": ug_path.name, "hash": new_hash}
     if existing:
+        existing.pop("bars", None)
         existing.update(entry)
+        if has_bars:
+            existing["bars"] = True
     else:
+        if has_bars:
+            entry["bars"] = True
         songs.append(entry)
     save_songs(songs)
     rebuild_index(songs)
