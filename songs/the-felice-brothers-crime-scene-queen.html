@@ -38,6 +38,9 @@
     body.font-small .block { font-size: 8pt; }
     .chords { column-count: 2; column-gap: 8mm; }
     @media (max-width: 640px), (max-height: 500px) and (orientation: landscape) { .chords { column-count: 1; } }
+    .barline { display: inline-block; align-self: flex-start; width: 1px; height: 1.1em; background: #ccc; margin: 0 5px; vertical-align: baseline; }
+    .barmark { color: #b00020; font-weight: bold; opacity: .6; font-size: 0.85em; line-height: 1.3; }
+    .barmark.rest { font-style: italic; }
     pre.block {
       font-family: ui-monospace, 'Courier New', Courier, monospace;
       white-space: pre-wrap; word-break: break-word;
@@ -45,12 +48,14 @@
     div.block { font-family: 'Source Sans 3', sans-serif; }
     .line { display: flex; flex-wrap: wrap; align-items: flex-end; }
     .line.chords-only .chord { margin-right: 1.4em; }
-    .seg { display: inline-flex; flex-direction: column; align-items: flex-start; }
-    .seg .lyr { white-space: pre; }
+    .seg { display: inline-block; }
+    .seg .lyr { display: block; white-space: pre; }
     .seg .lyr:empty::before { content: "\00a0"; }
     .seg .chord { font-size: 0.85em; line-height: 1.3; }
     .tab-section { margin-top: 8mm; }
     .chord { color: #b00020; font-weight: bold; cursor: help; }
+    .chord.now-playing { background: #ffe98a; border-radius: 3px; box-shadow: 0 0 0 2px #ffe98a; }
+    .chord.start-marker { border-radius: 3px; box-shadow: 0 0 0 2px #1a73e8; }
     .section { color: #777; font-style: italic; font-weight: bold; }
     @media (max-width: 640px) {
       body { background: white; padding: 0; }
@@ -64,6 +69,8 @@
       @page { size: A4; margin: 12mm 14mm; }
       .block { break-inside: avoid; }
       .tab-section { break-before: page; }
+      .chord.now-playing { background: none; box-shadow: none; }
+      .chord.start-marker { box-shadow: none; }
     }
   </style>
   <style>
@@ -430,6 +437,67 @@
     var audioCtx = null, tempoBPM = 120;
     var metroTimer = null, nextNoteTime = 0, beatCount = 0;
     var METRO_LOOKAHEAD = 25, METRO_SCHEDULE_AHEAD = 0.1;
+    // Basgang: afledt af [Bars]-taktdata (#bar-data), grundtonen i den
+    // aktive akkord spilles på 1. slag af hver (del-)takt. Kun grundtonen,
+    // ingen gang-figur endnu - se CLAUDE.md's afsnit om Takt-notation.
+    // Hvert element i bassBeats er enten:
+    //   null                                     - ingen ny hændelse (hold)
+    //   { type:'note', root, beats, idx }         - ny akkord-anslag; idx peger
+    //                                                på det tilsvarende .chord[data-idx]
+    //   { type:'rest' }                           - paustakt, ryd fremhævning
+    // idx følger samme globale, dokument-rækkefølge-tælling som data-idx-
+    // attributterne sat i render.py (kun rigtige akkorder, sektion for
+    // sektion, i den rækkefølge sektionerne optræder i sangen).
+    // bassBarFirstIdx[barNum] = data-idx for den akkord der klinger i starten
+    // af den bar (eller null for en paustakt); bassIdxToBar[idx] er det
+    // omvendte opslag. Begge bruges til at sætte/vise hvor basgangen skal
+    // starte fra (se changeBassStart/setBassStartFromIdx).
+    var bassBeats = [], bassBpb = 4, bassBarFirstIdx = [], bassIdxToBar = {}, bassStartBar = 0;
+    function buildBassBeats(timeline) {
+      if (!timeline || !timeline.sections) return { beats: [], bpb: 4, barFirstIdx: [], idxToBar: {} };
+      var bpb = timeline.beats_per_bar || 4;
+      var beats = [];
+      var barFirstIdx = [];
+      var idxToBar = {};
+      var lastNotes = null;
+      var chordCounter = 0;
+      timeline.sections.forEach(function(sec) {
+        (sec.bars || []).forEach(function(bar) {
+          var notes;
+          if (bar.rest) {
+            beats.push({ type: 'rest' });
+            for (var i = 1; i < bpb; i++) beats.push(null);
+            barFirstIdx.push(null);
+            return;
+          } else if (bar.repeat) {
+            notes = lastNotes || [];
+          } else {
+            var n = (bar.chords || []).length || 1;
+            notes = bar.chords.map(function(ch, i) {
+              var start = Math.round(bpb * i / n);
+              var end = Math.round(bpb * (i + 1) / n);
+              var parsed = parseChordName(ch);
+              var note = {
+                type: 'note',
+                root: parsed ? parsed.root : null,
+                beats: Math.max(1, end - start),
+                idx: chordCounter
+              };
+              idxToBar[chordCounter] = barFirstIdx.length;
+              chordCounter++;
+              return note;
+            });
+            lastNotes = notes;
+          }
+          barFirstIdx.push(notes.length ? notes[0].idx : null);
+          notes.forEach(function(note) {
+            beats.push(note);
+            for (var k = 1; k < note.beats; k++) beats.push(null);
+          });
+        });
+      });
+      return { beats: beats, bpb: bpb, barFirstIdx: barFirstIdx, idxToBar: idxToBar };
+    }
     function ensureAudioCtx() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       return audioCtx;
@@ -474,10 +542,94 @@
       osc.start(time); osc.stop(time + 0.15);
       setTimeout(flashMetroDot, Math.max(0, (time - ctx.currentTime) * 1000));
     }
+    function scheduleBassNote(time, root, beats, secPerBeat) {
+      var ctx = ensureAudioCtx();
+      // grundtone i bas-register (C2..B2), følger den aktuelle live-transponering
+      // (transposeSemitones), samme knap der transponerer akkord-teksten
+      var midi = 36 + root + transposeSemitones;
+      var freq = 440 * Math.pow(2, (midi - 69) / 12);
+      var noteLen = Math.min(beats * secPerBeat * 0.9, 1.2);
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      var filter = ctx.createBiquadFilter();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, time);
+      filter.type = 'lowpass'; filter.frequency.value = 900;
+      gain.gain.setValueAtTime(0.0001, time);
+      gain.gain.exponentialRampToValueAtTime(0.5, time + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + noteLen);
+      osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      osc.start(time); osc.stop(time + noteLen + 0.05);
+    }
+    // Fremhævning af den aktuelt spillende akkord + en "Takt N/M"-tæller,
+    // synkroniseret med bas-anslagene (samme lookahead-tidsstyring som
+    // klikket/bas-tonen, via setTimeout frem til den planlagte AudioContext-tid).
+    var chordEls = null, activeChordEl = null, bassCounterEl = null;
+    function ensureChordEls() {
+      if (chordEls) return chordEls;
+      chordEls = {};
+      document.querySelectorAll('.chord[data-idx]').forEach(function(el) {
+        chordEls[el.dataset.idx] = el;
+      });
+      return chordEls;
+    }
+    function clearHighlight() {
+      if (activeChordEl) { activeChordEl.classList.remove('now-playing'); activeChordEl = null; }
+    }
+    // Markør for hvor basgangen starter fra, når metronomen (gen)startes.
+    // Vises som en blå ramme om akkorden, kun mens metronomen står stille
+    // (now-playing-fremhævningen overtager mens den kører).
+    var startValueEl = null, markerChordEl = null;
+    function totalBassBars() { return bassBarFirstIdx.length; }
+    function clearStartMarker() {
+      if (markerChordEl) { markerChordEl.classList.remove('start-marker'); markerChordEl = null; }
+    }
+    function updateStartMarker() {
+      clearStartMarker();
+      if (metroTimer) return;
+      var idx = bassBarFirstIdx[bassStartBar];
+      if (idx === null || idx === undefined) return;
+      markerChordEl = ensureChordEls()[idx] || null;
+      if (markerChordEl) markerChordEl.classList.add('start-marker');
+    }
+    function updateBassStartUI() {
+      if (startValueEl) startValueEl.textContent = 'Takt ' + (bassStartBar + 1) + '/' + totalBassBars();
+      updateStartMarker();
+    }
+    function changeBassStart(delta) {
+      bassStartBar = Math.max(0, Math.min(totalBassBars() - 1, bassStartBar + delta));
+      updateBassStartUI();
+    }
+    function setBassStartFromIdx(idx) {
+      if (!bassIdxToBar.hasOwnProperty(idx)) return;
+      bassStartBar = bassIdxToBar[idx];
+      updateBassStartUI();
+    }
+    function scheduleBeatUI(time, note, barNum, totalBars) {
+      var ctx = ensureAudioCtx();
+      var delay = Math.max(0, (time - ctx.currentTime) * 1000);
+      setTimeout(function() {
+        clearHighlight();
+        if (note && note.type === 'note') {
+          activeChordEl = ensureChordEls()[note.idx] || null;
+          if (activeChordEl) activeChordEl.classList.add('now-playing');
+        }
+        if (bassCounterEl) bassCounterEl.textContent = 'Takt ' + barNum + '/' + totalBars;
+      }, delay);
+    }
     function metroScheduler() {
       var ctx = ensureAudioCtx();
       while (nextNoteTime < ctx.currentTime + METRO_SCHEDULE_AHEAD) {
         scheduleClick(nextNoteTime, beatCount % 4 === 0);
+        if (bassBeats.length) {
+          var pos = beatCount % bassBeats.length;
+          var note = bassBeats[pos];
+          if (note && note.type === 'note' && note.root !== null) {
+            scheduleBassNote(nextNoteTime, note.root, note.beats, 60 / tempoBPM);
+          }
+          var barNum = Math.floor(pos / bassBpb) + 1;
+          var totalBars = bassBeats.length / bassBpb;
+          scheduleBeatUI(nextNoteTime, note, barNum, totalBars);
+        }
         nextNoteTime += 60 / tempoBPM;
         beatCount++;
       }
@@ -487,11 +639,15 @@
       if (metroTimer) {
         clearInterval(metroTimer); metroTimer = null;
         b.textContent = '▶'; b.classList.remove('active');
+        clearHighlight();
+        if (bassCounterEl) bassCounterEl.textContent = '';
+        updateStartMarker();
         return;
       }
       var ctx = ensureAudioCtx();
       if (ctx.state === 'suspended') ctx.resume();
-      beatCount = 0;
+      beatCount = bassBeats.length ? bassStartBar * bassBpb : 0;
+      clearStartMarker();
       nextNoteTime = ctx.currentTime + 0.05;
       metroScheduler();
       metroTimer = setInterval(metroScheduler, METRO_LOOKAHEAD);
@@ -504,6 +660,14 @@
     document.addEventListener('DOMContentLoaded', function() {
       var tempoMeta = document.querySelector('meta[name="tempo"]');
       tempoBPM = (tempoMeta && parseInt(tempoMeta.content, 10)) || 120;
+      var barDataEl = document.getElementById('bar-data');
+      if (barDataEl) {
+        try {
+          var built = buildBassBeats(JSON.parse(barDataEl.textContent));
+          bassBeats = built.beats; bassBpb = built.bpb;
+          bassBarFirstIdx = built.barFirstIdx; bassIdxToBar = built.idxToBar;
+        } catch (e) { bassBeats = []; }
+      }
       var bar = document.createElement('div');
       bar.id = 'inst-bar';
       var lbl = document.createElement('span');
@@ -569,8 +733,14 @@
       sep4.textContent = '·'; sep4.style.cssText = 'color:#ccc;margin:0 6px';
       bar.appendChild(sep4);
       var metroLbl = document.createElement('span');
-      metroLbl.textContent = 'Metronom:';
+      metroLbl.textContent = bassBeats.length ? 'Metronom (+bas):' : 'Metronom:';
       bar.appendChild(metroLbl);
+      if (bassBeats.length) {
+        bassCounterEl = document.createElement('span');
+        bassCounterEl.id = 'bass-counter';
+        bassCounterEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#b00020;font-weight:bold;margin-right:2px;';
+        bar.appendChild(bassCounterEl);
+      }
       var metroBtn = document.createElement('button');
       metroBtn.id = 'metro-toggle'; metroBtn.textContent = '▶';
       metroBtn.className = 'inst-btn'; metroBtn.title = 'Metronom';
@@ -591,6 +761,27 @@
       tempoPlus.textContent = '+'; tempoPlus.className = 'inst-btn'; tempoPlus.title = 'Hurtigere tempo';
       tempoPlus.addEventListener('click', function() { changeTempo(1); });
       bar.appendChild(tempoPlus);
+      if (bassBeats.length) {
+        var sep5 = document.createElement('span');
+        sep5.textContent = '·'; sep5.style.cssText = 'color:#ccc;margin:0 6px';
+        bar.appendChild(sep5);
+        var startLbl = document.createElement('span');
+        startLbl.textContent = 'Basstart:';
+        bar.appendChild(startLbl);
+        var startMinus = document.createElement('button');
+        startMinus.textContent = '−'; startMinus.className = 'inst-btn'; startMinus.title = 'Basstart en takt tidligere';
+        startMinus.addEventListener('click', function() { changeBassStart(-1); });
+        bar.appendChild(startMinus);
+        startValueEl = document.createElement('span');
+        startValueEl.id = 'bass-start-value';
+        startValueEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#555';
+        bar.appendChild(startValueEl);
+        var startPlus = document.createElement('button');
+        startPlus.textContent = '+'; startPlus.className = 'inst-btn'; startPlus.title = 'Basstart en takt senere';
+        startPlus.addEventListener('click', function() { changeBassStart(1); });
+        bar.appendChild(startPlus);
+        updateBassStartUI();
+      }
       document.body.appendChild(bar);
       // Auto-hide on inactivity
       var hideTimer = null;
@@ -625,6 +816,9 @@
           show(el, name);
           if (tip) tip._el = el;
         });
+        if (el.dataset.idx !== undefined) {
+          el.addEventListener('click', function() { setBassStartFromIdx(el.dataset.idx); });
+        }
       });
       document.addEventListener('touchstart', function() { hide(); }, { passive: true });
       window.addEventListener('scroll', hide, { passive: true });
@@ -632,57 +826,63 @@
   })();
   </script>
 </head>
-<body class="font-small">
+<body>
   <div class="pages-wrap">
     <div class="page">
     <h1>Crime Scene Queen <span class="artist-inline">– The Felice Brothers</span></h1>
     <div class="meta">Toneart: Dm</div>
     <div class="chords">
-    <div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="lyr">Single released April 9, 2024</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">Youtube link: https://youtu.be/NhdM2uFQ8dY</span></span></div>
-<div class="line"><span class="seg"><span class="lyr">Spotify link: https://open.spotify.com/track/3AOcjr6I6Gfu5tie60k61k?si=8b8430936c264100</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> It was at the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Whisky a </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">Go-Go in the long ago go</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> At the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">dawn of the digital </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">age</span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> Like I said it was </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">at the Whisky a </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">Go Go</span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> When I first </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">heard her singing on the s</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">tage</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> She had a license to </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">kill (kill </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">kill)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="seg"><span class="chord">F</span><span class="lyr">billionaire </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="seg"><span class="chord">C</span><span class="lyr">hills</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> And she sang like a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">dream (dream </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">dream)</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">queen with a laser </span></span><span class="seg"><span class="chord">C</span><span class="lyr">beam</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> Like </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">sorrow on Joy </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">Street</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> Like </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">tears of cham</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">pagne</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> Like a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">Wartime s</span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">tarlet</span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> I saw her </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">walking in the </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">rain</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> She had a license to </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">kill (kill </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">kill)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="seg"><span class="chord">F</span><span class="lyr">billionaire </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="seg"><span class="chord">C</span><span class="lyr">hills</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> And she sang like a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">dream (dream </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">dream)</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">queen with a laser </span></span><span class="seg"><span class="chord">C</span><span class="lyr">beam</span></span><span class="seg"><span class="chord">A7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Interlude]</span></div><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">   (</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">La-la-la, </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">la-la-la)</span></span><span class="seg"><span class="chord">Gm6</span><span class="lyr"></span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr">   (</span></span><span class="seg"><span class="chord">Am</span><span class="lyr">La-la-la, </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">la-la-la, </span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr">la-la, la-</span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">la)</span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Through the </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">palms of pleasure </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">island</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> An ominous </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">wind began to </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">blow</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> Someone was </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">murdered by their </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">chauffeur</span></span><span class="seg"><span class="chord">Gm7</span><span class="lyr"></span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">Dm</span><span class="lyr"> There was a </span></span><span class="seg"><span class="chord">Am</span><span class="lyr">knife in a feathered </span></span><span class="seg"><span class="chord">Gm</span><span class="lyr">pillow</span></span><span class="seg"><span class="chord">C</span><span class="lyr"></span></span></div></div>
-<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> She had a license to </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">kill (kill </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">kill)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="seg"><span class="chord">F</span><span class="lyr">billionaire </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="seg"><span class="chord">C</span><span class="lyr">hills</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> And she sang like a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">dream (dream </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">dream)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">queen with a laser </span></span><span class="seg"><span class="chord">C</span><span class="lyr">beam</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> She had a license to </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">kill (kill </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">kill)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="seg"><span class="chord">F</span><span class="lyr">billionaire </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="seg"><span class="chord">C</span><span class="lyr">hills</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="seg"><span class="chord">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
-<div class="block line-group"><div class="line"><span class="seg"><span class="chord">C</span><span class="lyr"> And she sang like a </span></span><span class="seg"><span class="chord">Dm</span><span class="lyr">dream (dream </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">dream)</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line"><span class="seg"><span class="chord">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="seg"><span class="chord">Bb</span><span class="lyr">queen with a laser </span></span><span class="seg"><span class="chord">C</span><span class="lyr">beam</span></span></div></div>
-<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord">Gm7</span>    | <span class="chord">Dmadd9</span> |</span></span></div></div>
+    <div class="block line-group"><div class="line section-line"><span class="section">[Verse 1]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="0">Dm</span><span class="lyr"> It was at the </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="1">Am</span><span class="lyr">Whisky a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="2">Gm</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">Go-Go in the long ago go</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="3">Dm</span><span class="lyr"> At the </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="4">Am</span><span class="lyr">dawn of the digital </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="5">Gm</span><span class="lyr">age</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="6">Gm7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="7">Dm</span><span class="lyr"> Like I said it was </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="8">Am</span><span class="lyr">at the Whisky a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="9">Gm</span><span class="lyr">Go Go</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="10">Gm7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="11">Dm</span><span class="lyr"> When I first </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="12">Am</span><span class="lyr">heard her singing on the s</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="13">Gm</span><span class="lyr">tage</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="14">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="15">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="16">C</span><span class="lyr"> She had a license to </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="17">Dm</span><span class="lyr">kill (kill </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="18">Bb</span><span class="lyr">kill)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="19">F</span><span class="lyr">billionaire </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="20">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="21">C</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">hills</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="22">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="23">C</span><span class="lyr"> And she sang like a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="24">Dm</span><span class="lyr">dream (dream </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="25">Bb</span><span class="lyr">dream)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="26">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="27">Bb</span><span class="lyr">queen with a laser </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="28">C</span><span class="lyr">beam</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="29">A7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 2]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="30">Dm</span><span class="lyr"> Like </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="31">Am</span><span class="lyr">sorrow on Joy </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="32">Gm</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">Street</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="33">Dm</span><span class="lyr"> Like </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="34">Am</span><span class="lyr">tears of cham</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="35">Gm</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">pagne</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="36">Dm</span><span class="lyr"> Like a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="37">Am</span><span class="lyr">Wartime s</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="38">Gm</span><span class="lyr">tarlet</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="39">Gm7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="40">Dm</span><span class="lyr"> I saw her </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="41">Am</span><span class="lyr">walking in the </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="42">Gm</span><span class="lyr">rain</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="43">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus]</span></div><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="44">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="45">C</span><span class="lyr"> She had a license to </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="46">Dm</span><span class="lyr">kill (kill </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="47">Bb</span><span class="lyr">kill)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="48">F</span><span class="lyr">billionaire </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="49">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="50">C</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">hills</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="51">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="52">C</span><span class="lyr"> And she sang like a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="53">Dm</span><span class="lyr">dream (dream </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="54">Bb</span><span class="lyr">dream)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="55">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="56">Bb</span><span class="lyr">queen with a laser </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="57">C</span><span class="lyr">beam</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="58">A7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Interlude]</span></div><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="59">Dm</span><span class="lyr">   (</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="60">Am</span><span class="lyr">La-la-la, </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="61">Gm</span><span class="lyr">la-la-la)</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="62">Gm6</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="63">Dm</span><span class="lyr">   (</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="64">Am</span><span class="lyr">La-la-la, </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="65">Gm</span><span class="lyr">la-la-la, </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="66">Gm7</span><span class="lyr">la-la, la-</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="67">Dm</span><span class="lyr">la)</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Verse 3]</span></div><div class="line"><span class="seg"><span class="lyr">Through the </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="68">Am</span><span class="lyr">palms of pleasure </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="69">Gm</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">island</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="70">Dm</span><span class="lyr"> An ominous </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="71">Am</span><span class="lyr">wind began to </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="72">Gm</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">blow</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="73">Dm</span><span class="lyr"> Someone was </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="74">Am</span><span class="lyr">murdered by their </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="75">Gm</span><span class="lyr">chauffeur</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="76">Gm7</span><span class="lyr"></span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="77">Dm</span><span class="lyr"> There was a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="78">Am</span><span class="lyr">knife in a feathered </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="79">Gm</span><span class="lyr">pillow</span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="80">C</span><span class="lyr"></span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 2]</span></div><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="81">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="82">C</span><span class="lyr"> She had a license to </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="83">Dm</span><span class="lyr">kill (kill </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="84">Bb</span><span class="lyr">kill)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="85">F</span><span class="lyr">billionaire </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="86">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="87">C</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">hills</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="88">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="89">C</span><span class="lyr"> And she sang like a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="90">Dm</span><span class="lyr">dream (dream </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="91">Bb</span><span class="lyr">dream)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="92">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="93">Bb</span><span class="lyr">queen with a laser </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="94">C</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">beam</span></span></div></div>
+<div class="block line-group"><div class="line section-line"><span class="section">[Chorus 2]</span></div><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="95">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="96">C</span><span class="lyr"> She had a license to </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="97">Dm</span><span class="lyr">kill (kill </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="98">Bb</span><span class="lyr">kill)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">A </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="99">F</span><span class="lyr">billionaire </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="100">Bb</span><span class="lyr">daddy in the Hollywood </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="101">C</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">hills</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="seg"><span class="lyr">It was pretty in </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="102">F</span><span class="lyr">pink (pink pink pink)</span></span></div></div>
+<div class="block line-group"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="103">C</span><span class="lyr"> And she sang like a </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="104">Dm</span><span class="lyr">dream (dream </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="105">Bb</span><span class="lyr">dream)</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line"><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="106">F</span><span class="lyr"> She&#x27;s the crime scene </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="107">Bb</span><span class="lyr">queen with a laser </span></span><span class="barline" data-derived="bars"></span><span class="seg"><span class="chord" data-idx="108">C</span><span class="barline" data-derived="bars"></span><span class="barmark repeat">%</span><span class="lyr">beam</span></span></div></div>
+<div class="block line-group line-group-last"><div class="line section-line"><span class="section">[Outro]</span></div><div class="line"><span class="seg"><span class="lyr">| <span class="chord" data-idx="109">Gm7</span>    | <span class="chord" data-idx="110">Dmadd9</span> |</span></span></div></div>
     </div>
     
   </div>
+    <pre class="block bars-source" hidden><span class="section">[Bars]</span>
+Verse 1: |Dm|Am|Gm|%|Dm|Am|Gm|Gm7|Dm|Am|Gm|Gm7|Dm|Am|Gm|C|
+Chorus: |F|C|Dm|Bb|F|Bb|C|%|F|C|Dm|Bb|F|Bb|C|A7|
+Chorus 2: |F|C|Dm|Bb|F|Bb|C|%|F|C|Dm|Bb|F|Bb|C|%|
+Verse 2: |Dm|Am|Gm|%|Dm|Am|Gm|%|Dm|Am|Gm|Gm7|Dm|Am|Gm|C|
+Interlude: |Dm|Am|Gm|Gm6|Dm|Am|Gm|Gm7|Dm|
+Verse 3: |Am|Gm|%|Dm|Am|Gm|%|Dm|Am|Gm|Gm7|Dm|Am|Gm|C|
+Outro: |Gm7|Dmadd9|</pre>
+    <script type="application/json" id="bar-data">{"beats_per_bar": 4, "sections": [{"section": "Verse 1", "bars": [{"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["Gm7"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["Gm7"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}]}, {"section": "Chorus", "bars": [{"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["A7"], "repeat": false, "rest": false}]}, {"section": "Verse 2", "bars": [{"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["Gm7"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}]}, {"section": "Chorus", "bars": [{"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["A7"], "repeat": false, "rest": false}]}, {"section": "Interlude", "bars": [{"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["Gm6"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["Gm7"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}]}, {"section": "Verse 3", "bars": [{"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["Gm7"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Am"], "repeat": false, "rest": false}, {"chords": ["Gm"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}]}, {"section": "Chorus 2", "bars": [{"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}]}, {"section": "Chorus 2", "bars": [{"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": ["Dm"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["F"], "repeat": false, "rest": false}, {"chords": ["Bb"], "repeat": false, "rest": false}, {"chords": ["C"], "repeat": false, "rest": false}, {"chords": [], "repeat": true, "rest": false}]}, {"section": "Outro", "bars": [{"chords": ["Gm7"], "repeat": false, "rest": false}, {"chords": ["Dmadd9"], "repeat": false, "rest": false}]}]}</script>
   </div>
 </body>
 </html>

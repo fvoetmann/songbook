@@ -619,7 +619,8 @@
     "artist": "Bruce Springsteen",
     "file": "bruce-springsteen-i-m-on-fire.html",
     "source": "view-source_https___tabs.ultimate-guitar.com_tab_bruce-springsteen_im-on-fire-chords-1047368.html",
-    "hash": "0085e21ce43fda18d76c7693719223b8af25271b798ec7c001c9e9578a236c23"
+    "hash": "0085e21ce43fda18d76c7693719223b8af25271b798ec7c001c9e9578a236c23",
+    "bars": true
   },
   {
     "title": "Flying High",
@@ -1097,7 +1098,8 @@
     "artist": "The Felice Brothers",
     "file": "the-felice-brothers-valium.html",
     "source": "view-source_https___tabs.ultimate-guitar.com_tab_the-felice-brothers_valium-chords-3942356.html",
-    "hash": "efc6ccae1aec693264721dbb0c3cbe410a9e3ed6de662bcb2381c23895889d3e"
+    "hash": "efc6ccae1aec693264721dbb0c3cbe410a9e3ed6de662bcb2381c23895889d3e",
+    "bars": true
   },
   {
     "title": "Where Did You Sleep Last Night",
@@ -1119,6 +1121,7 @@
     "artist": "The Felice Brothers",
     "file": "the-felice-brothers-crime-scene-queen.html",
     "source": "view-source_https___tabs.ultimate-guitar.com_tab_the-felice-brothers_crime-scene-queen-chords-5243448.html",
-    "hash": "1a6d4f63982f6f205d1de54d271023056145156f0c362139472e6be13719b7df"
+    "hash": "1a6d4f63982f6f205d1de54d271023056145156f0c362139472e6be13719b7df",
+    "bars": true
   }
 ]
