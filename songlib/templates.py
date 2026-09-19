@@ -371,10 +371,13 @@ CHORD_DIAGRAM_JS = """  <script>
     var metroTimer = null, nextNoteTime = 0, beatCount = 0;
     var METRO_LOOKAHEAD = 25, METRO_SCHEDULE_AHEAD = 0.1;
     // Basgang: afledt af [Bars]-taktdata (#bar-data), grundtonen i den
-    // aktive akkord spilles på 1. slag af hver (del-)takt. Kun grundtonen,
-    // ingen gang-figur endnu - se CLAUDE.md's afsnit om Takt-notation.
+    // aktive akkord spilles på 1. slag af hver (del-)takt. Valgfrit (bassMode
+    // 'fifth') tilføjes kvinten på akkordens 3. slag, hvis akkorden holder så
+    // længe - se CLAUDE.md's afsnit om Takt-notation.
     // Hvert element i bassBeats er enten:
     //   null                                     - ingen ny hændelse (hold)
+    //   { type:'hold', root, beats }              - hold på akkordens 3. slag;
+    //                                                her spilles kvinten i 'fifth'-tilstand
     //   { type:'note', root, beats, idx }         - ny akkord-anslag; idx peger
     //                                                på det tilsvarende .chord[data-idx]
     //   { type:'rest' }                           - paustakt, ryd fremhævning
@@ -384,8 +387,9 @@ CHORD_DIAGRAM_JS = """  <script>
     // bassBarFirstIdx[barNum] = data-idx for den akkord der klinger i starten
     // af den bar (eller null for en paustakt); bassIdxToBar[idx] er det
     // omvendte opslag. Begge bruges til at sætte/vise hvor basgangen skal
-    // starte fra (se changeBassStart/setBassStartFromIdx).
+    // starte fra (se setBassStartFromIdx).
     var bassBeats = [], bassBpb = 4, bassBarFirstIdx = [], bassIdxToBar = {}, bassStartBar = 0;
+    var bassMode = 'root';
     function buildBassBeats(timeline) {
       if (!timeline || !timeline.sections) return { beats: [], bpb: 4, barFirstIdx: [], idxToBar: {} };
       var bpb = timeline.beats_per_bar || 4;
@@ -425,7 +429,9 @@ CHORD_DIAGRAM_JS = """  <script>
           barFirstIdx.push(notes.length ? notes[0].idx : null);
           notes.forEach(function(note) {
             beats.push(note);
-            for (var k = 1; k < note.beats; k++) beats.push(null);
+            for (var k = 1; k < note.beats; k++) {
+              beats.push(k === 2 ? { type: 'hold', root: note.root, beats: note.beats - 2 } : null);
+            }
           });
         });
       });
@@ -511,7 +517,7 @@ CHORD_DIAGRAM_JS = """  <script>
     // Markør for hvor basgangen starter fra, når metronomen (gen)startes.
     // Vises som en blå ramme om akkorden, kun mens metronomen står stille
     // (now-playing-fremhævningen overtager mens den kører).
-    var startValueEl = null, markerChordEl = null;
+    var markerChordEl = null;
     function totalBassBars() { return bassBarFirstIdx.length; }
     function clearStartMarker() {
       if (markerChordEl) { markerChordEl.classList.remove('start-marker'); markerChordEl = null; }
@@ -524,13 +530,11 @@ CHORD_DIAGRAM_JS = """  <script>
       markerChordEl = ensureChordEls()[idx] || null;
       if (markerChordEl) markerChordEl.classList.add('start-marker');
     }
+    // Tælleren i metronom-gruppen viser startpunktet mens metronomen står
+    // stille, og den aktuelle takt mens den kører.
     function updateBassStartUI() {
-      if (startValueEl) startValueEl.textContent = 'Takt ' + (bassStartBar + 1) + '/' + totalBassBars();
+      if (bassCounterEl) bassCounterEl.textContent = 'Takt ' + (bassStartBar + 1) + '/' + totalBassBars();
       updateStartMarker();
-    }
-    function changeBassStart(delta) {
-      bassStartBar = Math.max(0, Math.min(totalBassBars() - 1, bassStartBar + delta));
-      updateBassStartUI();
     }
     function setBassStartFromIdx(idx) {
       if (!bassIdxToBar.hasOwnProperty(idx)) return;
@@ -541,10 +545,14 @@ CHORD_DIAGRAM_JS = """  <script>
       var ctx = ensureAudioCtx();
       var delay = Math.max(0, (time - ctx.currentTime) * 1000);
       setTimeout(function() {
-        clearHighlight();
+        // null/'hold' = akkorden holdes videre: behold fremhævningen. Kun et
+        // nyt anslag eller en paustakt ændrer den.
         if (note && note.type === 'note') {
+          clearHighlight();
           activeChordEl = ensureChordEls()[note.idx] || null;
           if (activeChordEl) activeChordEl.classList.add('now-playing');
+        } else if (note && note.type === 'rest') {
+          clearHighlight();
         }
         if (bassCounterEl) bassCounterEl.textContent = 'Takt ' + barNum + '/' + totalBars;
       }, delay);
@@ -556,8 +564,12 @@ CHORD_DIAGRAM_JS = """  <script>
         if (bassBeats.length) {
           var pos = beatCount % bassBeats.length;
           var note = bassBeats[pos];
+          var secPerBeat = 60 / tempoBPM;
           if (note && note.type === 'note' && note.root !== null) {
-            scheduleBassNote(nextNoteTime, note.root, note.beats, 60 / tempoBPM);
+            var rootBeats = (bassMode === 'fifth' && note.beats >= 3) ? 2 : note.beats;
+            scheduleBassNote(nextNoteTime, note.root, rootBeats, secPerBeat);
+          } else if (bassMode === 'fifth' && note && note.type === 'hold' && note.root !== null) {
+            scheduleBassNote(nextNoteTime, note.root + 7, note.beats, secPerBeat);
           }
           var barNum = Math.floor(pos / bassBpb) + 1;
           var totalBars = bassBeats.length / bassBpb;
@@ -573,8 +585,7 @@ CHORD_DIAGRAM_JS = """  <script>
         clearInterval(metroTimer); metroTimer = null;
         b.textContent = '▶'; b.classList.remove('active');
         clearHighlight();
-        if (bassCounterEl) bassCounterEl.textContent = '';
-        updateStartMarker();
+        updateBassStartUI();
         return;
       }
       var ctx = ensureAudioCtx();
@@ -585,6 +596,10 @@ CHORD_DIAGRAM_JS = """  <script>
       metroScheduler();
       metroTimer = setInterval(metroScheduler, METRO_LOOKAHEAD);
       b.textContent = '⏸'; b.classList.add('active');
+    }
+    function toggleBassMode() {
+      bassMode = bassMode === 'root' ? 'fifth' : 'root';
+      document.getElementById('bass-mode').textContent = bassMode === 'fifth' ? 'Bas: grund+kvint' : 'Bas: grundtone';
     }
     function changeTempo(delta) {
       tempoBPM = Math.max(30, Math.min(300, tempoBPM + delta));
@@ -671,6 +686,7 @@ CHORD_DIAGRAM_JS = """  <script>
       if (bassBeats.length) {
         bassCounterEl = document.createElement('span');
         bassCounterEl.id = 'bass-counter';
+        bassCounterEl.title = 'Tryk på en akkord i sangen for at vælge startpunkt';
         bassCounterEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#b00020;font-weight:bold;margin-right:2px;';
         bar.appendChild(bassCounterEl);
       }
@@ -695,24 +711,11 @@ CHORD_DIAGRAM_JS = """  <script>
       tempoPlus.addEventListener('click', function() { changeTempo(1); });
       bar.appendChild(tempoPlus);
       if (bassBeats.length) {
-        var sep5 = document.createElement('span');
-        sep5.textContent = '·'; sep5.style.cssText = 'color:#ccc;margin:0 6px';
-        bar.appendChild(sep5);
-        var startLbl = document.createElement('span');
-        startLbl.textContent = 'Basstart:';
-        bar.appendChild(startLbl);
-        var startMinus = document.createElement('button');
-        startMinus.textContent = '−'; startMinus.className = 'inst-btn'; startMinus.title = 'Basstart en takt tidligere';
-        startMinus.addEventListener('click', function() { changeBassStart(-1); });
-        bar.appendChild(startMinus);
-        startValueEl = document.createElement('span');
-        startValueEl.id = 'bass-start-value';
-        startValueEl.style.cssText = 'min-width:5em;text-align:center;display:inline-block;color:#555';
-        bar.appendChild(startValueEl);
-        var startPlus = document.createElement('button');
-        startPlus.textContent = '+'; startPlus.className = 'inst-btn'; startPlus.title = 'Basstart en takt senere';
-        startPlus.addEventListener('click', function() { changeBassStart(1); });
-        bar.appendChild(startPlus);
+        var bassModeBtn = document.createElement('button');
+        bassModeBtn.id = 'bass-mode'; bassModeBtn.textContent = 'Bas: grundtone';
+        bassModeBtn.className = 'inst-btn'; bassModeBtn.title = 'Skift basgang: kun grundtone, eller grundtone + kvint på 3. slag';
+        bassModeBtn.addEventListener('click', toggleBassMode);
+        bar.appendChild(bassModeBtn);
         updateBassStartUI();
       }
       document.body.appendChild(bar);

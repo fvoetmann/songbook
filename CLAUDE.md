@@ -114,8 +114,10 @@ header fra `[Bars draft]` til `[Bars]` — gem, og den almindelige matchning/vis
 `[Bars]`-strukturen beregnes og gemmes som JSON (`<script id="bar-data">` i sang-HTML'en) og
 bruges nu til en simpel basgang: når `[Bars]` er aktiveret for sangen, spiller metronomen (▶)
 automatisk grundtonen af den aktive akkord på 1. slag af hver (del-)takt, i den rækkefølge
-sektionerne optræder i sangen (loop'er når metronomen kører videre efter sidste takt). Kun
-grundtonen indtil videre — ingen gangfigur endnu.
+sektionerne optræder i sangen (loop'er når metronomen kører videre efter sidste takt). Som
+standard kun grundtonen; knappen "Bas: grundtone" i metronom-gruppen skifter til "Bas: grund+kvint",
+hvor kvinten (grundtone + 7 halvtoner) også spilles på akkordens 3. slag, hvis akkorden holder så
+længe (fx en hel takt i 4/4). Valget gælder kun den aktuelle visning og gemmes ikke.
 
 Samtidig fremhæves den aktuelt spillende akkord i sangteksten (gul baggrund), og en lille
 "Takt N/M"-tæller ved siden af metronom-knappen viser hvor i sangen basgangen er, så man kan
