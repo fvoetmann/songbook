@@ -47,6 +47,7 @@ from .layout import (
     section_line_count,
     split_mixed,
 )
+from .polyboard import render_polyboard
 from .render import (
     chord_positions_align,
     content_to_html,
@@ -135,6 +136,7 @@ __all__ = [
     "rebuild_index",
     "render_chord_lines",
     "render_chord_lyric_line",
+    "render_polyboard",
     "render_section",
     "save_songs",
     "section_line_count",

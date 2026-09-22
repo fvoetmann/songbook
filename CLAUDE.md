@@ -124,6 +124,29 @@ Samtidig fremhæves den aktuelt spillende akkord i sangteksten (gul baggrund), o
 følge med selv når den spillende akkord er scrollet uden for skærmen. Begge dele følger
 metronomens ▶/⏸ og nulstilles til sangens begyndelse hver gang den startes.
 
+## Eksport til polyboard
+
+```bash
+python3 export_polyboard.py <søgeord>                 # print polyboard-kode
+python3 export_polyboard.py <søgeord> --out sang.txt  # gem i fil
+python3 export_polyboard.py <søgeord> --bass          # tilføj basgang på slot d2
+```
+
+Oversætter en sangs aktive `[Bars]`-takter til kode til polyboard (en live-coding-REPL med
+Tidal/Strudel-lignende mini-notation, fx `test.polyrythm.com`): `def`-linjer plus én
+`d1 # note (…)/N`-linje hvor 1 cyklus = 1 takt. Indsæt det hele i polyboard og kør alle linjer
+(Skift+Ctrl+Enter). Kræver `[Bars]` (ikke `[Bars draft]`); ukendte akkorder bliver til pause med advarsel.
+
+- `--sound NAVN` sætter polyboard-lyden til akkorderne (standard `arpy`)
+- `--restrike` genanslår forlængede (`%`) akkorder hver takt (`!N`) i stedet for ét langt anslag (`@N`)
+- `--bass` tilføjer grundtone på 1. slag i hver takt (som MIDI-tal, så tallene ikke forveksles med slot-navnet `d2`)
+- `--bass-sound NAVN` sætter basgangens lyd (standard `arpy`; `sine` blev afvist af polyboard)
+- Gentagne fire-takters mønstre udtrækkes automatisk som `def pat1 = (…)`; identiske sektioner deler én `def`
+
+Polyboards parser afviser akkordliste-opslag (`d3'$maj`) inde i `def`-kroppe (`UnknownName`), så akkorder
+skrives som inline-lister (`d3'[0 4 7]`). Mønstret er låst til transportens absolutte cyklus: mute/unmute
+globalt før start for at begynde ved takt 1. Logikken ligger i `songlib/polyboard.py`.
+
 ## PDF-generering
 
 ```bash
@@ -179,7 +202,8 @@ python3 rebuild_songs.py
 - `rebuild_songs.py` — regenerer alle sang-HTML-filer med aktuelt template
 - `add_default_bars.py` — foreslår en `[Bars]`-taktinddeling for en sang (se "Takt-notation" ovenfor)
 - `add_draft_bars.py` — indsætter en inaktiv `[Bars draft]`-taktinddeling for alle sange i biblioteket der endnu ikke har en (se "Takt-notation" ovenfor)
-- `songlib/` — logik-pakke bag scripts (akkordteori, templates, UG-parsing, layout, rendering, store, CLI, `bars.py` for takt-notation)
+- `export_polyboard.py` — oversætter en sangs `[Bars]`-takter til polyboard-kode (se "Eksport til polyboard" ovenfor)
+- `songlib/` — logik-pakke bag scripts (akkordteori, templates, UG-parsing, layout, rendering, store, CLI, `bars.py` for takt-notation, `polyboard.py` for polyboard-eksport)
 - `.nojekyll` — forhindrer GitHub Pages i at køre Jekyll
 - `songs/` — genererede HTML-sange
 - `songs.json` — intern liste over sange (title, artist, file, source, hash, evt. bars)
