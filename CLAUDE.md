@@ -62,19 +62,31 @@ Vers: |Em7|Am7 Fmaj7|
   i sangen, case-insensitivt — først eksakt, ellers som prefix (`Vers` matcher `[Vers 1]`,
   `[Vers 2]`)
 - `<taktsekvens>`: `|`-adskilte takter (kant-`|` er valgfri/kosmetisk). Hver takt er:
-  - én eller flere mellemrums-adskilte akkorder, der deler takten ligeligt (`D A` = 2
-    akkorder i én takt, fx 2 slag hver i 4/4)
-  - `%` = gentag forrige takt (samme akkord(er), holder videre)
-  - `.` = paustakt (ingen akkord)
+  - én eller flere slots, der deler takten ligeligt (`D A` = 2 akkorder i én takt, fx 2
+    slag hver i 4/4). Mellemrum mellem slots er valgfrit/kosmetisk — `D A` og `DA` er
+    IKKE det samme (se `.` nedenfor for hvorfor det er trygt at udelade mellemrum)
+  - `%` = gentag forrige takt (samme akkord(er), holder videre) — kun som en hel takt for sig
+  - `.` = paustakt. Som en hel takt for sig (`.` alene, evt. gentaget: `..`) er det en
+    paustakt uden akkord. Som et slot der deler en takt med en eller flere akkorder
+    (fx `...C` eller det samme skrevet med mellemrum: `. . . C`) er hvert `.` en
+    lige stor pause-andel af takten på linje med de øvrige slots — `...C` i 4/4 er
+    altså tre stille fjerdedele efterfulgt af `C` som fjerdedel; `|. C|` er en halv
+    takts pause efterfulgt af `C` i den anden halvdel. Da et akkordnavn aldrig
+    indeholder `.`, kan `.`-tegn og akkordnavne frit klistres sammen uden mellemrum
+    (`...C`, `D.A`, `C.` er alle gyldige og svarer til de mellemrums-adskilte former)
 - Fast 4/4 for alle takter (matcher metronomens antagelse om accent hvert 4. slag)
-- **Matchning:** de "rigtige" akkorder i taktsekvensen (uden `%`/`.`) skal, i rækkefølge,
-  svare 1:1 til `[ch]`-akkorderne der allerede står i den tilhørende sektion i sangteksten.
-  Stemmer det, tegnes taktstreger ind i den eksisterende visning (også i PDF, da PDF'en
-  genbruger samme HTML). Stemmer det ikke, springes visuel taktstregs-visning over for den
-  sektion, og der printes en advarsel ved gem/tilføjelse — resten af sangen er upåvirket
+- **Matchning:** de "rigtige" akkorder i taktsekvensen (uden `%`/`.`, uanset om `.` står som
+  en hel takt eller som et pause-slot inde i en delt takt) skal, i rækkefølge, svare 1:1 til
+  `[ch]`-akkorderne der allerede står i den tilhørende sektion i sangteksten. Stemmer det,
+  tegnes taktstreger ind i den eksisterende visning (også i PDF, da PDF'en genbruger samme
+  HTML). Stemmer det ikke, springes visuel taktstregs-visning over for den sektion, og der
+  printes en advarsel ved gem/tilføjelse — resten af sangen er upåvirket
 - **Visning:** taktstregen holder sig på akkordlinjen (over sangteksten) og går ikke ned i
   selve teksten. En `%`/`.`-markør (gentagelse/pause) vises umiddelbart efter den akkord i
-  sangteksten den hører til, på samme linje som akkorden — ikke efter hele tekstlinjen
+  sangteksten den hører til, på samme linje som akkorden — ikke efter hele tekstlinjen.
+  Pause-slots forrest i en delt takt (fx `...C`) har ingen egen forudgående akkord at hænge
+  på — de vises i stedet lige efter selve taktstregen, foran den første akkord i takten; der
+  tegnes kun én taktstreg for takten (ikke én pr. pause-slot)
 - Man skal allerede have skrevet akkorderne et sted i sangen (`[Am]`/`{Am}`) — `[Bars]`
   tilføjer kun taktinddeling oven på eksisterende akkorder, den genererer ikke nye
 - `songs.json`-feltet `bars: true` sættes automatisk når mindst én sektion matcher
@@ -114,13 +126,38 @@ header fra `[Bars draft]` til `[Bars]` — gem, og den almindelige matchning/vis
 `[Bars]`-strukturen beregnes og gemmes som JSON (`<script id="bar-data">` i sang-HTML'en) og
 bruges nu til en simpel basgang: når `[Bars]` er aktiveret for sangen, spiller metronomen (▶)
 automatisk grundtonen af den aktive akkord på 1. slag af hver (del-)takt, i den rækkefølge
-sektionerne optræder i sangen (loop'er når metronomen kører videre efter sidste takt). Kun
-grundtonen indtil videre — ingen gangfigur endnu.
+sektionerne optræder i sangen (loop'er når metronomen kører videre efter sidste takt). Som
+standard kun grundtonen; knappen "Bas: grundtone" i metronom-gruppen skifter til "Bas: grund+kvint",
+hvor kvinten (grundtone + 7 halvtoner) også spilles på akkordens 3. slag, hvis akkorden holder så
+længe (fx en hel takt i 4/4). Valget gælder kun den aktuelle visning og gemmes ikke.
 
 Samtidig fremhæves den aktuelt spillende akkord i sangteksten (gul baggrund), og en lille
 "Takt N/M"-tæller ved siden af metronom-knappen viser hvor i sangen basgangen er, så man kan
 følge med selv når den spillende akkord er scrollet uden for skærmen. Begge dele følger
 metronomens ▶/⏸ og nulstilles til sangens begyndelse hver gang den startes.
+
+## Eksport til polyboard
+
+```bash
+python3 export_polyboard.py <søgeord>                 # print polyboard-kode
+python3 export_polyboard.py <søgeord> --out sang.txt  # gem i fil
+python3 export_polyboard.py <søgeord> --bass          # tilføj basgang på slot d2
+```
+
+Oversætter en sangs aktive `[Bars]`-takter til kode til polyboard (en live-coding-REPL med
+Tidal/Strudel-lignende mini-notation, fx `test.polyrythm.com`): `def`-linjer plus én
+`d1 # note (…)/N`-linje hvor 1 cyklus = 1 takt. Indsæt det hele i polyboard og kør alle linjer
+(Skift+Ctrl+Enter). Kræver `[Bars]` (ikke `[Bars draft]`); ukendte akkorder bliver til pause med advarsel.
+
+- `--sound NAVN` sætter polyboard-lyden til akkorderne (standard `arpy`)
+- `--restrike` genanslår forlængede (`%`) akkorder hver takt (`!N`) i stedet for ét langt anslag (`@N`)
+- `--bass` tilføjer grundtone på 1. slag i hver takt (som MIDI-tal, så tallene ikke forveksles med slot-navnet `d2`)
+- `--bass-sound NAVN` sætter basgangens lyd (standard `arpy`; `sine` blev afvist af polyboard)
+- Gentagne fire-takters mønstre udtrækkes automatisk som `def pat1 = (…)`; identiske sektioner deler én `def`
+
+Polyboards parser afviser akkordliste-opslag (`d3'$maj`) inde i `def`-kroppe (`UnknownName`), så akkorder
+skrives som inline-lister (`d3'[0 4 7]`). Mønstret er låst til transportens absolutte cyklus: mute/unmute
+globalt før start for at begynde ved takt 1. Logikken ligger i `songlib/polyboard.py`.
 
 ## PDF-generering
 
@@ -177,7 +214,8 @@ python3 rebuild_songs.py
 - `rebuild_songs.py` — regenerer alle sang-HTML-filer med aktuelt template
 - `add_default_bars.py` — foreslår en `[Bars]`-taktinddeling for en sang (se "Takt-notation" ovenfor)
 - `add_draft_bars.py` — indsætter en inaktiv `[Bars draft]`-taktinddeling for alle sange i biblioteket der endnu ikke har en (se "Takt-notation" ovenfor)
-- `songlib/` — logik-pakke bag scripts (akkordteori, templates, UG-parsing, layout, rendering, store, CLI, `bars.py` for takt-notation)
+- `export_polyboard.py` — oversætter en sangs `[Bars]`-takter til polyboard-kode (se "Eksport til polyboard" ovenfor)
+- `songlib/` — logik-pakke bag scripts (akkordteori, templates, UG-parsing, layout, rendering, store, CLI, `bars.py` for takt-notation, `polyboard.py` for polyboard-eksport)
 - `.nojekyll` — forhindrer GitHub Pages i at køre Jekyll
 - `songs/` — genererede HTML-sange
 - `songs.json` — intern liste over sange (title, artist, file, source, hash, evt. bars)

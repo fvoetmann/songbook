@@ -29,9 +29,15 @@ def is_bars_draft_section(header: str) -> bool:
 
 @dataclass
 class Bar:
-    chords: list = field(default_factory=list)  # tom for pause-/gentagelsestakter
+    chords: list = field(default_factory=list)  # tom for pause-/gentagelsestakter; et
+    # akkordslot kan være None for en pause der deler takten med rigtige akkorder
+    # (fx "...C" / ". C" -> [None, None, None, "C"])
     is_repeat: bool = False
     is_rest: bool = False
+    # True for en pause der er en del af en delt takt (mid-takt eller foran den
+    # første akkord i takten) frem for sin egen selvstændige takt - renderes uden
+    # sin egen taktstreg, se render._render_extra_bar
+    in_bar: bool = False
 
 
 @dataclass
@@ -42,9 +48,17 @@ class MatchResult:
     bar_starts: set
     # occurrence-indeks -> liste af Bar (pause/gentagelse) der indsættes lige efter
     extra_after: dict
+    # occurrence-indeks -> liste af Bar (pause, in_bar=True) der indsættes lige
+    # foran denne akkord - bruges når en delt takt starter med en eller flere
+    # pauser før sin første rigtige akkord (fx "...C")
+    leading_rest: dict = field(default_factory=dict)
 
 
 _LABEL_LINE = re.compile(r"^\s*([^:\n]+):\s*(.+?)\s*$")
+# Ét akkordslot: enten et enkelt "."-tegn (pause) eller en sammenhængende streng
+# uden "." og mellemrum (et akkordnavn). Mellemrum mellem slots er kosmetisk -
+# "...C", ". . . C" og ".. .C" tolkes alle som de samme fire slots.
+_SLOT_RE = re.compile(r"\.|[^.\s]+")
 
 
 def _parse_bar_sequence(seq: str) -> list:
@@ -60,10 +74,14 @@ def _parse_bar_sequence(seq: str) -> list:
             continue
         if token == "%":
             bars.append(Bar(is_repeat=True))
-        elif token == ".":
+            continue
+        slots = _SLOT_RE.findall(token)
+        if all(s == "." for s in slots):
+            # Hele takten er pause, uanset om den er skrevet som ét "." eller
+            # flere (musikalsk identisk med en enkelt paustakt).
             bars.append(Bar(is_rest=True))
         else:
-            bars.append(Bar(chords=token.split()))
+            bars.append(Bar(chords=[None if s == "." else s for s in slots]))
     return bars
 
 
@@ -103,13 +121,14 @@ def find_label_for_header(header: str, labels) -> str:
 
 
 def _flatten_real_chords(bars: list) -> list:
-    """De 'rigtige' akkorder i en takt-sekvens (uden %/.) i rækkefølge – én
-    forekomst pr. akkord i en delt takt (fx 'D A' -> ['D', 'A'])."""
+    """De 'rigtige' akkorder i en takt-sekvens (uden %/./pause-slots) i
+    rækkefølge – én forekomst pr. akkord i en delt takt (fx 'D A' -> ['D', 'A'];
+    et pause-slot i en delt takt, fx '. C' -> ['C'], bidrager ikke selv)."""
     out = []
     for bar in bars:
         if bar.is_repeat or bar.is_rest:
             continue
-        out.extend(bar.chords)
+        out.extend(c for c in bar.chords if c is not None)
     return out
 
 
@@ -122,16 +141,37 @@ def match_section(bars: list, chord_sequence: list, header: str = ""):
 
     bar_starts = set()
     extra_after = {}
+    leading_rest = {}
     occ_idx = -1
     for bar in bars:
         if bar.is_repeat or bar.is_rest:
             extra_after.setdefault(occ_idx, []).append(bar)
             continue
-        for j in range(len(bar.chords)):
+        first_seen = False
+        pending = []
+        for slot in bar.chords:
+            if slot is None:
+                marker = Bar(is_rest=True, in_bar=True)
+                if first_seen:
+                    # Pause midt i eller efter takten - vises lige efter den
+                    # foregående rigtige akkord i samme takt (samme mekanisme
+                    # som en selvstændig "."-takt efter en anden takt).
+                    extra_after.setdefault(occ_idx, []).append(marker)
+                else:
+                    # Pause(r) før den første rigtige akkord i takten - vises
+                    # foran akkorden, efter selve taktstregen.
+                    pending.append(marker)
+                continue
             occ_idx += 1
-            if j == 0:
+            if not first_seen:
                 bar_starts.add(occ_idx)
-    return MatchResult(header=header, bars=bars, bar_starts=bar_starts, extra_after=extra_after)
+                if pending:
+                    leading_rest[occ_idx] = pending
+                first_seen = True
+    return MatchResult(
+        header=header, bars=bars, bar_starts=bar_starts,
+        extra_after=extra_after, leading_rest=leading_rest,
+    )
 
 
 def build_bar_timeline_json(matches) -> dict:

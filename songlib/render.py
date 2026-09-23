@@ -112,13 +112,16 @@ def _render_extra_bar(bar) -> str:
     chord it follows - it then rides along on the seg's chord row (see the
     ".seg"/".seg .lyr" flex-wrap rule) instead of dropping onto its own line,
     and edit_song.py's line_div_to_ug reconstruction (which only ever looks
-    up the "chord"/"lyr" classes) skips it automatically."""
+    up the "chord"/"lyr" classes) skips it automatically.
+
+    A pause that shares a bar with a real chord (bar.in_bar, e.g. the "."
+    slots in "...C" or ". C") gets no barline of its own - the bar's single
+    barline is the one already placed before its first real chord (or, for a
+    leading pause, right before this same marker - see leading_rest)."""
     cls = "rest" if bar.is_rest else "repeat"
     glyph = "·" if bar.is_rest else "%"
-    return (
-        '<span class="barline" data-derived="bars"></span>'
-        f'<span class="barmark {cls}">{glyph}</span>'
-    )
+    barline = "" if bar.in_bar else '<span class="barline" data-derived="bars"></span>'
+    return f'{barline}<span class="barmark {cls}">{glyph}</span>'
 
 
 def render_chord_lyric_line(
@@ -144,19 +147,23 @@ def render_chord_lyric_line(
     pieces = []
     for name, text, occ in parts:
         prefix = ""
+        pre_extra = ""
         extra = ""
         if bar_match is not None and occ is not None:
             if occ in bar_match.bar_starts:
                 prefix = '<span class="barline" data-derived="bars"></span>'
+                for bar in bar_match.leading_rest.get(occ, []):
+                    pre_extra += _render_extra_bar(bar)
             for bar in bar_match.extra_after.get(occ, []):
                 extra += _render_extra_bar(bar)
         idx_attr = f' data-idx="{chord_idx_base + occ}"' if (bar_match is not None and occ is not None) else ""
         chord_html = f'<span class="chord"{idx_attr}>{html.escape(name)}</span>' if name else ""
         lyr_html = f'<span class="lyr">{html.escape(text)}</span>' if (text or name) else ""
-        # extra (repeat/rest marks) sits between chord and lyr so it rides on
-        # the chord row (right after the chord it repeats) rather than after
-        # the full lyric text - see the ".seg"/".seg .lyr" flex-wrap rule.
-        pieces.append(f'{prefix}<span class="seg">{chord_html}{extra}{lyr_html}</span>')
+        # pre_extra (a leading pause sharing this bar, e.g. "...C") sits right
+        # after the barline and before the chord; extra (repeat/rest marks
+        # that follow this chord) sits between chord and lyr so it rides on
+        # the chord row - see the ".seg"/".seg .lyr" flex-wrap rule.
+        pieces.append(f'{prefix}<span class="seg">{pre_extra}{chord_html}{extra}{lyr_html}</span>')
     return f'<div class="line">{"".join(pieces)}</div>', start_idx + len(chords)
 
 
@@ -198,6 +205,8 @@ def render_chord_lines(lines: list, bar_match=None, start_idx: int = 0, chord_id
                 occ = idx + local_i
                 if bar_match is not None and occ in bar_match.bar_starts:
                     spans.append('<span class="barline" data-derived="bars"></span>')
+                    for leading in bar_match.leading_rest.get(occ, []):
+                        spans.append(_render_extra_bar(leading))
                 idx_attr = f' data-idx="{chord_idx_base + occ}"' if bar_match is not None else ""
                 spans.append(f'<span class="chord"{idx_attr}>{html.escape(name)}</span>')
                 if bar_match is not None:
@@ -456,7 +465,7 @@ def make_song_html(
     .seg .lyr:empty::before {{ content: "\\00a0"; }}
     .seg .chord {{ font-size: 0.85em; line-height: 1.3; }}
     .tab-section {{ margin-top: 8mm; }}
-    .chord {{ color: #b00020; font-weight: bold; cursor: help; }}
+    .chord {{ color: #b00020; font-weight: bold; cursor: help; margin-right: 0.3em; }}
     .chord.now-playing {{ background: #ffe98a; border-radius: 3px; box-shadow: 0 0 0 2px #ffe98a; }}
     .chord.start-marker {{ border-radius: 3px; box-shadow: 0 0 0 2px #1a73e8; }}
     .section {{ color: #777; font-style: italic; font-weight: bold; }}
