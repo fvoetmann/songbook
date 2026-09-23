@@ -232,6 +232,9 @@ def render_polyboard(bar_data: dict, tempo="120", *, title: str = "", artist: st
             return "~" if n == 1 else f"~!{n}"
         toks = []
         for c in chords:
+            if c is None:  # pause-slot der deler takten med en rigtig akkord (fx "...C")
+                toks.append("~")
+                continue
             st = chord_stack(c)
             if st is None:
                 unknown.add(c)
@@ -252,6 +255,9 @@ def render_polyboard(bar_data: dict, tempo="120", *, title: str = "", artist: st
             return "~" if n == 1 else f"~!{n}"
         toks = []
         for c in chords:
+            if c is None:
+                toks.append("~")
+                continue
             st = chord_stack(c)
             toks.append("~" if st is None else str(st[0] - 12))
         tok = toks[0] if len(toks) == 1 else "[" + " ".join(toks) + "]"

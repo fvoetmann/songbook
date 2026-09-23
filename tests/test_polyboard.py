@@ -121,6 +121,21 @@ def test_render_multi_chord_bar_repeat_restrikes_even_without_flag():
     assert "def a = ([d3'[0 4 7] a2'[0 4 7]]!2)" in text
 
 
+def test_render_shared_bar_pause_becomes_rest_slot():
+    # "...C" -> one bar with chords [null, null, null, "C"]: the pauses become
+    # "~" inline, sharing the bracketed sub-sequence with the real chord.
+    data = song(("Intro", [bar(None, None, None, "C")]))
+    text, warnings = render_polyboard(data)
+    assert warnings == []
+    assert "def intro = ([~ ~ ~ c3'[0 4 7]])" in text
+
+
+def test_render_bass_layer_treats_pause_slot_as_rest():
+    data = song(("Intro", [bar(None, "C")]))
+    text, _ = render_polyboard(data, bass=True)
+    assert "def bintro = ([~ 36])" in text
+
+
 def test_render_rests_and_slash_and_sound():
     data = song(("A", [bar("D/F#"), bar(rest=True), bar(rest=True)]))
     text, _ = render_polyboard(data, sound="superpiano")

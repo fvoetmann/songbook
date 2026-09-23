@@ -380,7 +380,10 @@ CHORD_DIAGRAM_JS = """  <script>
     //                                                her spilles kvinten i 'fifth'-tilstand
     //   { type:'note', root, beats, idx }         - ny akkord-anslag; idx peger
     //                                                på det tilsvarende .chord[data-idx]
-    //   { type:'rest' }                           - paustakt, ryd fremhævning
+    //   { type:'rest', beats }                     - paustakt (hel takt, eller et
+    //                                                pause-slot der deler en takt
+    //                                                med en rigtig akkord, fx
+    //                                                "...C"); rydder fremhævning
     // idx følger samme globale, dokument-rækkefølge-tælling som data-idx-
     // attributterne sat i render.py (kun rigtige akkorder, sektion for
     // sektion, i den rækkefølge sektionerne optræder i sangen).
@@ -409,15 +412,21 @@ CHORD_DIAGRAM_JS = """  <script>
           } else if (bar.repeat) {
             notes = lastNotes || [];
           } else {
+            // bar.chords slots may be null - a pause sharing the bar with a
+            // real chord (e.g. "...C" -> [null, null, null, "C"]); it still
+            // takes up an equal fraction of the bar for timing, but has no
+            // data-idx of its own and doesn't advance chordCounter.
             var n = (bar.chords || []).length || 1;
             notes = bar.chords.map(function(ch, i) {
               var start = Math.round(bpb * i / n);
               var end = Math.round(bpb * (i + 1) / n);
+              var beats = Math.max(1, end - start);
+              if (!ch) return { type: 'rest', beats: beats };
               var parsed = parseChordName(ch);
               var note = {
                 type: 'note',
                 root: parsed ? parsed.root : null,
-                beats: Math.max(1, end - start),
+                beats: beats,
                 idx: chordCounter
               };
               idxToBar[chordCounter] = barFirstIdx.length;
@@ -426,11 +435,12 @@ CHORD_DIAGRAM_JS = """  <script>
             });
             lastNotes = notes;
           }
-          barFirstIdx.push(notes.length ? notes[0].idx : null);
+          var firstNote = notes.filter(function(nn) { return nn.type === 'note'; })[0];
+          barFirstIdx.push(firstNote ? firstNote.idx : null);
           notes.forEach(function(note) {
             beats.push(note);
             for (var k = 1; k < note.beats; k++) {
-              beats.push(k === 2 ? { type: 'hold', root: note.root, beats: note.beats - 2 } : null);
+              beats.push((note.type === 'note' && k === 2) ? { type: 'hold', root: note.root, beats: note.beats - 2 } : null);
             }
           });
         });

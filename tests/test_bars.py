@@ -41,6 +41,27 @@ def test_parse_repeat_and_rest():
     assert bars[2] == Bar(is_rest=True)
 
 
+def test_parse_multiple_dots_is_still_a_whole_bar_rest():
+    assert parse_bars_meta("Vers: |..|")["Vers"] == [Bar(is_rest=True)]
+
+
+def test_parse_dot_shares_a_bar_with_a_chord_compact():
+    # "...C" = 4 equal slots: 3 pauses then C (a quarter note in 4/4).
+    bars = parse_bars_meta("Intro: |...C|")["Intro"]
+    assert bars == [Bar(chords=[None, None, None, "C"])]
+
+
+def test_parse_dot_shares_a_bar_with_a_chord_spaced():
+    # Spaces around slots are cosmetic - same result as the compact form.
+    assert parse_bars_meta("Intro: |. . . C|")["Intro"] == [Bar(chords=[None, None, None, "C"])]
+    assert parse_bars_meta("Intro: |.. .C|")["Intro"] == [Bar(chords=[None, None, None, "C"])]
+
+
+def test_parse_dot_mid_bar_and_trailing():
+    assert parse_bars_meta("Vers: |D . A|")["Vers"] == [Bar(chords=["D", None, "A"])]
+    assert parse_bars_meta("Vers: |C.|")["Vers"] == [Bar(chords=["C", None])]
+
+
 def test_parse_optional_edge_pipes():
     # Leading/trailing "|" are cosmetic and optional.
     assert parse_bars_meta("Vers: D|A")["Vers"] == [Bar(chords=["D"]), Bar(chords=["A"])]
@@ -97,6 +118,30 @@ def test_match_section_repeat_and_rest_do_not_require_a_body_occurrence():
     assert result is not None
     assert result.bar_starts == {0}
     assert len(result.extra_after[0]) == 2
+
+
+def test_match_section_leading_rest_does_not_require_a_body_occurrence():
+    # "...C" only has one real chord (C); the 3 leading dots don't count
+    # towards the [ch]-match, but do produce a barline + 3 in-bar markers
+    # right before C.
+    bars = parse_bars_meta("Intro: |...C|")["Intro"]
+    result = match_section(bars, ["C"])
+    assert result is not None
+    assert result.bar_starts == {0}
+    assert result.leading_rest[0] == [Bar(is_rest=True, in_bar=True)] * 3
+    assert result.extra_after == {}
+
+
+def test_match_section_mid_bar_rest_attaches_after_preceding_chord():
+    # "D . A" is one shared bar: D, then a pause, then A - the pause attaches
+    # right after D (in_bar=True, so no barline of its own), and only D
+    # starts the bar.
+    bars = parse_bars_meta("Vers: |D . A|")["Vers"]
+    result = match_section(bars, ["D", "A"])
+    assert result is not None
+    assert result.bar_starts == {0}
+    assert result.extra_after == {0: [Bar(is_rest=True, in_bar=True)]}
+    assert result.leading_rest == {}
 
 
 # ── Default-generering ───────────────────────────────────────────────────
@@ -188,6 +233,44 @@ def test_validate_bars_no_warnings_on_clean_match():
     assert validate_bars(BARS_CONTENT) == []
 
 
+# ── Pause i en delt takt (fx "...C") ─────────────────────────────────────
+
+HALF_BAR_PAUSE_CONTENT = (
+    "[Intro]\n"
+    "[ch]C[/ch]\n"
+    "Some words\n\n"
+    "[Bars]\n"
+    "Intro: |...C|\n"
+)
+
+
+def test_song_with_leading_pause_renders_one_barline_and_a_rest_mark():
+    rendered, _layout, has_bars = make_song_html("T", "A", "", "", HALF_BAR_PAUSE_CONTENT, "")
+    assert has_bars is True
+    # Exactly one barline (the bar's own), placed before the rest marks, not one per dot.
+    assert rendered.count('<span class="barline" data-derived="bars"></span>') == 1
+    assert rendered.count('<span class="barmark rest">·</span>') == 3
+    # The rest marks precede the chord in document order (search full opening
+    # tags, not the bare class names, which also appear in the <style> block).
+    barline_pos = rendered.index('<span class="barline" data-derived="bars"></span>')
+    barmark_pos = rendered.index('<span class="barmark rest">')
+    chord_pos = rendered.index('<span class="chord" data-idx')
+    assert barline_pos < barmark_pos < chord_pos
+
+
+def test_song_with_mid_bar_pause_renders_no_extra_barline():
+    content = (
+        "[Intro]\n[ch]D[/ch]  [ch]A[/ch]\n\n"
+        "[Bars]\nIntro: |D . A|\n"
+    )
+    rendered, _layout, has_bars = make_song_html("T", "A", "", "", content, "")
+    assert has_bars is True
+    # D and A still share one bar (one barline before D, none before A),
+    # plus one in-bar rest mark between them (no barline of its own).
+    assert rendered.count('<span class="barline" data-derived="bars"></span>') == 1
+    assert rendered.count('<span class="barmark rest">·</span>') == 1
+
+
 # ── Round-trip (edit_song.py) ────────────────────────────────────────────
 
 def test_bars_section_round_trips_through_editor_cycle(tmp_path):
@@ -209,6 +292,18 @@ def test_bars_section_round_trips_through_editor_cycle(tmp_path):
     # The synthesized barline/rest/repeat markers must never leak into content.
     assert "barline" not in current
     assert "barmark" not in current
+
+
+def test_bars_with_shared_bar_pause_round_trips(tmp_path):
+    content = "[Intro]\n[ch]C[/ch]\nwords\n\n[Bars]\nIntro: |...C|\n"
+    rendered, _layout, has_bars = make_song_html("T", "A", "", "", content, "")
+    assert has_bars is True
+    path = tmp_path / "song.html"
+    path.write_text(rendered, encoding="utf-8")
+    _, _, _, _, _, _, extracted = html_to_content(path)
+    assert extracted == content.strip()
+    assert "barline" not in extracted
+    assert "barmark" not in extracted
 
 
 def test_bars_with_repeat_and_rest_round_trips(tmp_path):

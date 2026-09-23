@@ -62,19 +62,31 @@ Vers: |Em7|Am7 Fmaj7|
   i sangen, case-insensitivt — først eksakt, ellers som prefix (`Vers` matcher `[Vers 1]`,
   `[Vers 2]`)
 - `<taktsekvens>`: `|`-adskilte takter (kant-`|` er valgfri/kosmetisk). Hver takt er:
-  - én eller flere mellemrums-adskilte akkorder, der deler takten ligeligt (`D A` = 2
-    akkorder i én takt, fx 2 slag hver i 4/4)
-  - `%` = gentag forrige takt (samme akkord(er), holder videre)
-  - `.` = paustakt (ingen akkord)
+  - én eller flere slots, der deler takten ligeligt (`D A` = 2 akkorder i én takt, fx 2
+    slag hver i 4/4). Mellemrum mellem slots er valgfrit/kosmetisk — `D A` og `DA` er
+    IKKE det samme (se `.` nedenfor for hvorfor det er trygt at udelade mellemrum)
+  - `%` = gentag forrige takt (samme akkord(er), holder videre) — kun som en hel takt for sig
+  - `.` = paustakt. Som en hel takt for sig (`.` alene, evt. gentaget: `..`) er det en
+    paustakt uden akkord. Som et slot der deler en takt med en eller flere akkorder
+    (fx `...C` eller det samme skrevet med mellemrum: `. . . C`) er hvert `.` en
+    lige stor pause-andel af takten på linje med de øvrige slots — `...C` i 4/4 er
+    altså tre stille fjerdedele efterfulgt af `C` som fjerdedel; `|. C|` er en halv
+    takts pause efterfulgt af `C` i den anden halvdel. Da et akkordnavn aldrig
+    indeholder `.`, kan `.`-tegn og akkordnavne frit klistres sammen uden mellemrum
+    (`...C`, `D.A`, `C.` er alle gyldige og svarer til de mellemrums-adskilte former)
 - Fast 4/4 for alle takter (matcher metronomens antagelse om accent hvert 4. slag)
-- **Matchning:** de "rigtige" akkorder i taktsekvensen (uden `%`/`.`) skal, i rækkefølge,
-  svare 1:1 til `[ch]`-akkorderne der allerede står i den tilhørende sektion i sangteksten.
-  Stemmer det, tegnes taktstreger ind i den eksisterende visning (også i PDF, da PDF'en
-  genbruger samme HTML). Stemmer det ikke, springes visuel taktstregs-visning over for den
-  sektion, og der printes en advarsel ved gem/tilføjelse — resten af sangen er upåvirket
+- **Matchning:** de "rigtige" akkorder i taktsekvensen (uden `%`/`.`, uanset om `.` står som
+  en hel takt eller som et pause-slot inde i en delt takt) skal, i rækkefølge, svare 1:1 til
+  `[ch]`-akkorderne der allerede står i den tilhørende sektion i sangteksten. Stemmer det,
+  tegnes taktstreger ind i den eksisterende visning (også i PDF, da PDF'en genbruger samme
+  HTML). Stemmer det ikke, springes visuel taktstregs-visning over for den sektion, og der
+  printes en advarsel ved gem/tilføjelse — resten af sangen er upåvirket
 - **Visning:** taktstregen holder sig på akkordlinjen (over sangteksten) og går ikke ned i
   selve teksten. En `%`/`.`-markør (gentagelse/pause) vises umiddelbart efter den akkord i
-  sangteksten den hører til, på samme linje som akkorden — ikke efter hele tekstlinjen
+  sangteksten den hører til, på samme linje som akkorden — ikke efter hele tekstlinjen.
+  Pause-slots forrest i en delt takt (fx `...C`) har ingen egen forudgående akkord at hænge
+  på — de vises i stedet lige efter selve taktstregen, foran den første akkord i takten; der
+  tegnes kun én taktstreg for takten (ikke én pr. pause-slot)
 - Man skal allerede have skrevet akkorderne et sted i sangen (`[Am]`/`{Am}`) — `[Bars]`
   tilføjer kun taktinddeling oven på eksisterende akkorder, den genererer ikke nye
 - `songs.json`-feltet `bars: true` sættes automatisk når mindst én sektion matcher
