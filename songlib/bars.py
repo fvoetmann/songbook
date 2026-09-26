@@ -190,11 +190,9 @@ def build_bar_timeline_json(matches) -> dict:
     return {"beats_per_bar": 4, "sections": sections}
 
 
-def generate_default_bars(content: str, header: str = BARS_HEADER) -> str:
-    """Byg en naiv [Bars]-krop ('1 akkord = 1 takt', ingen %/.) ud fra de
-    akkorder der allerede står i sangens sektioner. Bruges af
-    add_default_bars.py (og add_draft_bars.py, med header='[Bars draft]')
-    til at give et udgangspunkt at rette i."""
+def _default_bar_lines(content: str) -> list:
+    """[(header, 'Label: |A|B|')] for hver akkord-sektion (første forekomst af
+    hver header), '1 akkord = 1 takt'."""
     from .layout import is_tab_section, parse_sections
 
     lines = []
@@ -209,11 +207,59 @@ def generate_default_bars(content: str, header: str = BARS_HEADER) -> str:
             continue
         seen_headers.add(h)
         label = h.strip("[]").strip()
-        lines.append(f"{label}: |" + "|".join(chords) + "|")
+        lines.append((h, f"{label}: |" + "|".join(chords) + "|"))
+    return lines
 
+
+def generate_default_bars(content: str, header: str = BARS_HEADER) -> str:
+    """Byg en naiv [Bars]-krop ('1 akkord = 1 takt', ingen %/.) ud fra de
+    akkorder der allerede står i sangens sektioner. Bruges af
+    add_default_bars.py (og add_draft_bars.py, med header='[Bars draft]')
+    til at give et udgangspunkt at rette i."""
+    lines = [line for _, line in _default_bar_lines(content)]
     if not lines:
         return ""
     return f"{header}\n" + "\n".join(lines) + "\n"
+
+
+def add_missing_bars(content: str, draft: bool = False):
+    """Tilføj naive takt-linjer ('1 akkord = 1 takt') til en eksisterende
+    [Bars]- (eller, med draft=True, [Bars draft]-) sektion for de
+    akkord-sektioner hvis header endnu ikke har en matchende label
+    (samme eksakt/prefix-regel som matchningen). Eksisterende linjer røres
+    ikke. Returnerer (nyt_indhold, [tilføjede linjer]); listen er tom og
+    indholdet uændret hvis intet mangler eller sektionen ikke findes."""
+    from .layout import parse_sections
+
+    is_target = is_bars_draft_section if draft else is_bars_section
+    labels = []
+    for h, body in parse_sections(content):
+        if is_target(h):
+            labels.extend(parse_bars_meta(body).keys())
+
+    new_lines = [
+        line for h, line in _default_bar_lines(content)
+        if find_label_for_header(h, labels) is None
+    ]
+    if not new_lines:
+        return content, []
+
+    # Find target-sektionens header og slutningen af dens krop (næste
+    # sektions-header, samme header-regex som parse_sections, eller slut).
+    header_re = re.compile(r"\[[A-Z][^\]]*\]")
+    for m in header_re.finditer(content):
+        if is_target(m.group(0)):
+            nxt = header_re.search(content, m.end())
+            end = nxt.start() if nxt else len(content)
+            body = content[m.end():end].rstrip()
+            tail = content[end:]
+            insert = "\n".join(new_lines)
+            new_content = (
+                content[:m.end()] + body + "\n" + insert + "\n"
+                + ("\n" + tail if tail else "")
+            )
+            return new_content, new_lines
+    return content, []
 
 
 def validate_bars(content: str) -> list:

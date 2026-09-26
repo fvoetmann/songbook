@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from songlib import (
+    add_missing_bars,
     extract_chord_sequence,
     find_label_for_header,
     generate_default_bars,
@@ -163,6 +164,41 @@ def test_generate_default_bars_skips_sections_without_chords():
 def test_generate_default_bars_skips_tab_sections():
     content = "[Intro]\ne|--0--|\nB|--1--|\n"
     assert generate_default_bars(content) == ""
+
+
+def test_add_missing_bars_appends_only_new_headers():
+    content = (
+        "[Verse 1]\n[ch]Am[/ch] a [ch]C[/ch] b\n"
+        "[Verse 2]\n[ch]Am[/ch] c [ch]C[/ch] d\n"
+        "[Bridge]\n[ch]F[/ch] e [ch]G[/ch] f\n"
+        "[Bars]\nVerse: |Am|%|C|\n"
+    )
+    new, added = add_missing_bars(content)
+    assert added == ["Bridge: |F|G|"]
+    assert new.endswith("[Bars]\nVerse: |Am|%|C|\nBridge: |F|G|\n")
+
+
+def test_add_missing_bars_inserts_before_following_section():
+    content = (
+        "[Bars]\nVerse: |Am|\n\n"
+        "[Verse]\n[ch]Am[/ch] a\n"
+        "[Chorus]\n[ch]G[/ch] b\n"
+    )
+    new, added = add_missing_bars(content)
+    assert added == ["Chorus: |G|"]
+    assert new.startswith("[Bars]\nVerse: |Am|\nChorus: |G|\n\n[Verse]")
+
+
+def test_add_missing_bars_nothing_missing_returns_unchanged():
+    content = "[Verse]\n[ch]Am[/ch] a\n[Bars]\nVerse: |Am|\n"
+    assert add_missing_bars(content) == (content, [])
+
+
+def test_add_missing_bars_draft_targets_draft_section():
+    content = "[Verse]\n[ch]Am[/ch] a\n[Chorus]\n[ch]G[/ch] b\n[Bars draft]\nVerse: |Am|\n"
+    new, added = add_missing_bars(content, draft=True)
+    assert added == ["Chorus: |G|"]
+    assert new.endswith("[Bars draft]\nVerse: |Am|\nChorus: |G|\n")
 
 
 # ── Rendering (make_song_html) ───────────────────────────────────────────

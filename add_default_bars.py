@@ -9,12 +9,16 @@ Brug:
 
 Åbner sangen i $EDITOR med den foreslåede [Bars]-sektion indsat, klar til
 at rette til, før den gemmes via den normale edit_song.py-gemme-vej.
+
+Har sangen allerede en [Bars]- (eller [Bars draft]-) sektion, tilføjes kun
+linjer for sektions-headere (fx et nyt [Bridge]) der endnu ikke har en
+matchende label; eksisterende linjer røres ikke.
 """
 
 import sys
 
 from songlib import (
-    generate_default_bars, is_bars_draft_section, is_bars_section, load_songs,
+    add_missing_bars, generate_default_bars, is_bars_draft_section, is_bars_section, load_songs,
     make_song_html, parse_sections, rebuild_index, save_songs, slugify,
     transpose_chord, transpose_content, validate_bars,
 )
@@ -39,28 +43,43 @@ def main():
     title, artist, key, capo, url, tempo, ug_content = html_to_content(html_path)
 
     headers = _headers(ug_content)
-    if any(is_bars_section(h) for h in headers):
-        sys.exit(
-            f"'{song['artist']} – {song['title']}' har allerede en [Bars]-sektion. "
-            f"Redigér den i stedet med: python3 edit_song.py {query!r}"
+    has_bars = any(is_bars_section(h) for h in headers)
+    has_draft = any(is_bars_draft_section(h) for h in headers)
+
+    if has_bars or has_draft:
+        # Eksisterende takt-sektion: tilføj kun linjer for nye sektions-headere
+        # der endnu ikke har en matchende label.
+        section_name = "[Bars]" if has_bars else "[Bars draft]"
+        new_ug_content, added = add_missing_bars(ug_content, draft=not has_bars)
+        if not added:
+            sys.exit(
+                f"'{song['artist']} – {song['title']}' har allerede en {section_name}-sektion, "
+                f"og alle sektioner med akkorder er dækket. Redigér den i stedet med: "
+                f"python3 edit_song.py {query!r}"
+            )
+        print(f"Tilføjer {len(added)} ny(e) linje(r) til {section_name}:")
+        for line in added:
+            print(f"  {line}")
+        intro = (
+            f"# Nye sektioner er tilføjet til {section_name} nedenfor ('1 akkord = 1 takt'):\n"
+            + "".join(f"#   {line}\n" for line in added)
+            + "# Ret gentagelser (%), pauser (.) og akkorder der holder flere takter manuelt.\n"
         )
-    if any(is_bars_draft_section(h) for h in headers):
-        sys.exit(
-            f"'{song['artist']} – {song['title']}' har allerede en [Bars draft]-sektion "
-            f"(en foreslået, endnu inaktiv takt-inddeling). Redigér den i stedet med: "
-            f"python3 edit_song.py {query!r} – ret takterne til og omdøb sektionen til "
-            f"[Bars] for at aktivere den."
+        if not has_bars:
+            intro += "# Omdøb [Bars draft] til [Bars] for at aktivere takterne.\n"
+    else:
+        default_bars = generate_default_bars(ug_content)
+        if not default_bars:
+            sys.exit("Ingen akkorder fundet at generere takter ud fra.")
+        new_ug_content = ug_content.rstrip("\n") + "\n\n" + default_bars.rstrip("\n") + "\n"
+        intro = (
+            "# Foreslåede takter er indsat nedenfor ('1 akkord = 1 takt') – ret\n"
+            "# gentagelser (%), pauser (.) og akkorder der holder flere takter manuelt.\n"
         )
 
-    default_bars = generate_default_bars(ug_content)
-    if not default_bars:
-        sys.exit("Ingen akkorder fundet at generere takter ud fra.")
-
-    new_ug_content = ug_content.rstrip("\n") + "\n\n" + default_bars.rstrip("\n") + "\n"
     edit_text = (
         build_header(title, artist, key, capo, tempo)
-        + "# Foreslåede takter er indsat nedenfor ('1 akkord = 1 takt') – ret\n"
-        + "# gentagelser (%), pauser (.) og akkorder der holder flere takter manuelt.\n"
+        + intro
         + "# Gem og luk editoren for at gemme. Slet ALT indhold for at annullere.\n"
         + "#\n"
         + ug_to_edit(new_ug_content)

@@ -99,8 +99,14 @@
       background: #ddd; margin: 0 3px; transition: background 0.05s ease;
     }
     #metro-dot.flash { background: #b00020; }
+    #count-in {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      pointer-events: none; z-index: 10000;
+      font: bold 40vmin sans-serif; color: rgba(176, 0, 32, 0.8);
+    }
+    #count-in.show { display: flex; }
     @media (max-width: 640px) { #inst-bar { flex-wrap: wrap; max-width: calc(100vw - 32px); bottom: 8px; right: 8px; } }
-    @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } }
+    @media print { #chord-tip { display: none !important; } #inst-bar { display: none !important; } #count-in { display: none !important; } }
   </style>
   <script>
   (function() {
@@ -432,6 +438,11 @@
     var audioCtx = null, tempoBPM = 120;
     var metroTimer = null, nextNoteTime = 0, beatCount = 0;
     var METRO_LOOKAHEAD = 25, METRO_SCHEDULE_AHEAD = 0.1;
+    // Indtælling: når basgangen startes, spilles først én takt kun med klik,
+    // mens slagene tælles op med store tal på skærmen (1, 2, 3, 4).
+    // countInLeft = resterende indtællings-slag; metroRun tælles op ved hver
+    // start/stop, så forsinkede UI-timeouts fra en tidligere kørsel ignoreres.
+    var countInLeft = 0, countInTotal = 0, metroRun = 0;
     // Basgang: afledt af [Bars]-taktdata (#bar-data), grundtonen i den
     // aktive akkord spilles på 1. slag af hver (del-)takt. Valgfrit (bassMode
     // 'fifth') tilføjes kvinten på akkordens 3. slag, hvis akkorden holder så
@@ -629,9 +640,30 @@
         if (bassCounterEl) bassCounterEl.textContent = 'Takt ' + barNum + '/' + totalBars;
       }, delay);
     }
+    function showCountIn(text) {
+      var el = document.getElementById('count-in');
+      if (!el) return;
+      el.textContent = text;
+      el.classList.toggle('show', text !== '');
+    }
+    function scheduleCountInUI(time, text) {
+      var ctx = ensureAudioCtx(), run = metroRun;
+      setTimeout(function() {
+        if (run === metroRun) showCountIn(text);
+      }, Math.max(0, (time - ctx.currentTime) * 1000));
+    }
     function metroScheduler() {
       var ctx = ensureAudioCtx();
       while (nextNoteTime < ctx.currentTime + METRO_SCHEDULE_AHEAD) {
+        if (countInLeft > 0) {
+          var n = countInTotal - countInLeft;
+          scheduleClick(nextNoteTime, n === 0);
+          scheduleCountInUI(nextNoteTime, String(n + 1));
+          countInLeft--;
+          nextNoteTime += 60 / tempoBPM;
+          if (countInLeft === 0) scheduleCountInUI(nextNoteTime, '');
+          continue;
+        }
         scheduleClick(nextNoteTime, beatCount % 4 === 0);
         if (bassBeats.length) {
           var pos = beatCount % bassBeats.length;
@@ -655,6 +687,7 @@
       var b = document.getElementById('metro-toggle');
       if (metroTimer) {
         clearInterval(metroTimer); metroTimer = null;
+        metroRun++; countInLeft = 0; showCountIn('');
         b.textContent = '▶'; b.classList.remove('active');
         clearHighlight();
         updateBassStartUI();
@@ -663,6 +696,8 @@
       var ctx = ensureAudioCtx();
       if (ctx.state === 'suspended') ctx.resume();
       beatCount = bassBeats.length ? bassStartBar * bassBpb : 0;
+      metroRun++;
+      countInTotal = countInLeft = bassBeats.length ? bassBpb : 0;
       clearStartMarker();
       nextNoteTime = ctx.currentTime + 0.05;
       metroScheduler();
@@ -770,6 +805,11 @@
       var metroDot = document.createElement('span');
       metroDot.id = 'metro-dot';
       bar.appendChild(metroDot);
+      if (bassBeats.length) {
+        var countInEl = document.createElement('div');
+        countInEl.id = 'count-in';
+        document.body.appendChild(countInEl);
+      }
       var tempoMinus = document.createElement('button');
       tempoMinus.textContent = '−'; tempoMinus.className = 'inst-btn'; tempoMinus.title = 'Langsommere tempo';
       tempoMinus.addEventListener('click', function() { changeTempo(-1); });

@@ -101,6 +101,11 @@ Scriptet indsætter en foreslået `[Bars]`-sektion og åbner sangen i `$EDITOR`,
 gentagelser (`%`), pauser (`.`) og akkorder der holder i flere takter kan rettes manuelt
 før gem.
 
+Har sangen allerede en `[Bars]`-sektion (eller `[Bars draft]`, hvis der ingen `[Bars]` er),
+tilføjer scriptet kun linjer for sektions-headere der endnu ikke har en matchende label (samme
+eksakt/prefix-regel som matchningen, så `Vers:` dækker `[Vers 1]`/`[Vers 2]`) — eksisterende
+linjer røres ikke. Mangler ingen, afsluttes scriptet som før.
+
 ### `[Bars draft]` — inaktivt forslag for hele biblioteket
 
 ```bash
@@ -135,6 +140,10 @@ Samtidig fremhæves den aktuelt spillende akkord i sangteksten (gul baggrund), o
 "Takt N/M"-tæller ved siden af metronom-knappen viser hvor i sangen basgangen er, så man kan
 følge med selv når den spillende akkord er scrollet uden for skærmen. Begge dele følger
 metronomens ▶/⏸ og nulstilles til sangens begyndelse hver gang den startes.
+
+Når basgangen startes, spilles først én indtællings-takt med kun metronom-klik, mens slagene
+vises som store tal (1, 2, 3, 4) midt på skærmen; basgangen og akkordfremhævningen begynder
+på næste 1-slag. Sange uden aktiv `[Bars]` (ren metronom) starter direkte uden indtælling.
 
 ## Eksport til polyboard
 
